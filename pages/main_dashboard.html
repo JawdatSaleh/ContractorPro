@@ -61,7 +61,11 @@
         <div class="flex items-center gap-4">
             <i class="fas fa-search text-text-secondary text-lg cursor-pointer"></i>
             <i class="fas fa-bell text-text-secondary text-lg cursor-pointer"></i>
-            <i class="fas fa-user text-text-secondary text-lg cursor-pointer"></i>
+            <div id="currentUserEmail" class="text-sm text-text-secondary hidden md:block"></div>
+            <i class="fas fa-user text-text-secondary text-lg"></i>
+            <button id="logoutBtn" class="text-sm text-error hover:text-error-600 transition-fast">
+                تسجيل الخروج
+            </button>
         </div>
     </header>
 
@@ -400,6 +404,46 @@
 </div>
 
 <script>
+const SESSION_KEY = 'contractorpro_user';
+
+(function enforceAuthentication() {
+    const rawSession = localStorage.getItem(SESSION_KEY);
+
+    if (!rawSession) {
+        window.location.replace('../login.html');
+        return;
+    }
+
+    let user;
+    try {
+        user = JSON.parse(rawSession);
+    } catch (error) {
+        localStorage.removeItem(SESSION_KEY);
+        window.location.replace('../login.html');
+        return;
+    }
+
+    if (!user || !user.email) {
+        localStorage.removeItem(SESSION_KEY);
+        window.location.replace('../login.html');
+        return;
+    }
+
+    const emailElement = document.getElementById('currentUserEmail');
+    if (emailElement) {
+        emailElement.textContent = user.email;
+        emailElement.classList.remove('hidden');
+    }
+
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem(SESSION_KEY);
+            window.location.replace('../login.html');
+        });
+    }
+})();
+
 // Project Performance Chart
 const ctxProject = document.getElementById('projectPerformanceChart').getContext('2d');
 new Chart(ctxProject, {

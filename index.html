@@ -65,20 +65,20 @@
         <div class="logo">ContractorPro</div>
         <div class="loading-text">Initializing Construction Management System...</div>
         <div class="spinner"></div>
-        <div class="redirect-info">Redirecting to Main Dashboard</div>
+        <div class="redirect-info">Redirecting to Secure Login Portal</div>
     </div>
 
     <script>
-        // Show loading screen for 2 seconds then redirect to main dashboard
+        // Show loading screen for 2 seconds then redirect to login page
         setTimeout(function() {
-            window.location.href = 'pages/main_dashboard.html';
+            window.location.href = 'login.html';
         }, 2000);
-        
+
         // Fallback redirect in case of any issues
         window.addEventListener('load', function() {
             setTimeout(function() {
                 if (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/')) {
-                    window.location.href = 'pages/main_dashboard.html';
+                    window.location.href = 'login.html';
                 }
             }, 3000);
         });
