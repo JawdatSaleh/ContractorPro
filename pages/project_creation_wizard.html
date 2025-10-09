@@ -1547,27 +1547,17 @@ body {
         
         function createProject() {
             saveCurrentStepData();
-            
-            // Generate project ID
-            projectData.id = 'PRJ-' + Date.now();
-            projectData.createdAt = new Date().toISOString();
-            projectData.status = 'planning';
-            
-            // Save project to localStorage (in real app, this would be sent to server)
-            let projects = JSON.parse(localStorage.getItem('contractorProjects') || '[]');
-            projects.push(projectData);
-            localStorage.setItem('contractorProjects', JSON.stringify(projects));
-            
-            // Clear draft
-            localStorage.removeItem('contractorProProjectDraft');
-            
-            // Show success message and redirect
-            alert('تم إنشاء المشروع بنجاح!');
-            
-            // Redirect to project details page
-            setTimeout(() => {
-                window.location.href = `project_detail_hub.html?id=${projectData.id}`;
-            }, 1000);
+
+            try {
+                gatherWizardData();
+            } catch (error) {
+                const message = error && error.message ? error.message : 'تعذر إنشاء المشروع، يرجى التحقق من البيانات المدخلة';
+                if (typeof showToast === 'function') {
+                    showToast(message, false);
+                } else {
+                    alert(message);
+                }
+            }
         }
         
         function goBack() {
@@ -1644,9 +1634,104 @@ body {
     el.classList.remove('ring-2','ring-error');
   }
 
+  function parseNumberFromText(text){
+    if(!text) return 0;
+    const normalized = text.replace(/[^\d.,-]/g, '').replace(/,/g, '');
+    const value = Number(normalized);
+    return Number.isFinite(value) ? value : 0;
+  }
+
+  function parseDuration(text){
+    if(!text) return 0;
+    const match = text.match(/\d+/);
+    return match ? Number(match[0]) : 0;
+  }
+
+  function extractPhases(){
+    const phasesContainer = document.getElementById('projectPhases');
+    if(!phasesContainer) return [];
+
+    return Array.from(phasesContainer.querySelectorAll('.timeline-item')).map((item, index) => {
+      const name = item.querySelector('h6')?.textContent?.trim() || `مرحلة ${index + 1}`;
+      const durationText = item.querySelector('p')?.textContent || '';
+      const duration = parseDuration(durationText);
+      return {
+        id: `phase-${Date.now()}-${index}`,
+        name,
+        durationDays: duration,
+        order: index + 1
+      };
+    });
+  }
+
+  function resolveTeamMember(group, id){
+    if(!id) return null;
+    const list = teamMembers[group] || [];
+    return list.find(member => member.id === id) || null;
+  }
+
   function gatherWizardData(){
+    const projectId = 'PRJ-' + Date.now();
+    const startDate = collectField('startDate') || collectField('projectStartDate');
+    const endDate = collectField('endDate') || collectField('projectEndDate');
+    let durationDays = parseDuration(document.getElementById('projectDuration')?.textContent || '');
+
+    if ((!durationDays || Number.isNaN(durationDays)) && startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diff = end - start;
+      if (!Number.isNaN(diff) && diff > 0) {
+        durationDays = Math.max(1, Math.round(diff / (1000 * 60 * 60 * 24)));
+      }
+    }
+
+    const phases = extractPhases();
+    if ((!durationDays || Number.isNaN(durationDays)) && phases.length) {
+      durationDays = phases.reduce((sum, phase) => sum + (Number(phase.durationDays) || 0), 0);
+    }
+
+    const materialsCost = parseFloat(document.getElementById('materialsCost')?.value || 0);
+    const laborCost = parseFloat(document.getElementById('laborCost')?.value || 0);
+    const equipmentCost = parseFloat(document.getElementById('equipmentCost')?.value || 0);
+    const additionalCost = parseFloat(document.getElementById('additionalCost')?.value || 0);
+    const profitMargin = parseFloat(document.getElementById('profitMargin')?.value || 0);
+    const totalCostText = document.getElementById('totalCost')?.textContent || '';
+    const contractValue = parseNumberFromText(totalCostText);
+
+    const managerSelection = document.querySelector('input[name="projectManager"]:checked')?.value || null;
+    const engineerSelections = Array.from(document.querySelectorAll('input[name="engineers"]:checked')).map(cb => cb.value);
+    const supervisorSelections = Array.from(document.querySelectorAll('input[name="supervisors"]:checked')).map(cb => cb.value);
+
+    const managerInfo = resolveTeamMember('managers', managerSelection);
+    const engineerInfo = engineerSelections.map(id => resolveTeamMember('engineers', id)).filter(Boolean);
+    const supervisorInfo = supervisorSelections.map(id => resolveTeamMember('supervisors', id)).filter(Boolean);
+
+    const equipmentSelections = Array.from(document.querySelectorAll('#equipmentList input:checked')).map(el => el.nextElementSibling?.textContent?.trim()).filter(Boolean);
+    const materialsSelections = Array.from(document.querySelectorAll('#materialsList input:checked')).map(el => el.nextElementSibling?.textContent?.trim()).filter(Boolean);
+    const subcontractorSelections = Array.from(document.querySelectorAll('#step5 input[type="checkbox"]:checked'))
+      .filter(el => !el.closest('#equipmentList') && !el.closest('#materialsList'))
+      .map(el => el.nextElementSibling?.textContent?.trim())
+      .filter(Boolean);
+
+    const uploadedFiles = Array.from(document.querySelectorAll('#uploadedFiles .flex.items-center.justify-between')).map(container => {
+      const name = container.querySelector('p.text-sm')?.textContent?.trim();
+      const size = container.querySelector('p.text-xs')?.textContent?.trim();
+      return name ? { name, size } : null;
+    }).filter(Boolean);
+
+    const clientInfo = {
+      name: collectField('clientName'),
+      type: collectField('clientType'),
+      phone: collectField('clientPhone'),
+      email: collectField('clientEmail'),
+      id: collectField('clientId'),
+      tax: collectField('clientTaxNumber'),
+      address: collectField('clientAddress')
+    };
+
     const project = {
-      id: 'PRJ-' + Date.now(),
+      id: projectId,
+      code: '#' + projectId,
       name: collectField('projectName'),
       type: collectField('projectType'),
       description: collectField('projectDescription'),
@@ -1655,15 +1740,8 @@ body {
         district: collectField('projectDistrict'),
         address: collectField('projectAddress')
       },
-      client: {
-        name: collectField('clientName'),
-        type: collectField('clientType'),
-        phone: collectField('clientPhone'),
-        email: collectField('clientEmail'),
-        id: collectField('clientId'),
-        tax: collectField('clientTaxNumber'),
-        address: collectField('clientAddress')
-      },
+      client: clientInfo,
+      clientName: clientInfo.name,
       specs: {
         totalArea: collectField('totalArea'),
         builtArea: collectField('builtArea'),
@@ -1672,26 +1750,47 @@ body {
         foundationType: collectField('foundationType'),
         structureType: collectField('structureType'),
         wallType: collectField('wallType'),
-        roofType: collectField('roofType')
+        roofType: collectField('roofType'),
+        specialRequirements: collectField('specialRequirements')
       },
       timeline: {
-        startDate: collectField('startDate') || collectField('projectStartDate'),
-        endDate: collectField('endDate') || collectField('projectEndDate'),
-        durationDays: collectField('durationDays')
+        startDate,
+        endDate,
+        durationDays: durationDays || 0
       },
+      startDate,
+      endDate,
+      durationDays: durationDays || 0,
       budget: {
-        contractValue: collectField('contractValue') || collectField('projectValue'),
-        contingencyPct: collectField('contingencyPct'),
-        currency: 'SAR'
+        materials: materialsCost,
+        labor: laborCost,
+        equipment: equipmentCost,
+        additional: additionalCost,
+        profitMargin,
+        contractValue,
+        currency: 'SAR',
+        advancePayment: parseFloat(document.getElementById('advancePayment')?.value || 0),
+        paymentTerms: collectField('paymentTerms')
       },
-      status: 'in_progress',
+      value: contractValue,
+      status: 'active',
       progress: 0,
-      phases: [],
+      team: {
+        manager: managerInfo,
+        engineers: engineerInfo,
+        supervisors: supervisorInfo
+      },
+      equipment: equipmentSelections,
+      materials: materialsSelections,
+      subcontractors: subcontractorSelections,
+      phases,
+      attachments: uploadedFiles,
       expenses: [],
       subcontracts: [],
       payments: [],
-      attachments: []
+      createdAt: new Date().toISOString()
     };
+
     validate(project);
     const arr = getProjects();
     arr.push(project);
@@ -1741,69 +1840,6 @@ body {
 </script>
 <!-- END INJECT -->
 
-<script>
-// ===== RUNTIME LINKER (no design changes) =====
-(function(){
-  function val(id){ var el=document.getElementById(id); return el?el.value:''; }
-  function finishProjectCreation(e){
-    try{ if(e){ e.preventDefault(); } }catch(_){}
-    var projectData = {
-      id: 'PRJ-' + Date.now(),
-      name: val('projectName'),
-      projectType: val('projectType'),
-      projectDescription: val('projectDescription'),
-      city: val('projectCity'),
-      district: val('projectDistrict'),
-      address: val('projectAddress'),
-      clientName: val('clientName'),
-      clientType: val('clientType'),
-      clientPhone: val('clientPhone'),
-      clientEmail: val('clientEmail'),
-      clientId: val('clientId'),
-      clientTaxNumber: val('clientTaxNumber'),
-      clientAddress: val('clientAddress'),
-      totalArea: val('totalArea'),
-      builtArea: val('builtArea'),
-      floorsCount: val('floorsCount'),
-      unitsCount: val('unitsCount'),
-      foundationType: val('foundationType'),
-      structureType: val('structureType'),
-      wallType: val('wallType'),
-      roofType: val('roofType'),
-      startDate: val('startDate'),
-      endDate: val('endDate'),
-      projectValue: val('projectValue'),
-      teamNotes: val('teamNotes'),
-      progress: 0,
-      status: 'جديد'
-    };
-    try{
-      localStorage.setItem('newProject', JSON.stringify(projectData));
-      localStorage.setItem('toastMessage','success');
-    }catch(_){}
-    window.location.href = 'projects_management_center.INTEGRATED.html';
-  }
-  // expose globally in case existing button already calls it
-  window.finishProjectCreation = finishProjectCreation;
-
-  document.addEventListener('DOMContentLoaded', function(){
-    // Try to bind on existing "finish" button without changing design
-    var finishBtn = document.getElementById('finishProject');
-    if(!finishBtn){
-      // search buttons that include Arabic 'إنهاء' text
-      var btns = Array.from(document.querySelectorAll('button, a'));
-      finishBtn = btns.find(function(b){
-        var t = (b.textContent || '').trim();
-        return /إنهاء/.test(t) || /إنهاء وإنشاء/.test(t);
-      });
-    }
-    if(finishBtn && !finishBtn.__wizardBound){
-      finishBtn.addEventListener('click', finishProjectCreation);
-      finishBtn.__wizardBound = true;
-    }
-  });
-})();
-</script>
 <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
 </body>
 </html>

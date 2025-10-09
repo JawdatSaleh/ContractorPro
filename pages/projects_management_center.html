@@ -98,7 +98,7 @@
                     </div>
 
                     <!-- Projects Grid -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div id="projectsGrid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         <!-- Project 1 -->
                         <div class="border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card" onclick="openProjectDetails('project-001', 'فيلا الرياض الحديثة')">
                             <div class="flex items-start justify-between mb-4">
@@ -2675,6 +2675,9 @@ class DailyReportsStore {
 // Initialize daily reports store
 let dailyReportsStore = null;
 
+const PROJECTS_STORAGE_KEY = 'contractorPro.projects';
+const PROJECTS_LEGACY_KEY = 'projects';
+
 // Project Data Store
 class ProjectStore {
     constructor() {
@@ -2683,6 +2686,97 @@ class ProjectStore {
         this.phases = this.loadPhases();
         this.expenses = this.loadExpenses();
         this.subcontracts = this.loadSubcontracts();
+    }
+
+    normalizeProject(project) {
+        if (!project || typeof project !== 'object') {
+            return null;
+        }
+
+        const normalized = {...project};
+
+        if (typeof normalized.client === 'string') {
+            normalized.clientName = normalized.client;
+            normalized.client = { name: normalized.client };
+        } else {
+            normalized.clientName = normalized.client?.name || normalized.clientName || '';
+        }
+
+        if (!normalized.startDate && normalized.timeline?.startDate) {
+            normalized.startDate = normalized.timeline.startDate;
+        }
+        if (!normalized.endDate && normalized.timeline?.endDate) {
+            normalized.endDate = normalized.timeline.endDate;
+        }
+        if (!normalized.durationDays && normalized.timeline?.durationDays) {
+            normalized.durationDays = normalized.timeline.durationDays;
+        }
+
+        normalized.timeline = normalized.timeline || {
+            startDate: normalized.startDate || '',
+            endDate: normalized.endDate || '',
+            durationDays: normalized.durationDays || 0
+        };
+
+        if (!normalized.timeline.startDate && normalized.startDate) {
+            normalized.timeline.startDate = normalized.startDate;
+        }
+        if (!normalized.timeline.endDate && normalized.endDate) {
+            normalized.timeline.endDate = normalized.endDate;
+        }
+        if (!normalized.timeline.durationDays || Number.isNaN(normalized.timeline.durationDays)) {
+            if (normalized.durationDays) {
+                normalized.timeline.durationDays = normalized.durationDays;
+            } else if (normalized.startDate && normalized.endDate) {
+                const start = new Date(normalized.startDate);
+                const end = new Date(normalized.endDate);
+                const diff = end - start;
+                if (!Number.isNaN(diff) && diff > 0) {
+                    normalized.timeline.durationDays = Math.max(1, Math.round(diff / (1000 * 60 * 60 * 24)));
+                } else {
+                    normalized.timeline.durationDays = 0;
+                }
+            } else {
+                normalized.timeline.durationDays = 0;
+            }
+        }
+
+        if (normalized.value === undefined || normalized.value === null) {
+            normalized.value = normalized.budget?.contractValue || 0;
+        }
+
+        normalized.budget = normalized.budget || {};
+        if (normalized.budget.contractValue === undefined || normalized.budget.contractValue === null) {
+            normalized.budget.contractValue = normalized.value || 0;
+        }
+        if (!normalized.budget.currency) {
+            normalized.budget.currency = 'SAR';
+        }
+
+        if (!normalized.status) {
+            normalized.status = 'active';
+        }
+
+        if (normalized.progress === undefined || normalized.progress === null || Number.isNaN(Number(normalized.progress))) {
+            normalized.progress = 0;
+        }
+
+        if (!normalized.code && normalized.id) {
+            normalized.code = `#${normalized.id}`;
+        }
+
+        normalized.createdAt = normalized.createdAt || new Date().toISOString();
+
+        return normalized;
+    }
+
+    normalizeProjects(projects) {
+        if (!Array.isArray(projects)) {
+            return this.getDefaultProjects();
+        }
+        return projects
+            .map(project => this.normalizeProject(project))
+            .filter(Boolean);
     }
 
     // Project CRUD operations
@@ -2936,12 +3030,41 @@ class ProjectStore {
 
     // Storage methods
     saveProjects() {
-        localStorage.setItem('projects', JSON.stringify(this.projects));
+        this.projects = this.normalizeProjects(this.projects);
+        const serialized = JSON.stringify(this.projects);
+        localStorage.setItem(PROJECTS_STORAGE_KEY, serialized);
+        localStorage.setItem(PROJECTS_LEGACY_KEY, serialized);
     }
 
     loadProjects() {
-        const saved = localStorage.getItem('projects');
-        return saved ? JSON.parse(saved) : this.getDefaultProjects();
+        let parsed = null;
+
+        const storedPrimary = localStorage.getItem(PROJECTS_STORAGE_KEY);
+        const storedLegacy = localStorage.getItem(PROJECTS_LEGACY_KEY);
+
+        try {
+            if (storedPrimary) {
+                parsed = JSON.parse(storedPrimary);
+            }
+        } catch (error) {
+            parsed = null;
+        }
+
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+            try {
+                if (storedLegacy) {
+                    parsed = JSON.parse(storedLegacy);
+                }
+            } catch (error) {
+                parsed = null;
+            }
+        }
+
+        const normalized = this.normalizeProjects(parsed || this.getDefaultProjects());
+        const serialized = JSON.stringify(normalized);
+        localStorage.setItem(PROJECTS_STORAGE_KEY, serialized);
+        localStorage.setItem(PROJECTS_LEGACY_KEY, serialized);
+        return normalized;
     }
 
     saveAdditionalContracts() {
@@ -2984,41 +3107,125 @@ class ProjectStore {
         return [
             {
                 id: 'project-001',
-                name: 'فيلا الرياض الحديثة',
                 code: '#PRJ-001',
-                client: 'محمد العبدالله',
-                value: 850000,
+                name: 'فيلا الرياض الحديثة',
+                type: 'residential_villa',
+                description: 'مشروع فيلا سكنية حديثة في شمال الرياض.',
+                client: {
+                    name: 'محمد العبدالله',
+                    type: 'individual',
+                    phone: '0501234567',
+                    email: 'm.alabdullah@example.com'
+                },
+                clientName: 'محمد العبدالله',
+                location: {
+                    city: 'الرياض',
+                    district: 'حي النخيل',
+                    address: 'شارع العليا'
+                },
+                timeline: {
+                    startDate: '2025-01-01',
+                    endDate: '2025-02-15',
+                    durationDays: 45
+                },
                 startDate: '2025-01-01',
                 endDate: '2025-02-15',
-                progress: 85,
+                durationDays: 45,
+                budget: {
+                    contractValue: 850000,
+                    materials: 420000,
+                    labor: 250000,
+                    equipment: 90000,
+                    additional: 30000,
+                    profitMargin: 15,
+                    currency: 'SAR'
+                },
+                value: 850000,
                 status: 'active',
-                notes: 'مشروع فيلا سكنية حديثة في شمال الرياض'
+                progress: 85,
+                createdAt: '2025-01-01T08:00:00.000Z'
             },
             {
                 id: 'project-002',
-                name: 'مجمع تجاري جدة',
                 code: '#PRJ-002',
-                client: 'شركة الأندلس للاستثمار',
-                value: 1200000,
+                name: 'مجمع تجاري جدة',
+                type: 'commercial',
+                description: 'مجمع تجاري متعدد الاستخدامات في مدينة جدة.',
+                client: {
+                    name: 'شركة الأندلس للاستثمار',
+                    type: 'company',
+                    phone: '0507654321',
+                    email: 'info@andalus.sa'
+                },
+                clientName: 'شركة الأندلس للاستثمار',
+                location: {
+                    city: 'جدة',
+                    district: 'حي التحلية',
+                    address: 'طريق الأمير محمد بن عبدالعزيز'
+                },
+                timeline: {
+                    startDate: '2025-01-10',
+                    endDate: '2025-03-25',
+                    durationDays: 74
+                },
                 startDate: '2025-01-10',
                 endDate: '2025-03-25',
+                durationDays: 74,
+                budget: {
+                    contractValue: 1200000,
+                    materials: 520000,
+                    labor: 360000,
+                    equipment: 140000,
+                    additional: 60000,
+                    profitMargin: 12,
+                    currency: 'SAR'
+                },
+                value: 1200000,
+                status: 'in_progress',
                 progress: 45,
-                status: 'active',
-                notes: 'مجمع تجاري متعدد الطوابق في وسط جدة'
+                createdAt: '2025-01-05T09:15:00.000Z'
             },
             {
                 id: 'project-003',
-                name: 'مشروع سكني الدمام',
                 code: '#PRJ-003',
-                client: 'فهد الخالدي',
-                value: 650000,
+                name: 'مشروع سكني الدمام',
+                type: 'residential_complex',
+                description: 'مشروع إسكان متوسط يضم عدة وحدات سكنية في الدمام.',
+                client: {
+                    name: 'فهد الخالدي',
+                    type: 'individual',
+                    phone: '0509876543',
+                    email: 'f.alkhaldi@example.com'
+                },
+                clientName: 'فهد الخالدي',
+                location: {
+                    city: 'الدمام',
+                    district: 'حي الشاطئ',
+                    address: 'شارع الخليج'
+                },
+                timeline: {
+                    startDate: '2025-01-20',
+                    endDate: '2025-04-15',
+                    durationDays: 85
+                },
                 startDate: '2025-01-20',
                 endDate: '2025-04-15',
+                durationDays: 85,
+                budget: {
+                    contractValue: 650000,
+                    materials: 280000,
+                    labor: 180000,
+                    equipment: 60000,
+                    additional: 30000,
+                    profitMargin: 10,
+                    currency: 'SAR'
+                },
+                value: 650000,
+                status: 'planned',
                 progress: 20,
-                status: 'active',
-                notes: 'مجمع سكني للعائلات في الدمام'
+                createdAt: '2025-01-12T11:45:00.000Z'
             }
-        ];
+        ].map(project => this.normalizeProject(project));
     }
 
     getDefaultAdditionalContracts() {
@@ -5521,7 +5728,7 @@ function removePhoto(index) {
 }
 
 // Placeholder functions for other features
-function openNewProjectModal(){ window.location.href = 'project_creation_wizard.INTEGRATED.html'; }
+function openNewProjectModal(){ window.location.href = 'project_creation_wizard.html'; }
 
 function exportProjectsData() {
     alert('تصدير البيانات - قيد التطوير');
@@ -5669,8 +5876,25 @@ function refreshTimeline() {
   const STORAGE_KEY = 'contractorPro.projects';
 
   function getProjects(){
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-    catch(e){ return []; }
+    try {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      if (Array.isArray(stored) && stored.length) {
+        return stored;
+      }
+    } catch(e){ /* ignore */ }
+
+    try {
+      const legacy = JSON.parse(localStorage.getItem('projects') || '[]');
+      if (Array.isArray(legacy) && legacy.length) {
+        return legacy;
+      }
+    } catch(e){ /* ignore */ }
+
+    if (window.projectStore && Array.isArray(window.projectStore.projects)) {
+      return window.projectStore.projects;
+    }
+
+    return [];
   }
   function saveProjects(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
 
@@ -5704,14 +5928,26 @@ function refreshTimeline() {
     return v;
   }
 
-  function renderStoredProjects(){
+  function renderStoredProjects(highlightId){
     const grid = document.querySelector('#projects-list .grid');
     if(!grid) return;
 
-    const projects = getProjects();
+    if (!grid.dataset.enhanced) {
+      grid.querySelectorAll('.project-card:not([data-proj-id])').forEach(el => el.remove());
+      grid.dataset.enhanced = 'true';
+    }
+
+    const projects = (getProjects() || [])
+      .slice()
+      .sort((a, b) => {
+        const aTime = new Date(a.createdAt || a.id || 0).getTime();
+        const bTime = new Date(b.createdAt || b.id || 0).getTime();
+        return bTime - aTime;
+      });
+
     projects.forEach(p => {
-      // avoid duplicates if already rendered
-      if (grid.querySelector(`[data-proj-id="${p.id}"]`)) return;
+      const existingCard = grid.querySelector(`[data-proj-id="${p.id}"]`);
+      if (existingCard) return;
 
       const card = document.createElement('div');
       card.className = 'border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card';
@@ -5722,12 +5958,17 @@ function refreshTimeline() {
         }
       };
 
-      const progress = Number(p.progress || 0);
+      const progressValue = Math.max(0, Math.min(100, Number(p.progress ?? 0)));
+      const clientDisplay = (p.client && p.client.name) || p.clientName || (typeof p.client === 'string' ? p.client : 'غير محدد');
+      const budgetValue = p.budget?.contractValue ?? p.value;
+      const startDate = p.timeline?.startDate || p.startDate || '-';
+      const endDate = p.timeline?.endDate || p.endDate || '-';
+
       card.innerHTML = `
         <div class="flex items-start justify-between mb-4">
           <div>
             <h3 class="text-lg font-bold text-text-primary">${p.name || 'مشروع جديد'}</h3>
-            <p class="text-sm text-text-secondary">العميل: ${(p.client && p.client.name) ? p.client.name : 'غير محدد'}</p>
+            <p class="text-sm text-text-secondary">العميل: ${clientDisplay || 'غير محدد'}</p>
           </div>
           <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusBadgeClass(p.status)}">
             ${statusArabic(p.status)}
@@ -5737,37 +5978,45 @@ function refreshTimeline() {
         <div class="space-y-3 mb-4">
           <div class="flex justify-between">
             <span class="text-text-secondary">قيمة المشروع:</span>
-            <span class="font-bold text-text-primary">${formatCurrency(p.budget && p.budget.contractValue)}</span>
+            <span class="font-bold text-text-primary">${formatCurrency(budgetValue)}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-text-secondary">تاريخ البداية:</span>
-            <span class="font-medium">${(p.timeline && p.timeline.startDate) ? p.timeline.startDate : '-'}</span>
+            <span class="font-medium">${startDate || '-'}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-text-secondary">نسبة الإنجاز:</span>
-            <span class="font-bold ${progressColor(progress)}">${progress}%</span>
+            <span class="font-bold ${progressColor(progressValue)}">${progressValue}%</span>
           </div>
         </div>
 
         <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
-          <div class="${progressBarColor(progress)} h-2 rounded-full" style="width: ${progress}%"></div>
+          <div class="${progressBarColor(progressValue)} h-2 rounded-full" style="width: ${progressValue}%"></div>
         </div>
 
         <div class="flex items-center gap-2 text-sm text-text-secondary">
           <i class="fas fa-calendar-alt"></i>
-          <span>ينتهي في: ${(p.timeline && p.timeline.endDate) ? p.timeline.endDate : '-'}</span>
+          <span>ينتهي في: ${endDate || '-'}</span>
         </div>
       `;
 
-      // Prepend new projects so they appear first
       grid.prepend(card);
+
+      if (highlightId && highlightId === p.id) {
+        const originalShadow = card.style.boxShadow;
+        card.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.35), 0 15px 30px rgba(0, 0, 0, 0.12)';
+        setTimeout(() => {
+          card.style.boxShadow = originalShadow;
+        }, 3200);
+        setTimeout(() => {
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150);
+      }
     });
 
-    // Update "active projects" counter if such element exists
     const activeCounter = document.querySelector('#projects-list .text-primary.font-bold.text-lg');
     if (activeCounter) {
-      const count = grid.querySelectorAll('.project-card').length;
-      activeCounter.textContent = String(count);
+      activeCounter.textContent = String(projects.length);
     }
   }
 
@@ -5786,98 +6035,20 @@ function refreshTimeline() {
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    // If redirected from wizard after a successful creation, show a toast
     const url = new URL(window.location.href);
-    if (url.searchParams.get('created')) {
+    const createdId = url.searchParams.get('created');
+
+    if (createdId) {
       showToast('تم إنشاء المشروع بنجاح ✅', true);
-      url.searchParams.delete('created');
-      history.replaceState({}, '', url.pathname);
     }
-    renderStoredProjects();
-  });
-})();
-</script>
-<!-- END INJECT -->
 
-<script>
-// ===== LINKED RUNTIME (no design changes) =====
-(function(){
-  function showSuccessToast(title, message){
-    var t = document.createElement('div');
-    t.style.position = 'fixed';
-    t.style.top = '16px';
-    t.style.right = '16px';
-    t.style.background = '#10B981';
-    t.style.color = '#fff';
-    t.style.padding = '12px 16px';
-    t.style.borderRadius = '12px';
-    t.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
-    t.style.zIndex = 9999;
-    t.style.opacity = '0';
-    t.style.transition = 'opacity .5s ease';
-    t.innerHTML = '<strong>' + (title||'') + '</strong><br><small>' + (message||'') + '</small>';
-    document.body.appendChild(t);
-    requestAnimationFrame(function(){ t.style.opacity = '1'; });
-    setTimeout(function(){ t.style.opacity = '0'; setTimeout(function(){ t.remove(); }, 400); }, 4000);
-  }
+    renderStoredProjects(createdId);
 
-  function addNewProjectCard(p){
-    var grid = document.querySelector('#projectsGrid') || document.querySelector('.grid');
-    if(!grid){ return; }
-    var card = document.createElement('div');
-    card.className = 'border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card';
-    card.innerHTML = ''
-      + '<div class="flex items-start justify-between mb-4">'
-      +   '<div>'
-      +     '<h3 class="text-lg font-bold text-text-primary">' + (p.name||'مشروع جديد') + '</h3>'
-      +     '<p class="text-sm text-text-secondary">العميل: ' + (p.clientName||'غير محدد') + '</p>'
-      +   '</div>'
-      +   '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success">جديد</span>'
-      + '</div>'
-      + '<div class="space-y-3 mb-4">'
-      +   '<div class="flex justify-between"><span class="text-text-secondary">قيمة المشروع:</span><span class="font-bold text-text-primary">' + (p.projectValue||p.value||'—') + ' ر.س</span></div>'
-      +   '<div class="flex justify-between"><span class="text-text-secondary">تاريخ البداية:</span><span class="font-medium">' + (p.startDate||'—') + '</span></div>'
-      + '</div>'
-      + '<div class="w-full bg-secondary-200 rounded-full h-2 mb-4">'
-      +   '<div class="bg-success h-2 rounded-full" style="width:' + (p.progress||0) + '%"></div>'
-      + '</div>';
-    // animation 1s (fade + scale)
-    card.style.opacity = '0';
-    card.style.transform = 'scale(0.9)';
-    grid.prepend(card);
-    setTimeout(function(){
-      card.style.transition = 'all 1s ease';
-      card.style.opacity = '1';
-      card.style.transform = 'scale(1)';
-    }, 50);
-
-    // increment active count if exists
-    var cnt = document.getElementById('activeProjectsCount');
-    if(cnt){ var n=parseInt(cnt.textContent||'0',10); if(!isNaN(n)){ cnt.textContent = (n+1).toString(); } }
-  }
-
-  // ensure "مشروع جديد" opens the wizard page
-  if (typeof window.openNewProjectModal !== 'function') {
-    window.openNewProjectModal = function(){ window.location.href = 'project_creation_wizard.INTEGRATED.html'; };
-  } else {
-    // override safely to guarantee navigation to wizard
-    var _old = window.openNewProjectModal;
-    window.openNewProjectModal = function(){ try{ return _old(); }catch(_){ window.location.href = 'project_creation_wizard.INTEGRATED.html'; } };
-  }
-
-  document.addEventListener('DOMContentLoaded', function(){
-    try{
-      var saved = localStorage.getItem('newProject');
-      if(saved){
-        var p = JSON.parse(saved);
-        addNewProjectCard(p);
-        localStorage.removeItem('newProject');
-      }
-      if(localStorage.getItem('toastMessage') === 'success'){
-        showSuccessToast('✅ تم إنشاء المشروع بنجاح!', 'تمت إضافته إلى قائمة المشاريع.');
-        localStorage.removeItem('toastMessage');
-      }
-    }catch(_){}
+    if (createdId) {
+      url.searchParams.delete('created');
+      const newSearch = url.searchParams.toString();
+      history.replaceState({}, '', newSearch ? `${url.pathname}?${newSearch}` : url.pathname);
+    }
   });
 })();
 </script>
