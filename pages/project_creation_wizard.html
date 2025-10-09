@@ -357,7 +357,7 @@ body {
                             <i class="fas fa-templates ml-2 text-accent"></i>قوالب المشاريع (اختياري)
                         </h4>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('villa')">
+                            <div class="project-template-card bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('villa', this)">
                                 <div class="text-center">
                                     <i class="fas fa-home text-primary text-2xl mb-2"></i>
                                     <h5 class="font-medium text-text-primary">قالب فيلا سكنية</h5>
@@ -365,7 +365,7 @@ body {
                                 </div>
                             </div>
                             
-                            <div class="bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('commercial')">
+                            <div class="project-template-card bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('commercial', this)">
                                 <div class="text-center">
                                     <i class="fas fa-building text-success text-2xl mb-2"></i>
                                     <h5 class="font-medium text-text-primary">قالب مبنى تجاري</h5>
@@ -373,7 +373,7 @@ body {
                                 </div>
                             </div>
                             
-                            <div class="bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('custom')">
+                            <div class="project-template-card bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('custom', this)">
                                 <div class="text-center">
                                     <i class="fas fa-cog text-warning text-2xl mb-2"></i>
                                     <h5 class="font-medium text-text-primary">تكوين مخصص</h5>
@@ -857,6 +857,7 @@ body {
         let currentStep = 1;
         const totalSteps = 5;
         let projectData = {};
+        let selectedProjectTemplate = null;
         
         // Sample data for team members
         const teamMembers = {
@@ -1492,16 +1493,17 @@ body {
             document.getElementById('clientSearch').value = '';
         }
         
-        function selectTemplate(template) {
-            // Remove previous selections
-            document.querySelectorAll('[onclick*="selectTemplate"]').forEach(btn => {
-                btn.classList.remove('border-primary', 'bg-primary-50');
+        function selectTemplate(template, element) {
+            selectedProjectTemplate = template;
+
+            document.querySelectorAll('.project-template-card').forEach(card => {
+                card.classList.remove('border-primary', 'bg-primary-50', 'shadow-lg');
             });
-            
-            // Add selection to clicked template
-            event.target.classList.add('border-primary', 'bg-primary-50');
-            
-            // Apply template values based on selection
+
+            if (element) {
+                element.classList.add('border-primary', 'bg-primary-50', 'shadow-lg');
+            }
+
             const projectType = document.getElementById('projectType');
             if (template === 'villa') {
                 if (projectType.value === '') projectType.value = 'residential_villa';
@@ -1729,12 +1731,42 @@ body {
       address: collectField('clientAddress')
     };
 
+    const templateLabels = {
+      villa: 'قالب فيلا سكنية',
+      commercial: 'قالب مبنى تجاري',
+      custom: 'تكوين مخصص'
+    };
+    const templateLabel = selectedProjectTemplate ? (templateLabels[selectedProjectTemplate] || 'تكوين مخصص') : '';
+
+    const paymentTermsValue = collectField('paymentTerms');
+    const paymentTermsLabelMap = {
+      lumpsum: 'دفعة واحدة',
+      '2payments': 'دفعتان',
+      '3payments': '3 دفعات',
+      '4payments': '4 دفعات',
+      monthly: 'دفعات شهرية',
+      milestone: 'حسب مراحل الإنجاز'
+    };
+    const paymentTermsLabel = paymentTermsValue ? (paymentTermsLabelMap[paymentTermsValue] || paymentTermsValue) : '';
+
+    let paymentsCount = null;
+    if (paymentTermsValue) {
+      const match = paymentTermsValue.match(/(\d+)/);
+      if (match) {
+        paymentsCount = Number(match[1]);
+      } else if (paymentTermsValue === 'lumpsum') {
+        paymentsCount = 1;
+      }
+    }
+
     const project = {
       id: projectId,
       code: '#' + projectId,
       name: collectField('projectName'),
       type: collectField('projectType'),
       description: collectField('projectDescription'),
+      template: selectedProjectTemplate,
+      templateLabel,
       location: {
         city: collectField('projectCity'),
         district: collectField('projectDistrict'),
@@ -1770,7 +1802,9 @@ body {
         contractValue,
         currency: 'SAR',
         advancePayment: parseFloat(document.getElementById('advancePayment')?.value || 0),
-        paymentTerms: collectField('paymentTerms')
+        paymentTerms: paymentTermsValue,
+        paymentTermsLabel,
+        paymentsCount
       },
       value: contractValue,
       status: 'active',
