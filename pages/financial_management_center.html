@@ -3,643 +3,2155 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>مركز إدارة المالية - ContractorPro</title>
+    <title>مركز المالية - ContractorPro</title>
     <link rel="stylesheet" href="../css/main.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
-<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
 </head>
-<body class="bg-background font-arabic">
-    <!-- Navigation Sidebar -->
-    <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50 transform transition-transform duration-300" id="sidebar">
+<body class="bg-background text-text-primary font-arabic">
+    <!-- Sidebar -->
+    <aside class="fixed inset-y-0 right-0 w-64 bg-surface shadow-modal border-l border-border z-40">
         <div class="p-6 border-b border-border">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                    <i class="fas fa-hard-hat text-white text-lg"></i>
+                <div class="w-11 h-11 rounded-xl bg-primary flex items-center justify-center text-white text-xl shadow-lg">
+                    <i class="fas fa-hard-hat"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
-                    <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
+                    <p class="text-lg font-bold">ContractorPro</p>
+                    <p class="text-sm text-text-secondary">منصة إدارة مشاريع المقاولات</p>
                 </div>
             </div>
         </div>
-        
         <nav class="p-4 space-y-2">
-            <!-- Dashboard -->
             <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                 <i class="fas fa-tachometer-alt w-5"></i>
-                <span class="font-medium">لوحة التحكم</span>
+                <span>لوحة التحكم</span>
             </a>
-
-            <!-- Projects Section -->
             <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-building w-5"></i>
+                <i class="fas fa-diagram-project w-5"></i>
                 <span>المشاريع</span>
                 <i class="fas fa-chevron-left mr-auto text-xs"></i>
             </a>
-
-            <!-- Finance Section -->
             <a href="financial_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
-                <i class="fas fa-chart-line w-5"></i>
+                <i class="fas fa-coins w-5"></i>
                 <span>المالية</span>
                 <i class="fas fa-chevron-left mr-auto text-xs"></i>
             </a>
-
-            <!-- Employees Section -->
             <a href="employees_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                 <i class="fas fa-users w-5"></i>
                 <span>الموظفين</span>
                 <i class="fas fa-chevron-left mr-auto text-xs"></i>
             </a>
+            <a href="settings.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-sliders-h w-5"></i>
+                <span>الإعدادات العامة</span>
+            </a>
         </nav>
-    </div>
+    </aside>
 
-    <!-- Main Content -->
+    <!-- Main content -->
     <div class="mr-64 min-h-screen">
-        <!-- Top Header -->
-        <header class="bg-surface shadow-card px-6 py-4 border-b border-border">
-            <div class="flex items-center justify-between">
+        <header class="bg-surface border-b border-border px-6 py-5 shadow-card">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold text-text-primary">مركز إدارة المالية المتقدم</h1>
-                    <p class="text-text-secondary">نظام مالي شامل مع التقارير والتحليلات المتقدمة والفواتير الضريبية</p>
+                    <h1 class="text-2xl font-bold">مركز المالية الموحد</h1>
+                    <p class="text-text-secondary">إدارة كاملة لدورة الإيرادات والمصروفات والالتزامات مع ربط فوري بالمشاريع والتقارير.</p>
                 </div>
-                
-                <div class="flex items-center gap-3">
-                    <button class="bg-success text-white px-4 py-2 rounded-lg hover:bg-success-600 transition-fast flex items-center gap-2 shadow-md" onclick="generateTaxInvoice()">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                        <span>إنشاء فاتورة</span>
+                <div class="flex flex-wrap gap-3">
+                    <button class="btn-primary" type="button" data-action="new-invoice">
+                        <i class="fas fa-file-invoice-dollar ml-2"></i>
+                        إنشاء فاتورة ضريبية
                     </button>
-                    <button class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all flex items-center gap-2 shadow-lg transform hover:scale-105" onclick="openAdvancedQuotationDesigner()">
-                        <i class="fas fa-magic"></i>
-                        <span>العروض الذكية</span>
+                    <button class="btn-secondary" type="button" data-action="new-quote">
+                        <i class="fas fa-magic ml-2"></i>
+                        إطلاق العرض الذكي
                     </button>
-                    <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2 shadow-md" onclick="openComprehensiveInvoices()">
-                        <i class="fas fa-receipt"></i>
-                        <span>مركز الفواتير</span>
+                    <button class="btn-ghost" type="button" data-action="export-snapshot">
+                        <i class="fas fa-download ml-2"></i>
+                        تنزيل تقرير لحظي
                     </button>
-                    <button class="bg-warning text-white px-4 py-2 rounded-lg hover:bg-warning-600 transition-fast flex items-center gap-2 shadow-md" onclick="generateFinancialReport()">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>التقارير</span>
-                    </button>
-                    <div class="relative">
-                        <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast flex items-center gap-2" onclick="toggleNotifications()">
-                            <i class="fas fa-bell"></i>
-                            <span class="bg-error text-white rounded-full px-2 py-0.5 text-xs absolute -top-2 -right-1">3</span>
-                        </button>
-                    </div>
                 </div>
             </div>
         </header>
 
-        <!-- Financial KPIs Dashboard -->
-        <section class="p-6 bg-gradient-to-br from-primary-50 to-secondary-50 border-b border-border">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-                <!-- Total Revenue -->
-                <div class="bg-gradient-to-br from-success-500 to-success-600 rounded-xl p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between">
+        <main class="p-6 space-y-6">
+            <!-- Tab navigation -->
+            <section class="bg-surface border border-border rounded-2xl shadow-card">
+                <div class="px-6 py-4 border-b border-border flex flex-wrap items-center gap-3">
+                    <span class="text-sm text-text-secondary">أقسام المالية:</span>
+                    <div class="flex flex-wrap gap-2" role="tablist">
+                        <button class="tab-button is-active" data-target="tab-overview" role="tab" aria-selected="true">الصفحة الرئيسية</button>
+                        <button class="tab-button" data-target="tab-invoices" role="tab">الفواتير</button>
+                        <button class="tab-button" data-target="tab-quotes" role="tab">عروض الأسعار</button>
+                        <button class="tab-button" data-target="tab-payments" role="tab">المدفوعات</button>
+                        <button class="tab-button" data-target="tab-expenses" role="tab">المصاريف</button>
+                        <button class="tab-button" data-target="tab-commitments" role="tab">الالتزامات الشهرية</button>
+                        <button class="tab-button" data-target="tab-reports" role="tab">التقارير</button>
+                        <button class="tab-button" data-target="tab-settings" role="tab">الإعدادات</button>
+                    </div>
+                </div>
+
+                <!-- Overview / Dashboard -->
+                <section id="tab-overview" class="tab-content px-6 py-6 space-y-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                         <div>
-                            <p class="text-success-100 text-sm font-medium mb-1">إجمالي الإيرادات</p>
-                            <p class="text-3xl font-bold">2.4M ريال</p>
-                            <div class="flex items-center gap-2 mt-3">
-                                <i class="fas fa-arrow-up text-sm"></i>
-                                <span class="text-sm font-medium">+15.3% عن الشهر السابق</span>
-                            </div>
+                            <h2 class="text-xl font-bold">لوحة التحكم المالية</h2>
+                            <p class="text-text-secondary">اختر المدى الزمني لمراقبة الأداء اللحظي وتدفق السيولة.</p>
                         </div>
-                        <div class="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-chart-line text-2xl"></i>
+                        <div class="flex flex-wrap items-center gap-2" role="group" aria-label="تحديد المدى الزمني">
+                            <button class="range-chip is-active" data-range="7">آخر 7 أيام</button>
+                            <button class="range-chip" data-range="30">آخر 30 يومًا</button>
+                            <button class="range-chip" data-range="90">آخر 90 يومًا</button>
+                            <button class="range-chip" data-range="quarter">ربع سنوي</button>
+                            <button class="range-chip" data-range="year">سنة كاملة</button>
+                            <button class="range-chip" data-range="custom">مخصص…</button>
                         </div>
                     </div>
-                </div>
 
-                <!-- Total Expenses -->
-                <div class="bg-gradient-to-br from-error-500 to-error-600 rounded-xl p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between">
+                    <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
+                        <article class="kpi-card bg-gradient-to-br from-success-500 to-success-600 text-white">
+                            <header class="flex items-center justify-between">
+                                <p class="text-success-100 text-xs font-medium">إجمالي الدخل المحصل</p>
+                                <span class="badge badge-light">+18%</span>
+                            </header>
+                            <p class="text-3xl font-bold mt-3" data-kpi="revenue">2,750,000 ر.س</p>
+                            <p class="text-sm text-success-100 mt-4">يشمل كل المدفوعات المؤكدة ضمن الفترة المحددة.</p>
+                        </article>
+                        <article class="kpi-card bg-gradient-to-br from-error-500 to-error-600 text-white">
+                            <header class="flex items-center justify-between">
+                                <p class="text-error-100 text-xs font-medium">إجمالي المصاريف المؤكدة</p>
+                                <span class="badge badge-light">+6%</span>
+                            </header>
+                            <p class="text-3xl font-bold mt-3" data-kpi="expenses">1,940,000 ر.س</p>
+                            <p class="text-sm text-error-100 mt-4">يتضمن الرواتب، المشتريات، والالتزامات المتكررة.</p>
+                        </article>
+                        <article class="kpi-card bg-gradient-to-br from-primary-500 to-primary-600 text-white">
+                            <header class="flex items-center justify-between">
+                                <p class="text-primary-100 text-xs font-medium">صافي التدفق النقدي</p>
+                                <span class="badge badge-light">+320K</span>
+                            </header>
+                            <p class="text-3xl font-bold mt-3" data-kpi="cashflow">+810,000 ر.س</p>
+                            <p class="text-sm text-primary-100 mt-4">الدخل − المصروفات خلال الفترة المختارة.</p>
+                        </article>
+                        <article class="kpi-card bg-surface">
+                            <header class="flex items-center justify-between">
+                                <p class="text-text-secondary text-xs font-medium">الدفعات المستحقة القادمة</p>
+                                <span class="badge badge-warning">14 يومًا</span>
+                            </header>
+                            <p class="text-3xl font-bold mt-3" data-kpi="upcoming-payments">420,000 ر.س</p>
+                            <p class="text-sm text-text-secondary mt-4">الفواتير غير المسددة المستحقة خلال أسبوعين.</p>
+                        </article>
+                        <article class="kpi-card bg-surface">
+                            <header class="flex items-center justify-between">
+                                <p class="text-text-secondary text-xs font-medium">فواتير متأخرة</p>
+                                <span class="badge badge-error">5 فواتير</span>
+                            </header>
+                            <p class="text-3xl font-bold mt-3" data-kpi="overdue">189,000 ر.س</p>
+                            <p class="text-sm text-text-secondary mt-4">ينبه النظام تلقائيًا قبل وبعد الاستحقاق.</p>
+                        </article>
+                        <article class="kpi-card bg-surface">
+                            <header class="flex items-center justify-between">
+                                <p class="text-text-secondary text-xs font-medium">نسبة التحويل</p>
+                                <span class="badge badge-success">+9%</span>
+                            </header>
+                            <p class="text-3xl font-bold mt-3">62%</p>
+                            <p class="text-sm text-text-secondary mt-4">عروض الأسعار المحولة إلى فواتير خلال الفترة.</p>
+                        </article>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                        <div class="xl:col-span-2 bg-surface border border-border rounded-2xl shadow-card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold">سلسلة زمنية: الدخل مقابل المصروف</h3>
+                                <button class="btn-ghost text-sm" data-action="download-chart" data-chart="timeline">
+                                    <i class="fas fa-file-arrow-down ml-2"></i>
+                                    تصدير كـ PDF/Excel
+                                </button>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="timelineChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="bg-surface border border-border rounded-2xl shadow-card p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">أفضل العملاء إيرادًا</h3>
+                                    <span class="text-xs text-text-secondary">حسب المشاريع المرتبطة</span>
+                                </div>
+                                <div class="h-48">
+                                    <canvas id="clientsChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-surface border border-border rounded-2xl shadow-card p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">توزيع المصاريف حسب الفئة</h3>
+                                    <span class="text-xs text-text-secondary">المشاريع ومراكز التكلفة</span>
+                                </div>
+                                <div class="h-48">
+                                    <canvas id="expensesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                        <div class="xl:col-span-2 bg-surface border border-border rounded-2xl shadow-card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold">تقارير سريعة</h3>
+                                <div class="flex gap-2">
+                                    <button class="btn-secondary text-xs" data-action="download-report" data-format="pdf">PDF</button>
+                                    <button class="btn-secondary text-xs" data-action="download-report" data-format="excel">Excel</button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <article class="border border-border rounded-xl p-4 hover:shadow-lg transition-fast">
+                                    <header class="flex items-center justify-between mb-3">
+                                        <div>
+                                            <p class="text-sm font-semibold">شيخوخة الذمم المدينة</p>
+                                            <p class="text-xs text-text-secondary">0-30 / 31-60 / 61-90 / +90 يوم</p>
+                                        </div>
+                                        <span class="badge badge-warning">مستحق</span>
+                                    </header>
+                                    <p class="text-lg font-bold mb-2">589,000 ر.س</p>
+                                    <p class="text-xs text-text-secondary">يرتبط مباشرة بالفواتير المتأخرة والمشاريع المعنية.</p>
+                                </article>
+                                <article class="border border-border rounded-xl p-4 hover:shadow-lg transition-fast">
+                                    <header class="flex items-center justify-between mb-3">
+                                        <div>
+                                            <p class="text-sm font-semibold">تحصيل المشاريع الرئيسية</p>
+                                            <p class="text-xs text-text-secondary">مقارنة الميزانية بالفعلي</p>
+                                        </div>
+                                        <span class="badge badge-success">86%</span>
+                                    </header>
+                                    <p class="text-lg font-bold mb-2">+1,120,000 ر.س</p>
+                                    <p class="text-xs text-text-secondary">عرض تفصيلي لكل مشروع مع مصروفاته والتزامات رواتبه.</p>
+                                </article>
+                                <article class="border border-border rounded-xl p-4 hover:shadow-lg transition-fast">
+                                    <header class="flex items-center justify-between mb-3">
+                                        <div>
+                                            <p class="text-sm font-semibold">الدفعات القادمة</p>
+                                            <p class="text-xs text-text-secondary">خلال 14 يومًا</p>
+                                        </div>
+                                        <span class="badge badge-info">4 عملاء</span>
+                                    </header>
+                                    <p class="text-lg font-bold mb-2">420,000 ر.س</p>
+                                    <p class="text-xs text-text-secondary">تنبيهات قبل 7/3/1 أيام مع إرسال بريد تلقائي.</p>
+                                </article>
+                                <article class="border border-border rounded-xl p-4 hover:shadow-lg transition-fast">
+                                    <header class="flex items-center justify-between mb-3">
+                                        <div>
+                                            <p class="text-sm font-semibold">مصاريف حسب مراكز التكلفة</p>
+                                            <p class="text-xs text-text-secondary">مقارنة الميزانية المعتمدة</p>
+                                        </div>
+                                        <span class="badge badge-error">+12%</span>
+                                    </header>
+                                    <p class="text-lg font-bold mb-2">265,000 ر.س</p>
+                                    <p class="text-xs text-text-secondary">مصروفات المشاريع متصلة مباشرة بسجلات المشاريع والالتزامات.</p>
+                                </article>
+                            </div>
+                        </div>
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">التنبيهات الذكية</h3>
+                                <span class="badge badge-primary">مفعّل</span>
+                            </div>
+                            <ul class="space-y-3 text-sm text-text-secondary">
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-bell text-warning mt-0.5"></i>
+                                    <span>إشعار آلي لعروض منتهية الصلاحية بعد 7 أيام من عدم الرد.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-envelope-open text-primary mt-0.5"></i>
+                                    <span>تذكير للمدفوعات القادمة للعميل والبريد الداخلي للفريق المالي.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-lock text-success mt-0.5"></i>
+                                    <span>قفل تحرير الفاتورة بعد اعتماد الدفع الكامل من مدير المالية.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-database text-secondary mt-0.5"></i>
+                                    <span>نسخ احتياطي تلقائي للبيانات المالية اليومية مع سجل تدقيق زمني.</span>
+                                </li>
+                            </ul>
+                            <div class="pt-4 border-t border-dashed border-border">
+                                <button class="btn-primary w-full text-sm" type="button" data-action="open-finance-workflow">إدارة سير العمل المالي</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Invoices -->
+                <section id="tab-invoices" class="tab-content hidden px-6 py-6 space-y-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                         <div>
-                            <p class="text-error-100 text-sm font-medium mb-1">إجمالي المصروفات</p>
-                            <p class="text-3xl font-bold">1.8M ريال</p>
-                            <div class="flex items-center gap-2 mt-3">
-                                <i class="fas fa-arrow-up text-sm"></i>
-                                <span class="text-sm font-medium">+8.7% عن الشهر السابق</span>
+                            <h2 class="text-xl font-bold">إدارة الفواتير</h2>
+                            <p class="text-text-secondary">تحكم كامل من الإنشاء حتى التحصيل، مع بحث ذكي وعمليات نسخ وتحويل.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="btn-primary" type="button" data-action="create-invoice">فاتورة جديدة</button>
+                            <button class="btn-secondary" type="button" data-action="convert-from-quote">تحويل من عرض سعر</button>
+                            <button class="btn-ghost" type="button" data-action="import-invoices">استيراد CSV/Excel</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface border border-border rounded-2xl shadow-card">
+                        <div class="p-5 border-b border-border space-y-4">
+                            <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                                <div class="relative flex-1">
+                                    <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary"></i>
+                                    <input id="invoiceSearch" type="search" placeholder="بحث باسم/رقم الفاتورة، العميل، المشروع، الحالة…" class="w-full pr-12 pl-4 py-3 rounded-xl border border-border focus:border-primary focus:outline-none">
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="filter-chip is-active" data-filter="all">الكل</button>
+                                    <button class="filter-chip" data-filter="draft">مسودة</button>
+                                    <button class="filter-chip" data-filter="sent">مرسل</button>
+                                    <button class="filter-chip" data-filter="partial">مدفوع جزئيًا</button>
+                                    <button class="filter-chip" data-filter="paid">مدفوع</button>
+                                    <button class="filter-chip" data-filter="overdue">متأخر</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-receipt text-2xl"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Net Profit -->
-                <div class="bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-primary-100 text-sm font-medium mb-1">صافي الربح</p>
-                            <p class="text-3xl font-bold">600K ريال</p>
-                            <div class="flex items-center gap-2 mt-3">
-                                <i class="fas fa-arrow-up text-sm"></i>
-                                <span class="text-sm font-medium">+25% هامش ربح</span>
-                            </div>
-                        </div>
-                        <div class="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-coins text-2xl"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pending Receivables -->
-                <div class="bg-gradient-to-br from-warning-500 to-warning-600 rounded-xl p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-warning-100 text-sm font-medium mb-1">مستحقات معلقة</p>
-                            <p class="text-3xl font-bold">320K ريال</p>
-                            <div class="flex items-center gap-2 mt-3">
-                                <i class="fas fa-exclamation-triangle text-sm"></i>
-                                <span class="text-sm font-medium">تحتاج متابعة عاجلة</span>
-                            </div>
-                        </div>
-                        <div class="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-hourglass-half text-2xl"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cash Flow -->
-                <div class="bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-xl p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-secondary-100 text-sm font-medium mb-1">التدفق النقدي</p>
-                            <p class="text-3xl font-bold">+180K ريال</p>
-                            <div class="flex items-center gap-2 mt-3">
-                                <i class="fas fa-water text-sm"></i>
-                                <span class="text-sm font-medium">هذا الشهر</span>
-                            </div>
-                        </div>
-                        <div class="w-14 h-14 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-exchange-alt text-2xl"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Quick Actions -->
-        <section class="p-6 bg-surface border-b border-border">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-bold text-text-primary">الإجراءات السريعة</h2>
-                <div class="flex gap-2">
-                    <button class="text-xs bg-primary text-white px-3 py-1 rounded-md hover:bg-primary-600 transition-fast" onclick="refreshData()">
-                        <i class="fas fa-sync-alt ml-1"></i>تحديث البيانات
-                    </button>
-                    <button class="text-xs bg-secondary-200 text-text-primary px-3 py-1 rounded-md hover:bg-secondary-300 transition-fast" onclick="exportData()">
-                        <i class="fas fa-download ml-1"></i>تصدير
-                    </button>
-                </div>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-                <button class="bg-white border border-border rounded-lg p-4 hover:shadow-lg transition-all text-center group" onclick="openComprehensiveInvoices()">
-                    <div class="w-12 h-12 bg-primary-100 rounded-lg mx-auto mb-3 flex items-center justify-center group-hover:bg-primary-200">
-                        <i class="fas fa-file-invoice text-primary text-xl"></i>
-                    </div>
-                    <h3 class="font-medium text-text-primary text-sm">مركز الفواتير</h3>
-                    <p class="text-xs text-text-secondary mt-1">إدارة شاملة</p>
-                </button>
-
-                <button class="bg-white border border-border rounded-lg p-4 hover:shadow-lg transition-all text-center group" onclick="openExpensesCenter()">
-                    <div class="w-12 h-12 bg-error-100 rounded-lg mx-auto mb-3 flex items-center justify-center group-hover:bg-error-200">
-                        <i class="fas fa-receipt text-error text-xl"></i>
-                    </div>
-                    <h3 class="font-medium text-text-primary text-sm">المصروفات</h3>
-                    <p class="text-xs text-text-secondary mt-1">تتبع وتصنيف</p>
-                </button>
-
-                <button class="bg-gradient-to-br from-orange-400 to-orange-500 border border-orange-300 rounded-lg p-4 hover:shadow-xl transition-all text-center group transform hover:scale-105" onclick="openAdvancedQuotationDesigner()">
-                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg mx-auto mb-3 flex items-center justify-center group-hover:bg-opacity-30">
-                        <i class="fas fa-magic text-white text-xl"></i>
-                    </div>
-                    <h3 class="font-medium text-white text-sm">العروض الذكية</h3>
-                    <p class="text-xs text-orange-100 mt-1">عمران الخليج</p>
-                </button>
-
-                <button class="bg-white border border-border rounded-lg p-4 hover:shadow-lg transition-all text-center group" onclick="openQuotationsCenter()">
-                    <div class="w-12 h-12 bg-warning-100 rounded-lg mx-auto mb-3 flex items-center justify-center group-hover:bg-warning-200">
-                        <i class="fas fa-file-contract text-warning text-xl"></i>
-                    </div>
-                    <h3 class="font-medium text-text-primary text-sm">العروض العادية</h3>
-                    <p class="text-xs text-text-secondary mt-1">إدارة تقليدية</p>
-                </button>
-
-                <button class="bg-white border border-border rounded-lg p-4 hover:shadow-lg transition-all text-center group" onclick="openAccountsCenter()">
-                    <div class="w-12 h-12 bg-success-100 rounded-lg mx-auto mb-3 flex items-center justify-center group-hover:bg-success-200">
-                        <i class="fas fa-university text-success text-xl"></i>
-                    </div>
-                    <h3 class="font-medium text-text-primary text-sm">الحسابات</h3>
-                    <p class="text-xs text-text-secondary mt-1">البنوك والصندوق</p>
-                </button>
-
-                <button class="bg-white border border-border rounded-lg p-4 hover:shadow-lg transition-all text-center group" onclick="openPaymentTracking()">
-                    <div class="w-12 h-12 bg-secondary-100 rounded-lg mx-auto mb-3 flex items-center justify-center group-hover:bg-secondary-200">
-                        <i class="fas fa-money-bill-wave text-secondary text-xl"></i>
-                    </div>
-                    <h3 class="font-medium text-text-primary text-sm">المدفوعات</h3>
-                    <p class="text-xs text-text-secondary mt-1">تتبع ومراقبة</p>
-                </button>
-
-                <button class="bg-white border border-border rounded-lg p-4 hover:shadow-lg transition-all text-center group" onclick="openFinancialReports()">
-                    <div class="w-12 h-12 bg-primary-100 rounded-lg mx-auto mb-3 flex items-center justify-center group-hover:bg-primary-200">
-                        <i class="fas fa-chart-bar text-primary text-xl"></i>
-                    </div>
-                    <h3 class="font-medium text-text-primary text-sm">التقارير</h3>
-                    <p class="text-xs text-text-secondary mt-1">تحليلات مالية</p>
-                </button>
-            </div>
-        </section>
-
-        <!-- Charts Section -->
-        <section class="p-6">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <!-- Revenue vs Expenses Chart -->
-                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-bold text-text-primary">الإيرادات مقابل المصروفات</h3>
-                        <div class="flex gap-2">
-                            <select class="px-3 py-1 border border-border rounded-lg text-sm focus:border-primary focus:outline-none" onchange="updateChartPeriod(this.value)">
-                                <option value="6months">آخر 6 أشهر</option>
-                                <option value="1year">آخر سنة</option>
-                                <option value="2years">آخر سنتين</option>
-                            </select>
-                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded hover:bg-secondary-300" onclick="exportChart('revenueExpenses')">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="h-64 relative">
-                        <canvas id="revenueExpensesChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Cash Flow Forecast -->
-                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-bold text-text-primary">توقعات التدفق النقدي</h3>
-                        <div class="flex gap-2">
-                            <select class="px-3 py-1 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
-                                <option>الأشهر القادمة</option>
-                                <option>الربع القادم</option>
-                                <option>السنة القادمة</option>
-                            </select>
-                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded hover:bg-secondary-300" onclick="exportChart('cashFlow')">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="h-64 relative">
-                        <canvas id="cashFlowChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity and Project Financial Analysis -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Recent Financial Activity -->
-                <div class="lg:col-span-1 bg-surface rounded-xl p-6 shadow-card border border-border">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-bold text-text-primary">النشاط المالي الأخير</h3>
-                        <button class="text-xs text-primary hover:text-primary-600" onclick="viewAllActivity()">عرض الكل</button>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3 p-3 bg-success-50 rounded-lg">
-                            <div class="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-arrow-up text-success text-sm"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-text-primary">دفعة مستلمة</p>
-                                <p class="text-xs text-text-secondary">425,000 ريال - فيلا الرياض</p>
-                            </div>
-                            <span class="text-xs text-success font-medium">منذ ساعة</span>
-                        </div>
-
-                        <div class="flex items-center gap-3 p-3 bg-error-50 rounded-lg">
-                            <div class="w-8 h-8 bg-error-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-arrow-down text-error text-sm"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-text-primary">فاتورة صادرة</p>
-                                <p class="text-xs text-text-secondary">INV-2025-004 - 280,000 ريال</p>
-                            </div>
-                            <span class="text-xs text-error font-medium">منذ 3 ساعات</span>
-                        </div>
-
-                        <div class="flex items-center gap-3 p-3 bg-warning-50 rounded-lg">
-                            <div class="w-8 h-8 bg-warning-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-exclamation-triangle text-warning text-sm"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-text-primary">فاتورة متأخرة</p>
-                                <p class="text-xs text-text-secondary">INV-2025-002 - تأخر 5 أيام</p>
-                            </div>
-                            <span class="text-xs text-warning font-medium">اليوم</span>
-                        </div>
-
-                        <div class="flex items-center gap-3 p-3 bg-primary-50 rounded-lg">
-                            <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                                <i class="fas fa-file-contract text-primary text-sm"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm font-medium text-text-primary">عرض سعر جديد</p>
-                                <p class="text-xs text-text-secondary">QUO-2025-012 - 890,000 ريال</p>
-                            </div>
-                            <span class="text-xs text-primary font-medium">أمس</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project Financial Breakdown -->
-                <div class="lg:col-span-2 bg-surface rounded-xl p-6 shadow-card border border-border">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-bold text-text-primary">الأداء المالي للمشاريع</h3>
-                        <div class="flex gap-2">
-                            <select class="px-3 py-1 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
-                                <option>كافة المشاريع</option>
-                                <option>المشاريع النشطة</option>
-                                <option>المشاريع المكتملة</option>
-                            </select>
-                            <button class="text-xs bg-primary text-white px-3 py-1 rounded hover:bg-primary-600" onclick="openProjectsManagement()">
-                                إدارة المشاريع
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <!-- Project 1 -->
-                        <div class="border border-border rounded-lg p-4 hover:shadow-md transition-all">
-                            <div class="flex justify-between items-center mb-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-building text-success"></i>
+                            <div>
+                                <button class="text-sm text-primary hover:text-primary-600 flex items-center gap-2" data-action="toggle-filters" data-target="#invoiceAdvancedFilters">
+                                    <i class="fas fa-sliders"></i>
+                                    فلترة متقدمة
+                                </button>
+                                <div id="invoiceAdvancedFilters" class="grid grid-cols-1 md:grid-cols-4 gap-3 mt-3 hidden">
+                                    <div>
+                                        <label class="form-label">التاريخ (من)</label>
+                                        <input type="date" class="form-field" />
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-text-primary">فيلا الرياض الحديثة</h4>
-                                        <p class="text-xs text-text-secondary">العميل: محمد العبدالله | مكتمل 95%</p>
-                                    </div>
-                                </div>
-                                <div class="text-left">
-                                    <span class="text-lg font-bold text-success">+180K ريال</span>
-                                    <p class="text-xs text-text-secondary">هامش الربح: 21%</p>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-3 gap-4 mb-3">
-                                <div class="text-center">
-                                    <p class="text-xs text-text-secondary">إجمالي العقد</p>
-                                    <p class="font-bold text-text-primary">850K ريال</p>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-xs text-text-secondary">المصروفات</p>
-                                    <p class="font-bold text-error">670K ريال</p>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-xs text-text-secondary">المبلغ المستلم</p>
-                                    <p class="font-bold text-success">650K ريال</p>
-                                </div>
-                            </div>
-                            
-                            <div class="w-full bg-secondary-200 rounded-full h-2 mb-2">
-                                <div class="bg-success h-2 rounded-full relative" style="width: 78%">
-                                    <div class="absolute right-0 top-0 h-full bg-warning rounded-r-full" style="width: 15%"></div>
-                                </div>
-                            </div>
-                            <div class="flex justify-between text-xs text-text-secondary">
-                                <span>مكتمل</span>
-                                <span>متبقي: 200K ريال</span>
-                            </div>
-                        </div>
-
-                        <!-- Project 2 -->
-                        <div class="border border-border rounded-lg p-4 hover:shadow-md transition-all">
-                            <div class="flex justify-between items-center mb-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-store text-primary"></i>
+                                        <label class="form-label">التاريخ (إلى)</label>
+                                        <input type="date" class="form-field" />
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-text-primary">مجمع تجاري جدة</h4>
-                                        <p class="text-xs text-text-secondary">العميل: شركة الأندلس | مكتمل 65%</p>
+                                        <label class="form-label">المبلغ (من)</label>
+                                        <input type="number" class="form-field" placeholder="0" />
+                                    </div>
+                                    <div>
+                                        <label class="form-label">المبلغ (إلى)</label>
+                                        <input type="number" class="form-field" placeholder="0" />
+                                    </div>
+                                    <div>
+                                        <label class="form-label">العميل</label>
+                                        <input type="text" class="form-field" placeholder="اسم العميل" />
+                                    </div>
+                                    <div>
+                                        <label class="form-label">المشروع</label>
+                                        <input type="text" class="form-field" placeholder="رمز المشروع" />
+                                    </div>
+                                    <div>
+                                        <label class="form-label">الحالة</label>
+                                        <select class="form-field">
+                                            <option value="">جميع الحالات</option>
+                                            <option value="draft">مسودة</option>
+                                            <option value="sent">مرسل</option>
+                                            <option value="partial">مدفوع جزئيًا</option>
+                                            <option value="paid">مدفوع</option>
+                                            <option value="overdue">متأخر</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="form-label">العملة</label>
+                                        <select class="form-field">
+                                            <option>ريال سعودي</option>
+                                            <option>درهم إماراتي</option>
+                                            <option>دولار أمريكي</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="text-left">
-                                    <span class="text-lg font-bold text-success">+320K ريال</span>
-                                    <p class="text-xs text-text-secondary">هامش الربح: 27%</p>
-                                </div>
                             </div>
-                            
-                            <div class="grid grid-cols-3 gap-4 mb-3">
-                                <div class="text-center">
-                                    <p class="text-xs text-text-secondary">إجمالي العقد</p>
-                                    <p class="font-bold text-text-primary">1.2M ريال</p>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-xs text-text-secondary">المصروفات</p>
-                                    <p class="font-bold text-error">880K ريال</p>
-                                </div>
-                                <div class="text-center">
-                                    <p class="text-xs text-text-secondary">المبلغ المستلم</p>
-                                    <p class="font-bold text-warning">400K ريال</p>
-                                </div>
-                            </div>
-                            
-                            <div class="w-full bg-secondary-200 rounded-full h-2 mb-2">
-                                <div class="bg-primary h-2 rounded-full" style="width: 45%"></div>
-                            </div>
-                            <div class="flex justify-between text-xs text-text-secondary">
-                                <span>قيد التنفيذ</span>
-                                <span>متبقي: 800K ريال</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-secondary-50 text-text-secondary uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-3 text-right">رقم الفاتورة</th>
+                                        <th class="px-6 py-3 text-right">العميل</th>
+                                        <th class="px-6 py-3 text-right">المشروع</th>
+                                        <th class="px-6 py-3 text-right">تاريخ الإصدار</th>
+                                        <th class="px-6 py-3 text-right">تاريخ الاستحقاق</th>
+                                        <th class="px-6 py-3 text-right">الإجمالي</th>
+                                        <th class="px-6 py-3 text-right">الحالة</th>
+                                        <th class="px-6 py-3 text-right">إجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoiceTable" class="divide-y divide-border">
+                                    <tr data-status="sent" data-search="فاتورة-2024-091 العقارات المتقدمة AR-102 15/04/2024 30/04/2024 245000 مرسل">
+                                        <td class="px-6 py-4 font-medium">فاتورة-2024-091</td>
+                                        <td class="px-6 py-4">العقارات المتقدمة</td>
+                                        <td class="px-6 py-4">AR-102</td>
+                                        <td class="px-6 py-4">15/04/2024</td>
+                                        <td class="px-6 py-4">30/04/2024</td>
+                                        <td class="px-6 py-4 font-semibold">245,000 ر.س</td>
+                                        <td class="px-6 py-4">
+                                            <span class="status-chip status-sent">مرسل</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button class="action-icon" title="عرض التفاصيل"><i class="fas fa-eye"></i></button>
+                                                <button class="action-icon" title="تسجيل دفعة" data-action="record-payment"><i class="fas fa-money-check"></i></button>
+                                                <button class="action-icon" title="نسخ" data-action="duplicate"><i class="fas fa-copy"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="overdue" data-search="فاتورة-2024-087 عمران الخليج VL-221 02/03/2024 01/04/2024 189000 متأخر">
+                                        <td class="px-6 py-4 font-medium">فاتورة-2024-087</td>
+                                        <td class="px-6 py-4">عمران الخليج</td>
+                                        <td class="px-6 py-4">VL-221</td>
+                                        <td class="px-6 py-4">02/03/2024</td>
+                                        <td class="px-6 py-4">01/04/2024</td>
+                                        <td class="px-6 py-4 font-semibold">189,000 ر.س</td>
+                                        <td class="px-6 py-4">
+                                            <span class="status-chip status-overdue">متأخر</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button class="action-icon" title="إرسال تذكير"><i class="fas fa-envelope"></i></button>
+                                                <button class="action-icon" title="جدولة متابعة" data-action="schedule-followup"><i class="fas fa-clock"></i></button>
+                                                <button class="action-icon" title="نسخ" data-action="duplicate"><i class="fas fa-copy"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="partial" data-search="فاتورة-2024-078 المشاريع المتحدة EN-556 20/02/2024 20/03/2024 375000 مدفوع جزئيًا">
+                                        <td class="px-6 py-4 font-medium">فاتورة-2024-078</td>
+                                        <td class="px-6 py-4">المشاريع المتحدة</td>
+                                        <td class="px-6 py-4">EN-556</td>
+                                        <td class="px-6 py-4">20/02/2024</td>
+                                        <td class="px-6 py-4">20/03/2024</td>
+                                        <td class="px-6 py-4 font-semibold">375,000 ر.س</td>
+                                        <td class="px-6 py-4">
+                                            <span class="status-chip status-partial">مدفوع جزئيًا</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button class="action-icon" title="تسجيل دفعة"><i class="fas fa-money-check"></i></button>
+                                                <button class="action-icon" title="تحويل إلى مكتمل" data-action="mark-paid"><i class="fas fa-circle-check"></i></button>
+                                                <button class="action-icon" title="نسخ" data-action="duplicate"><i class="fas fa-copy"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="paid" data-search="فاتورة-2024-072 أساس العمران HQ-301 15/01/2024 31/01/2024 510000 مدفوع">
+                                        <td class="px-6 py-4 font-medium">فاتورة-2024-072</td>
+                                        <td class="px-6 py-4">أساس العمران</td>
+                                        <td class="px-6 py-4">HQ-301</td>
+                                        <td class="px-6 py-4">15/01/2024</td>
+                                        <td class="px-6 py-4">31/01/2024</td>
+                                        <td class="px-6 py-4 font-semibold">510,000 ر.س</td>
+                                        <td class="px-6 py-4">
+                                            <span class="status-chip status-paid">مدفوع</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button class="action-icon" title="تحميل PDF"><i class="fas fa-file-pdf"></i></button>
+                                                <button class="action-icon" title="تحميل Excel"><i class="fas fa-file-excel"></i></button>
+                                                <button class="action-icon" title="نسخ" data-action="duplicate"><i class="fas fa-copy"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-5 border-t border-border flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                            <p class="text-sm text-text-secondary">عرض 1-20 من 180 فاتورة. التصفح اللانهائي فعال لضمان الأداء.</p>
+                            <div class="flex gap-2 text-sm">
+                                <button class="btn-ghost" type="button"><i class="fas fa-chevron-right ml-2"></i>السابق</button>
+                                <button class="btn-ghost" type="button">التالي<i class="fas fa-chevron-left mr-2"></i></button>
                             </div>
                         </div>
                     </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold">النموذج الذكي للفواتير</h3>
+                                    <p class="text-sm text-text-secondary">تحكم بالقالب، الترقيم، والحقول الاختيارية.</p>
+                                </div>
+                                <button class="btn-secondary text-xs" type="button" data-action="preview-template">معاينة الطباعة</button>
+                            </header>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <label class="flex items-center gap-3 bg-secondary-50 rounded-xl px-4 py-3">
+                                    <input id="toggleInvoiceIntro" type="checkbox" class="accent-primary" checked />
+                                    <span class="text-sm">إظهار المقدمة (Intro)</span>
+                                </label>
+                                <label class="flex items-center gap-3 bg-secondary-50 rounded-xl px-4 py-3">
+                                    <input id="toggleInvoiceScope" type="checkbox" class="accent-primary" checked />
+                                    <span class="text-sm">إظهار وصف الأعمال</span>
+                                </label>
+                                <div>
+                                    <label class="form-label">بادئة الترقيم</label>
+                                    <input type="text" class="form-field" value="فاتورة-2024-" />
+                                </div>
+                                <div>
+                                    <label class="form-label">عدد الأرقام التسلسلية</label>
+                                    <input type="number" class="form-field" value="3" min="1" max="6" />
+                                </div>
+                            </div>
+                            <div class="bg-background rounded-xl p-4">
+                                <p class="text-xs text-text-secondary mb-2">متغيرات القالب المتاحة</p>
+                                <div class="flex flex-wrap gap-2 text-xs">
+                                    <span class="token">{{client.name}}</span>
+                                    <span class="token">{{client.number}}</span>
+                                    <span class="token">{{invoice.number}}</span>
+                                    <span class="token">{{project.code}}</span>
+                                    <span class="token">{{line.total}}</span>
+                                    <span class="token">{{tax.rate}}</span>
+                                    <span class="token">{{issue_date}}</span>
+                                    <span class="token">{{due_date}}</span>
+                                    <span class="token">{{company.logo}}</span>
+                                </div>
+                            </div>
+                            <div id="invoiceTemplatePreview" class="bg-white border border-dashed border-border rounded-xl p-4 space-y-2">
+                                <p class="text-sm font-semibold">عنوان الفاتورة</p>
+                                <p class="text-xs text-text-secondary intro-block">{{intro}}</p>
+                                <p class="text-xs text-text-secondary scope-block">{{scope_description}}</p>
+                                <p class="text-xs text-text-secondary">العميل: {{client.name}} | المشروع: {{project.code}}</p>
+                                <p class="text-xs text-text-secondary">المجموع: {{grand_total}} ({{tax.rate}} ضريبة)</p>
+                            </div>
+                        </div>
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4" id="invoiceQuickForm">
+                            <header class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold">نماذج إنشاء وتعديل</h3>
+                                    <p class="text-sm text-text-secondary">كل الحقول القياسية مدعومة مع ضرائب متعددة وعملات مختلفة.</p>
+                                </div>
+                                <button class="btn-secondary text-xs" type="button" data-action="open-invoice-form">فتح النموذج الكامل</button>
+                            </header>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <label class="form-label">العميل</label>
+                                    <input type="text" class="form-field" placeholder="اختر العميل" />
+                                </div>
+                                <div>
+                                    <label class="form-label">المشروع</label>
+                                    <input type="text" class="form-field" placeholder="رمز المشروع (اختياري)" />
+                                </div>
+                                <div>
+                                    <label class="form-label">تاريخ الإصدار</label>
+                                    <input type="date" class="form-field" />
+                                </div>
+                                <div>
+                                    <label class="form-label">تاريخ الاستحقاق</label>
+                                    <input type="date" class="form-field" />
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="form-label">البنود</label>
+                                    <textarea class="form-field" rows="3" placeholder="الوصف، الكمية، الوحدة، السعر، الخصم، الضريبة…"></textarea>
+                                </div>
+                                <div>
+                                    <label class="form-label">الضريبة</label>
+                                    <select class="form-field">
+                                        <option>15% ضريبة قيمة مضافة</option>
+                                        <option>5% ضريبة خدمات</option>
+                                        <option>بدون ضريبة</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-field">
+                                        <option>مسودة</option>
+                                        <option>مرسل</option>
+                                        <option>مدفوع جزئيًا</option>
+                                        <option>مدفوع</option>
+                                        <option>متأخر</option>
+                                        <option>ملغي</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="form-label">مرفقات</label>
+                                    <input type="file" class="form-field" multiple />
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <button class="btn-primary" type="button">حفظ كمسودة</button>
+                                <button class="btn-secondary" type="button">إرسال للعميل</button>
+                                <button class="btn-ghost" type="button">تصدير PDF</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Quotes -->
+                <section id="tab-quotes" class="tab-content hidden px-6 py-6 space-y-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold">عروض الأسعار الذكية</h2>
+                            <p class="text-text-secondary">استخدم النموذج الذكي، ثم حوّل العرض إلى فاتورة بنقرة واحدة مع الحفاظ على كل البنود.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="btn-primary" type="button" data-action="create-quote">عرض سعر جديد</button>
+                            <button class="btn-secondary" type="button" data-action="duplicate-quote">نسخ من عرض سابق</button>
+                            <button class="btn-ghost" type="button" data-action="import-quotes">استيراد عروض</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface border border-border rounded-2xl shadow-card">
+                        <div class="p-5 border-b border-border space-y-4">
+                            <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                                <div class="relative flex-1">
+                                    <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary"></i>
+                                    <input id="quoteSearch" type="search" placeholder="بحث باسم العرض، رقم العميل، المشروع، الحالة…" class="w-full pr-12 pl-4 py-3 rounded-xl border border-border focus:border-primary focus:outline-none">
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="filter-chip is-active" data-filter="all">الكل</button>
+                                    <button class="filter-chip" data-filter="draft">مسودة</button>
+                                    <button class="filter-chip" data-filter="sent">مرسل</button>
+                                    <button class="filter-chip" data-filter="accepted">مقبول</button>
+                                    <button class="filter-chip" data-filter="rejected">مرفوض</button>
+                                    <button class="filter-chip" data-filter="converted">مُحوَّل</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-secondary-50 text-text-secondary uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-3 text-right">رقم العرض</th>
+                                        <th class="px-6 py-3 text-right">العميل</th>
+                                        <th class="px-6 py-3 text-right">المشروع</th>
+                                        <th class="px-6 py-3 text-right">تاريخ الإصدار</th>
+                                        <th class="px-6 py-3 text-right">القيمة</th>
+                                        <th class="px-6 py-3 text-right">الحالة</th>
+                                        <th class="px-6 py-3 text-right">إجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="quoteTable" class="divide-y divide-border">
+                                    <tr data-status="draft" data-search="عرض-2024-055 شركة السيف SF-908 05/04/2024 320000 مسودة">
+                                        <td class="px-6 py-4 font-medium">عرض-2024-055</td>
+                                        <td class="px-6 py-4">شركة السيف</td>
+                                        <td class="px-6 py-4">SF-908</td>
+                                        <td class="px-6 py-4">05/04/2024</td>
+                                        <td class="px-6 py-4 font-semibold">320,000 ر.س</td>
+                                        <td class="px-6 py-4"><span class="status-chip status-draft">مسودة</span></td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button class="action-icon" title="تحرير"><i class="fas fa-pen"></i></button>
+                                                <button class="action-icon" title="إرسال"><i class="fas fa-paper-plane"></i></button>
+                                                <button class="action-icon" title="نسخ" data-action="duplicate"><i class="fas fa-copy"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="sent" data-search="عرض-2024-049 عمران الخليج VL-221 10/03/2024 189000 مرسل">
+                                        <td class="px-6 py-4 font-medium">عرض-2024-049</td>
+                                        <td class="px-6 py-4">عمران الخليج</td>
+                                        <td class="px-6 py-4">VL-221</td>
+                                        <td class="px-6 py-4">10/03/2024</td>
+                                        <td class="px-6 py-4 font-semibold">189,000 ر.س</td>
+                                        <td class="px-6 py-4"><span class="status-chip status-sent">مرسل</span></td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button class="action-icon" title="تحويل إلى فاتورة" data-action="convert"><i class="fas fa-retweet"></i></button>
+                                                <button class="action-icon" title="قبول"><i class="fas fa-check"></i></button>
+                                                <button class="action-icon" title="نسخ" data-action="duplicate"><i class="fas fa-copy"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="accepted" data-search="عرض-2024-043 شركة الأفق AF-113 02/03/2024 510000 مقبول">
+                                        <td class="px-6 py-4 font-medium">عرض-2024-043</td>
+                                        <td class="px-6 py-4">شركة الأفق</td>
+                                        <td class="px-6 py-4">AF-113</td>
+                                        <td class="px-6 py-4">02/03/2024</td>
+                                        <td class="px-6 py-4 font-semibold">510,000 ر.س</td>
+                                        <td class="px-6 py-4"><span class="status-chip status-accepted">مقبول</span></td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button class="action-icon" title="تحويل إلى فاتورة" data-action="convert"><i class="fas fa-retweet"></i></button>
+                                                <button class="action-icon" title="تحميل PDF"><i class="fas fa-file-pdf"></i></button>
+                                                <button class="action-icon" title="نسخ" data-action="duplicate"><i class="fas fa-copy"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-status="converted" data-search="عرض-2024-039 المشاريع المتحدة EN-556 20/02/2024 375000 محول">
+                                        <td class="px-6 py-4 font-medium">عرض-2024-039</td>
+                                        <td class="px-6 py-4">المشاريع المتحدة</td>
+                                        <td class="px-6 py-4">EN-556</td>
+                                        <td class="px-6 py-4">20/02/2024</td>
+                                        <td class="px-6 py-4 font-semibold">375,000 ر.س</td>
+                                        <td class="px-6 py-4"><span class="status-chip status-converted">مُحوَّل</span></td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-2">
+                                                <button class="action-icon" title="عرض الفاتورة المرتبطة"><i class="fas fa-link"></i></button>
+                                                <button class="action-icon" title="سجل التحويل"><i class="fas fa-history"></i></button>
+                                                <button class="action-icon" title="نسخ" data-action="duplicate"><i class="fas fa-copy"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-5 border-t border-border text-sm text-text-secondary flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                            <p>البحث متعدد الحقول (اسم العرض، رقم العميل، تاريخ الإصدار، الحالة) يستجيب في أقل من 300ms حتى مع 10,000 سجل.</p>
+                            <div class="flex gap-2">
+                                <button class="btn-ghost" type="button">السابق</button>
+                                <button class="btn-ghost" type="button">التالي</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4" id="smartQuoteBuilder">
+                            <header class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold">محرر العرض الذكي</h3>
+                                    <p class="text-sm text-text-secondary">أدر البنود، الخصومات، الضرائب، والشروط في واجهة واحدة.</p>
+                                </div>
+                                <button class="btn-secondary text-xs" type="button">معاينة PDF</button>
+                            </header>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <label class="form-label">العميل</label>
+                                    <input type="text" class="form-field" placeholder="اختر العميل" />
+                                </div>
+                                <div>
+                                    <label class="form-label">المشروع (اختياري)</label>
+                                    <input type="text" class="form-field" placeholder="رمز المشروع" />
+                                </div>
+                                <div>
+                                    <label class="form-label">البنود</label>
+                                    <textarea class="form-field" rows="3" placeholder="الوصف، الكمية، السعر، الوحدة، الضريبة، الخصم"></textarea>
+                                </div>
+                                <div>
+                                    <label class="form-label">شروط الدفع</label>
+                                    <input type="text" class="form-field" placeholder="30 يوم - دفعة واحدة" />
+                                </div>
+                                <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <label class="flex items-center gap-3 bg-secondary-50 rounded-xl px-4 py-3">
+                                        <input id="toggleQuoteIntro" type="checkbox" class="accent-primary" checked />
+                                        <span class="text-sm">المقدمة</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 bg-secondary-50 rounded-xl px-4 py-3">
+                                        <input id="toggleQuoteScope" type="checkbox" class="accent-primary" checked />
+                                        <span class="text-sm">وصف الأعمال</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="form-label">الحالة</label>
+                                    <select class="form-field">
+                                        <option>مسودة</option>
+                                        <option>مرسل</option>
+                                        <option>مقبول</option>
+                                        <option>مرفوض</option>
+                                        <option>منتهي الصلاحية</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">مرفقات</label>
+                                    <input type="file" class="form-field" multiple />
+                                </div>
+                            </div>
+                            <div class="bg-background rounded-xl p-4">
+                                <p class="text-xs text-text-secondary mb-2">متغيرات القالب</p>
+                                <div class="flex flex-wrap gap-2 text-xs">
+                                    <span class="token">{{quote.number}}</span>
+                                    <span class="token">{{quote.valid_until}}</span>
+                                    <span class="token">{{client.name}}</span>
+                                    <span class="token">{{project.code}}</span>
+                                    <span class="token">{{line.total}}</span>
+                                    <span class="token">{{tax.rate}}</span>
+                                </div>
+                            </div>
+                            <div id="quoteTemplatePreview" class="bg-white border border-dashed border-border rounded-xl p-4 space-y-2">
+                                <p class="text-sm font-semibold">عنوان العرض</p>
+                                <p class="text-xs text-text-secondary quote-intro">{{intro}}</p>
+                                <p class="text-xs text-text-secondary quote-scope">{{scope_description}}</p>
+                                <p class="text-xs text-text-secondary">القيمة الإجمالية: {{grand_total}} | صلاحية حتى {{quote.valid_until}}</p>
+                            </div>
+                        </div>
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold">سير عمل التحويل</h3>
+                                    <p class="text-sm text-text-secondary">تحويل سريع يحافظ على 100٪ من البنود والضرائب والخصومات.</p>
+                                </div>
+                                <button class="btn-primary text-xs" type="button" data-action="open-conversion">تشغيل التحويل الآن</button>
+                            </header>
+                            <ol class="space-y-4 text-sm text-text-secondary">
+                                <li class="flex items-start gap-3">
+                                    <span class="step">1</span>
+                                    <div>
+                                        <p class="font-semibold text-text-primary">تأكيد قبول العرض</p>
+                                        <p>يتم تغيير الحالة تلقائيًا إلى «مقبول» مع سجل تدقيق باسم المستخدم.</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="step">2</span>
+                                    <div>
+                                        <p class="font-semibold text-text-primary">إنشاء فاتورة مرتبطة</p>
+                                        <p>نسخ البنود، الشروط، الضرائب، وربط الفاتورة بالعرض والمشروع نفسه.</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="step">3</span>
+                                    <div>
+                                        <p class="font-semibold text-text-primary">فتح الفاتورة الجديدة</p>
+                                        <p>الفاتورة تُنشأ بحالة «مسودة» مع ترقيم جديد وتاريخ اليوم للتحرير النهائي.</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="step">4</span>
+                                    <div>
+                                        <p class="font-semibold text-text-primary">التذكيرات الآلية</p>
+                                        <p>إرسال تذكيرات قبل الاستحقاق وبعد التأخير (1/7/14 يومًا) مع خيارات تعليق أو متابعة.</p>
+                                    </div>
+                                </li>
+                            </ol>
+                            <div class="bg-background rounded-xl p-4 text-xs text-text-secondary">
+                                <p>كل عملية تحويل ونسخ تحفظ في <strong>سجل التدقيق</strong> مع الزمن والمستخدم.</p>
+                                <p>يمكن تعيين صلاحية التحويل لمجموعة «المبيعات» فقط لإنشاء فواتير مسودة، بينما «المدير المالي» يعتمد الإصدار النهائي.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Payments -->
+                <section id="tab-payments" class="tab-content hidden px-6 py-6 space-y-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold">تتبع المدفوعات</h2>
+                            <p class="text-text-secondary">سجل كامل للدفعات المؤكدة والمجدولة والمرفوضة مع ربط واضح بالفواتير والمشاريع.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="btn-primary" type="button" data-action="record-payment">تسجيل دفعة</button>
+                            <button class="btn-secondary" type="button" data-action="schedule-payment">جدولة دفعة</button>
+                            <button class="btn-ghost" type="button" data-action="export-payments">تصدير Excel</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface border border-border rounded-2xl shadow-card">
+                        <div class="p-5 border-b border-border flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                            <div class="relative flex-1">
+                                <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary"></i>
+                                <input id="paymentSearch" type="search" placeholder="بحث برقم الفاتورة، العميل، المشروع، الطريقة…" class="w-full pr-12 pl-4 py-3 rounded-xl border border-border focus:border-primary focus:outline-none">
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button class="filter-chip is-active" data-filter="all">الكل</button>
+                                <button class="filter-chip" data-filter="confirmed">مؤكد</button>
+                                <button class="filter-chip" data-filter="pending">معلق</button>
+                                <button class="filter-chip" data-filter="rejected">مرفوض</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-secondary-50 text-text-secondary uppercase text-xs">
+                                    <tr>
+                                        <th class="px-6 py-3 text-right">التاريخ</th>
+                                        <th class="px-6 py-3 text-right">رقم الفاتورة</th>
+                                        <th class="px-6 py-3 text-right">العميل</th>
+                                        <th class="px-6 py-3 text-right">المشروع</th>
+                                        <th class="px-6 py-3 text-right">المبلغ</th>
+                                        <th class="px-6 py-3 text-right">طريقة الدفع</th>
+                                        <th class="px-6 py-3 text-right">الحالة</th>
+                                        <th class="px-6 py-3 text-right">ملاحظات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentTable" class="divide-y divide-border">
+                                    <tr data-status="confirmed" data-search="21/04/2024 فاتورة-2024-091 العقارات المتقدمة AR-102 245000 تحويل بنكي مؤكد">
+                                        <td class="px-6 py-4">21/04/2024</td>
+                                        <td class="px-6 py-4">فاتورة-2024-091</td>
+                                        <td class="px-6 py-4">العقارات المتقدمة</td>
+                                        <td class="px-6 py-4">AR-102</td>
+                                        <td class="px-6 py-4 font-semibold">245,000 ر.س</td>
+                                        <td class="px-6 py-4">تحويل بنكي</td>
+                                        <td class="px-6 py-4"><span class="status-chip status-paid">مؤكد</span></td>
+                                        <td class="px-6 py-4">أضيف بواسطة المحاسب خالد</td>
+                                    </tr>
+                                    <tr data-status="pending" data-search="18/04/2024 فاتورة-2024-087 عمران الخليج VL-221 189000 شيك معلق">
+                                        <td class="px-6 py-4">18/04/2024</td>
+                                        <td class="px-6 py-4">فاتورة-2024-087</td>
+                                        <td class="px-6 py-4">عمران الخليج</td>
+                                        <td class="px-6 py-4">VL-221</td>
+                                        <td class="px-6 py-4 font-semibold">189,000 ر.س</td>
+                                        <td class="px-6 py-4">شيك</td>
+                                        <td class="px-6 py-4"><span class="status-chip status-warning">معلق</span></td>
+                                        <td class="px-6 py-4">بانتظار تأكيد البنك</td>
+                                    </tr>
+                                    <tr data-status="confirmed" data-search="11/04/2024 فاتورة-2024-078 المشاريع المتحدة EN-556 185000 تحويل بنكي مؤكد">
+                                        <td class="px-6 py-4">11/04/2024</td>
+                                        <td class="px-6 py-4">فاتورة-2024-078</td>
+                                        <td class="px-6 py-4">المشاريع المتحدة</td>
+                                        <td class="px-6 py-4">EN-556</td>
+                                        <td class="px-6 py-4 font-semibold">185,000 ر.س</td>
+                                        <td class="px-6 py-4">تحويل بنكي</td>
+                                        <td class="px-6 py-4"><span class="status-chip status-paid">مؤكد</span></td>
+                                        <td class="px-6 py-4">دفعة جزئية - تم ربطها بالمشروع</td>
+                                    </tr>
+                                    <tr data-status="rejected" data-search="08/04/2024 فاتورة-2024-071 شركة الأفق AF-113 120000 نقدًا مرفوض">
+                                        <td class="px-6 py-4">08/04/2024</td>
+                                        <td class="px-6 py-4">فاتورة-2024-071</td>
+                                        <td class="px-6 py-4">شركة الأفق</td>
+                                        <td class="px-6 py-4">AF-113</td>
+                                        <td class="px-6 py-4 font-semibold">120,000 ر.س</td>
+                                        <td class="px-6 py-4">نقدًا</td>
+                                        <td class="px-6 py-4"><span class="status-chip status-error">مرفوض</span></td>
+                                        <td class="px-6 py-4">تم رفض السند - إعادة طلب الدفع</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-5 border-t border-border text-sm text-text-secondary">
+                            <p>إجمالي المدفوعات المؤكدة خلال الفترة المحددة يظهر مباشرة في لوحة التحكم الرئيسية.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">جدول المدفوعات القادمة</h3>
+                                <span class="badge badge-info">مزامنة مع الفواتير</span>
+                            </header>
+                            <ul class="space-y-4 text-sm text-text-secondary">
+                                <li class="flex items-start gap-3">
+                                    <span class="timeline-dot bg-warning"></span>
+                                    <div>
+                                        <p class="font-medium text-text-primary">30/04/2024 - 120,000 ر.س</p>
+                                        <p>فاتورة-2024-087 (عمران الخليج) - تم تعيين تذكير قبل 3 أيام.</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="timeline-dot bg-success"></span>
+                                    <div>
+                                        <p class="font-medium text-text-primary">28/04/2024 - 185,000 ر.س</p>
+                                        <p>دفعة ثانية لمشروع EN-556 - سيتم تحديث لوحة التحكم بعد التأكيد.</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="timeline-dot bg-primary"></span>
+                                    <div>
+                                        <p class="font-medium text-text-primary">02/05/2024 - 210,000 ر.س</p>
+                                        <p>دفعة مجدولة من مشروع HQ-301 - إشعارات 7/3/1 أيام مفعلة.</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">ربط المدفوعات بالمشاريع</h3>
+                                <span class="badge badge-success">مباشر</span>
+                            </header>
+                            <p class="text-sm text-text-secondary">كل دفعة مرتبطة بالمشروع المعني لإظهار الفرق بين الميزانية والفعلي في تقارير المشروع.</p>
+                            <div class="border border-dashed border-border rounded-xl p-4 space-y-3 text-xs text-text-secondary">
+                                <p><strong>المشروع:</strong> EN-556 | <strong>الميزانية:</strong> 1,200,000 ر.س | <strong>المنفذ:</strong> 945,000 ر.س | <strong>الهامش:</strong> 21%</p>
+                                <p><strong>آخر دفعة:</strong> 185,000 ر.س (11/04/2024) | <strong>الحالة:</strong> مؤكد</p>
+                                <p><strong>المصاريف المرتبطة:</strong> 612,000 ر.س | <strong>الالتزامات:</strong> رواتب الفريق + إيجار المعدات الشهرية.</p>
+                                <p><strong>ملاحظات:</strong> لا توجد تأخيرات. التذكيرات المستقبلية مفعّلة.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Expenses -->
+                <section id="tab-expenses" class="tab-content hidden px-6 py-6 space-y-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold">إدارة المصاريف</h2>
+                            <p class="text-text-secondary">تصنيف المصاريف حسب الفئة ومركز التكلفة مع ربط مباشر بالمشاريع وتقارير التدفق النقدي.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="btn-primary" type="button" data-action="add-expense">إضافة مصروف</button>
+                            <button class="btn-secondary" type="button" data-action="bulk-import-expenses">استيراد مصاريف</button>
+                            <button class="btn-ghost" type="button" data-action="export-expenses">تصدير PDF/Excel</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                        <div class="xl:col-span-2 bg-surface border border-border rounded-2xl shadow-card">
+                            <div class="p-5 border-b border-border flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                                <div class="relative flex-1">
+                                    <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary"></i>
+                                    <input id="expenseSearch" type="search" placeholder="بحث بالمورد، الفئة، المشروع، المبلغ…" class="w-full pr-12 pl-4 py-3 rounded-xl border border-border focus:border-primary focus:outline-none">
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="filter-chip is-active" data-filter="all">الكل</button>
+                                    <button class="filter-chip" data-filter="payroll">رواتب</button>
+                                    <button class="filter-chip" data-filter="rent">إيجارات</button>
+                                    <button class="filter-chip" data-filter="equipment">معدات</button>
+                                    <button class="filter-chip" data-filter="other">أخرى</button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-sm">
+                                    <thead class="bg-secondary-50 text-text-secondary uppercase text-xs">
+                                        <tr>
+                                            <th class="px-6 py-3 text-right">التاريخ</th>
+                                            <th class="px-6 py-3 text-right">المورد</th>
+                                            <th class="px-6 py-3 text-right">الفئة</th>
+                                            <th class="px-6 py-3 text-right">مركز التكلفة/المشروع</th>
+                                            <th class="px-6 py-3 text-right">المبلغ</th>
+                                            <th class="px-6 py-3 text-right">الضريبة</th>
+                                            <th class="px-6 py-3 text-right">مرفقات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expenseTable" class="divide-y divide-border">
+                                        <tr data-status="payroll" data-search="25/04/2024 رواتب فريق المشروع رواتب EN-556 145000 15% كشف الرواتب">
+                                            <td class="px-6 py-4">25/04/2024</td>
+                                            <td class="px-6 py-4">رواتب فريق المشروع</td>
+                                            <td class="px-6 py-4">رواتب</td>
+                                            <td class="px-6 py-4">EN-556</td>
+                                            <td class="px-6 py-4 font-semibold">145,000 ر.س</td>
+                                            <td class="px-6 py-4">15%</td>
+                                            <td class="px-6 py-4"><button class="action-icon" title="عرض المرفق"><i class="fas fa-paperclip"></i></button></td>
+                                        </tr>
+                                        <tr data-status="rent" data-search="20/04/2024 إيجار المستودع الرئيسي إيجارات HQ-301 48,000 0% عقد إيجار">
+                                            <td class="px-6 py-4">20/04/2024</td>
+                                            <td class="px-6 py-4">إيجار المستودع الرئيسي</td>
+                                            <td class="px-6 py-4">إيجارات</td>
+                                            <td class="px-6 py-4">HQ-301</td>
+                                            <td class="px-6 py-4 font-semibold">48,000 ر.س</td>
+                                            <td class="px-6 py-4">0%</td>
+                                            <td class="px-6 py-4"><button class="action-icon" title="عرض المرفق"><i class="fas fa-paperclip"></i></button></td>
+                                        </tr>
+                                        <tr data-status="equipment" data-search="18/04/2024 صيانة معدات الرفع معدات AR-102 32,500 15% فاتورة مورد">
+                                            <td class="px-6 py-4">18/04/2024</td>
+                                            <td class="px-6 py-4">صيانة معدات الرفع</td>
+                                            <td class="px-6 py-4">معدات</td>
+                                            <td class="px-6 py-4">AR-102</td>
+                                            <td class="px-6 py-4 font-semibold">32,500 ر.س</td>
+                                            <td class="px-6 py-4">15%</td>
+                                            <td class="px-6 py-4"><button class="action-icon" title="عرض المرفق"><i class="fas fa-paperclip"></i></button></td>
+                                        </tr>
+                                        <tr data-status="other" data-search="15/04/2024 فواتير خدمات المياه والكهرباء أخرى VL-221 18,750 5% فواتير شهرية">
+                                            <td class="px-6 py-4">15/04/2024</td>
+                                            <td class="px-6 py-4">خدمات المياه والكهرباء</td>
+                                            <td class="px-6 py-4">أخرى</td>
+                                            <td class="px-6 py-4">VL-221</td>
+                                            <td class="px-6 py-4 font-semibold">18,750 ر.س</td>
+                                            <td class="px-6 py-4">5%</td>
+                                            <td class="px-6 py-4"><button class="action-icon" title="عرض المرفق"><i class="fas fa-paperclip"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="p-5 border-t border-border text-sm text-text-secondary">
+                                <p>كل مصروف مرتبط بالمشروع ومركز التكلفة لضمان دقة تقارير الربحية.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">إضافة مصروف سريع</h3>
+                                <button class="btn-secondary text-xs" type="button">فتح النموذج المتقدم</button>
+                            </header>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <label class="form-label">الفئة</label>
+                                    <select class="form-field">
+                                        <option>رواتب</option>
+                                        <option>إيجارات</option>
+                                        <option>معدات</option>
+                                        <option>مصاريف تشغيلية</option>
+                                        <option>أخرى</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">المركز/المشروع</label>
+                                    <input type="text" class="form-field" placeholder="رمز المشروع" />
+                                </div>
+                                <div>
+                                    <label class="form-label">المورد</label>
+                                    <input type="text" class="form-field" placeholder="اسم المورد" />
+                                </div>
+                                <div>
+                                    <label class="form-label">التاريخ</label>
+                                    <input type="date" class="form-field" />
+                                </div>
+                                <div>
+                                    <label class="form-label">المبلغ</label>
+                                    <input type="number" class="form-field" placeholder="0" />
+                                </div>
+                                <div>
+                                    <label class="form-label">الضريبة</label>
+                                    <select class="form-field">
+                                        <option>15% ضريبة قيمة مضافة</option>
+                                        <option>5% ضريبة خدمات</option>
+                                        <option>معفية</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="form-label">ملاحظات</label>
+                                    <textarea class="form-field" rows="2" placeholder="تفاصيل إضافية"></textarea>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="form-label">مرفقات</label>
+                                    <input type="file" class="form-field" multiple />
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <button class="btn-primary" type="button">حفظ المصروف</button>
+                                <button class="btn-ghost" type="button">حفظ كمسودة</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">مراكز التكلفة والمشاريع</h3>
+                                <span class="badge badge-primary">متكامل</span>
+                            </header>
+                            <p class="text-sm text-text-secondary">كل المصاريف والالتزامات تُجمع في تقارير المشروع مع مقارنة مستمرة بين الميزانية والفعلي والهامش.</p>
+                            <ul class="space-y-4 text-sm text-text-secondary">
+                                <li class="border border-dashed border-border rounded-xl p-4">
+                                    <p class="font-semibold text-text-primary">مشروع EN-556</p>
+                                    <p>الميزانية: 1,200,000 ر.س | المصاريف: 945,000 ر.س | الالتزامات: 210,000 ر.س</p>
+                                    <p>الهامش الحالي: 21% | التحصيل: 68% | التوقعات: إيجابية</p>
+                                </li>
+                                <li class="border border-dashed border-border rounded-xl p-4">
+                                    <p class="font-semibold text-text-primary">مشروع HQ-301</p>
+                                    <p>الميزانية: 2,500,000 ر.س | المصاريف: 1,180,000 ر.س | الالتزامات: 310,000 ر.س</p>
+                                    <p>الهامش الحالي: 27% | التحصيل: 74% | التوقعات: بحاجة لمتابعة</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                <!-- Commitments -->
+                <section id="tab-commitments" class="tab-content hidden px-6 py-6 space-y-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold">الالتزامات الشهرية</h2>
+                            <p class="text-text-secondary">رواتب، إيجارات، سيارات، فواتير ثابتة مع تكرار تلقائي وتذكيرات وربط شامل بالمشاريع والتقارير.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="btn-primary" type="button" data-action="add-commitment">إنشاء التزام متكرر</button>
+                            <button class="btn-secondary" type="button" data-action="pause-commitment">إيقاف مؤقت</button>
+                            <button class="btn-ghost" type="button" data-action="export-commitments">تصدير Excel</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                        <div class="xl:col-span-2 bg-surface border border-border rounded-2xl shadow-card">
+                            <div class="p-5 border-b border-border flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                                <div class="relative flex-1">
+                                    <i class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary"></i>
+                                    <input id="commitmentSearch" type="search" placeholder="بحث بالنوع، الجهة المستفيدة، المشروع…" class="w-full pr-12 pl-4 py-3 rounded-xl border border-border focus:border-primary focus:outline-none">
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="filter-chip is-active" data-filter="all">الكل</button>
+                                    <button class="filter-chip" data-filter="salary">رواتب</button>
+                                    <button class="filter-chip" data-filter="rent">إيجارات</button>
+                                    <button class="filter-chip" data-filter="vehicles">سيارات</button>
+                                    <button class="filter-chip" data-filter="services">خدمات</button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-sm">
+                                    <thead class="bg-secondary-50 text-text-secondary uppercase text-xs">
+                                        <tr>
+                                            <th class="px-6 py-3 text-right">النوع</th>
+                                            <th class="px-6 py-3 text-right">الجهة المستفيدة</th>
+                                            <th class="px-6 py-3 text-right">المبلغ</th>
+                                            <th class="px-6 py-3 text-right">التكرار</th>
+                                            <th class="px-6 py-3 text-right">بداية الالتزام</th>
+                                            <th class="px-6 py-3 text-right">الاستحقاق القادم</th>
+                                            <th class="px-6 py-3 text-right">المشروع/مركز التكلفة</th>
+                                            <th class="px-6 py-3 text-right">الحالة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="commitmentTable" class="divide-y divide-border">
+                                        <tr data-status="salary" data-search="رواتب فريق المشاريع رواتب 220000 شهري 01/01/2024 30/04/2024 EN-556 نشط">
+                                            <td class="px-6 py-4">راتب</td>
+                                            <td class="px-6 py-4">فريق المشاريع الميداني</td>
+                                            <td class="px-6 py-4 font-semibold">220,000 ر.س</td>
+                                            <td class="px-6 py-4">شهري</td>
+                                            <td class="px-6 py-4">01/01/2024</td>
+                                            <td class="px-6 py-4">30/04/2024</td>
+                                            <td class="px-6 py-4">EN-556</td>
+                                            <td class="px-6 py-4"><span class="status-chip status-success">نشط</span></td>
+                                        </tr>
+                                        <tr data-status="rent" data-search="إيجار مخزن المعدات إيجارات 48,000 شهري 01/02/2024 01/05/2024 HQ-301 نشط">
+                                            <td class="px-6 py-4">إيجار</td>
+                                            <td class="px-6 py-4">مخزن المعدات الرئيسي</td>
+                                            <td class="px-6 py-4 font-semibold">48,000 ر.س</td>
+                                            <td class="px-6 py-4">شهري</td>
+                                            <td class="px-6 py-4">01/02/2024</td>
+                                            <td class="px-6 py-4">01/05/2024</td>
+                                            <td class="px-6 py-4">HQ-301</td>
+                                            <td class="px-6 py-4"><span class="status-chip status-success">نشط</span></td>
+                                        </tr>
+                                        <tr data-status="vehicles" data-search="تأجير سيارات الفريق سيارات 26,400 شهري 01/03/2024 01/05/2024 EN-556 نشط">
+                                            <td class="px-6 py-4">سيارات</td>
+                                            <td class="px-6 py-4">شركة تأجير المركبات</td>
+                                            <td class="px-6 py-4 font-semibold">26,400 ر.س</td>
+                                            <td class="px-6 py-4">شهري</td>
+                                            <td class="px-6 py-4">01/03/2024</td>
+                                            <td class="px-6 py-4">01/05/2024</td>
+                                            <td class="px-6 py-4">EN-556</td>
+                                            <td class="px-6 py-4"><span class="status-chip status-success">نشط</span></td>
+                                        </tr>
+                                        <tr data-status="services" data-search="عقد صيانة الأنظمة خدمات 12,500 شهري 01/01/2024 01/05/2024 HQ-301 موقوف">
+                                            <td class="px-6 py-4">خدمات</td>
+                                            <td class="px-6 py-4">شركة صيانة الأنظمة</td>
+                                            <td class="px-6 py-4 font-semibold">12,500 ر.س</td>
+                                            <td class="px-6 py-4">شهري</td>
+                                            <td class="px-6 py-4">01/01/2024</td>
+                                            <td class="px-6 py-4">01/05/2024</td>
+                                            <td class="px-6 py-4">HQ-301</td>
+                                            <td class="px-6 py-4"><span class="status-chip status-warning">موقوف</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="p-5 border-t border-border text-sm text-text-secondary">
+                                <p>يتم إنشاء قيود تلقائية لكل تكرار مع إمكانية تعديل كل قيد على حدة أو إيقاف التكرار.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">إنشاء التزام متكرر</h3>
+                                <span class="badge badge-primary">RRULE</span>
+                            </header>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <label class="form-label">نوع الالتزام</label>
+                                    <select class="form-field">
+                                        <option>راتب</option>
+                                        <option>إيجار</option>
+                                        <option>سيارة</option>
+                                        <option>خدمة/فاتورة ثابتة</option>
+                                        <option>أخرى</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">الجهة المستفيدة</label>
+                                    <input type="text" class="form-field" placeholder="اسم الجهة" />
+                                </div>
+                                <div>
+                                    <label class="form-label">المبلغ</label>
+                                    <input type="number" class="form-field" placeholder="0" />
+                                </div>
+                                <div>
+                                    <label class="form-label">الضريبة</label>
+                                    <select class="form-field">
+                                        <option>15%</option>
+                                        <option>5%</option>
+                                        <option>0%</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">التكرار</label>
+                                    <select class="form-field">
+                                        <option>شهري</option>
+                                        <option>ربع سنوي</option>
+                                        <option>نصف سنوي</option>
+                                        <option>سنوي</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">تاريخ البداية</label>
+                                    <input type="date" class="form-field" />
+                                </div>
+                                <div>
+                                    <label class="form-label">تاريخ النهاية (اختياري)</label>
+                                    <input type="date" class="form-field" />
+                                </div>
+                                <div>
+                                    <label class="form-label">التذكير</label>
+                                    <select class="form-field">
+                                        <option>قبل 7 أيام</option>
+                                        <option>قبل 3 أيام</option>
+                                        <option>قبل يوم واحد</option>
+                                        <option>بدون تذكير</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="form-label">ربط بمركز تكلفة/مشروع</label>
+                                    <input type="text" class="form-field" placeholder="رمز المشروع أو المركز" />
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="form-label">ملاحظات</label>
+                                    <textarea class="form-field" rows="2" placeholder="تفاصيل إضافية"></textarea>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <button class="btn-primary" type="button">حفظ الالتزام</button>
+                                <button class="btn-ghost" type="button">حفظ كمسودة</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">تأثير الالتزامات على التدفق النقدي</h3>
+                                <span class="badge badge-warning">متابعة</span>
+                            </header>
+                            <p class="text-sm text-text-secondary">الالتزامات تظهر في لوحة التحكم ضمن «إجمالي المصاريف» و«التدفق النقدي» فور تسجيلها وتحديثها شهريًا.</p>
+                            <ul class="space-y-3 text-sm text-text-secondary">
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-arrow-trend-down text-error mt-0.5"></i>
+                                    <span>توقع انخفاض التدفق النقدي بـ 286,900 ر.س خلال الشهر القادم بناءً على الالتزامات المسجلة.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-flag text-warning mt-0.5"></i>
+                                    <span>التزام صيانة الأنظمة موقوف حاليًا وسيتم إعادة تفعيله بعد اعتماد مدير المالية.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-file-export text-primary mt-0.5"></i>
+                                    <span>يمكن تصدير جدول الالتزامات لتحديث أنظمة ERP خارجية.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+                <!-- Reports -->
+                <section id="tab-reports" class="tab-content hidden px-6 py-6 space-y-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold">التقارير المالية</h2>
+                            <p class="text-text-secondary">تحليلات الدخل والمصروف والتحصيل والضرائب مع تصدير فوري وتصفية متقدمة.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="btn-primary" type="button" data-action="export-all-reports">تصدير كل التقارير</button>
+                            <button class="btn-secondary" type="button" data-action="schedule-report">جدولة إرسال دوري</button>
+                            <button class="btn-ghost" type="button" data-action="share-report">مشاركة مع الإدارة</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                        <article class="report-card">
+                            <div class="report-icon bg-success-100 text-success"><i class="fas fa-chart-line"></i></div>
+                            <h3 class="report-title">تقرير الدخل</h3>
+                            <p class="report-desc">تفاصيل الإيرادات حسب العملاء، المشاريع، والوقت.</p>
+                            <div class="report-actions">
+                                <button class="btn-secondary text-xs" type="button">PDF</button>
+                                <button class="btn-secondary text-xs" type="button">Excel</button>
+                            </div>
+                        </article>
+                        <article class="report-card">
+                            <div class="report-icon bg-error-100 text-error"><i class="fas fa-wallet"></i></div>
+                            <h3 class="report-title">تقرير المصروفات</h3>
+                            <p class="report-desc">مقارنة بنود المصروفات مع الميزانية والالتزامات.</p>
+                            <div class="report-actions">
+                                <button class="btn-secondary text-xs" type="button">PDF</button>
+                                <button class="btn-secondary text-xs" type="button">Excel</button>
+                            </div>
+                        </article>
+                        <article class="report-card">
+                            <div class="report-icon bg-warning-100 text-warning"><i class="fas fa-receipt"></i></div>
+                            <h3 class="report-title">تقرير الذمم والتحصيل</h3>
+                            <p class="report-desc">رصد الفواتير غير المسددة والدفعات المتأخرة.</p>
+                            <div class="report-actions">
+                                <button class="btn-secondary text-xs" type="button">PDF</button>
+                                <button class="btn-secondary text-xs" type="button">Excel</button>
+                            </div>
+                        </article>
+                        <article class="report-card">
+                            <div class="report-icon bg-primary-100 text-primary"><i class="fas fa-percent"></i></div>
+                            <h3 class="report-title">تقرير الضرائب</h3>
+                            <p class="report-desc">حساب الضريبة على مستوى البنود والإجمالي وإقرارات جاهزة.</p>
+                            <div class="report-actions">
+                                <button class="btn-secondary text-xs" type="button">PDF</button>
+                                <button class="btn-secondary text-xs" type="button">Excel</button>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-6">
+                        <header class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                            <div>
+                                <h3 class="text-lg font-semibold">تصفية مخصصة للتقارير</h3>
+                                <p class="text-sm text-text-secondary">حدد الفترة الزمنية، العميل، المشروع، مركز التكلفة، والحالة.</p>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <select class="form-field">
+                                    <option>آخر 30 يومًا</option>
+                                    <option>آخر 90 يومًا</option>
+                                    <option>ربع سنوي</option>
+                                    <option>سنة كاملة</option>
+                                    <option>مخصص…</option>
+                                </select>
+                                <button class="btn-primary" type="button">تطبيق التصفية</button>
+                            </div>
+                        </header>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <label class="form-label">العميل</label>
+                                <input type="text" class="form-field" placeholder="اسم العميل" />
+                            </div>
+                            <div>
+                                <label class="form-label">المشروع</label>
+                                <input type="text" class="form-field" placeholder="رمز المشروع" />
+                            </div>
+                            <div>
+                                <label class="form-label">الحالة</label>
+                                <select class="form-field">
+                                    <option>الكل</option>
+                                    <option>مسودة</option>
+                                    <option>مرسل</option>
+                                    <option>مدفوع</option>
+                                    <option>متأخر</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">الفئة</label>
+                                <select class="form-field">
+                                    <option>الإيرادات</option>
+                                    <option>المصاريف</option>
+                                    <option>الالتزامات</option>
+                                    <option>الضرائب</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">مركز التكلفة</label>
+                                <input type="text" class="form-field" placeholder="مثال: مركز 01" />
+                            </div>
+                            <div>
+                                <label class="form-label">العملة</label>
+                                <select class="form-field">
+                                    <option>ريال سعودي</option>
+                                    <option>درهم إماراتي</option>
+                                    <option>دولار أمريكي</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="border border-dashed border-border rounded-xl p-4 text-sm text-text-secondary space-y-2">
+                            <p>يتم حفظ الإعدادات كمرشح مفضل لكل مستخدم، ويمكن جدولة إرسال التقرير للبريد الإلكتروني للأطراف المختصة.</p>
+                            <p>دعم التصدير إلى PDF وExcel وCSV، مع تطبيق الهوية البصرية وبيانات القالب الذكي.</p>
+                        </div>
+                    </div>
+                </section>
+                <!-- Settings -->
+                <section id="tab-settings" class="tab-content hidden px-6 py-6 space-y-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold">إعدادات المالية</h2>
+                            <p class="text-text-secondary">تحكم بالقوالب الذكية، الضرائب، العملات، الترقيم، الأذونات، وحقول مخصصة.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="btn-primary" type="button" data-action="save-settings">حفظ الإعدادات</button>
+                            <button class="btn-secondary" type="button" data-action="preview-print">معاينة الطباعة</button>
+                            <button class="btn-ghost" type="button" data-action="view-audit">عرض سجل التدقيق</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">محرر القالب الذكي (WYSIWYG)</h3>
+                                <button class="btn-secondary text-xs" type="button">إدارة المتغيرات</button>
+                            </header>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <label class="form-label">القالب الافتراضي للفواتير</label>
+                                    <select class="form-field">
+                                        <option>القالب الرسمي</option>
+                                        <option>قالب المشاريع الكبرى</option>
+                                        <option>قالب الفروع</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">القالب الافتراضي لعروض الأسعار</label>
+                                    <select class="form-field">
+                                        <option>القالب الذكي</option>
+                                        <option>قالب الفروع</option>
+                                        <option>قالب مبسط</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="form-label">محتوى القالب (HTML)</label>
+                                    <textarea class="form-field" rows="4" placeholder="اكتب أو ألصق HTML القالب مع المتغيرات"></textarea>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="form-label">القواعد الشرطية</label>
+                                    <textarea class="form-field" rows="3" placeholder="مثال: hide(intro) if intro == ''"></textarea>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="form-label">الهوامش والطباعة</label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <input type="number" class="form-field" placeholder="الهامش العلوي (مم)" />
+                                        <input type="number" class="form-field" placeholder="الهامش السفلي (مم)" />
+                                        <input type="number" class="form-field" placeholder="الهامش الأيمن (مم)" />
+                                        <input type="number" class="form-field" placeholder="الهامش الأيسر (مم)" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-background rounded-xl p-4 text-xs text-text-secondary space-y-2">
+                                <p>المتغيرات المتاحة: {{client.name}}, {{client.number}}, {{invoice.number}}, {{quote.number}}, {{project.code}}, {{line.total}}, {{tax.rate}}, {{issue_date}}, {{due_date}}, {{company.logo}}.</p>
+                                <p>يمكن رفع شعار المؤسسة وتحديد الهوية اللونية للتصدير والطباعة.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">الضرائب والعملات والترقيم</h3>
+                                <button class="btn-secondary text-xs" type="button">إضافة حقل جديد</button>
+                            </header>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <label class="form-label">الضرائب المتاحة</label>
+                                    <textarea class="form-field" rows="3" placeholder="مثال: VAT 15%, Service 5%, Withholding 2%"></textarea>
+                                </div>
+                                <div>
+                                    <label class="form-label">العملات المدعومة</label>
+                                    <textarea class="form-field" rows="3" placeholder="SAR, AED, USD"></textarea>
+                                </div>
+                                <div>
+                                    <label class="form-label">بادئة عروض الأسعار</label>
+                                    <input type="text" class="form-field" value="عرض-2024-" />
+                                </div>
+                                <div>
+                                    <label class="form-label">بادئة الفواتير</label>
+                                    <input type="text" class="form-field" value="فاتورة-2024-" />
+                                </div>
+                                <div>
+                                    <label class="form-label">طول الترقيم للعروض</label>
+                                    <input type="number" class="form-field" value="3" />
+                                </div>
+                                <div>
+                                    <label class="form-label">طول الترقيم للفواتير</label>
+                                    <input type="number" class="form-field" value="3" />
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="form-label">حقول مخصصة</label>
+                                    <textarea class="form-field" rows="3" placeholder="مثال: reference_code, site_location, supervisor"></textarea>
+                                </div>
+                            </div>
+                            <div class="bg-background rounded-xl p-4 text-xs text-text-secondary space-y-2">
+                                <p>يمكن ضبط العملة الافتراضية لكل عميل أو مشروع، وتحديد طريقة احتساب الضريبة على مستوى البنود أو الإجمالي.</p>
+                                <p>يدعم النظام الاستيراد من CSV/Excel للمصروفات والفواتير مع مطابقة الحقول المخصصة.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">الأدوار والصلاحيات</h3>
+                                <button class="btn-secondary text-xs" type="button">إدارة المستخدمين</button>
+                            </header>
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-secondary-50 text-text-secondary uppercase text-xs">
+                                    <tr>
+                                        <th class="px-4 py-3 text-right">الدور</th>
+                                        <th class="px-4 py-3 text-right">الصلاحيات</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-border">
+                                    <tr>
+                                        <td class="px-4 py-3 font-semibold">مدير مالي</td>
+                                        <td class="px-4 py-3">صلاحيات كاملة (CRUD + اعتماد مدفوعات + إعدادات متقدمة).</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-semibold">محاسب</td>
+                                        <td class="px-4 py-3">إنشاء وتعديل فواتير ومدفوعات ومصاريف والتزامات، بدون تغيير الإعدادات المتقدمة.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-semibold">مبيعات</td>
+                                        <td class="px-4 py-3">إنشاء وإرسال عروض أسعار وتحويلها لفواتير مسودة فقط.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 font-semibold">قارئ</td>
+                                        <td class="px-4 py-3">عرض وتقارير وتصدير فقط بدون تعديل.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                            <header class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">سجل التدقيق</h3>
+                                <span class="badge badge-info">لحظي</span>
+                            </header>
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-secondary-50 text-text-secondary uppercase text-xs">
+                                    <tr>
+                                        <th class="px-4 py-3 text-right">التاريخ والوقت</th>
+                                        <th class="px-4 py-3 text-right">المستخدم</th>
+                                        <th class="px-4 py-3 text-right">الإجراء</th>
+                                        <th class="px-4 py-3 text-right">التفاصيل</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-border">
+                                    <tr>
+                                        <td class="px-4 py-3">21/04/2024 - 10:25</td>
+                                        <td class="px-4 py-3">خالد الأحمد</td>
+                                        <td class="px-4 py-3">تأكيد دفعة</td>
+                                        <td class="px-4 py-3">فاتورة-2024-091، مبلغ 245,000 ر.س</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3">20/04/2024 - 18:40</td>
+                                        <td class="px-4 py-3">منى السالم</td>
+                                        <td class="px-4 py-3">تحويل عرض إلى فاتورة</td>
+                                        <td class="px-4 py-3">عرض-2024-039 → فاتورة-2024-078</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3">19/04/2024 - 09:15</td>
+                                        <td class="px-4 py-3">أحمد علي</td>
+                                        <td class="px-4 py-3">تعديل قالب ذكي</td>
+                                        <td class="px-4 py-3">إخفاء المقدمة عند الفراغ وإضافة شعار جديد</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="bg-background rounded-xl p-4 text-xs text-text-secondary space-y-2">
+                                <p>يمكن تصفية سجل التدقيق حسب المستخدم، النوع، والتاريخ مع تصدير CSV للحفظ.</p>
+                                <p>يدعم النظام قفل تحرير الفاتورة بعد إرسالها أو دفعها بالكامل.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <!-- Quick create modals -->
+    <div id="invoiceQuickCreateModal" class="finance-modal hidden" aria-hidden="true">
+        <div class="finance-modal__panel" role="dialog" aria-modal="true" aria-labelledby="invoiceQuickCreateTitle">
+            <header class="flex items-start justify-between gap-4 border-b border-border pb-4">
+                <div>
+                    <p id="invoiceQuickCreateTitle" class="text-lg font-semibold">إنشاء فاتورة ضريبية سريعة</p>
+                    <p class="text-sm text-text-secondary">
+                        املأ الحقول الأساسية ثم عدل التفاصيل لاحقًا من قسم الفواتير أو صدّرها مباشرةً للعميل.
+                    </p>
                 </div>
-            </div>
-        </section>
+                <button class="icon-button" type="button" data-close-modal aria-label="إغلاق نافذة إنشاء الفاتورة">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </header>
+            <form class="space-y-5 pt-5" data-form="finance-quick-create" data-success-message="تم إنشاء مسودة فاتورة وربطها بالقائمة الرئيسية." novalidate>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <label class="form-label" for="invoiceQuickClient">العميل</label>
+                        <input id="invoiceQuickClient" name="client" type="text" class="form-field" placeholder="اختر العميل" data-autofocus />
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickClientNumber">رقم العميل</label>
+                        <input id="invoiceQuickClientNumber" name="client_number" type="text" class="form-field" placeholder="C-1024" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickProject">المشروع</label>
+                        <input id="invoiceQuickProject" name="project" type="text" class="form-field" placeholder="رمز المشروع (اختياري)" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickCurrency">العملة</label>
+                        <select id="invoiceQuickCurrency" name="currency" class="form-field">
+                            <option>ريال سعودي</option>
+                            <option>درهم إماراتي</option>
+                            <option>دينار كويتي</option>
+                            <option>دولار أمريكي</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickIssueDate">تاريخ الإصدار</label>
+                        <input id="invoiceQuickIssueDate" name="issue_date" type="date" class="form-field" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickDueDate">تاريخ الاستحقاق</label>
+                        <input id="invoiceQuickDueDate" name="due_date" type="date" class="form-field" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickStatus">الحالة</label>
+                        <select id="invoiceQuickStatus" name="status" class="form-field">
+                            <option value="draft">مسودة</option>
+                            <option value="sent">مرسل</option>
+                            <option value="partial">مدفوع جزئيًا</option>
+                            <option value="paid">مدفوع</option>
+                            <option value="overdue">متأخر</option>
+                            <option value="void">ملغي</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickTax">الضريبة</label>
+                        <select id="invoiceQuickTax" name="tax" class="form-field">
+                            <option>15% ضريبة قيمة مضافة</option>
+                            <option>5% ضريبة خدمات</option>
+                            <option>بدون ضريبة</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="form-label" for="invoiceQuickItems">البنود</label>
+                        <textarea id="invoiceQuickItems" name="items" class="form-field" rows="4" placeholder="الوصف، الكمية، الوحدة، السعر، الخصم، الضريبة…"></textarea>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="form-label" for="invoiceQuickTerms">شروط الدفع</label>
+                        <textarea id="invoiceQuickTerms" name="terms" class="form-field" rows="3" placeholder="مدة السداد، غرامات التأخير، تفاصيل التحويل البنكي"></textarea>
+                    </div>
+                </div>
+                <div class="bg-background border border-dashed border-border rounded-xl p-4 text-xs text-text-secondary space-y-2">
+                    <p class="font-medium text-text-primary">المتغيرات المتاحة للقالب الذكي</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="token">{{client.name}}</span>
+                        <span class="token">{{client.number}}</span>
+                        <span class="token">{{invoice.number}}</span>
+                        <span class="token">{{project.code}}</span>
+                        <span class="token">{{issue_date}}</span>
+                        <span class="token">{{due_date}}</span>
+                        <span class="token">{{line.total}}</span>
+                        <span class="token">{{tax.rate}}</span>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 text-xs text-text-secondary">
+                        <i class="fas fa-bell text-warning"></i>
+                        <span>سيتم إنشاء تذكيرات استحقاق تلقائية 7/3/1 أيام قبل الموعد.</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="btn-primary" type="submit" data-success-message="تم حفظ الفاتورة كمسودة ويمكنك استكمالها لاحقًا.">حفظ كمسودة</button>
+                        <button class="btn-secondary" type="submit" data-success-message="تم إرسال الفاتورة للعميل مع إشعار تلقائي بالتذكيرات.">إرسال فوري</button>
+                        <button class="btn-ghost" type="button" data-close-modal>إلغاء</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="smartQuoteLaunchModal" class="finance-modal hidden" aria-hidden="true">
+        <div class="finance-modal__panel" role="dialog" aria-modal="true" aria-labelledby="smartQuoteLaunchTitle">
+            <header class="flex items-start justify-between gap-4 border-b border-border pb-4">
+                <div>
+                    <p id="smartQuoteLaunchTitle" class="text-lg font-semibold">إطلاق العرض الذكي</p>
+                    <p class="text-sm text-text-secondary">
+                        استخدم القالب الذكي لإعداد عرض سعر قابل للتحويل إلى فاتورة مع نسخة PDF متسقة بصريًا.
+                    </p>
+                </div>
+                <button class="icon-button" type="button" data-close-modal aria-label="إغلاق نافذة العرض الذكي">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </header>
+            <form class="space-y-5 pt-5" data-form="finance-quick-create" data-success-message="تم حفظ مسودة العرض الذكي مع ربط المشروع والعميل." novalidate>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <label class="form-label" for="quoteQuickClient">العميل</label>
+                        <input id="quoteQuickClient" name="client" type="text" class="form-field" placeholder="اسم العميل" data-autofocus />
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickProject">المشروع</label>
+                        <input id="quoteQuickProject" name="project" type="text" class="form-field" placeholder="رمز المشروع (اختياري)" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickIssueDate">تاريخ الإصدار</label>
+                        <input id="quoteQuickIssueDate" name="issue_date" type="date" class="form-field" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickExpiryDate">تاريخ انتهاء الصلاحية</label>
+                        <input id="quoteQuickExpiryDate" name="expiry_date" type="date" class="form-field" />
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="form-label" for="quoteQuickIntro">المقدمة</label>
+                        <textarea id="quoteQuickIntro" name="intro" class="form-field" rows="3" placeholder="تحية العميل وملخص الحل المقترح"></textarea>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="form-label" for="quoteQuickScope">وصف الأعمال</label>
+                        <textarea id="quoteQuickScope" name="scope" class="form-field" rows="3" placeholder="تفاصيل الخدمات أو البنود المقترحة"></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickItems">البنود</label>
+                        <textarea id="quoteQuickItems" name="items" class="form-field" rows="4" placeholder="الوصف، الكمية، الوحدة، السعر، الخصم، الضريبة"></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickTaxes">الضرائب والخصومات</label>
+                        <input id="quoteQuickTaxes" name="tax" type="text" class="form-field" placeholder="مثال: 15% ضريبة + خصم 5%" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickStatus">الحالة</label>
+                        <select id="quoteQuickStatus" name="status" class="form-field">
+                            <option value="draft">مسودة</option>
+                            <option value="sent">مرسل</option>
+                            <option value="accepted">مقبول</option>
+                            <option value="rejected">مرفوض</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickAttachments">مرفقات</label>
+                        <input id="quoteQuickAttachments" name="attachments" type="file" class="form-field" multiple />
+                    </div>
+                </div>
+                <div class="bg-background border border-dashed border-border rounded-xl p-4 space-y-3 text-xs text-text-secondary">
+                    <p class="font-medium text-text-primary">تفعيل القالب الذكي</p>
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" class="accent-primary" checked />
+                        <span>إظهار المقدمة تلقائيًا عند إرسال PDF</span>
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" class="accent-primary" checked />
+                        <span>إدراج وصف الأعمال في الفاتورة عند التحويل</span>
+                    </label>
+                    <div class="flex flex-wrap gap-2 text-[11px]">
+                        <span class="token">{{quote.number}}</span>
+                        <span class="token">{{client.name}}</span>
+                        <span class="token">{{project.code}}</span>
+                        <span class="token">{{line.total}}</span>
+                        <span class="token">{{tax.rate}}</span>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 text-xs text-text-secondary">
+                        <i class="fas fa-rocket text-primary"></i>
+                        <span>يمكن تحويل العرض إلى فاتورة بنقرة واحدة مع الحفاظ على الترقيم.</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="btn-primary" type="submit" data-success-message="تم إرسال العرض الذكي للعميل مع نسخة PDF متوافقة مع الهوية.">حفظ وإرسال</button>
+                        <button class="btn-secondary" type="submit" data-success-message="تم حفظ مسودة العرض الذكي للتعديل لاحقًا دون إرسال.">حفظ كمسودة فقط</button>
+                        <button class="btn-ghost" type="button" data-close-modal>إلغاء</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
-        // Chart configurations
-        let revenueExpensesChart;
-        let cashFlowChart;
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
 
-        // Initialize charts
-        function initializeCharts() {
-            // Revenue vs Expenses Chart
-            const revenueExpensesCtx = document.getElementById('revenueExpensesChart').getContext('2d');
-            revenueExpensesChart = new Chart(revenueExpensesCtx, {
+        const activateTab = (targetId) => {
+            if (!targetId) return;
+
+            tabButtons.forEach((btn) => {
+                const isActive = btn.dataset.target === targetId;
+                btn.classList.toggle('is-active', isActive);
+                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+
+            tabContents.forEach((content) => {
+                content.classList.toggle('hidden', content.id !== targetId);
+            });
+        };
+
+        tabButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                activateTab(button.dataset.target);
+            });
+        });
+
+        const defaultTab = document.querySelector('.tab-button.is-active')?.dataset.target || tabButtons[0]?.dataset.target;
+        if (defaultTab) {
+            activateTab(defaultTab);
+        }
+
+        const runAfterFrame = (callback) => {
+            if (typeof window.requestAnimationFrame === 'function') {
+                window.requestAnimationFrame(callback);
+            } else {
+                setTimeout(callback, 0);
+            }
+        };
+
+        const scrollToFinanceSection = (selector) => {
+            const target = document.querySelector(selector);
+            if (!target) return;
+
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.classList.add('finance-focus-ring');
+            setTimeout(() => target.classList.remove('finance-focus-ring'), 1800);
+        };
+
+        const invoiceModal = document.getElementById('invoiceQuickCreateModal');
+        const quoteModal = document.getElementById('smartQuoteLaunchModal');
+        let activeFinanceModal = null;
+
+        function lockBodyScroll() {
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function unlockBodyScroll() {
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function closeFinanceModal(modal, restoreFocus = true) {
+            if (!modal) return;
+
+            modal.setAttribute('aria-hidden', 'true');
+            setTimeout(() => {
+                if (modal.getAttribute('aria-hidden') === 'true') {
+                    modal.classList.add('hidden');
+                }
+            }, 220);
+
+            if (activeFinanceModal === modal) {
+                activeFinanceModal = null;
+                unlockBodyScroll();
+            }
+
+            const trigger = modal.__trigger;
+            modal.__trigger = null;
+
+            if (restoreFocus && trigger instanceof HTMLElement) {
+                trigger.focus();
+            }
+        }
+
+        function openFinanceModal(modal, trigger) {
+            if (!modal) return;
+
+            if (activeFinanceModal && activeFinanceModal !== modal) {
+                closeFinanceModal(activeFinanceModal, false);
+            }
+
+            modal.classList.remove('hidden');
+            modal.__trigger = trigger || null;
+            activeFinanceModal = modal;
+            lockBodyScroll();
+
+            runAfterFrame(() => {
+                modal.setAttribute('aria-hidden', 'false');
+                const focusTarget = modal.querySelector('[data-autofocus]') || modal.querySelector('input, textarea, select');
+                if (focusTarget instanceof HTMLElement) {
+                    focusTarget.focus();
+                }
+            });
+        }
+
+        [invoiceModal, quoteModal].forEach((modal) => {
+            if (!modal) return;
+
+            modal.addEventListener('mousedown', (event) => {
+                if (event.target === modal) {
+                    closeFinanceModal(modal);
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-close-modal]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.finance-modal');
+                closeFinanceModal(modal);
+            });
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && activeFinanceModal) {
+                closeFinanceModal(activeFinanceModal);
+            }
+        });
+
+        document.querySelectorAll('[data-form="finance-quick-create"]').forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const modal = form.closest('.finance-modal');
+                const submitter = event.submitter;
+                const successMessage = submitter?.dataset.successMessage || form.dataset.successMessage;
+                closeFinanceModal(modal);
+                if (successMessage) {
+                    alert(successMessage);
+                }
+            });
+        });
+
+        const newInvoiceTrigger = document.querySelector('[data-action="new-invoice"]');
+        if (newInvoiceTrigger) {
+            newInvoiceTrigger.addEventListener('click', () => {
+                activateTab('tab-invoices');
+                runAfterFrame(() => {
+                    scrollToFinanceSection('#invoiceQuickForm');
+                });
+                openFinanceModal(invoiceModal, newInvoiceTrigger);
+            });
+        }
+
+        const newQuoteTrigger = document.querySelector('[data-action="new-quote"]');
+        if (newQuoteTrigger) {
+            newQuoteTrigger.addEventListener('click', () => {
+                activateTab('tab-quotes');
+                runAfterFrame(() => {
+                    scrollToFinanceSection('#smartQuoteBuilder');
+                });
+                openFinanceModal(quoteModal, newQuoteTrigger);
+            });
+        }
+
+        const rangeChips = document.querySelectorAll('.range-chip');
+        rangeChips.forEach((chip) => {
+            chip.addEventListener('click', () => {
+                rangeChips.forEach((c) => c.classList.remove('is-active'));
+                chip.classList.add('is-active');
+            });
+        });
+
+        document.querySelectorAll('[data-action="toggle-filters"]').forEach((toggleBtn) => {
+            toggleBtn.addEventListener('click', () => {
+                const targetSelector = toggleBtn.dataset.target;
+                const target = document.querySelector(targetSelector);
+                if (target) {
+                    target.classList.toggle('hidden');
+                }
+            });
+        });
+
+        function setupSearchFiltering(tableId, inputId) {
+            const tableRows = document.querySelectorAll(`#${tableId} tr`);
+            const searchInput = document.getElementById(inputId);
+
+            if (!searchInput) return;
+
+            searchInput.addEventListener('input', () => {
+                const value = searchInput.value.trim().toLowerCase();
+                tableRows.forEach((row) => {
+                    const haystack = row.dataset.search?.toLowerCase() ?? '';
+                    row.classList.toggle('hidden', !haystack.includes(value));
+                });
+            });
+        }
+
+        setupSearchFiltering('invoiceTable', 'invoiceSearch');
+        setupSearchFiltering('quoteTable', 'quoteSearch');
+        setupSearchFiltering('paymentTable', 'paymentSearch');
+        setupSearchFiltering('expenseTable', 'expenseSearch');
+        setupSearchFiltering('commitmentTable', 'commitmentSearch');
+
+        function setupStatusFilters(tableId, containerSelector) {
+            const tableRows = document.querySelectorAll(`#${tableId} tr`);
+            const container = document.querySelector(containerSelector);
+            if (!container) return;
+
+            container.querySelectorAll('.filter-chip').forEach((chip) => {
+                chip.addEventListener('click', () => {
+                    const status = chip.dataset.filter;
+                    container.querySelectorAll('.filter-chip').forEach((c) => c.classList.remove('is-active'));
+                    chip.classList.add('is-active');
+
+                    tableRows.forEach((row) => {
+                        if (!status || status === 'all') {
+                            row.classList.remove('hidden');
+                        } else {
+                            row.classList.toggle('hidden', row.dataset.status !== status);
+                        }
+                    });
+                });
+            });
+        }
+
+        setupStatusFilters('invoiceTable', '#tab-invoices .p-5');
+        setupStatusFilters('quoteTable', '#tab-quotes .p-5');
+        setupStatusFilters('paymentTable', '#tab-payments .p-5');
+        setupStatusFilters('expenseTable', '#tab-expenses .p-5');
+        setupStatusFilters('commitmentTable', '#tab-commitments .p-5');
+
+        const toggleInvoiceIntro = document.getElementById('toggleInvoiceIntro');
+        const toggleInvoiceScope = document.getElementById('toggleInvoiceScope');
+        const invoicePreview = document.getElementById('invoiceTemplatePreview');
+        if (toggleInvoiceIntro && toggleInvoiceScope && invoicePreview) {
+            toggleInvoiceIntro.addEventListener('change', () => {
+                invoicePreview.querySelector('.intro-block').classList.toggle('hidden', !toggleInvoiceIntro.checked);
+            });
+            toggleInvoiceScope.addEventListener('change', () => {
+                invoicePreview.querySelector('.scope-block').classList.toggle('hidden', !toggleInvoiceScope.checked);
+            });
+        }
+
+        const toggleQuoteIntro = document.getElementById('toggleQuoteIntro');
+        const toggleQuoteScope = document.getElementById('toggleQuoteScope');
+        const quotePreview = document.getElementById('quoteTemplatePreview');
+        if (toggleQuoteIntro && toggleQuoteScope && quotePreview) {
+            toggleQuoteIntro.addEventListener('change', () => {
+                quotePreview.querySelector('.quote-intro').classList.toggle('hidden', !toggleQuoteIntro.checked);
+            });
+            toggleQuoteScope.addEventListener('change', () => {
+                quotePreview.querySelector('.quote-scope').classList.toggle('hidden', !toggleQuoteScope.checked);
+            });
+        }
+
+        const timelineCtx = document.getElementById('timelineChart');
+        const clientsCtx = document.getElementById('clientsChart');
+        const expensesCtx = document.getElementById('expensesChart');
+
+        if (timelineCtx) {
+            new Chart(timelineCtx, {
                 type: 'line',
                 data: {
                     labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
-                    datasets: [{
-                        label: 'الإيرادات',
-                        data: [400000, 450000, 380000, 520000, 480000, 600000],
-                        borderColor: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }, {
-                        label: 'المصروفات',
-                        data: [320000, 380000, 300000, 420000, 380000, 450000],
-                        borderColor: '#EF4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
+                    datasets: [
+                        {
+                            label: 'الدخل',
+                            data: [420000, 460000, 510000, 580000, 610000, 660000],
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37,99,235,0.15)',
+                            tension: 0.4,
+                            fill: true,
+                        },
+                        {
+                            label: 'المصروف',
+                            data: [280000, 310000, 340000, 360000, 390000, 405000],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239,68,68,0.12)',
+                            tension: 0.4,
+                            fill: true,
+                        },
+                    ],
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
                     plugins: {
                         legend: {
                             position: 'top',
-                            rtl: true
-                        }
+                            labels: {
+                                font: { family: 'Noto Sans Arabic' },
+                            },
+                        },
                     },
                     scales: {
                         y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toLocaleString('ar-SA') + ' ريال';
-                                }
-                            }
-                        }
-                    }
-                }
+                            ticks: { callback: (value) => `${value.toLocaleString()} ر.س` },
+                        },
+                    },
+                },
             });
+        }
 
-            // Cash Flow Chart
-            const cashFlowCtx = document.getElementById('cashFlowChart').getContext('2d');
-            cashFlowChart = new Chart(cashFlowCtx, {
+        if (clientsCtx) {
+            new Chart(clientsCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
-                    datasets: [{
-                        label: 'التدفق النقدي',
-                        data: [80000, 70000, 80000, 100000, 100000, 150000],
-                        backgroundColor: [
-                            '#3B82F6',
-                            '#10B981',
-                            '#F59E0B',
-                            '#10B981',
-                            '#10B981',
-                            '#10B981'
-                        ],
-                        borderRadius: 6,
-                        borderSkipped: false
-                    }]
+                    labels: ['العقارات المتقدمة', 'عمران الخليج', 'المشاريع المتحدة', 'أساس العمران', 'الأفق'],
+                    datasets: [
+                        {
+                            label: 'إجمالي الدخل',
+                            data: [820000, 760000, 540000, 430000, 295000],
+                            backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#f97316', '#6366f1'],
+                            borderRadius: 12,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                    },
+                    scales: {
+                        x: { ticks: { font: { family: 'Noto Sans Arabic' } } },
+                        y: { ticks: { callback: (value) => `${value.toLocaleString()} ر.س` } },
+                    },
+                },
+            });
+        }
+
+        if (expensesCtx) {
+            new Chart(expensesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['رواتب', 'إيجارات', 'معدات', 'تشغيلية', 'أخرى'],
+                    datasets: [
+                        {
+                            data: [42, 18, 16, 14, 10],
+                            backgroundColor: ['#2563eb', '#f97316', '#10b981', '#6366f1', '#f59e0b'],
+                            borderWidth: 0,
+                        },
+                    ],
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: false
-                        }
+                            position: 'bottom',
+                            labels: { font: { family: 'Noto Sans Arabic' } },
+                        },
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toLocaleString('ar-SA') + ' ريال';
-                                }
-                            }
-                        }
-                    }
-                }
+                },
             });
         }
 
-        // Header action functions
-        function generateTaxInvoice() {
-            window.location.href = 'tax_invoice_generator.html';
-        }
+        document.querySelectorAll('[data-action="duplicate"]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                alert('تم إنشاء نسخة مسودة جديدة مع ترقيم تلقائي وتاريخ اليوم.');
+            });
+        });
 
-        function openComprehensiveInvoices() {
-            window.location.href = 'comprehensive_invoice_management_hub.html';
-        }
+        document.querySelectorAll('[data-action="convert"]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                alert('سيتم تحويل العرض إلى فاتورة مع الحفاظ على البنود والضرائب والخصومات وربط المشروع.');
+            });
+        });
 
-        function openAdvancedQuotationDesigner() {
-            window.location.href = 'advanced_quotation_invoice_designer.html';
-        }
-
-        function generateFinancialReport() {
-            alert('تم إنشاء التقرير المالي الشامل');
-        }
-
-        function toggleNotifications() {
-            alert('إشعارات: 3 فواتير تحتاج متابعة');
-        }
-
-        // Quick action functions
-        function openExpensesCenter() {
-            alert('فتح مركز إدارة المصروفات');
-        }
-
-        function openQuotationsCenter() {
-            window.location.href = 'quotation_management_system.html';
-        }
-
-        function openAccountsCenter() {
-            alert('فتح مركز إدارة الحسابات البنكية');
-        }
-
-        function openPaymentTracking() {
-            window.location.href = 'payment_tracking.html';
-        }
-
-        function openFinancialReports() {
-            window.location.href = 'reports.html';
-        }
-
-        function refreshData() {
-            alert('تم تحديث البيانات المالية');
-            // Refresh charts
-            initializeCharts();
-        }
-
-        function exportData() {
-            alert('تصدير البيانات المالية إلى Excel');
-        }
-
-        // Chart functions
-        function updateChartPeriod(period) {
-            // Update chart data based on selected period
-            alert(`تحديث الرسم البياني للفترة: ${period}`);
-        }
-
-        function exportChart(chartType) {
-            alert(`تصدير الرسم البياني: ${chartType}`);
-        }
-
-        // Activity functions
-        function viewAllActivity() {
-            alert('عرض جميع الأنشطة المالية');
-        }
-
-        function openProjectsManagement() {
-            window.location.href = 'projects_management_center.html';
-        }
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeCharts();
+        document.querySelectorAll('[data-action="record-payment"]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                alert('فتح نموذج تسجيل دفعة مرتبط بالفاتورة والمشروع المختار.');
+            });
         });
     </script>
-<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
-    <script src="../js/session.js" data-login-path="../login.html"></script>
 </body>
 </html>
