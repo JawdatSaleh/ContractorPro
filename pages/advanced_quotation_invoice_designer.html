@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>منشئ عروض الأسعار الذكي - عمران الخليج</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+</head>
+<body class="bg-background font-arabic" style="font-family: 'Tajawal', 'Arial', sans-serif;">
+    <!-- Navigation Sidebar -->
+    <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50 transform transition-transform duration-300" id="sidebar">
+        <div class="p-6 border-b border-border">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-magic text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-text-primary">عمران الخليج</h1>
+                    <p class="text-sm text-text-secondary">منشئ العروض الذكي</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="p-4 space-y-2">
+            <!-- Dashboard -->
+            <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-tachometer-alt w-5"></i>
+                <span class="font-medium">لوحة التحكم</span>
+            </a>
+
+            <!-- Projects Section -->
+            <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-building w-5"></i>
+                <span>المشاريع</span>
+                <i class="fas fa-chevron-left mr-auto text-xs"></i>
+            </a>
+
+            <!-- Finance Section -->
+            <a href="financial_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-chart-line w-5"></i>
+                <span>المالية</span>
+                <i class="fas fa-chevron-left mr-auto text-xs"></i>
+            </a>
+
+            <!-- Employees Section -->
+            <a href="employees_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-users w-5"></i>
+                <span>الموظفين</span>
+                <i class="fas fa-chevron-left mr-auto text-xs"></i>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mr-64 min-h-screen bg-gradient-to-br from-orange-50 to-gray-50">
+        <!-- Top Header -->
+        <header class="bg-white shadow-lg px-6 py-4 border-b-4 border-orange-500">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">منشئ عروض الأسعار الذكي</h1>
+                    <p class="text-gray-600 text-lg">مؤسسة عمران الخليج للمقاولات العامة - نظام إنشاء فواتير وعروض أسعار احترافية</p>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <button class="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all flex items-center gap-2 shadow-lg transform hover:scale-105" onclick="createNewDocument()">
+                        <i class="fas fa-plus"></i>
+                        <span>إنشاء جديد</span>
+                    </button>
+                    <button class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all flex items-center gap-2 shadow-lg" onclick="loadTemplate()">
+                        <i class="fas fa-file-upload"></i>
+                        <span>تحميل قالب</span>
+                    </button>
+                    <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg" onclick="previewDocument()">
+                        <i class="fas fa-eye"></i>
+                        <span>معاينة</span>
+                    </button>
+                    <button class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all flex items-center gap-2 shadow-lg" onclick="exportToPDF()">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>تصدير PDF</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Document Type Selection -->
+        <section class="p-6 bg-white border-b border-gray-200">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-gray-800">نوع المستند</h2>
+                <div class="flex gap-2">
+                    <button class="text-sm bg-orange-100 text-orange-800 px-3 py-1 rounded-md" onclick="resetForm()">
+                        <i class="fas fa-undo ml-1"></i>إعادة تعيين
+                    </button>
+                    <button class="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-md" onclick="saveAsTemplate()">
+                        <i class="fas fa-save ml-1"></i>حفظ كقالب
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-orange-500 transition-all cursor-pointer" onclick="selectDocumentType('quotation')" id="quotation-card">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-orange-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <i class="fas fa-file-contract text-orange-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">عرض سعر أعمال</h3>
+                        <p class="text-gray-600 text-sm">إنشاء عرض سعر احترافي مع المواصفات والأسعار التفصيلية</p>
+                        <div class="mt-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                مؤسسة عمران الخليج للمقاولات العامة
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-green-500 transition-all cursor-pointer" onclick="selectDocumentType('invoice')" id="invoice-card">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+                            <i class="fas fa-file-invoice-dollar text-green-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">فاتورة ضريبية</h3>
+                        <p class="text-gray-600 text-sm">إنشاء فاتورة ضريبية متوافقة مع نظام فاتورة (ZATCA)</p>
+                        <div class="mt-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                متوافق مع اللوائح السعودية
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Document Configuration -->
+        <section class="p-6" id="document-config" style="display: none;">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Panel - Document Settings -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Company Information -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-building text-orange-600"></i>
+                            معلومات الشركة
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">شعار الشركة</label>
+                                <div class="flex items-center gap-3">
+                                    <input type="file" id="company-logo" accept="image/*" class="hidden" onchange="uploadLogo(this)" />
+                                    <button class="bg-gray-100 border border-gray-300 px-4 py-2 rounded-lg text-sm hover:bg-gray-200 transition-fast" onclick="document.getElementById('company-logo').click()">
+                                        <i class="fas fa-upload ml-2"></i>رفع شعار
+                                    </button>
+                                    <div id="logo-preview" class="w-12 h-12 bg-gray-100 rounded border flex items-center justify-center">
+                                        <i class="fas fa-image text-gray-400"></i>
+                                    </div>
+                                    <button class="text-red-500 hover:text-red-700 text-sm" onclick="clearLogo()" id="clear-logo" style="display: none;">
+                                        <i class="fas fa-times"></i> إزالة
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">اسم الشركة</label>
+                                <input type="text" value="مؤسسة عمران الخليج للمقاولات العامة" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-fast" id="company-name" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">رقم السجل التجاري</label>
+                                <input type="text" value="5900121203" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-fast" id="company-cr" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">الرقم الضريبي</label>
+                                <input type="text" value="311181325200003" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-fast" id="company-vat" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">خلفية A4</label>
+                                <div class="space-y-3">
+                                    <input type="file" id="background-image" accept="image/*" class="hidden" onchange="uploadBackground(this)" />
+                                    <button class="w-full bg-orange-100 border border-orange-300 px-4 py-3 rounded-lg text-sm hover:bg-orange-200 transition-fast flex items-center justify-center gap-2" onclick="document.getElementById('background-image').click()">
+                                        <i class="fas fa-image"></i>
+                                        <span>رفع خلفية A4</span>
+                                    </button>
+                                    <div id="background-preview" class="hidden bg-gray-50 border border-gray-200 rounded-lg p-3">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2">
+                                                <i class="fas fa-file-image text-orange-600"></i>
+                                                <span class="text-sm text-gray-700" id="background-filename">background.jpg</span>
+                                            </div>
+                                            <button class="text-red-500 hover:text-red-700 text-sm" onclick="clearBackground()">
+                                                <i class="fas fa-times"></i> إزالة
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500">يفضل استخدام صورة بقياس A4 (2480x3508 بكسل)</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">الختم الرسمي</label>
+                                <div class="space-y-3">
+                                    <input type="file" id="company-stamp" accept="image/*" class="hidden" onchange="uploadStamp(this)" />
+                                    <button class="w-full bg-blue-100 border border-blue-300 px-4 py-3 rounded-lg text-sm hover:bg-blue-200 transition-fast flex items-center justify-center gap-2" onclick="document.getElementById('company-stamp').click()">
+                                        <i class="fas fa-stamp"></i>
+                                        <span>رفع الختم الرسمي</span>
+                                    </button>
+                                    <div id="stamp-preview-container" class="hidden bg-gray-50 border border-gray-200 rounded-lg p-3">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <div id="stamp-preview" class="w-12 h-12 bg-white border rounded flex items-center justify-center">
+                                                    <i class="fas fa-stamp text-blue-600"></i>
+                                                </div>
+                                                <div>
+                                                    <span class="text-sm font-medium text-gray-700" id="stamp-filename">stamp.png</span>
+                                                    <p class="text-xs text-gray-500">الختم الرسمي</p>
+                                                </div>
+                                            </div>
+                                            <button class="text-red-500 hover:text-red-700 text-sm" onclick="clearStamp()">
+                                                <i class="fas fa-times"></i> إزالة
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500">يفضل استخدام صورة PNG شفافة للختم</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">التوقيع</label>
+                                <div class="space-y-3">
+                                    <input type="file" id="company-signature" accept="image/*" class="hidden" onchange="uploadSignature(this)" />
+                                    <button class="w-full bg-green-100 border border-green-300 px-4 py-3 rounded-lg text-sm hover:bg-green-200 transition-fast flex items-center justify-center gap-2" onclick="document.getElementById('company-signature').click()">
+                                        <i class="fas fa-signature"></i>
+                                        <span>رفع التوقيع</span>
+                                    </button>
+                                    <div id="signature-preview-container" class="hidden bg-gray-50 border border-gray-200 rounded-lg p-3">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <div id="signature-preview" class="w-16 h-8 bg-white border rounded flex items-center justify-center">
+                                                    <i class="fas fa-signature text-green-600"></i>
+                                                </div>
+                                                <div>
+                                                    <span class="text-sm font-medium text-gray-700" id="signature-filename">signature.png</span>
+                                                    <p class="text-xs text-gray-500">التوقيع الرسمي</p>
+                                                </div>
+                                            </div>
+                                            <button class="text-red-500 hover:text-red-700 text-sm" onclick="clearSignature()">
+                                                <i class="fas fa-times"></i> إزالة
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500">يفضل استخدام صورة PNG شفافة للتوقيع</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Information -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-user-tie text-blue-600"></i>
+                            معلومات العميل
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">اسم العميل</label>
+                                <input type="text" placeholder="أدخل اسم العميل" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-fast" id="client-name" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">المدينة</label>
+                                <input type="text" placeholder="أدخل اسم المدينة" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-fast" id="client-city" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">نوع المشروع</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-fast" id="project-type">
+                                    <option value>اختر نوع المشروع</option>
+                                    <option value="سكني">سكني - فيلا</option>
+                                    <option value="تجاري">تجاري - مجمع</option>
+                                    <option value="إداري">إداري - مكاتب</option>
+                                    <option value="صناعي">صناعي - مستودعات</option>
+                                    <option value="تشطيب">أعمال تشطيب</option>
+                                    <option value="ترميم">أعمال ترميم</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">تاريخ العرض / الفاتورة</label>
+                                <input type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-fast" id="document-date" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">رقم المرجع</label>
+                                <input type="text" placeholder="QUO-2025-001" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-fast" id="document-reference" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VAT Settings -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-percentage text-green-600"></i>
+                            إعدادات الضريبة
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" id="include-vat" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500" onchange="toggleVAT()" />
+                                <label for="include-vat" class="text-sm font-medium text-gray-700">السعر شامل ضريبة القيمة المضافة</label>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">نسبة الضريبة (%)</label>
+                                <input type="number" value="15" min="0" max="100" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-fast" id="vat-rate" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">مدة صلاحية العرض (أيام)</label>
+                                <input type="number" value="30" min="1" max="365" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-fast" id="validity-period" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center Panel - Document Content -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Introduction Text -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-align-right text-purple-600"></i>
+                            نص المقدمة
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">المقدمة</label>
+                                <textarea rows="4" placeholder="يسرنا أن نقدم لكم عرض سعر أعمال [نوع الأعمال] في مدينة [اسم المدينة]، وذلك بحسب المخططات والمواصفات الفنية المعتمدة أدناه، وبما يحقق أعلى معايير الجودة والاستدامة." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition-fast resize-none" id="introduction-text"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Work Specifications -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <i class="fas fa-list-ul text-indigo-600"></i>
+                                مواصفات الأعمال
+                            </h3>
+                            <button class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-md text-sm hover:bg-indigo-200 transition-fast" onclick="addSpecification()">
+                                <i class="fas fa-plus ml-1"></i>إضافة بند
+                            </button>
+                        </div>
+                        
+                        <div id="specifications-list" class="space-y-2">
+                            <div class="flex items-center gap-2 specification-item">
+                                <span class="text-gray-400">•</span>
+                                <input type="text" value="تنفيذ جميع البنود حسب المخططات الهندسية والمواصفات الفنية" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-fast" />
+                                <button class="text-red-500 hover:text-red-700" onclick="removeSpecification(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2 specification-item">
+                                <span class="text-gray-400">•</span>
+                                <input type="text" value="توريد كافة المواد المطلوبة (حديد – خرسانة – بلوك – أخشاب)" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-fast" />
+                                <button class="text-red-500 hover:text-red-700" onclick="removeSpecification(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2 specification-item">
+                                <span class="text-gray-400">•</span>
+                                <input type="text" value="تنفيذ الخرسانة العادية للأساسات طبقاً للمخططات" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-fast" />
+                                <button class="text-red-500 hover:text-red-700" onclick="removeSpecification(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2 specification-item">
+                                <span class="text-gray-400">•</span>
+                                <input type="text" value="استخدام بلوك بركاني للعزل الحراري في الجدران الخارجية" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-fast" />
+                                <button class="text-red-500 hover:text-red-700" onclick="removeSpecification(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2 specification-item">
+                                <span class="text-gray-400">•</span>
+                                <input type="text" value="الالتزام بكود البناء السعودي" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-fast" />
+                                <button class="text-red-500 hover:text-red-700" onclick="removeSpecification(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Table -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <i class="fas fa-table text-green-600"></i>
+                                جدول الأسعار
+                            </h3>
+                            <button class="bg-green-100 text-green-800 px-3 py-1 rounded-md text-sm hover:bg-green-200 transition-fast" onclick="addTableRow()">
+                                <i class="fas fa-plus ml-1"></i>إضافة بند
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse border border-gray-300">
+                                <thead>
+                                    <tr class="bg-gray-50">
+                                        <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 text-center w-12">م</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 text-center w-32">البند</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 text-center">الوصف</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 text-center w-20">الوحدة</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 text-center w-20">الكمية</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 text-center w-24">السعر/وحدة</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 text-center w-24">الإجمالي</th>
+                                        <th class="border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 text-center w-12">حذف</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pricing-table-body">
+                                    <tr class="pricing-row">
+                                        <td class="border border-gray-300 px-2 py-1 text-center">1</td>
+                                        <td class="border border-gray-300 px-2 py-1">
+                                            <input type="text" value="أعمال الحفر" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm" />
+                                        </td>
+                                        <td class="border border-gray-300 px-2 py-1">
+                                            <input type="text" value="حفر أساسات حسب المخططات" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm" />
+                                        </td>
+                                        <td class="border border-gray-300 px-2 py-1">
+                                            <input type="text" value="م³" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm text-center" />
+                                        </td>
+                                        <td class="border border-gray-300 px-2 py-1">
+                                            <input type="number" value="150" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm text-center quantity-input" onchange="calculateRowTotal(this)" />
+                                        </td>
+                                        <td class="border border-gray-300 px-2 py-1">
+                                            <input type="number" value="25" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm text-center price-input" onchange="calculateRowTotal(this)" />
+                                        </td>
+                                        <td class="border border-gray-300 px-2 py-1 text-center row-total">3,750</td>
+                                        <td class="border border-gray-300 px-2 py-1 text-center">
+                                            <button class="text-red-500 hover:text-red-700" onclick="removeTableRow(this)">
+                                                <i class="fas fa-trash text-xs"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr class="pricing-row">
+                                        <td class="border border-gray-300 px-2 py-1 text-center">2</td>
+                                        <td class="border border-gray-300 px-2 py-1">
+                                            <input type="text" value="أعمال الخرسانة" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm" />
+                                        </td>
+                                        <td class="border border-gray-300 px-2 py-1">
+                                            <input type="text" value="صب خرسانة عادية للأساسات" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm" />
+                                        </td>
+                                        <td class="border border-gray-300 px-2 py-1">
+                                            <input type="text" value="م³" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm text-center" />
+                                        </td>
+                                        <td class="border border-gray-300 px-2 py-1">
+                                            <input type="number" value="120" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm text-center quantity-input" onchange="calculateRowTotal(this)" />
+                                        </td>
+                                        <td class="border border-gray-300 px-2 py-1">
+                                            <input type="number" value="350" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm text-center price-input" onchange="calculateRowTotal(this)" />
+                                        </td>
+                                        <td class="border border-gray-300 px-2 py-1 text-center row-total">42,000</td>
+                                        <td class="border border-gray-300 px-2 py-1 text-center">
+                                            <button class="text-red-500 hover:text-red-700" onclick="removeTableRow(this)">
+                                                <i class="fas fa-trash text-xs"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Totals Section -->
+                        <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <span class="font-medium">المجموع الفرعي:</span>
+                                        <span id="subtotal">45,750 ريال</span>
+                                    </div>
+                                    <div class="flex justify-between" id="vat-section" style="display: none;">
+                                        <span class="font-medium">ضريبة القيمة المضافة (<span id="vat-percentage">15</span>%):</span>
+                                        <span id="vat-amount">6,862.50 ريال</span>
+                                    </div>
+                                    <div class="flex justify-between border-t pt-2">
+                                        <span class="font-bold text-lg">الإجمالي النهائي:</span>
+                                        <span id="grand-total" class="font-bold text-lg text-green-600">45,750 ريال سعودي</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs text-gray-600" id="vat-note">غير شامل ضريبة القيمة المضافة</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-sticky-note text-yellow-600"></i>
+                            ملاحظات إضافية
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">ملاحظات عامة</label>
+                                <textarea rows="3" placeholder="أضف أي ملاحظات أو شروط إضافية هنا..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 outline-none transition-fast resize-none" id="additional-notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Document Preview Modal -->
+        <div id="preview-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800">معاينة المستند</h3>
+                    <button class="text-gray-500 hover:text-gray-700" onclick="closePreview()">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div id="document-preview" class="p-6" style="font-family: 'Tajawal', 'Arial', sans-serif;">
+                    <!-- Preview content will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDocumentType = '';
+        let rowCounter = 2;
+        
+        // Store uploaded assets
+        let uploadedAssets = {
+            logo: null,
+            background: null,
+            stamp: null,
+            signature: null
+        };
+
+        // Set today's date as default
+        document.getElementById('document-date').value = new Date().toISOString().split('T')[0];
+
+        // Generate default reference number
+        generateReferenceNumber();
+
+        function selectDocumentType(type) {
+            currentDocumentType = type;
+            
+            // Reset card styles
+            document.getElementById('quotation-card').className = 'border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-orange-500 transition-all cursor-pointer';
+            document.getElementById('invoice-card').className = 'border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-green-500 transition-all cursor-pointer';
+            
+            // Highlight selected card
+            if (type === 'quotation') {
+                document.getElementById('quotation-card').className = 'border-2 border-orange-500 bg-orange-50 rounded-xl p-6 transition-all cursor-pointer';
+            } else {
+                document.getElementById('invoice-card').className = 'border-2 border-green-500 bg-green-50 rounded-xl p-6 transition-all cursor-pointer';
+            }
+            
+            // Show configuration section
+            document.getElementById('document-config').style.display = 'block';
+            
+            // Update form fields based on type
+            updateFormForDocumentType(type);
+            
+            // Auto-fill introduction
+            updateIntroductionText();
+        }
+
+        function updateFormForDocumentType(type) {
+            if (type === 'quotation') {
+                document.getElementById('document-reference').placeholder = 'QUO-2025-001';
+                generateReferenceNumber('QUO');
+            } else {
+                document.getElementById('document-reference').placeholder = 'INV-2025-001';
+                generateReferenceNumber('INV');
+            }
+        }
+
+        function generateReferenceNumber(prefix = 'QUO') {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const random = Math.floor(Math.random() * 999) + 1;
+            
+            document.getElementById('document-reference').value = `${prefix}-${year}-${String(random).padStart(3, '0')}`;
+        }
+
+        function updateIntroductionText() {
+            const clientName = document.getElementById('client-name').value || '[اسم العميل]';
+            const clientCity = document.getElementById('client-city').value || '[اسم المدينة]';
+            const projectType = document.getElementById('project-type').value || '[نوع الأعمال]';
+            
+            let introText = '';
+            if (currentDocumentType === 'quotation') {
+                introText = `يسرنا أن نقدم لكم عرض سعر أعمال ${projectType} في مدينة ${clientCity}، وذلك بحسب المخططات والمواصفات الفنية المعتمدة أدناه، وبما يحقق أعلى معايير الجودة والاستدامة.`;
+            } else {
+                introText = `نتقدم إليكم بفاتورة ضريبية لأعمال ${projectType} المنجزة في مدينة ${clientCity}، وفقاً للمواصفات والشروط المتفق عليها.`;
+            }
+            
+            document.getElementById('introduction-text').value = introText;
+        }
+
+        // Update introduction when client info changes
+        document.getElementById('client-name').addEventListener('input', updateIntroductionText);
+        document.getElementById('client-city').addEventListener('input', updateIntroductionText);
+        document.getElementById('project-type').addEventListener('change', updateIntroductionText);
+
+        // Enhanced file upload functions
+        function uploadLogo(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('يرجى اختيار ملف صورة صالح');
+                    return;
+                }
+                
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('حجم الملف كبير جداً. يرجى اختيار صورة أصغر من 5 ميجابايت');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedAssets.logo = e.target.result;
+                    const preview = document.getElementById('logo-preview');
+                    preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-contain rounded" alt="شعار الشركة">`;
+                    document.getElementById('clear-logo').style.display = 'inline-block';
+                    showSuccessMessage('تم رفع الشعار بنجاح');
+                };
+                reader.onerror = function() {
+                    alert('حدث خطأ في قراءة الملف. يرجى المحاولة مرة أخرى');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function uploadBackground(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('يرجى اختيار ملف صورة صالح');
+                    return;
+                }
+                
+                // Validate file size (max 10MB for background)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('حجم الملف كبير جداً. يرجى اختيار صورة أصغر من 10 ميجابايت');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedAssets.background = e.target.result;
+                    const preview = document.getElementById('background-preview');
+                    const filename = document.getElementById('background-filename');
+                    
+                    filename.textContent = file.name;
+                    preview.classList.remove('hidden');
+                    showSuccessMessage('تم رفع خلفية A4 بنجاح');
+                };
+                reader.onerror = function() {
+                    alert('حدث خطأ في قراءة الملف. يرجى المحاولة مرة أخرى');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function uploadStamp(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('يرجى اختيار ملف صورة صالح');
+                    return;
+                }
+                
+                // Validate file size (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('حجم الملف كبير جداً. يرجى اختيار صورة أصغر من 2 ميجابايت');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedAssets.stamp = e.target.result;
+                    const preview = document.getElementById('stamp-preview');
+                    const filename = document.getElementById('stamp-filename');
+                    const container = document.getElementById('stamp-preview-container');
+                    
+                    preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-contain" alt="الختم الرسمي">`;
+                    filename.textContent = file.name;
+                    container.classList.remove('hidden');
+                    showSuccessMessage('تم رفع الختم بنجاح');
+                };
+                reader.onerror = function() {
+                    alert('حدث خطأ في قراءة الملف. يرجى المحاولة مرة أخرى');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function uploadSignature(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    alert('يرجى اختيار ملف صورة صالح');
+                    return;
+                }
+                
+                // Validate file size (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('حجم الملف كبير جداً. يرجى اختيار صورة أصغر من 2 ميجابايت');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedAssets.signature = e.target.result;
+                    const preview = document.getElementById('signature-preview');
+                    const filename = document.getElementById('signature-filename');
+                    const container = document.getElementById('signature-preview-container');
+                    
+                    preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-contain" alt="التوقيع">`;
+                    filename.textContent = file.name;
+                    container.classList.remove('hidden');
+                    showSuccessMessage('تم رفع التوقيع بنجاح');
+                };
+                reader.onerror = function() {
+                    alert('حدث خطأ في قراءة الملف. يرجى المحاولة مرة أخرى');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Clear functions
+        function clearLogo() {
+            uploadedAssets.logo = null;
+            document.getElementById('logo-preview').innerHTML = '<i class="fas fa-image text-gray-400"></i>';
+            document.getElementById('clear-logo').style.display = 'none';
+            document.getElementById('company-logo').value = '';
+            showSuccessMessage('تم إزالة الشعار');
+        }
+
+        function clearBackground() {
+            uploadedAssets.background = null;
+            document.getElementById('background-preview').classList.add('hidden');
+            document.getElementById('background-image').value = '';
+            showSuccessMessage('تم إزالة خلفية A4');
+        }
+
+        function clearStamp() {
+            uploadedAssets.stamp = null;
+            document.getElementById('stamp-preview').innerHTML = '<i class="fas fa-stamp text-blue-600"></i>';
+            document.getElementById('stamp-preview-container').classList.add('hidden');
+            document.getElementById('company-stamp').value = '';
+            showSuccessMessage('تم إزالة الختم');
+        }
+
+        function clearSignature() {
+            uploadedAssets.signature = null;
+            document.getElementById('signature-preview').innerHTML = '<i class="fas fa-signature text-green-600"></i>';
+            document.getElementById('signature-preview-container').classList.add('hidden');
+            document.getElementById('company-signature').value = '';
+            showSuccessMessage('تم إزالة التوقيع');
+        }
+
+        // Success message function
+        function showSuccessMessage(message) {
+            // Create temporary success message
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300';
+            successDiv.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(successDiv);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        function addSpecification() {
+            const list = document.getElementById('specifications-list');
+            const newSpec = document.createElement('div');
+            newSpec.className = 'flex items-center gap-2 specification-item';
+            newSpec.innerHTML = `
+                <span class="text-gray-400">•</span>
+                <input type="text" placeholder="أدخل مواصفة جديدة" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-fast">
+                <button class="text-red-500 hover:text-red-700" onclick="removeSpecification(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            list.appendChild(newSpec);
+        }
+
+        function removeSpecification(button) {
+            if (document.querySelectorAll('.specification-item').length > 1) {
+                button.parentElement.remove();
+            } else {
+                alert('يجب الاحتفاظ ببند واحد على الأقل');
+            }
+        }
+
+        function addTableRow() {
+            rowCounter++;
+            const tableBody = document.getElementById('pricing-table-body');
+            const newRow = document.createElement('tr');
+            newRow.className = 'pricing-row';
+            newRow.innerHTML = `
+                <td class="border border-gray-300 px-2 py-1 text-center">${rowCounter}</td>
+                <td class="border border-gray-300 px-2 py-1">
+                    <input type="text" placeholder="البند" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm">
+                </td>
+                <td class="border border-gray-300 px-2 py-1">
+                    <input type="text" placeholder="الوصف" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm">
+                </td>
+                <td class="border border-gray-300 px-2 py-1">
+                    <input type="text" placeholder="الوحدة" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm text-center">
+                </td>
+                <td class="border border-gray-300 px-2 py-1">
+                    <input type="number" value="0" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm text-center quantity-input" onchange="calculateRowTotal(this)">
+                </td>
+                <td class="border border-gray-300 px-2 py-1">
+                    <input type="number" value="0" class="w-full px-2 py-1 border-0 focus:ring-0 outline-none text-sm text-center price-input" onchange="calculateRowTotal(this)">
+                </td>
+                <td class="border border-gray-300 px-2 py-1 text-center row-total">0</td>
+                <td class="border border-gray-300 px-2 py-1 text-center">
+                    <button class="text-red-500 hover:text-red-700" onclick="removeTableRow(this)">
+                        <i class="fas fa-trash text-xs"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(newRow);
+            updateTableNumbers();
+        }
+
+        function removeTableRow(button) {
+            if (document.querySelectorAll('.pricing-row').length > 1) {
+                button.closest('tr').remove();
+                updateTableNumbers();
+                calculateTotals();
+            } else {
+                alert('يجب الاحتفاظ ببند واحد على الأقل');
+            }
+        }
+
+        function updateTableNumbers() {
+            const rows = document.querySelectorAll('.pricing-row');
+            rows.forEach((row, index) => {
+                row.cells[0].textContent = index + 1;
+            });
+            rowCounter = rows.length;
+        }
+
+        function calculateRowTotal(input) {
+            const row = input.closest('tr');
+            const quantity = parseFloat(row.querySelector('.quantity-input').value) || 0;
+            const price = parseFloat(row.querySelector('.price-input').value) || 0;
+            const total = quantity * price;
+            
+            row.querySelector('.row-total').textContent = total.toLocaleString('ar-SA');
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            const rows = document.querySelectorAll('.pricing-row');
+            let subtotal = 0;
+            
+            rows.forEach(row => {
+                const quantity = parseFloat(row.querySelector('.quantity-input').value) || 0;
+                const price = parseFloat(row.querySelector('.price-input').value) || 0;
+                subtotal += quantity * price;
+            });
+            
+            const vatRate = parseFloat(document.getElementById('vat-rate').value) || 15;
+            const includeVat = document.getElementById('include-vat').checked;
+            
+            let vatAmount = 0;
+            let grandTotal = subtotal;
+            
+            if (includeVat) {
+                vatAmount = subtotal * (vatRate / 100);
+                grandTotal = subtotal + vatAmount;
+            }
+            
+            document.getElementById('subtotal').textContent = subtotal.toLocaleString('ar-SA') + ' ريال';
+            document.getElementById('vat-amount').textContent = vatAmount.toLocaleString('ar-SA') + ' ريال';
+            document.getElementById('vat-percentage').textContent = vatRate;
+            document.getElementById('grand-total').textContent = grandTotal.toLocaleString('ar-SA') + ' ريال سعودي';
+            
+            // Update VAT note
+            const vatNote = includeVat ? 'شامل ضريبة القيمة المضافة' : 'غير شامل ضريبة القيمة المضافة';
+            document.getElementById('vat-note').textContent = vatNote;
+        }
+
+        function toggleVAT() {
+            const includeVat = document.getElementById('include-vat').checked;
+            const vatSection = document.getElementById('vat-section');
+            
+            if (includeVat) {
+                vatSection.style.display = 'flex';
+            } else {
+                vatSection.style.display = 'none';
+            }
+            
+            calculateTotals();
+        }
+
+        function previewDocument() {
+            if (!currentDocumentType) {
+                alert('يرجى اختيار نوع المستند أولاً');
+                return;
+            }
+            
+            generatePreview();
+            document.getElementById('preview-modal').classList.remove('hidden');
+        }
+
+        function generatePreview() {
+            const preview = document.getElementById('document-preview');
+            const companyName = document.getElementById('company-name').value;
+            const companyCr = document.getElementById('company-cr').value;
+            const companyVat = document.getElementById('company-vat').value;
+            const clientName = document.getElementById('client-name').value;
+            const clientCity = document.getElementById('client-city').value;
+            const projectType = document.getElementById('project-type').value;
+            const documentDate = document.getElementById('document-date').value;
+            const documentRef = document.getElementById('document-reference').value;
+            const introText = document.getElementById('introduction-text').value;
+            const additionalNotes = document.getElementById('additional-notes').value;
+            const validityPeriod = document.getElementById('validity-period').value;
+            
+            const documentTitle = currentDocumentType === 'quotation' ? 
+                'عرض سعر أعمال' : 'فاتورة ضريبية';
+            
+            // Build background style
+            let backgroundStyle = '';
+            if (uploadedAssets.background) {
+                backgroundStyle = `
+                    background-image: url('${uploadedAssets.background}');
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                `;
+            }
+            
+            let previewHTML = `
+                <div class="max-w-4xl mx-auto bg-white" style="min-height: 297mm; font-family: 'Tajawal', 'Arial', sans-serif; ${backgroundStyle}">
+                    <!-- Page 1 - Cover Page -->
+                    <div class="page-break" style="page-break-after: always; min-height: 297mm; position: relative;">
+                        <!-- Header -->
+                        <div class="text-center mb-8 border-b-4 border-orange-500 pb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600">C.R: ${companyCr}</p>
+                                    <p class="text-sm text-gray-600">VAT: ${companyVat}</p>
+                                </div>
+                                <div>
+                                    ${uploadedAssets.logo ? 
+                                        `<img src="${uploadedAssets.logo}" class="w-16 h-16 object-contain" alt="شعار الشركة">` :
+                                        '<div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center"><i class="fas fa-building text-gray-400"></i></div>'
+                                    }
+                                </div>
+                            </div>
+                            <h1 class="text-3xl font-bold text-orange-600 mb-2">${documentTitle}</h1>
+                            <h2 class="text-xl font-medium text-gray-800">${companyName}</h2>
+                        </div>
+                        
+                        <!-- Document Info -->
+                        <div class="grid grid-cols-2 gap-6 mb-8">
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-2">معلومات المستند:</h3>
+                                <p class="text-sm"><strong>رقم المرجع:</strong> ${documentRef}</p>
+                                <p class="text-sm"><strong>التاريخ:</strong> ${new Date(documentDate).toLocaleDateString('ar-SA')}</p>
+                                ${currentDocumentType === 'quotation' ? `<p class="text-sm"><strong>صالح لمدة:</strong> ${validityPeriod} يوم</p>` : ''}
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-2">معلومات العميل:</h3>
+                                <p class="text-sm"><strong>العميل:</strong> ${clientName}</p>
+                                <p class="text-sm"><strong>المدينة:</strong> ${clientCity}</p>
+                                <p class="text-sm"><strong>نوع المشروع:</strong> ${projectType}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Client Address -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4">إلى السادة / ${clientName}</h3>
+                            <h4 class="text-base font-medium text-gray-700">المحترم</h4>
+                        </div>
+                        
+                        <!-- Introduction -->
+                        <div class="mb-8">
+                            <p class="text-base leading-relaxed text-gray-700">${introText}</p>
+                        </div>
+                        
+                        <!-- Work Specifications -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-bold text-orange-600 mb-4">مواصفات الأعمال</h3>
+                            <ul class="space-y-2">
+        `;
+            
+            // Add specifications
+            const specifications = document.querySelectorAll('.specification-item input');
+            specifications.forEach(spec => {
+                if (spec.value.trim()) {
+                    previewHTML += `<li class="text-sm text-gray-700">• ${spec.value}</li>`;
+                }
+            });
+            
+            previewHTML += `
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Page 2 - Pricing -->
+                    <div class="page-break" style="min-height: 297mm; ${backgroundStyle}">
+                        <div class="text-center mb-6 border-b-2 border-orange-500 pb-4">
+                            <h2 class="text-2xl font-bold text-orange-600">الأسعار</h2>
+                            <p class="text-sm text-gray-600 mt-2">الأسعار التالية بعد معاينة الموقع وبناءً على المواصفات الموضحة أعلاه:</p>
+                        </div>
+                        
+                        <!-- Pricing Table -->
+                        <div class="mb-8">
+                            <table class="w-full border-collapse border border-gray-400">
+                                <thead>
+                                    <tr class="bg-orange-100">
+                                        <th class="border border-gray-400 px-2 py-2 text-sm font-bold">م</th>
+                                        <th class="border border-gray-400 px-2 py-2 text-sm font-bold">البند</th>
+                                        <th class="border border-gray-400 px-2 py-2 text-sm font-bold">الوصف</th>
+                                        <th class="border border-gray-400 px-2 py-2 text-sm font-bold">الوحدة</th>
+                                        <th class="border border-gray-400 px-2 py-2 text-sm font-bold">الكمية</th>
+                                        <th class="border border-gray-400 px-2 py-2 text-sm font-bold">السعر للوحدة</th>
+                                        <th class="border border-gray-400 px-2 py-2 text-sm font-bold">الإجمالي</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+        `;
+            
+            // Add table rows
+            const tableRows = document.querySelectorAll('.pricing-row');
+            tableRows.forEach((row, index) => {
+                const cells = row.cells;
+                const item = cells[1].querySelector('input').value;
+                const description = cells[2].querySelector('input').value;
+                const unit = cells[3].querySelector('input').value;
+                const quantity = cells[4].querySelector('input').value;
+                const price = cells[5].querySelector('input').value;
+                const total = cells[6].textContent;
+                
+                previewHTML += `
+                    <tr>
+                        <td class="border border-gray-400 px-2 py-2 text-sm text-center">${index + 1}</td>
+                        <td class="border border-gray-400 px-2 py-2 text-sm">${item}</td>
+                        <td class="border border-gray-400 px-2 py-2 text-sm">${description}</td>
+                        <td class="border border-gray-400 px-2 py-2 text-sm text-center">${unit}</td>
+                        <td class="border border-gray-400 px-2 py-2 text-sm text-center">${quantity}</td>
+                        <td class="border border-gray-400 px-2 py-2 text-sm text-center">${price}</td>
+                        <td class="border border-gray-400 px-2 py-2 text-sm text-center">${total}</td>
+                    </tr>
+                `;
+            });
+            
+            const subtotal = document.getElementById('subtotal').textContent;
+            const vatAmount = document.getElementById('vat-amount').textContent;
+            const grandTotal = document.getElementById('grand-total').textContent;
+            const includeVat = document.getElementById('include-vat').checked;
+            const vatNote = document.getElementById('vat-note').textContent;
+            
+            previewHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Totals -->
+                        <div class="bg-gray-50 p-4 rounded-lg mb-8">
+                            <div class="text-right space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="font-medium">المجموع الفرعي:</span>
+                                    <span>${subtotal}</span>
+                                </div>
+        `;
+            
+            if (includeVat) {
+                previewHTML += `
+                                <div class="flex justify-between">
+                                    <span class="font-medium">ضريبة القيمة المضافة (${document.getElementById('vat-percentage').textContent}%):</span>
+                                    <span>${vatAmount}</span>
+                                </div>
+            `;
+            }
+            
+            previewHTML += `
+                                <div class="flex justify-between border-t pt-2">
+                                    <span class="font-bold text-lg">الإجمالي النهائي:</span>
+                                    <span class="font-bold text-lg text-orange-600">${grandTotal}</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-2">${vatNote}</p>
+                            </div>
+                        </div>
+        `;
+        
+        if (additionalNotes) {
+            previewHTML += `
+                    <!-- Additional Notes -->
+                    <div class="mb-8">
+                        <h3 class="font-bold text-gray-800 mb-2">ملاحظات:</h3>
+                        <p class="text-sm text-gray-700">${additionalNotes}</p>
+                    </div>
+            `;
+        }
+        
+        previewHTML += `
+                    <!-- Footer -->
+                    <div class="mt-12 text-center">
+                        <div class="border-t-2 border-orange-500 pt-6">
+                            <h3 class="font-bold text-gray-800 mb-4">${companyName}</h3>
+                            <p class="text-sm text-gray-600">الختم والتوقيع</p>
+                            <div class="mt-6 flex justify-between items-end">
+                                <div class="flex flex-col items-center gap-2">
+                                    ${uploadedAssets.stamp ? 
+                                        `<img src="${uploadedAssets.stamp}" class="w-20 h-20 object-contain" alt="الختم الرسمي">` :
+                                        '<div class="w-20 h-20 border-2 border-dashed border-gray-300 rounded flex items-center justify-center"><span class="text-xs text-gray-500">الختم</span></div>'
+                                    }
+                                    <p class="text-xs text-gray-500">الختم الرسمي</p>
+                                </div>
+                                <div class="flex flex-col items-center gap-2">
+                                    ${uploadedAssets.signature ? 
+                                        `<img src="${uploadedAssets.signature}" class="w-32 h-16 object-contain" alt="التوقيع">` :
+                                        '<div class="w-32 h-16 border-2 border-dashed border-gray-300 rounded flex items-center justify-center"><span class="text-xs text-gray-500">التوقيع</span></div>'
+                                    }
+                                    <p class="text-xs text-gray-500">التوقيع</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        preview.innerHTML = previewHTML;
+    }
+
+    function closePreview() {
+        document.getElementById('preview-modal').classList.add('hidden');
+    }
+
+    async function exportToPDF() {
+        if (!currentDocumentType) {
+            alert('يرجى اختيار نوع المستند أولاً');
+            return;
+        }
+        
+        // Generate preview first
+        generatePreview();
+        
+        const element = document.getElementById('document-preview');
+        
+        try {
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                height: element.scrollHeight,
+                width: element.scrollWidth
+            });
+            
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF.jsPDF('p', 'mm', 'a4');
+            
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            
+            let position = 0;
+            
+            // Add first page
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+            
+            // Add additional pages if needed
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+            
+            // Generate filename
+            const docType = currentDocumentType === 'quotation' ? 'عرض_سعر' : 'فاتورة';
+            const refNumber = document.getElementById('document-reference').value;
+            const clientName = document.getElementById('client-name').value || 'عميل';
+            const filename = `${docType}_${refNumber}_${clientName}.pdf`;
+            
+            pdf.save(filename);
+            showSuccessMessage('تم تصدير PDF بنجاح');
+            
+        } catch (error) {
+            console.error('خطأ في تصدير PDF:', error);
+            alert('حدث خطأ في تصدير PDF. يرجى المحاولة مرة أخرى.');
+        }
+    }
+
+    function createNewDocument() {
+        if (confirm('هل تريد إنشاء مستند جديد؟ سيتم فقدان البيانات الحالية.')) {
+            location.reload();
+        }
+    }
+
+    function resetForm() {
+        if (confirm('هل تريد إعادة تعيين النموذج؟ سيتم فقدان جميع البيانات المدخلة.')) {
+            location.reload();
+        }
+    }
+
+    function loadTemplate() {
+        alert('سيتم إضافة هذه الميزة قريباً - تحميل القوالب المحفوظة');
+    }
+
+    function saveAsTemplate() {
+        // Create template object
+        const template = {
+            companyName: document.getElementById('company-name').value,
+            companyCr: document.getElementById('company-cr').value,
+            companyVat: document.getElementById('company-vat').value,
+            assets: uploadedAssets,
+            specifications: Array.from(document.querySelectorAll('.specification-item input')).map(input => input.value),
+            timestamp: new Date().toISOString()
+        };
+        
+        // Save to localStorage
+        const templateName = `template_${Date.now()}`;
+        localStorage.setItem(templateName, JSON.stringify(template));
+        
+        showSuccessMessage('تم حفظ القالب بنجاح! سيمكنك استخدامه في المرات القادمة.');
+    }
+
+    // Initialize calculations
+    calculateTotals();
+    
+    // Auto-update totals when VAT rate changes
+    document.getElementById('vat-rate').addEventListener('input', calculateTotals);
+</script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تسجيل الدخول - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+</head>
+<body class="bg-gradient-to-br from-primary-600 to-primary-800 min-h-screen flex items-center justify-center font-arabic">
+    <!-- Login Container -->
+    <div class="bg-surface rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4 border border-border">
+        <!-- Logo Section -->
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-hard-hat text-white text-2xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-text-primary">ContractorPro</h1>
+            <p class="text-text-secondary text-sm mt-2">نظام إدارة المقاولات</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-6">
+            <!-- Email Field -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-text-primary mb-2">البريد الإلكتروني</label>
+                <div class="relative">
+                    <input type="email" id="email" name="email" required class="w-full px-4 py-3 pr-12 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-fast" placeholder="admin@contractorpro.sa" />
+                    <i class="fas fa-envelope absolute right-4 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                </div>
+            </div>
+
+            <!-- Password Field -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-text-primary mb-2">كلمة المرور</label>
+                <div class="relative">
+                    <input type="password" id="password" name="password" required class="w-full px-4 py-3 pr-12 pl-12 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-fast" placeholder="••••••••" />
+                    <i class="fas fa-lock absolute right-4 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                    <button type="button" id="togglePassword" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary hover:text-text-primary transition-fast">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Remember Me & Forgot Password -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input type="checkbox" id="remember" class="w-4 h-4 text-primary bg-surface border-border rounded focus:ring-primary" />
+                    <label for="remember" class="mr-2 text-sm text-text-secondary">تذكرني</label>
+                </div>
+                <button type="button" class="text-sm text-primary hover:text-primary-700 font-medium">
+                    نسيت كلمة المرور؟
+                </button>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" id="loginBtn" class="w-full bg-primary hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-lg transition-fast flex items-center justify-center gap-2">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>تسجيل الدخول</span>
+            </button>
+        </form>
+
+        <!-- Demo Credentials -->
+        <div class="mt-8 p-4 bg-secondary-50 rounded-lg border border-secondary-200">
+            <h3 class="font-medium text-text-primary mb-3 text-sm">بيانات الدخول التجريبية:</h3>
+            <div class="space-y-2 text-xs">
+                <div class="flex justify-between items-center">
+                    <span class="text-text-secondary">المدير العام:</span>
+                    <button class="demo-credential text-primary font-mono" data-email="admin@contractorpro.sa" data-password="admin123">
+                        admin@contractorpro.sa / admin123
+                    </button>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-text-secondary">المالية:</span>
+                    <button class="demo-credential text-primary font-mono" data-email="finance@contractorpro.sa" data-password="finance456">
+                        finance@contractorpro.sa / finance456
+                    </button>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-text-secondary">مدير المشروع:</span>
+                    <button class="demo-credential text-primary font-mono" data-email="admin@contractorpro.com" data-password="Admin123!">
+                        admin@contractorpro.com / Admin123!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-8 text-xs text-text-secondary">
+            <p>© 2025 ContractorPro. جميع الحقوق محفوظة.</p>
+        </div>
+    </div>
+
+    <script>
+        // Password toggle functionality
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Demo credential buttons
+        document.querySelectorAll('.demo-credential').forEach(button => {
+            button.addEventListener('click', function() {
+                document.getElementById('email').value = this.dataset.email;
+                document.getElementById('password').value = this.dataset.password;
+                
+                // Add visual feedback
+                button.style.background = '#10B981';
+                button.style.color = 'white';
+                button.style.padding = '2px 6px';
+                button.style.borderRadius = '4px';
+                
+                setTimeout(() => {
+                    button.style.background = '';
+                    button.style.color = '';
+                    button.style.padding = '';
+                    button.style.borderRadius = '';
+                }, 1000);
+            });
+        });
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Show loading state
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>جاري التحقق...</span>';
+            loginBtn.disabled = true;
+            
+            // Simulate login process
+            setTimeout(() => {
+                // Basic validation for demo credentials
+                const validCredentials = [
+                    { email: 'admin@contractorpro.sa', password: 'admin123' },
+                    { email: 'finance@contractorpro.sa', password: 'finance456' },
+                    { email: 'admin@contractorpro.com', password: 'admin123' },
+                    { email: 'finance@contractorpro.com', password: 'finance123' },
+                    { email: 'admin@contractorpro.com', password: 'Admin123!' }
+                ];
+                
+                const isValid = validCredentials.some(cred => 
+                    cred.email === email && cred.password === password
+                );
+                
+                if (isValid) {
+                    // Success animation
+                    loginBtn.innerHTML = '<i class="fas fa-check"></i> <span>تم بنجاح</span>';
+                    loginBtn.classList.add('bg-success');
+                    loginBtn.classList.remove('bg-primary');
+                    
+                    // Store user session (simplified)
+                    localStorage.setItem('contractorpro_user', JSON.stringify({
+                        email: email,
+                        loginTime: new Date().toISOString(),
+                        role: email.includes('admin') ? 'admin' : 'finance'
+                    }));
+                    
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = 'main_dashboard.html';
+                    }, 1000);
+                } else {
+                    // Error state
+                    loginBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span>بيانات خاطئة</span>';
+                    loginBtn.classList.add('bg-error');
+                    loginBtn.classList.remove('bg-primary');
+                    
+                    // Reset after 3 seconds
+                    setTimeout(() => {
+                        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> <span>تسجيل الدخول</span>';
+                        loginBtn.classList.remove('bg-error');
+                        loginBtn.classList.add('bg-primary');
+                        loginBtn.disabled = false;
+                    }, 3000);
+                }
+            }, 1500);
+        });
+
+        // Auto-focus on email field
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('email').focus();
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

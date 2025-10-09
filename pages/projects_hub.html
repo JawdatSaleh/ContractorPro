@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مركز المشاريع - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+</head>
+<body class="bg-background font-arabic">
+    <!-- Navigation Sidebar -->
+    <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50 transform transition-transform duration-300" id="sidebar">
+        <div class="p-6 border-b border-border">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fas fa-hard-hat text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
+                    <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="p-4 space-y-2">
+            <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-tachometer-alt w-5"></i>
+                <span>لوحة التحكم</span>
+            </a>
+            <a href="projects_hub.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
+                <i class="fas fa-building w-5"></i>
+                <span class="font-medium">مركز المشاريع</span>
+            </a>
+            <a href="financial_operations_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-chart-line w-5"></i>
+                <span>العمليات المالية</span>
+            </a>
+            <a href="employee_management.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-users w-5"></i>
+                <span>إدارة الموظفين</span>
+            </a>
+            <a href="system_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-cog w-5"></i>
+                <span>لوحة التحكم</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <div class="md:hidden fixed top-4 right-4 z-50">
+        <button id="mobileMenuToggle" class="p-3 bg-surface rounded-lg shadow-card border border-border">
+            <i class="fas fa-bars text-text-primary"></i>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mr-0 md:mr-64 min-h-screen">
+        <!-- Top Header -->
+        <header class="bg-surface shadow-card px-6 py-4 border-b border-border">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-text-primary">مركز المشاريع</h1>
+                    <p class="text-text-secondary">إدارة شاملة للمشاريع والعقود والمقاولين الفرعيين</p>
+                </div>
+                
+                <!-- Quick Actions & Search -->
+                <div class="hidden md:flex items-center gap-4">
+                    <div class="relative">
+                        <input type="text" placeholder="البحث في المشاريع والعملاء..." class="w-80 px-4 py-2 pr-10 border border-border rounded-lg focus:border-primary focus:outline-none" />
+                        <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                    </div>
+                    
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button class="p-2 rounded-lg hover:bg-secondary-100 transition-fast relative" onclick="window.location.href='notifications.html'">
+                            <i class="fas fa-bell text-text-secondary text-lg"></i>
+                            <span class="absolute -top-1 -left-1 w-5 h-5 bg-error text-white text-xs rounded-full flex items-center justify-center">8</span>
+                        </button>
+                    </div>
+                    
+                    <!-- User Profile -->
+                    <div class="flex items-center gap-3" onclick="window.location.href='user_profile.html'" style="cursor: pointer;">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="صورة المستخدم" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <div>
+                            <p class="font-medium text-text-primary">أحمد المالك</p>
+                            <p class="text-sm text-text-secondary">مدير المشاريع</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Projects Hub Content -->
+        <main class="p-6 space-y-6">
+            <!-- Projects Overview KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Total Projects -->
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border hover:shadow-modal transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-text-secondary text-sm font-medium">إجمالي المشاريع</p>
+                            <p class="text-3xl font-bold text-text-primary mt-2">24</p>
+                            <div class="flex items-center gap-1 mt-2">
+                                <i class="fas fa-arrow-up text-success text-sm"></i>
+                                <span class="text-success text-sm font-medium">+3 مشاريع جديدة</span>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-building text-primary text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Projects -->
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border hover:shadow-modal transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-text-secondary text-sm font-medium">المشاريع النشطة</p>
+                            <p class="text-3xl font-bold text-text-primary mt-2">12</p>
+                            <div class="flex items-center gap-1 mt-2">
+                                <i class="fas fa-clock text-warning text-sm"></i>
+                                <span class="text-warning text-sm font-medium">قيد التنفيذ</span>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-hammer text-success text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Project Value -->
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border hover:shadow-modal transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-text-secondary text-sm font-medium">قيمة المشاريع الإجمالية</p>
+                            <p class="text-3xl font-bold text-text-primary mt-2">18.5M ريال</p>
+                            <div class="flex items-center gap-1 mt-2">
+                                <i class="fas fa-trending-up text-success text-sm"></i>
+                                <span class="text-success text-sm font-medium">نمو 22%</span>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-accent text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subcontractors -->
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border hover:shadow-modal transition-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-text-secondary text-sm font-medium">المقاولون الفرعيون</p>
+                            <p class="text-3xl font-bold text-text-primary mt-2">35</p>
+                            <div class="flex items-center gap-1 mt-2">
+                                <i class="fas fa-handshake text-primary text-sm"></i>
+                                <span class="text-primary text-sm font-medium">نشط</span>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-users-cog text-warning text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                <h3 class="text-lg font-bold text-text-primary mb-6">الإجراءات السريعة</h3>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <button class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group" onclick="openProjectModal()">
+                        <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center group-hover:bg-primary-200 transition-fast">
+                            <i class="fas fa-plus text-primary text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-text-primary text-center">مشروع جديد</span>
+                    </button>
+
+                    <button class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group" onclick="openSubcontractorModal()">
+                        <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center group-hover:bg-success-200 transition-fast">
+                            <i class="fas fa-handshake text-success text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-text-primary text-center">عقد مقاول فرعي</span>
+                    </button>
+
+                    <button class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group" onclick="openExpenseModal()">
+                        <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center group-hover:bg-warning-200 transition-fast">
+                            <i class="fas fa-receipt text-warning text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-text-primary text-center">إضافة مصروف</span>
+                    </button>
+
+                    <a href="project_detail_hub.html" class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group">
+                        <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center group-hover:bg-accent-200 transition-fast">
+                            <i class="fas fa-chart-bar text-accent text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-text-primary text-center">تقارير المشاريع</span>
+                    </a>
+
+                    <button class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group" onclick="exportProjectData()">
+                        <div class="w-12 h-12 bg-secondary-200 rounded-lg flex items-center justify-center group-hover:bg-secondary-300 transition-fast">
+                            <i class="fas fa-download text-secondary text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-text-primary text-center">تصدير البيانات</span>
+                    </button>
+
+                    <a href="system_settings.html" class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group">
+                        <div class="w-12 h-12 bg-error-100 rounded-lg flex items-center justify-center group-hover:bg-error-200 transition-fast">
+                            <i class="fas fa-cog text-error text-lg"></i>
+                        </div>
+                        <span class="text-sm font-medium text-text-primary text-center">الإعدادات</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Projects Grid with Filters -->
+            <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+                    <h3 class="text-lg font-bold text-text-primary">جميع المشاريع</h3>
+                    
+                    <!-- Filters -->
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <select class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
+                            <option value>جميع المشاريع</option>
+                            <option value="active">نشطة</option>
+                            <option value="completed">مكتملة</option>
+                            <option value="pending">معلقة</option>
+                            <option value="planning">تحت التخطيط</option>
+                        </select>
+                        
+                        <select class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
+                            <option value>نوع المشروع</option>
+                            <option value="villa">فيلا سكنية</option>
+                            <option value="commercial">مجمع تجاري</option>
+                            <option value="office">مكاتب إدارية</option>
+                            <option value="warehouse">مستودعات</option>
+                        </select>
+                        
+                        <select class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
+                            <option value>ترتيب حسب</option>
+                            <option value="date_desc">الأحدث أولاً</option>
+                            <option value="date_asc">الأقدم أولاً</option>
+                            <option value="value_desc">القيمة (الأعلى)</option>
+                            <option value="value_asc">القيمة (الأقل)</option>
+                            <option value="progress_desc">التقدم (الأعلى)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Projects Cards Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6" id="projectsGrid">
+                    <!-- Project Card 1 -->
+                    <div class="border border-border rounded-xl p-6 hover:shadow-modal transition-shadow project-card" data-status="active" data-type="villa" data-value="850000">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-text-primary text-lg mb-2">فيلا الرياض الحديثة</h4>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=100&auto=format&fit=crop" alt="صورة العميل" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=100&auto=format&fit=crop'; this.onerror=null;" />
+                                    <span class="text-sm text-text-secondary">محمد العبدالله</span>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
+                                قيد التنفيذ
+                            </span>
+                        </div>
+
+                        <!-- Project Image -->
+                        <div class="mb-4">
+                            <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="مشروع فيلا الرياض" class="w-full h-40 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;" />
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-text-primary">التقدم</span>
+                                <span class="text-sm text-text-secondary">85%</span>
+                            </div>
+                            <div class="w-full bg-secondary-200 rounded-full h-2">
+                                <div class="bg-success h-2 rounded-full transition-all duration-1000" style="width: 85%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Project Details -->
+                        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div>
+                                <span class="text-text-secondary">القيمة:</span>
+                                <p class="font-bold text-text-primary">850,000 ريال</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المدة:</span>
+                                <p class="font-bold text-text-primary">12 شهر</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">تاريخ البدء:</span>
+                                <p class="font-bold text-text-primary">01/01/2025</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المقاولون الفرعيون:</span>
+                                <p class="font-bold text-text-primary">5 مقاولين</p>
+                            </div>
+                        </div>
+
+                        <!-- Expenses Summary -->
+                        <div class="bg-secondary-50 rounded-lg p-3 mb-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">إجمالي المصاريف</span>
+                                <span class="text-sm font-bold text-text-primary">425,000 ريال</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-xs text-text-secondary">الربح المتوقع</span>
+                                <span class="text-xs font-bold text-success">425,000 ريال (50%)</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="viewProjectDetails('project1')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-fast text-sm">
+                                <i class="fas fa-eye ml-1"></i>
+                                عرض التفاصيل
+                            </button>
+                            <button onclick="editProject('project1')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-edit text-text-secondary"></i>
+                            </button>
+                            <button onclick="generateProjectReport('project1')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-chart-bar text-text-secondary"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 2 -->
+                    <div class="border border-border rounded-xl p-6 hover:shadow-modal transition-shadow project-card" data-status="active" data-type="commercial" data-value="1200000">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-text-primary text-lg mb-2">مجمع تجاري جدة</h4>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop" alt="صورة العميل" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=100&auto=format&fit=crop'; this.onerror=null;" />
+                                    <span class="text-sm text-text-secondary">شركة الأندلس للاستثمار</span>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">
+                                مرحلة الأساسات
+                            </span>
+                        </div>
+
+                        <!-- Project Image -->
+                        <div class="mb-4">
+                            <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="مجمع تجاري جدة" class="w-full h-40 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;" />
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-text-primary">التقدم</span>
+                                <span class="text-sm text-text-secondary">45%</span>
+                            </div>
+                            <div class="w-full bg-secondary-200 rounded-full h-2">
+                                <div class="bg-warning h-2 rounded-full transition-all duration-1000" style="width: 45%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Project Details -->
+                        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div>
+                                <span class="text-text-secondary">القيمة:</span>
+                                <p class="font-bold text-text-primary">1,200,000 ريال</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المدة:</span>
+                                <p class="font-bold text-text-primary">18 شهر</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">تاريخ البدء:</span>
+                                <p class="font-bold text-text-primary">15/02/2025</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المقاولون الفرعيون:</span>
+                                <p class="font-bold text-text-primary">8 مقاولين</p>
+                            </div>
+                        </div>
+
+                        <!-- Expenses Summary -->
+                        <div class="bg-secondary-50 rounded-lg p-3 mb-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">إجمالي المصاريف</span>
+                                <span class="text-sm font-bold text-text-primary">540,000 ريال</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-xs text-text-secondary">الربح المتوقع</span>
+                                <span class="text-xs font-bold text-success">660,000 ريال (55%)</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="viewProjectDetails('project2')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-fast text-sm">
+                                <i class="fas fa-eye ml-1"></i>
+                                عرض التفاصيل
+                            </button>
+                            <button onclick="editProject('project2')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-edit text-text-secondary"></i>
+                            </button>
+                            <button onclick="generateProjectReport('project2')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-chart-bar text-text-secondary"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 3 -->
+                    <div class="border border-border rounded-xl p-6 hover:shadow-modal transition-shadow project-card" data-status="pending" data-type="villa" data-value="650000">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-text-primary text-lg mb-2">مشروع سكني الدمام</h4>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop" alt="صورة العميل" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=100&auto=format&fit=crop'; this.onerror=null;" />
+                                    <span class="text-sm text-text-secondary">فهد الخالدي</span>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary">
+                                بداية المشروع
+                            </span>
+                        </div>
+
+                        <!-- Project Image -->
+                        <div class="mb-4">
+                            <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="مشروع سكني الدمام" class="w-full h-40 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;" />
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-text-primary">التقدم</span>
+                                <span class="text-sm text-text-secondary">20%</span>
+                            </div>
+                            <div class="w-full bg-secondary-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full transition-all duration-1000" style="width: 20%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Project Details -->
+                        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div>
+                                <span class="text-text-secondary">القيمة:</span>
+                                <p class="font-bold text-text-primary">650,000 ريال</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المدة:</span>
+                                <p class="font-bold text-text-primary">10 أشهر</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">تاريخ البدء:</span>
+                                <p class="font-bold text-text-primary">01/03/2025</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المقاولون الفرعيون:</span>
+                                <p class="font-bold text-text-primary">3 مقاولين</p>
+                            </div>
+                        </div>
+
+                        <!-- Expenses Summary -->
+                        <div class="bg-secondary-50 rounded-lg p-3 mb-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">إجمالي المصاريف</span>
+                                <span class="text-sm font-bold text-text-primary">130,000 ريال</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-xs text-text-secondary">الربح المتوقع</span>
+                                <span class="text-xs font-bold text-success">520,000 ريال (80%)</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="viewProjectDetails('project3')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-fast text-sm">
+                                <i class="fas fa-eye ml-1"></i>
+                                عرض التفاصيل
+                            </button>
+                            <button onclick="editProject('project3')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-edit text-text-secondary"></i>
+                            </button>
+                            <button onclick="generateProjectReport('project3')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-chart-bar text-text-secondary"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 4 -->
+                    <div class="border border-border rounded-xl p-6 hover:shadow-modal transition-shadow project-card" data-status="completed" data-type="office" data-value="420000">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-text-primary text-lg mb-2">مكاتب نورا التجارية</h4>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b890?q=80&w=100&auto=format&fit=crop" alt="صورة العميل" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=100&auto=format&fit=crop'; this.onerror=null;" />
+                                    <span class="text-sm text-text-secondary">نورا التجارية</span>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
+                                مكتمل
+                            </span>
+                        </div>
+
+                        <!-- Project Image -->
+                        <div class="mb-4">
+                            <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="مكاتب نورا التجارية" class="w-full h-40 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;" />
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-text-primary">التقدم</span>
+                                <span class="text-sm text-text-secondary">100%</span>
+                            </div>
+                            <div class="w-full bg-secondary-200 rounded-full h-2">
+                                <div class="bg-success h-2 rounded-full transition-all duration-1000" style="width: 100%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Project Details -->
+                        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div>
+                                <span class="text-text-secondary">القيمة:</span>
+                                <p class="font-bold text-text-primary">420,000 ريال</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المدة:</span>
+                                <p class="font-bold text-text-primary">6 أشهر</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">تاريخ الإنجاز:</span>
+                                <p class="font-bold text-text-primary">15/09/2024</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المقاولون الفرعيون:</span>
+                                <p class="font-bold text-text-primary">4 مقاولين</p>
+                            </div>
+                        </div>
+
+                        <!-- Expenses Summary -->
+                        <div class="bg-secondary-50 rounded-lg p-3 mb-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">إجمالي المصاريف</span>
+                                <span class="text-sm font-bold text-text-primary">294,000 ريال</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-xs text-text-secondary">الربح المحقق</span>
+                                <span class="text-xs font-bold text-success">126,000 ريال (30%)</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="viewProjectDetails('project4')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-fast text-sm">
+                                <i class="fas fa-eye ml-1"></i>
+                                عرض التفاصيل
+                            </button>
+                            <button onclick="editProject('project4')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-edit text-text-secondary"></i>
+                            </button>
+                            <button onclick="generateProjectReport('project4')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-chart-bar text-text-secondary"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 5 -->
+                    <div class="border border-border rounded-xl p-6 hover:shadow-modal transition-shadow project-card" data-status="planning" data-type="warehouse" data-value="280000">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-text-primary text-lg mb-2">مستودعات خالد الشركة</h4>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=100&auto=format&fit=crop" alt="صورة العميل" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=100&auto=format&fit=crop'; this.onerror=null;" />
+                                    <span class="text-sm text-text-secondary">خالد الشركة</span>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary-200 text-secondary">
+                                تحت التخطيط
+                            </span>
+                        </div>
+
+                        <!-- Project Image -->
+                        <div class="mb-4">
+                            <img src="https://images.unsplash.com/photo-1566228015668-4c45dbc4e2f5?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="مستودعات خالد الشركة" class="w-full h-40 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;" />
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-text-primary">التقدم</span>
+                                <span class="text-sm text-text-secondary">5%</span>
+                            </div>
+                            <div class="w-full bg-secondary-200 rounded-full h-2">
+                                <div class="bg-secondary h-2 rounded-full transition-all duration-1000" style="width: 5%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Project Details -->
+                        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div>
+                                <span class="text-text-secondary">القيمة:</span>
+                                <p class="font-bold text-text-primary">280,000 ريال</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المدة:</span>
+                                <p class="font-bold text-text-primary">8 أشهر</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">تاريخ البدء المخطط:</span>
+                                <p class="font-bold text-text-primary">01/05/2025</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المقاولون الفرعيون:</span>
+                                <p class="font-bold text-text-primary">2 مقاولين</p>
+                            </div>
+                        </div>
+
+                        <!-- Expenses Summary -->
+                        <div class="bg-secondary-50 rounded-lg p-3 mb-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">الميزانية المتوقعة</span>
+                                <span class="text-sm font-bold text-text-primary">196,000 ريال</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-xs text-text-secondary">الربح المتوقع</span>
+                                <span class="text-xs font-bold text-success">84,000 ريال (30%)</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="viewProjectDetails('project5')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-fast text-sm">
+                                <i class="fas fa-eye ml-1"></i>
+                                عرض التفاصيل
+                            </button>
+                            <button onclick="editProject('project5')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-edit text-text-secondary"></i>
+                            </button>
+                            <button onclick="generateProjectReport('project5')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-chart-bar text-text-secondary"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 6 -->
+                    <div class="border border-border rounded-xl p-6 hover:shadow-modal transition-shadow project-card" data-status="active" data-type="villa" data-value="750000">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-text-primary text-lg mb-2">فيلا الخبر الفاخرة</h4>
+                                <div class="flex items-center gap-2 mb-3">
+                                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=100&auto=format&fit=crop" alt="صورة العميل" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=100&auto=format&fit=crop'; this.onerror=null;" />
+                                    <span class="text-sm text-text-secondary">عبدالرحمن السعود</span>
+                                </div>
+                            </div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-accent-100 text-accent">
+                                مرحلة التشطيبات
+                            </span>
+                        </div>
+
+                        <!-- Project Image -->
+                        <div class="mb-4">
+                            <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="فيلا الخبر الفاخرة" class="w-full h-40 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;" />
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-text-primary">التقدم</span>
+                                <span class="text-sm text-text-secondary">75%</span>
+                            </div>
+                            <div class="w-full bg-secondary-200 rounded-full h-2">
+                                <div class="bg-accent h-2 rounded-full transition-all duration-1000" style="width: 75%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Project Details -->
+                        <div class="grid grid-cols-2 gap-4 mb-4 text-sm">
+                            <div>
+                                <span class="text-text-secondary">القيمة:</span>
+                                <p class="font-bold text-text-primary">750,000 ريال</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المدة:</span>
+                                <p class="font-bold text-text-primary">14 شهر</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">تاريخ البدء:</span>
+                                <p class="font-bold text-text-primary">15/12/2024</p>
+                            </div>
+                            <div>
+                                <span class="text-text-secondary">المقاولون الفرعيون:</span>
+                                <p class="font-bold text-text-primary">6 مقاولين</p>
+                            </div>
+                        </div>
+
+                        <!-- Expenses Summary -->
+                        <div class="bg-secondary-50 rounded-lg p-3 mb-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">إجمالي المصاريف</span>
+                                <span class="text-sm font-bold text-text-primary">562,500 ريال</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-xs text-text-secondary">الربح المتوقع</span>
+                                <span class="text-xs font-bold text-success">187,500 ريال (25%)</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2">
+                            <button onclick="viewProjectDetails('project6')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-fast text-sm">
+                                <i class="fas fa-eye ml-1"></i>
+                                عرض التفاصيل
+                            </button>
+                            <button onclick="editProject('project6')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-edit text-text-secondary"></i>
+                            </button>
+                            <button onclick="generateProjectReport('project6')" class="p-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-chart-bar text-text-secondary"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Load More Button -->
+                <div class="text-center mt-8">
+                    <button onclick="loadMoreProjects()" class="px-6 py-3 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                        <i class="fas fa-plus ml-2"></i>
+                        عرض المزيد من المشاريع
+                    </button>
+                </div>
+            </div>
+
+            <!-- Projects Summary Statistics -->
+            <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                <h3 class="text-lg font-bold text-text-primary mb-6">إحصائيات المشاريع الشاملة</h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Overall Financial Summary -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-text-primary mb-4">الملخص المالي الشامل</h4>
+                        
+                        <div class="bg-success-100 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-success font-medium">إجمالي قيمة المشاريع</span>
+                                <span class="text-2xl font-bold text-success">18.5M ريال</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-warning-100 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-warning font-medium">إجمالي المصاريف</span>
+                                <span class="text-2xl font-bold text-warning">12.1M ريال</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-primary-100 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-primary font-medium">صافي الربح المتوقع</span>
+                                <span class="text-2xl font-bold text-primary">6.4M ريال (34.6%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Projects by Status Chart -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-text-primary mb-4">توزيع المشاريع حسب الحالة</h4>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-4 h-4 bg-success rounded-full"></div>
+                                    <span class="text-sm text-text-secondary">نشطة</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-32 bg-secondary-200 rounded-full h-2">
+                                        <div class="bg-success h-2 rounded-full" style="width: 50%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium text-text-primary">12 (50%)</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-4 h-4 bg-primary rounded-full"></div>
+                                    <span class="text-sm text-text-secondary">مكتملة</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-32 bg-secondary-200 rounded-full h-2">
+                                        <div class="bg-primary h-2 rounded-full" style="width: 33%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium text-text-primary">8 (33%)</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-4 h-4 bg-secondary rounded-full"></div>
+                                    <span class="text-sm text-text-secondary">تحت التخطيط</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-32 bg-secondary-200 rounded-full h-2">
+                                        <div class="bg-secondary h-2 rounded-full" style="width: 17%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium text-text-primary">4 (17%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-surface border-t border-border px-6 py-4 mt-8">
+            <div class="flex items-center justify-between text-sm text-text-secondary">
+                <p>© 2025 ContractorPro. جميع الحقوق محفوظة.</p>
+                <p id="currentTime">آخر تحديث: 4 أكتوبر 2025 - 11:10</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- New Project Modal -->
+    <div id="projectModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-surface rounded-xl p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-text-primary">إضافة مشروع جديد</h3>
+                    <button onclick="closeProjectModal()" class="p-2 hover:bg-secondary-100 rounded-lg transition-fast">
+                        <i class="fas fa-times text-text-secondary"></i>
+                    </button>
+                </div>
+
+                <form class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">اسم المشروع</label>
+                            <input type="text" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="أدخل اسم المشروع" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">العميل</label>
+                            <input type="text" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="اسم العميل" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">نوع المشروع</label>
+                            <select class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none">
+                                <option>اختر نوع المشروع</option>
+                                <option value="villa">فيلا سكنية</option>
+                                <option value="commercial">مجمع تجاري</option>
+                                <option value="office">مكاتب إدارية</option>
+                                <option value="warehouse">مستودعات</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">قيمة المشروع (ريال)</label>
+                            <input type="number" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="000,000" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">المدة (شهر)</label>
+                            <input type="number" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="12" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">تاريخ البدء</label>
+                            <input type="date" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">تاريخ الانتهاء المتوقع</label>
+                            <input type="date" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">وصف المشروع</label>
+                        <textarea class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none h-24" placeholder="وصف تفصيلي للمشروع..."></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-4">
+                        <button type="submit" class="flex-1 bg-primary text-white py-2 rounded-lg hover:bg-primary-700 transition-fast">
+                            <i class="fas fa-save ml-2"></i>
+                            حفظ المشروع
+                        </button>
+                        <button type="button" onclick="closeProjectModal()" class="px-6 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                            إلغاء
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subcontractor Modal -->
+    <div id="subcontractorModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-surface rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-text-primary">إضافة مقاول فرعي</h3>
+                    <button onclick="closeSubcontractorModal()" class="p-2 hover:bg-secondary-100 rounded-lg transition-fast">
+                        <i class="fas fa-times text-text-secondary"></i>
+                    </button>
+                </div>
+
+                <form class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">اسم المقاول</label>
+                            <input type="text" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="اسم الشركة أو المقاول" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">نوع التخصص</label>
+                            <select class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none">
+                                <option>اختر التخصص</option>
+                                <option>أعمال الخرسانة</option>
+                                <option>أعمال الحديد</option>
+                                <option>أعمال السباكة</option>
+                                <option>أعمال الكهرباء</option>
+                                <option>أعمال التشطيبات</option>
+                                <option>أعمال الطلاء</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">رقم الهاتف</label>
+                            <input type="tel" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="05xxxxxxxx" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">قيمة العقد</label>
+                            <input type="number" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="000,000" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">المشروع</label>
+                        <select class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none">
+                            <option>اختر المشروع</option>
+                            <option>فيلا الرياض الحديثة</option>
+                            <option>مجمع تجاري جدة</option>
+                            <option>مشروع سكني الدمام</option>
+                            <option>فيلا الخبر الفاخرة</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">تفاصيل العمل</label>
+                        <textarea class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none h-24" placeholder="وصف مفصل للأعمال المطلوبة..."></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-4">
+                        <button type="submit" class="flex-1 bg-primary text-white py-2 rounded-lg hover:bg-primary-700 transition-fast">
+                            <i class="fas fa-handshake ml-2"></i>
+                            إضافة المقاول
+                        </button>
+                        <button type="button" onclick="closeSubcontractorModal()" class="px-6 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                            إلغاء
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expense Modal -->
+    <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-surface rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-text-primary">إضافة مصروف مشروع</h3>
+                    <button onclick="closeExpenseModal()" class="p-2 hover:bg-secondary-100 rounded-lg transition-fast">
+                        <i class="fas fa-times text-text-secondary"></i>
+                    </button>
+                </div>
+
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">المشروع</label>
+                        <select class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none">
+                            <option>اختر المشروع</option>
+                            <option>فيلا الرياض الحديثة</option>
+                            <option>مجمع تجاري جدة</option>
+                            <option>مشروع سكني الدمام</option>
+                            <option>فيلا الخبر الفاخرة</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">نوع المصروف</label>
+                            <select class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none">
+                                <option>اختر نوع المصروف</option>
+                                <option>مواد بناء</option>
+                                <option>عمالة</option>
+                                <option>نقل ومواصلات</option>
+                                <option>معدات وآلات</option>
+                                <option>استشارات هندسية</option>
+                                <option>أخرى</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">المبلغ (ريال)</label>
+                            <input type="number" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="0000" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">التاريخ</label>
+                            <input type="date" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">طريقة الدفع</label>
+                            <select class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none">
+                                <option>نقدي</option>
+                                <option>تحويل بنكي</option>
+                                <option>شيك</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">وصف المصروف</label>
+                        <textarea class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none h-20" placeholder="تفاصيل إضافية..."></textarea>
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-4">
+                        <button type="submit" class="flex-1 bg-primary text-white py-2 rounded-lg hover:bg-primary-700 transition-fast">
+                            <i class="fas fa-save ml-2"></i>
+                            حفظ المصروف
+                        </button>
+                        <button type="button" onclick="closeExpenseModal()" class="px-6 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                            إلغاء
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu functionality
+        document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('transform');
+            sidebar.classList.toggle('translate-x-full');
+        });
+
+        // Modal Functions
+        function openProjectModal() {
+            document.getElementById('projectModal').classList.remove('hidden');
+        }
+
+        function closeProjectModal() {
+            document.getElementById('projectModal').classList.add('hidden');
+        }
+
+        function openSubcontractorModal() {
+            document.getElementById('subcontractorModal').classList.remove('hidden');
+        }
+
+        function closeSubcontractorModal() {
+            document.getElementById('subcontractorModal').classList.add('hidden');
+        }
+
+        function openExpenseModal() {
+            document.getElementById('expenseModal').classList.remove('hidden');
+        }
+
+        function closeExpenseModal() {
+            document.getElementById('expenseModal').classList.add('hidden');
+        }
+
+        // Project Functions
+        function viewProjectDetails(projectId) {
+            window.location.href = `project_detail_hub.html?id=${projectId}`;
+        }
+
+        function editProject(projectId) {
+            alert(`تحرير المشروع: ${projectId}`);
+            // Implement edit functionality
+        }
+
+        function generateProjectReport(projectId) {
+            alert(`إنشاء تقرير للمشروع: ${projectId}`);
+            // Implement report generation
+        }
+
+        function exportProjectData() {
+            alert('سيتم تصدير بيانات المشاريع قريباً...');
+            // Implement data export
+        }
+
+        function loadMoreProjects() {
+            alert('تحميل المزيد من المشاريع...');
+            // Implement load more functionality
+        }
+
+        // Filtering Functions
+        function filterProjects() {
+            const statusFilter = document.querySelector('select').value;
+            const typeFilter = document.querySelectorAll('select')[1].value;
+            const sortBy = document.querySelectorAll('select')[2].value;
+            
+            const projectCards = document.querySelectorAll('.project-card');
+            
+            projectCards.forEach(card => {
+                let show = true;
+                
+                if (statusFilter && card.dataset.status !== statusFilter) {
+                    show = false;
+                }
+                
+                if (typeFilter && card.dataset.type !== typeFilter) {
+                    show = false;
+                }
+                
+                card.style.display = show ? 'block' : 'none';
+            });
+        }
+
+        // Add event listeners to filters
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', filterProjects);
+        });
+
+        // Real-time clock update
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const timeElement = document.getElementById('currentTime');
+            if (timeElement) {
+                timeElement.textContent = `آخر تحديث: ${timeString}`;
+            }
+        }
+
+        // Update time every minute
+        setInterval(updateTime, 60000);
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate progress bars
+            const progressBars = document.querySelectorAll('[style*="width:"]');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.transition = 'width 1.5s ease-out';
+                    bar.style.width = width;
+                }, 500);
+            });
+
+            // Add hover effects to cards
+            const cards = document.querySelectorAll('.shadow-card, .project-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-4px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Close modals when clicking outside
+            const modals = ['projectModal', 'subcontractorModal', 'expenseModal'];
+            modals.forEach(modalId => {
+                document.getElementById(modalId).addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Initialize mobile responsiveness
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.add('transform', 'translate-x-full');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.remove('transform', 'translate-x-full');
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

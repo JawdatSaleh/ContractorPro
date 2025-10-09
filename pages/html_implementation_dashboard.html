@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مركز تطوير HTML - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+</head>
+<body class="bg-background font-arabic">
+    <!-- Navigation Sidebar -->
+    <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50 transform transition-transform duration-300" id="sidebar">
+        <div class="p-6 border-b border-border">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fas fa-code text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-text-primary">HTML Dashboard</h1>
+                    <p class="text-sm text-text-secondary">مركز تطوير الكود</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="p-4 space-y-2">
+            <!-- Back to Main -->
+            <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-arrow-right w-5"></i>
+                <span>العودة للرئيسية</span>
+            </a>
+
+            <!-- HTML Implementation -->
+            <a href="html_implementation_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
+                <i class="fas fa-code w-5"></i>
+                <span class="font-medium">مركز HTML</span>
+            </a>
+
+            <!-- Template Library -->
+            <div class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast cursor-pointer" onclick="showTemplateLibrary()">
+                <i class="fas fa-layer-group w-5"></i>
+                <span>مكتبة القوالب</span>
+                <i class="fas fa-chevron-left mr-auto text-xs"></i>
+            </div>
+
+            <!-- Code Generator -->
+            <div class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast cursor-pointer" onclick="showCodeGenerator()">
+                <i class="fas fa-magic w-5"></i>
+                <span>منشئ الكود</span>
+                <i class="fas fa-chevron-left mr-auto text-xs"></i>
+            </div>
+
+            <!-- File Manager -->
+            <div class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast cursor-pointer" onclick="showFileManager()">
+                <i class="fas fa-folder w-5"></i>
+                <span>إدارة الملفات</span>
+                <i class="fas fa-chevron-left mr-auto text-xs"></i>
+            </div>
+        </nav>
+
+        <!-- Quick Tools -->
+        <div class="absolute bottom-0 w-full p-4 border-t border-border bg-surface">
+            <div class="grid grid-cols-1 gap-2">
+                <button class="flex items-center justify-center gap-2 px-3 py-2 bg-success text-white rounded-lg text-sm hover:bg-success-600 transition-fast" onclick="exportProject()">
+                    <i class="fas fa-download text-xs"></i>
+                    <span>تصدير المشروع</span>
+                </button>
+                <button class="flex items-center justify-center gap-2 px-3 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary-600 transition-fast" onclick="previewProject()">
+                    <i class="fas fa-eye text-xs"></i>
+                    <span>معاينة مباشرة</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mr-64 min-h-screen">
+        <!-- Top Header -->
+        <header class="bg-surface shadow-card px-6 py-4 border-b border-border">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-text-primary">مركز تطوير HTML</h1>
+                    <p class="text-text-secondary">أدوات شاملة لتطوير وإدارة صفحات ContractorPro</p>
+                </div>
+                
+                <!-- Project Actions -->
+                <div class="flex items-center gap-4">
+                    <!-- Project Status -->
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 bg-success rounded-full animate-pulse"></span>
+                        <span class="text-sm text-text-secondary">متصل</span>
+                    </div>
+                    
+                    <!-- Save Status -->
+                    <div class="flex items-center gap-2 px-3 py-1 bg-primary-50 text-primary rounded-lg text-sm" id="saveStatus">
+                        <i class="fas fa-save"></i>
+                        <span>محفوظ</span>
+                    </div>
+                    
+                    <!-- Theme Toggle -->
+                    <button class="p-2 rounded-lg hover:bg-secondary-100 transition-fast" onclick="toggleTheme()">
+                        <i class="fas fa-adjust text-text-secondary text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Content -->
+        <main class="p-6 space-y-6">
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-file-code text-primary text-lg"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-text-primary" id="fileCount">12</span>
+                    </div>
+                    <h3 class="font-medium text-text-primary">ملفات HTML</h3>
+                    <p class="text-sm text-text-secondary">إجمالي الصفحات</p>
+                </div>
+
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-layer-group text-success text-lg"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-text-primary" id="templateCount">8</span>
+                    </div>
+                    <h3 class="font-medium text-text-primary">القوالب</h3>
+                    <p class="text-sm text-text-secondary">قوالب جاهزة</p>
+                </div>
+
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 bg-warning-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-code-branch text-warning text-lg"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-text-primary" id="componentCount">24</span>
+                    </div>
+                    <h3 class="font-medium text-text-primary">المكونات</h3>
+                    <p class="text-sm text-text-secondary">عناصر قابلة للإعادة</p>
+                </div>
+
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="w-10 h-10 bg-accent-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-paint-brush text-accent text-lg"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-text-primary" id="styleCount">16</span>
+                    </div>
+                    <h3 class="font-medium text-text-primary">الأنماط</h3>
+                    <p class="text-sm text-text-secondary">ملفات CSS</p>
+                </div>
+            </div>
+
+            <!-- Main Working Area -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Code Editor Section -->
+                <div class="bg-surface rounded-xl shadow-card border border-border">
+                    <div class="flex items-center justify-between p-4 border-b border-border">
+                        <h3 class="text-lg font-bold text-text-primary">محرر الكود</h3>
+                        <div class="flex items-center gap-2">
+                            <!-- Language Selector -->
+                            <select class="px-3 py-1 border border-border rounded-lg text-sm" id="languageSelector" onchange="changeLanguage()">
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="javascript">JavaScript</option>
+                            </select>
+                            
+                            <!-- Editor Actions -->
+                            <button class="px-3 py-1 bg-primary text-white rounded-lg text-sm hover:bg-primary-600 transition-fast" onclick="formatCode()">
+                                <i class="fas fa-magic text-xs mr-1"></i>
+                                تنسيق
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Code Editor -->
+                    <div class="relative">
+                        <textarea id="codeEditor" class="w-full h-96 p-4 font-mono text-sm bg-gray-900 text-green-400 border-none resize-none focus:outline-none" placeholder="ابدأ بكتابة الكود هنا..."><!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContractorPro - لوحة التحكم</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-hard-hat"></i> ContractorPro
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">لوحة التحكم الرئيسية</h2>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h4 class="card-title">12</h4>
+                        <p class="card-text">إجمالي المشاريع</p>
+                        <i class="fas fa-project-diagram fa-2x float-end"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more stats cards here -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html></textarea>
+                        
+                        <!-- Line Numbers -->
+                        <div class="absolute left-0 top-0 p-4 bg-gray-800 text-gray-400 font-mono text-sm select-none pointer-events-none" id="lineNumbers">
+                            1<br />2<br />3<br />4<br />5<br />6<br />7<br />8<br />9<br />10<br />11<br />12<br />13<br />14<br />15<br />16<br />17<br />18<br />19<br />20<br />21<br />22<br />23<br />24<br />25<br />26<br />27<br />28<br />29<br />30<br />31<br />32<br />33<br />34<br />35<br />36<br />37<br />38<br />39<br />40<br />41<br />42<br />43
+                        </div>
+                    </div>
+                    
+                    <!-- Code Actions -->
+                    <div class="p-4 border-t border-border bg-secondary-50">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-text-secondary">الأسطر: <span id="lineCount">43</span></span>
+                                <span class="text-sm text-text-secondary">الأحرف: <span id="charCount">1247</span></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button class="px-3 py-1 bg-success text-white rounded text-sm hover:bg-success-600 transition-fast" onclick="saveCode()">
+                                    <i class="fas fa-save text-xs mr-1"></i>
+                                    حفظ
+                                </button>
+                                <button class="px-3 py-1 bg-warning text-white rounded text-sm hover:bg-warning-600 transition-fast" onclick="copyCode()">
+                                    <i class="fas fa-copy text-xs mr-1"></i>
+                                    نسخ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Preview Section -->
+                <div class="bg-surface rounded-xl shadow-card border border-border">
+                    <div class="flex items-center justify-between p-4 border-b border-border">
+                        <h3 class="text-lg font-bold text-text-primary">المعاينة المباشرة</h3>
+                        <div class="flex items-center gap-2">
+                            <!-- Viewport Selector -->
+                            <select class="px-3 py-1 border border-border rounded-lg text-sm" id="viewportSelector" onchange="changeViewport()">
+                                <option value="desktop">سطح المكتب</option>
+                                <option value="tablet">الجهاز اللوحي</option>
+                                <option value="mobile">الهاتف</option>
+                            </select>
+                            
+                            <button class="px-3 py-1 bg-primary text-white rounded-lg text-sm hover:bg-primary-600 transition-fast" onclick="refreshPreview()">
+                                <i class="fas fa-sync text-xs mr-1"></i>
+                                تحديث
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Preview Frame -->
+                    <div class="p-4">
+                        <div class="border border-border rounded-lg overflow-hidden" id="previewContainer">
+                            <iframe id="previewFrame" class="w-full h-96 border-none" src="data:text/html;charset=utf-8,<!DOCTYPE html><html><head><meta charset='utf-8'><style>body{font-family:Arial,sans-serif;margin:20px;direction:rtl;}</style></head><body><h2>معاينة مباشرة</h2><p>سيتم عرض الكود هنا...</p></body></html>"></iframe>
+                        </div>
+                    </div>
+                    
+                    <!-- Preview Actions -->
+                    <div class="p-4 border-t border-border bg-secondary-50">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-success rounded-full"></span>
+                                <span class="text-sm text-text-secondary">معاينة نشطة</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button class="px-3 py-1 bg-accent text-white rounded text-sm hover:bg-accent-600 transition-fast" onclick="openInNewTab()">
+                                    <i class="fas fa-external-link-alt text-xs mr-1"></i>
+                                    فتح في تبويب جديد
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Template Library & Code Generator -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Template Library -->
+                <div class="bg-surface rounded-xl shadow-card border border-border" id="templateLibraryPanel">
+                    <div class="flex items-center justify-between p-4 border-b border-border">
+                        <h3 class="text-lg font-bold text-text-primary">مكتبة القوالب</h3>
+                        <button class="px-3 py-1 bg-primary text-white rounded-lg text-sm hover:bg-primary-600 transition-fast" onclick="addNewTemplate()">
+                            <i class="fas fa-plus text-xs mr-1"></i>
+                            إضافة قالب
+                        </button>
+                    </div>
+                    
+                    <div class="p-4 space-y-4 max-h-96 overflow-y-auto">
+                        <!-- Dashboard Template -->
+                        <div class="flex items-center gap-4 p-3 border border-border rounded-lg hover:bg-secondary-50 transition-fast cursor-pointer" onclick="loadTemplate('dashboard')">
+                            <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-tachometer-alt text-primary"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-text-primary">لوحة التحكم الرئيسية</h4>
+                                <p class="text-sm text-text-secondary">قالب لوحة التحكم مع الإحصائيات</p>
+                            </div>
+                            <button class="text-primary hover:text-primary-700 transition-fast" onclick="event.stopPropagation(); useTemplate('dashboard')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+
+                        <!-- Login Form Template -->
+                        <div class="flex items-center gap-4 p-3 border border-border rounded-lg hover:bg-secondary-50 transition-fast cursor-pointer" onclick="loadTemplate('login')">
+                            <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-sign-in-alt text-success"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-text-primary">نموذج تسجيل الدخول</h4>
+                                <p class="text-sm text-text-secondary">صفحة تسجيل الدخول مع التحقق</p>
+                            </div>
+                            <button class="text-primary hover:text-primary-700 transition-fast" onclick="event.stopPropagation(); useTemplate('login')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+
+                        <!-- Project Form Template -->
+                        <div class="flex items-center gap-4 p-3 border border-border rounded-lg hover:bg-secondary-50 transition-fast cursor-pointer" onclick="loadTemplate('project-form')">
+                            <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-plus-circle text-warning"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-text-primary">نموذج إضافة مشروع</h4>
+                                <p class="text-sm text-text-secondary">نموذج شامل لإضافة المشاريع</p>
+                            </div>
+                            <button class="text-primary hover:text-primary-700 transition-fast" onclick="event.stopPropagation(); useTemplate('project-form')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+
+                        <!-- Table Template -->
+                        <div class="flex items-center gap-4 p-3 border border-border rounded-lg hover:bg-secondary-50 transition-fast cursor-pointer" onclick="loadTemplate('table')">
+                            <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-table text-accent"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-text-primary">جدول البيانات</h4>
+                                <p class="text-sm text-text-secondary">جدول تفاعلي مع البحث والتصفية</p>
+                            </div>
+                            <button class="text-primary hover:text-primary-700 transition-fast" onclick="event.stopPropagation(); useTemplate('table')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Generator -->
+                <div class="bg-surface rounded-xl shadow-card border border-border" id="codeGeneratorPanel">
+                    <div class="flex items-center justify-between p-4 border-b border-border">
+                        <h3 class="text-lg font-bold text-text-primary">منشئ الكود التلقائي</h3>
+                        <button class="px-3 py-1 bg-success text-white rounded-lg text-sm hover:bg-success-600 transition-fast" onclick="generateCode()">
+                            <i class="fas fa-magic text-xs mr-1"></i>
+                            إنشاء
+                        </button>
+                    </div>
+                    
+                    <div class="p-4 space-y-4">
+                        <!-- Component Type -->
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">نوع المكون</label>
+                            <select class="w-full px-3 py-2 border border-border rounded-lg" id="componentType">
+                                <option value="card">بطاقة (Card)</option>
+                                <option value="form">نموذج (Form)</option>
+                                <option value="table">جدول (Table)</option>
+                                <option value="modal">نافذة منبثقة (Modal)</option>
+                                <option value="navbar">شريط التنقل (Navbar)</option>
+                                <option value="sidebar">الشريط الجانبي (Sidebar)</option>
+                            </select>
+                        </div>
+
+                        <!-- Component Options -->
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">الخصائص</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" id="includeIcons" checked class="rounded" />
+                                    <span class="text-sm">تضمين الأيقونات</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" id="rtlSupport" checked class="rounded" />
+                                    <span class="text-sm">دعم الاتجاه من اليمين لليسار</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" id="responsiveDesign" checked class="rounded" />
+                                    <span class="text-sm">التصميم المتجاوب</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" id="darkModeSupport" class="rounded" />
+                                    <span class="text-sm">دعم الوضع المظلم</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- CSS Framework -->
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">إطار العمل</label>
+                            <select class="w-full px-3 py-2 border border-border rounded-lg" id="cssFramework">
+                                <option value="bootstrap">Bootstrap 5</option>
+                                <option value="tailwind">Tailwind CSS</option>
+                                <option value="custom">CSS مخصص</option>
+                            </select>
+                        </div>
+
+                        <!-- Generate Options -->
+                        <div class="flex items-center gap-2 pt-4">
+                            <button class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast" onclick="generateAndInsert()">
+                                <i class="fas fa-plus text-xs mr-1"></i>
+                                إنشاء وإدراج
+                            </button>
+                            <button class="flex-1 px-4 py-2 bg-secondary text-text-primary border border-border rounded-lg hover:bg-secondary-100 transition-fast" onclick="previewGenerated()">
+                                <i class="fas fa-eye text-xs mr-1"></i>
+                                معاينة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Management -->
+            <div class="bg-surface rounded-xl shadow-card border border-border">
+                <div class="flex items-center justify-between p-4 border-b border-border">
+                    <h3 class="text-lg font-bold text-text-primary">إدارة الملفات والتصدير</h3>
+                    <div class="flex items-center gap-2">
+                        <button class="px-3 py-1 bg-warning text-white rounded-lg text-sm hover:bg-warning-600 transition-fast" onclick="validateCode()">
+                            <i class="fas fa-check-circle text-xs mr-1"></i>
+                            فحص الكود
+                        </button>
+                        <button class="px-3 py-1 bg-success text-white rounded-lg text-sm hover:bg-success-600 transition-fast" onclick="optimizeCode()">
+                            <i class="fas fa-compress text-xs mr-1"></i>
+                            تحسين
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-4">
+                    <!-- File Structure -->
+                    <div>
+                        <h4 class="font-medium text-text-primary mb-3">هيكل الملفات</h4>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            <div class="flex items-center gap-2 p-2 rounded hover:bg-secondary-50 cursor-pointer">
+                                <i class="fas fa-folder text-warning"></i>
+                                <span class="text-sm">pages/</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-2 mr-4 rounded hover:bg-secondary-50 cursor-pointer">
+                                <i class="fas fa-file-code text-primary"></i>
+                                <span class="text-sm">main_dashboard.html</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-2 mr-4 rounded hover:bg-secondary-50 cursor-pointer">
+                                <i class="fas fa-file-code text-primary"></i>
+                                <span class="text-sm">login.html</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-2 rounded hover:bg-secondary-50 cursor-pointer">
+                                <i class="fas fa-folder text-warning"></i>
+                                <span class="text-sm">css/</span>
+                            </div>
+                            <div class="flex items-center gap-2 p-2 mr-4 rounded hover:bg-secondary-50 cursor-pointer">
+                                <i class="fas fa-file-code text-success"></i>
+                                <span class="text-sm">main.css</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Export Options -->
+                    <div>
+                        <h4 class="font-medium text-text-primary mb-3">خيارات التصدير</h4>
+                        <div class="space-y-3">
+                            <button class="w-full flex items-center gap-2 p-3 border border-border rounded-lg hover:bg-secondary-50 transition-fast" onclick="exportHTML()">
+                                <i class="fas fa-file-code text-primary"></i>
+                                <div class="text-right">
+                                    <div class="font-medium">تصدير HTML</div>
+                                    <div class="text-xs text-text-secondary">ملف HTML نظيف</div>
+                                </div>
+                            </button>
+                            
+                            <button class="w-full flex items-center gap-2 p-3 border border-border rounded-lg hover:bg-secondary-50 transition-fast" onclick="exportZip()">
+                                <i class="fas fa-file-archive text-warning"></i>
+                                <div class="text-right">
+                                    <div class="font-medium">تصدير مضغوط</div>
+                                    <div class="text-xs text-text-secondary">مشروع كامل ZIP</div>
+                                </div>
+                            </button>
+                            
+                            <button class="w-full flex items-center gap-2 p-3 border border-border rounded-lg hover:bg-secondary-50 transition-fast" onclick="deployProject()">
+                                <i class="fas fa-cloud-upload-alt text-success"></i>
+                                <div class="text-right">
+                                    <div class="font-medium">نشر المشروع</div>
+                                    <div class="text-xs text-text-secondary">رفع مباشر للخادم</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Performance & Validation -->
+                    <div>
+                        <h4 class="font-medium text-text-primary mb-3">الأداء والفحص</h4>
+                        <div class="space-y-3">
+                            <!-- Performance Score -->
+                            <div class="p-3 border border-border rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium">نقاط الأداء</span>
+                                    <span class="text-lg font-bold text-success">95</span>
+                                </div>
+                                <div class="w-full bg-secondary-200 rounded-full h-2">
+                                    <div class="bg-success h-2 rounded-full transition-all duration-1000" style="width: 95%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Validation Results -->
+                            <div class="p-3 border border-border rounded-lg">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="text-sm font-medium">HTML صحيح</span>
+                                </div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    <span class="text-sm font-medium">CSS صحيح</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                                    <span class="text-sm font-medium">تحسينات مقترحة: 2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-surface border-t border-border px-6 py-4 mt-8">
+            <div class="flex items-center justify-between text-sm text-text-secondary">
+                <p>© 2025 ContractorPro HTML Implementation Dashboard. جميع الحقوق محفوظة.</p>
+                <p id="lastUpdate">آخر تحديث: 5 أكتوبر 2025 - 08:34</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal for Template Preview -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" id="templateModal">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-surface rounded-xl shadow-modal max-w-4xl w-full max-h-screen overflow-y-auto">
+                <div class="flex items-center justify-between p-6 border-b border-border">
+                    <h3 class="text-xl font-bold text-text-primary">معاينة القالب</h3>
+                    <button class="text-text-secondary hover:text-text-primary" onclick="closeTemplateModal()">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <pre id="templateCode" class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"></pre>
+                </div>
+                <div class="flex items-center justify-end gap-4 p-6 border-t border-border">
+                    <button class="px-4 py-2 bg-secondary text-text-primary border border-border rounded-lg hover:bg-secondary-100 transition-fast" onclick="closeTemplateModal()">
+                        إلغاء
+                    </button>
+                    <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast" onclick="insertTemplate()">
+                        استخدام القالب
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        // Global Variables
+        let currentTemplate = '';
+        let currentLanguage = 'html';
+        let autoSaveInterval;
+        
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEditor();
+            setupAutoSave();
+            updateStats();
+            setupEventListeners();
+        });
+
+        // Initialize the code editor
+        function initializeEditor() {
+            const editor = document.getElementById('codeEditor');
+            
+            // Auto-update preview on code change
+            editor.addEventListener('input', function() {
+                updatePreview();
+                updateLineNumbers();
+                updateCharCount();
+                setSaveStatus('غير محفوظ', 'warning');
+            });
+            
+            // Initial setup
+            updateLineNumbers();
+            updateCharCount();
+            updatePreview();
+        }
+
+        // Setup auto-save functionality
+        function setupAutoSave() {
+            autoSaveInterval = setInterval(function() {
+                saveCode();
+            }, 30000); // Auto-save every 30 seconds
+        }
+
+        // Update statistics
+        function updateStats() {
+            // These would be populated from actual data
+            document.getElementById('fileCount').textContent = '12';
+            document.getElementById('templateCount').textContent = '8';
+            document.getElementById('componentCount').textContent = '24';
+            document.getElementById('styleCount').textContent = '16';
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case 's':
+                            e.preventDefault();
+                            saveCode();
+                            break;
+                        case 'Enter':
+                            e.preventDefault();
+                            formatCode();
+                            break;
+                    }
+                }
+            });
+        }
+
+        // Code Editor Functions
+        function changeLanguage() {
+            const language = document.getElementById('languageSelector').value;
+            currentLanguage = language;
+            
+            const editor = document.getElementById('codeEditor');
+            editor.className = `w-full h-96 p-4 font-mono text-sm bg-gray-900 border-none resize-none focus:outline-none language-${language}`;
+            
+            // Update placeholder based on language
+            switch(language) {
+                case 'html':
+                    editor.placeholder = 'ابدأ بكتابة HTML هنا...';
+                    editor.style.color = '#4ade80'; // green
+                    break;
+                case 'css':
+                    editor.placeholder = 'ابدأ بكتابة CSS هنا...';
+                    editor.style.color = '#60a5fa'; // blue
+                    break;
+                case 'javascript':
+                    editor.placeholder = 'ابدأ بكتابة JavaScript هنا...';
+                    editor.style.color = '#fbbf24'; // yellow
+                    break;
+            }
+        }
+
+        function formatCode() {
+            const editor = document.getElementById('codeEditor');
+            let code = editor.value;
+            
+            // Basic formatting (would use a proper formatter in production)
+            if (currentLanguage === 'html') {
+                code = code.replace(/></g, '>\n<');
+                code = code.replace(/\n\s*\n/g, '\n');
+            }
+            
+            editor.value = code;
+            updateLineNumbers();
+            updatePreview();
+            setSaveStatus('تم التنسيق', 'success');
+        }
+
+        function saveCode() {
+            const code = document.getElementById('codeEditor').value;
+            
+            // Save to localStorage (in production, this would save to server)
+            localStorage.setItem(`contractor_pro_code_${currentLanguage}`, code);
+            localStorage.setItem('contractor_pro_last_save', new Date().toISOString());
+            
+            setSaveStatus('محفوظ', 'success');
+        }
+
+        function copyCode() {
+            const editor = document.getElementById('codeEditor');
+            editor.select();
+            document.execCommand('copy');
+            
+            // Show copied notification
+            setSaveStatus('تم النسخ', 'success');
+            setTimeout(() => {
+                setSaveStatus('محفوظ', 'success');
+            }, 2000);
+        }
+
+        function updateLineNumbers() {
+            const editor = document.getElementById('codeEditor');
+            const lineCount = editor.value.split('\n').length;
+            
+            let lineNumbers = '';
+            for (let i = 1; i <= lineCount; i++) {
+                lineNumbers += i + '<br>';
+            }
+            
+            document.getElementById('lineNumbers').innerHTML = lineNumbers;
+            document.getElementById('lineCount').textContent = lineCount;
+        }
+
+        function updateCharCount() {
+            const editor = document.getElementById('codeEditor');
+            const charCount = editor.value.length;
+            document.getElementById('charCount').textContent = charCount;
+        }
+
+        // Preview Functions
+        function updatePreview() {
+            const code = document.getElementById('codeEditor').value;
+            const preview = document.getElementById('previewFrame');
+            
+            if (currentLanguage === 'html') {
+                const blob = new Blob([code], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                preview.src = url;
+            }
+        }
+
+        function changeViewport() {
+            const viewport = document.getElementById('viewportSelector').value;
+            const preview = document.getElementById('previewFrame');
+            
+            switch(viewport) {
+                case 'desktop':
+                    preview.style.width = '100%';
+                    break;
+                case 'tablet':
+                    preview.style.width = '768px';
+                    break;
+                case 'mobile':
+                    preview.style.width = '375px';
+                    break;
+            }
+        }
+
+        function refreshPreview() {
+            updatePreview();
+            setSaveStatus('تم التحديث', 'success');
+        }
+
+        function openInNewTab() {
+            const code = document.getElementById('codeEditor').value;
+            const newWindow = window.open();
+            newWindow.document.write(code);
+            newWindow.document.close();
+        }
+
+        // Template Functions
+        function showTemplateLibrary() {
+            document.getElementById('templateLibraryPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function loadTemplate(templateName) {
+            const templates = {
+                dashboard: `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContractorPro - لوحة التحكم</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-hard-hat"></i> ContractorPro</a>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h4 class="card-title">12</h4>
+                        <p class="card-text">إجمالي المشاريع</p>
+                        <i class="fas fa-project-diagram fa-2x float-end"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`,
+                login: `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - ContractorPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center">تسجيل الدخول</h3>
+                        <form>
+                            <div class="mb-3">
+                                <label class="form-label">اسم المستخدم</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">كلمة المرور</label>
+                                <input type="password" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">دخول</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>`
+            };
+            
+            currentTemplate = templates[templateName] || '';
+            document.getElementById('templateCode').textContent = currentTemplate;
+            document.getElementById('templateModal').classList.remove('hidden');
+        }
+
+        function useTemplate(templateName) {
+            loadTemplate(templateName);
+            insertTemplate();
+        }
+
+        function insertTemplate() {
+            if (currentTemplate) {
+                document.getElementById('codeEditor').value = currentTemplate;
+                updateLineNumbers();
+                updateCharCount();
+                updatePreview();
+                closeTemplateModal();
+                setSaveStatus('تم إدراج القالب', 'success');
+            }
+        }
+
+        function closeTemplateModal() {
+            document.getElementById('templateModal').classList.add('hidden');
+        }
+
+        function addNewTemplate() {
+            const templateName = prompt('اسم القالب الجديد:');
+            if (templateName) {
+                const code = document.getElementById('codeEditor').value;
+                // Save template (would save to server in production)
+                localStorage.setItem(`template_${templateName}`, code);
+                alert('تم حفظ القالب بنجاح!');
+            }
+        }
+
+        // Code Generator Functions
+        function showCodeGenerator() {
+            document.getElementById('codeGeneratorPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateCode() {
+            const componentType = document.getElementById('componentType').value;
+            const includeIcons = document.getElementById('includeIcons').checked;
+            const rtlSupport = document.getElementById('rtlSupport').checked;
+            const responsiveDesign = document.getElementById('responsiveDesign').checked;
+            const cssFramework = document.getElementById('cssFramework').value;
+            
+            let generatedCode = '';
+            
+            switch(componentType) {
+                case 'card':
+                    generatedCode = generateCardComponent(includeIcons, rtlSupport, responsiveDesign, cssFramework);
+                    break;
+                case 'form':
+                    generatedCode = generateFormComponent(includeIcons, rtlSupport, responsiveDesign, cssFramework);
+                    break;
+                case 'table':
+                    generatedCode = generateTableComponent(includeIcons, rtlSupport, responsiveDesign, cssFramework);
+                    break;
+                case 'modal':
+                    generatedCode = generateModalComponent(includeIcons, rtlSupport, responsiveDesign, cssFramework);
+                    break;
+            }
+            
+            return generatedCode;
+        }
+
+        function generateCardComponent(icons, rtl, responsive, framework) {
+            const rtlDir = rtl ? ' dir="rtl"' : '';
+            const iconClass = icons ? '<i class="fas fa-star text-warning"></i> ' : '';
+            
+            return `<div class="card${responsive ? ' mb-3' : ''}"${rtlDir}>
+    <div class="card-body">
+        <h5 class="card-title">${iconClass}عنوان البطاقة</h5>
+        <p class="card-text">محتوى البطاقة يظهر هنا.</p>
+        <a href="#" class="btn btn-primary">إجراء</a>
+    </div>
+</div>`;
+        }
+
+        function generateFormComponent(icons, rtl, responsive, framework) {
+            const rtlDir = rtl ? ' dir="rtl"' : '';
+            const iconClass = icons ? '<i class="fas fa-user"></i> ' : '';
+            
+            return `<form${rtlDir}>
+    <div class="mb-3">
+        <label class="form-label">${iconClass}الاسم</label>
+        <input type="text" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">${icons ? '<i class="fas fa-envelope"></i> ' : ''}البريد الإلكتروني</label>
+        <input type="email" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">إرسال</button>
+</form>`;
+        }
+
+        function generateTableComponent(icons, rtl, responsive, framework) {
+            const rtlDir = rtl ? ' dir="rtl"' : '';
+            
+            return `<div class="table-responsive"${rtlDir}>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>الاسم</th>
+                <th>البريد الإلكتروني</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>أحمد محمد</td>
+                <td>ahmed@example.com</td>
+                <td>
+                    <button class="btn btn-sm btn-primary">${icons ? '<i class="fas fa-edit"></i> ' : ''}تعديل</button>
+                    <button class="btn btn-sm btn-danger">${icons ? '<i class="fas fa-trash"></i> ' : ''}حذف</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>`;
+        }
+
+        function generateModalComponent(icons, rtl, responsive, framework) {
+            const rtlDir = rtl ? ' dir="rtl"' : '';
+            
+            return `<div class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content"${rtlDir}>
+            <div class="modal-header">
+                <h5 class="modal-title">${icons ? '<i class="fas fa-info-circle"></i> ' : ''}عنوان النافذة</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>محتوى النافذة المنبثقة يظهر هنا.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary">حفظ</button>
+            </div>
+        </div>
+    </div>
+</div>`;
+        }
+
+        function generateAndInsert() {
+            const generatedCode = generateCode();
+            const editor = document.getElementById('codeEditor');
+            const cursorPosition = editor.selectionStart;
+            const textBefore = editor.value.substring(0, cursorPosition);
+            const textAfter = editor.value.substring(cursorPosition);
+            
+            editor.value = textBefore + '\n' + generatedCode + '\n' + textAfter;
+            updateLineNumbers();
+            updateCharCount();
+            updatePreview();
+            setSaveStatus('تم إدراج الكود', 'success');
+        }
+
+        function previewGenerated() {
+            const generatedCode = generateCode();
+            alert('الكود المُنشأ:\n\n' + generatedCode);
+        }
+
+        // File Management Functions
+        function showFileManager() {
+            // Scroll to file management section
+            document.querySelector('.bg-surface.rounded-xl.shadow-card.border.border-border:last-of-type').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
+        function validateCode() {
+            const code = document.getElementById('codeEditor').value;
+            
+            // Basic HTML validation
+            const errors = [];
+            if (currentLanguage === 'html') {
+                if (!code.includes('<!DOCTYPE html>')) {
+                    errors.push('مفقود: إعلان نوع المستند DOCTYPE');
+                }
+                if (!code.includes('<html')) {
+                    errors.push('مفقود: عنصر HTML الأساسي');
+                }
+                if (!code.includes('<head>')) {
+                    errors.push('مفقود: قسم HEAD');
+                }
+                if (!code.includes('<body>')) {
+                    errors.push('مفقود: قسم BODY');
+                }
+            }
+            
+            if (errors.length === 0) {
+                alert('الكود صحيح! لا توجد أخطاء.');
+                setSaveStatus('تم الفحص ✓', 'success');
+            } else {
+                alert('تم العثور على الأخطاء التالية:\n\n' + errors.join('\n'));
+                setSaveStatus('يحتوي على أخطاء', 'error');
+            }
+        }
+
+        function optimizeCode() {
+            const editor = document.getElementById('codeEditor');
+            let code = editor.value;
+            
+            // Basic optimization
+            code = code.replace(/\s+/g, ' '); // Remove extra whitespace
+            code = code.replace(/>\s+</g, '><'); // Remove spaces between tags
+            code = code.trim();
+            
+            editor.value = code;
+            updateLineNumbers();
+            updateCharCount();
+            updatePreview();
+            setSaveStatus('تم التحسين', 'success');
+        }
+
+        // Export Functions
+        function exportProject() {
+            exportHTML();
+        }
+
+        function exportHTML() {
+            const code = document.getElementById('codeEditor').value;
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'contractor-pro-page.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            setSaveStatus('تم التصدير', 'success');
+        }
+
+        function exportZip() {
+            // In a real implementation, this would create a ZIP file with all project files
+            alert('سيتم إنشاء ملف مضغوط يحتوي على جميع ملفات المشروع');
+        }
+
+        function deployProject() {
+            // In a real implementation, this would deploy to a server
+            alert('سيتم نشر المشروع على الخادم المحدد');
+        }
+
+        // Utility Functions
+        function setSaveStatus(status, type) {
+            const statusElement = document.getElementById('saveStatus');
+            const iconMap = {
+                success: 'fas fa-check',
+                warning: 'fas fa-exclamation-triangle',
+                error: 'fas fa-times'
+            };
+            const colorMap = {
+                success: 'bg-success-50 text-success',
+                warning: 'bg-warning-50 text-warning',
+                error: 'bg-error-50 text-error'
+            };
+            
+            statusElement.innerHTML = `<i class="${iconMap[type] || 'fas fa-save'}"></i><span>${status}</span>`;
+            statusElement.className = `flex items-center gap-2 px-3 py-1 rounded-lg text-sm ${colorMap[type] || 'bg-primary-50 text-primary'}`;
+        }
+
+        function previewProject() {
+            openInNewTab();
+        }
+
+        function toggleTheme() {
+            // Toggle between light and dark theme
+            document.body.classList.toggle('dark-theme');
+        }
+
+        // Update time in footer
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const footerTime = document.getElementById('lastUpdate');
+            if (footerTime) {
+                footerTime.textContent = `آخر تحديث: ${timeString}`;
+            }
+        }
+
+        // Update time every minute
+        setInterval(updateTime, 60000);
+        updateTime(); // Initial call
+    </script>
+</body>
+</html>

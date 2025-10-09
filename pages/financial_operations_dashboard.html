@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة العمليات المالية - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+</head>
+<body class="bg-background font-arabic">
+    <!-- Navigation Sidebar -->
+    <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50 transform transition-transform duration-300" id="sidebar">
+        <div class="p-6 border-b border-border">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fas fa-hard-hat text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
+                    <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="p-4 space-y-2">
+            <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-tachometer-alt w-5"></i>
+                <span>لوحة التحكم</span>
+            </a>
+            <a href="projects_hub.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-building w-5"></i>
+                <span>مركز المشاريع</span>
+            </a>
+            <a href="financial_operations_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
+                <i class="fas fa-chart-line w-5"></i>
+                <span class="font-medium">العمليات المالية</span>
+            </a>
+            <a href="employee_management.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-users w-5"></i>
+                <span>إدارة الموظفين</span>
+            </a>
+            <a href="system_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-cog w-5"></i>
+                <span>لوحة التحكم</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <div class="md:hidden fixed top-4 right-4 z-50">
+        <button id="mobileMenuToggle" class="p-3 bg-surface rounded-lg shadow-card border border-border">
+            <i class="fas fa-bars text-text-primary"></i>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mr-0 md:mr-64 min-h-screen">
+        <!-- Top Header -->
+        <header class="bg-surface shadow-card px-6 py-4 border-b border-border">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-text-primary">لوحة العمليات المالية</h1>
+                    <p class="text-text-secondary">مركز شامل لإدارة الفواتير والعروض والتقارير المالية مع الامتثال الضريبي</p>
+                </div>
+                
+                <!-- Quick Actions & Search -->
+                <div class="hidden md:flex items-center gap-4">
+                    <div class="relative">
+                        <input type="text" placeholder="البحث في الفواتير والتقارير..." class="w-80 px-4 py-2 pr-10 border border-border rounded-lg focus:border-primary focus:outline-none" />
+                        <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                    </div>
+                    
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button class="p-2 rounded-lg hover:bg-secondary-100 transition-fast relative" onclick="window.location.href='notifications.html'">
+                            <i class="fas fa-bell text-text-secondary text-lg"></i>
+                            <span class="absolute -top-1 -left-1 w-5 h-5 bg-error text-white text-xs rounded-full flex items-center justify-center">12</span>
+                        </button>
+                    </div>
+                    
+                    <!-- User Profile -->
+                    <div class="flex items-center gap-3" onclick="window.location.href='user_profile.html'" style="cursor: pointer;">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="صورة المستخدم" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'; this.onerror=null;" />
+                        <div>
+                            <p class="font-medium text-text-primary">سارة المحاسبة</p>
+                            <p class="text-sm text-text-secondary">مدير مالي</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Financial Operations Content -->
+        <main class="p-6 space-y-6">
+            <!-- Financial Overview Tabs -->
+            <div class="bg-surface rounded-xl shadow-card border border-border">
+                <!-- Tab Navigation -->
+                <div class="border-b border-border">
+                    <nav class="flex space-x-8">
+                        <button onclick="switchTab('reports')" id="reportsTab" class="tab-button active py-4 px-6 text-sm font-medium border-b-2 border-primary text-primary">
+                            <i class="fas fa-chart-bar ml-2"></i>
+                            التقارير المالية
+                        </button>
+                        <button onclick="switchTab('invoices')" id="invoicesTab" class="tab-button py-4 px-6 text-sm font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary hover:border-secondary-300 transition-fast">
+                            <i class="fas fa-file-invoice ml-2"></i>
+                            إدارة الفواتير
+                        </button>
+                        <button onclick="switchTab('quotations')" id="quotationsTab" class="tab-button py-4 px-6 text-sm font-medium border-b-2 border-transparent text-text-secondary hover:text-text-primary hover:border-secondary-300 transition-fast">
+                            <i class="fas fa-file-contract ml-2"></i>
+                            إدارة العروض
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Reports Tab Content -->
+                <div id="reportsContent" class="tab-content p-6">
+                    <!-- Financial KPI Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <!-- Total Revenue -->
+                        <div class="bg-gradient-to-br from-success-100 to-success-200 rounded-xl p-6 shadow-card border border-success-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-success-700 text-sm font-medium">إجمالي الإيرادات</p>
+                                    <p class="text-3xl font-bold text-success-800 mt-2">18.5M ريال</p>
+                                    <div class="flex items-center gap-1 mt-2">
+                                        <i class="fas fa-trending-up text-success-600 text-sm"></i>
+                                        <span class="text-success-600 text-sm font-medium">+24.5% هذا الشهر</span>
+                                    </div>
+                                </div>
+                                <div class="w-12 h-12 bg-success-300 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-chart-line text-success-700 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Outstanding Invoices -->
+                        <div class="bg-gradient-to-br from-warning-100 to-warning-200 rounded-xl p-6 shadow-card border border-warning-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-warning-700 text-sm font-medium">الفواتير المعلقة</p>
+                                    <p class="text-3xl font-bold text-warning-800 mt-2">1.2M ريال</p>
+                                    <div class="flex items-center gap-1 mt-2">
+                                        <i class="fas fa-clock text-warning-600 text-sm"></i>
+                                        <span class="text-warning-600 text-sm font-medium">15 فاتورة معلقة</span>
+                                    </div>
+                                </div>
+                                <div class="w-12 h-12 bg-warning-300 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-file-invoice text-warning-700 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profit Margin -->
+                        <div class="bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl p-6 shadow-card border border-primary-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-primary-700 text-sm font-medium">هامش الربح</p>
+                                    <p class="text-3xl font-bold text-primary-800 mt-2">34.6%</p>
+                                    <div class="flex items-center gap-1 mt-2">
+                                        <i class="fas fa-percentage text-primary-600 text-sm"></i>
+                                        <span class="text-primary-600 text-sm font-medium">6.4M ريال صافي ربح</span>
+                                    </div>
+                                </div>
+                                <div class="w-12 h-12 bg-primary-300 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-percentage text-primary-700 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tax Compliance -->
+                        <div class="bg-gradient-to-br from-accent-100 to-accent-200 rounded-xl p-6 shadow-card border border-accent-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-accent-700 text-sm font-medium">الامتثال الضريبي</p>
+                                    <p class="text-3xl font-bold text-accent-800 mt-2">98.5%</p>
+                                    <div class="flex items-center gap-1 mt-2">
+                                        <i class="fas fa-shield-check text-accent-600 text-sm"></i>
+                                        <span class="text-accent-600 text-sm font-medium">متوافق مع ZATCA</span>
+                                    </div>
+                                </div>
+                                <div class="w-12 h-12 bg-accent-300 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-shield-alt text-accent-700 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <!-- Revenue vs Expenses Chart -->
+                        <div class="bg-secondary-50 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-bold text-text-primary">تحليل الإيرادات والمصروفات</h3>
+                                <select class="px-3 py-1 border border-border rounded-lg text-sm">
+                                    <option>آخر 12 شهر</option>
+                                    <option>السنة الحالية</option>
+                                    <option>المقارنة السنوية</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Chart Placeholder with Enhanced Design -->
+                            <div class="h-80 bg-white rounded-lg flex items-center justify-center relative overflow-hidden border border-border shadow-sm">
+                                <svg class="w-full h-full" viewBox="0 0 500 300">
+                                    <!-- Chart Background Grid -->
+                                    <defs>
+                                        <pattern id="revenueGrid" width="50" height="25" patternUnits="userSpaceOnUse">
+                                            <path d="M 50 0 L 0 0 0 25" fill="none" stroke="#E2E8F0" stroke-width="1" opacity="0.5"/>
+                                        </pattern>
+                                        <linearGradient id="revenueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#10B981;stop-opacity:0.4"/>
+                                            <stop offset="100%" style="stop-color:#10B981;stop-opacity:0.1"/>
+                                        </linearGradient>
+                                        <linearGradient id="expenseGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#EF4444;stop-opacity:0.3"/>
+                                            <stop offset="100%" style="stop-color:#EF4444;stop-opacity:0.1"/>
+                                        </linearGradient>
+                                    </defs>
+                                    
+                                    <!-- Grid -->
+                                    <rect width="100%" height="100%" fill="url(#revenueGrid)"/>
+                                    
+                                    <!-- Revenue Area -->
+                                    <polygon fill="url(#revenueGradient)" points="50,200 100,180 150,160 200,140 250,120 300,100 350,80 400,70 450,60 450,250 50,250"/>
+                                    
+                                    <!-- Expense Area -->
+                                    <polygon fill="url(#expenseGradient)" points="50,220 100,210 150,190 200,180 250,170 300,160 350,150 400,140 450,130 450,250 50,250"/>
+                                    
+                                    <!-- Revenue Line -->
+                                    <polyline fill="none" stroke="#10B981" stroke-width="4" points="50,200 100,180 150,160 200,140 250,120 300,100 350,80 400,70 450,60"/>
+                                    
+                                    <!-- Expense Line -->
+                                    <polyline fill="none" stroke="#EF4444" stroke-width="4" points="50,220 100,210 150,190 200,180 250,170 300,160 350,150 400,140 450,130"/>
+                                    
+                                    <!-- Data Points -->
+                                    <circle cx="450" cy="60" r="6" fill="#10B981" stroke="#fff" stroke-width="2"/>
+                                    <circle cx="450" cy="130" r="6" fill="#EF4444" stroke="#fff" stroke-width="2"/>
+                                    <circle cx="400" cy="70" r="5" fill="#10B981" stroke="#fff" stroke-width="2"/>
+                                    <circle cx="400" cy="140" r="5" fill="#EF4444" stroke="#fff" stroke-width="2"/>
+                                    <circle cx="350" cy="80" r="5" fill="#10B981" stroke="#fff" stroke-width="2"/>
+                                    <circle cx="350" cy="150" r="5" fill="#EF4444" stroke="#fff" stroke-width="2"/>
+                                </svg>
+                                
+                                <!-- Legend -->
+                                <div class="absolute top-4 left-4 bg-white rounded-lg p-3 shadow-sm border border-border">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <div class="w-4 h-4 bg-success rounded-full"></div>
+                                        <span class="text-xs font-medium text-text-primary">الإيرادات: 18.5M ريال</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-4 h-4 bg-error rounded-full"></div>
+                                        <span class="text-xs font-medium text-text-primary">المصروفات: 12.1M ريال</span>
+                                    </div>
+                                </div>
+
+                                <!-- Current Values Display -->
+                                <div class="absolute bottom-4 right-4 bg-white rounded-lg p-3 shadow-sm border border-border">
+                                    <div class="text-right">
+                                        <p class="text-xs text-text-secondary">صافي الربح</p>
+                                        <p class="text-lg font-bold text-success">6.4M ريال</p>
+                                        <p class="text-xs text-success">+34.6%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Profitability Chart -->
+                        <div class="bg-secondary-50 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-bold text-text-primary">ربحية المشاريع</h3>
+                                <select class="px-3 py-1 border border-border rounded-lg text-sm">
+                                    <option>جميع المشاريع</option>
+                                    <option>المشاريع النشطة</option>
+                                    <option>المشاريع المكتملة</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Profitability Data -->
+                            <div class="space-y-4">
+                                <!-- Project 1 -->
+                                <div class="bg-white rounded-lg p-4 border border-border">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-3 h-3 bg-success rounded-full"></div>
+                                            <span class="font-medium text-text-primary">فيلا الرياض الحديثة</span>
+                                        </div>
+                                        <span class="text-sm font-bold text-success">425K ريال (50%)</span>
+                                    </div>
+                                    <div class="w-full bg-secondary-200 rounded-full h-3">
+                                        <div class="bg-success h-3 rounded-full transition-all duration-1000" style="width: 85%"></div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-text-secondary mt-2">
+                                        <span>إجمالي: 850K</span>
+                                        <span>التقدم: 85%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Project 2 -->
+                                <div class="bg-white rounded-lg p-4 border border-border">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-3 h-3 bg-primary rounded-full"></div>
+                                            <span class="font-medium text-text-primary">مجمع تجاري جدة</span>
+                                        </div>
+                                        <span class="text-sm font-bold text-primary">660K ريال (55%)</span>
+                                    </div>
+                                    <div class="w-full bg-secondary-200 rounded-full h-3">
+                                        <div class="bg-primary h-3 rounded-full transition-all duration-1000" style="width: 45%"></div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-text-secondary mt-2">
+                                        <span>إجمالي: 1.2M</span>
+                                        <span>التقدم: 45%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Project 3 -->
+                                <div class="bg-white rounded-lg p-4 border border-border">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-3 h-3 bg-accent rounded-full"></div>
+                                            <span class="font-medium text-text-primary">فيلا الخبر الفاخرة</span>
+                                        </div>
+                                        <span class="text-sm font-bold text-accent">187K ريال (25%)</span>
+                                    </div>
+                                    <div class="w-full bg-secondary-200 rounded-full h-3">
+                                        <div class="bg-accent h-3 rounded-full transition-all duration-1000" style="width: 75%"></div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-text-secondary mt-2">
+                                        <span>إجمالي: 750K</span>
+                                        <span>التقدم: 75%</span>
+                                    </div>
+                                </div>
+
+                                <!-- Project 4 -->
+                                <div class="bg-white rounded-lg p-4 border border-border">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-3 h-3 bg-warning rounded-full"></div>
+                                            <span class="font-medium text-text-primary">مكاتب نورا التجارية</span>
+                                        </div>
+                                        <span class="text-sm font-bold text-success">126K ريال (30%)</span>
+                                    </div>
+                                    <div class="w-full bg-secondary-200 rounded-full h-3">
+                                        <div class="bg-success h-3 rounded-full transition-all duration-1000" style="width: 100%"></div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-text-secondary mt-2">
+                                        <span>إجمالي: 420K</span>
+                                        <span>مكتمل: 100%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report Generation Actions -->
+                    <div class="bg-white rounded-xl p-6 border border-border">
+                        <h3 class="text-lg font-bold text-text-primary mb-6">إنشاء التقارير المالية</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <button onclick="generateReport('monthly')" class="p-6 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-center group">
+                                <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-primary-200 transition-fast">
+                                    <i class="fas fa-calendar-alt text-primary text-xl"></i>
+                                </div>
+                                <h4 class="font-medium text-text-primary mb-2">التقرير الشهري</h4>
+                                <p class="text-xs text-text-secondary">تقرير مفصل للأداء المالي الشهري</p>
+                            </button>
+
+                            <button onclick="generateReport('quarterly')" class="p-6 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-center group">
+                                <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-success-200 transition-fast">
+                                    <i class="fas fa-chart-pie text-success text-xl"></i>
+                                </div>
+                                <h4 class="font-medium text-text-primary mb-2">التقرير الربعي</h4>
+                                <p class="text-xs text-text-secondary">ملخص الأداء المالي للربع</p>
+                            </button>
+
+                            <button onclick="generateReport('tax')" class="p-6 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-center group">
+                                <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-warning-200 transition-fast">
+                                    <i class="fas fa-receipt text-warning text-xl"></i>
+                                </div>
+                                <h4 class="font-medium text-text-primary mb-2">التقرير الضريبي</h4>
+                                <p class="text-xs text-text-secondary">تقرير الامتثال الضريبي</p>
+                            </button>
+
+                            <button onclick="generateReport('custom')" class="p-6 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-center group">
+                                <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-accent-200 transition-fast">
+                                    <i class="fas fa-cogs text-accent text-xl"></i>
+                                </div>
+                                <h4 class="font-medium text-text-primary mb-2">تقرير مخصص</h4>
+                                <p class="text-xs text-text-secondary">تقرير قابل للتخصيص حسب الحاجة</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoices Tab Content -->
+                <div id="invoicesContent" class="tab-content p-6 hidden">
+                    <!-- Invoice Management Actions -->
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-text-primary">إدارة الفواتير</h3>
+                            <p class="text-text-secondary">إنشاء وإدارة الفواتير الضريبية المتوافقة مع ZATCA</p>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            <button onclick="openInvoiceModal()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-fast">
+                                <i class="fas fa-plus ml-2"></i>
+                                فاتورة جديدة
+                            </button>
+                            <button onclick="importInvoices()" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-upload ml-2"></i>
+                                استيراد
+                            </button>
+                            <button onclick="exportInvoices()" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-download ml-2"></i>
+                                تصدير
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Invoice Filters -->
+                    <div class="bg-secondary-50 rounded-lg p-4 mb-6">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <select class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
+                                <option value>جميع الفواتير</option>
+                                <option value="paid">مدفوعة</option>
+                                <option value="pending">معلقة</option>
+                                <option value="overdue">متأخرة</option>
+                                <option value="draft">مسودة</option>
+                            </select>
+                            
+                            <select class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
+                                <option value>جميع المشاريع</option>
+                                <option value="villa_riyadh">فيلا الرياض الحديثة</option>
+                                <option value="commercial_jeddah">مجمع تجاري جدة</option>
+                                <option value="villa_khobar">فيلا الخبر الفاخرة</option>
+                                <option value="offices_nora">مكاتب نورا التجارية</option>
+                            </select>
+                            
+                            <input type="date" class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none" />
+                            <span class="text-text-secondary">إلى</span>
+                            <input type="date" class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none" />
+                            
+                            <button onclick="applyInvoiceFilters()" class="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary-700 transition-fast">
+                                تطبيق الفلترة
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Invoices List -->
+                    <div class="bg-white rounded-xl border border-border overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-secondary-50 border-b border-border">
+                                    <tr>
+                                        <th class="text-right py-4 px-6 text-sm font-medium text-text-primary">رقم الفاتورة</th>
+                                        <th class="text-right py-4 px-6 text-sm font-medium text-text-primary">المشروع</th>
+                                        <th class="text-right py-4 px-6 text-sm font-medium text-text-primary">العميل</th>
+                                        <th class="text-right py-4 px-6 text-sm font-medium text-text-primary">المبلغ</th>
+                                        <th class="text-right py-4 px-6 text-sm font-medium text-text-primary">التاريخ</th>
+                                        <th class="text-right py-4 px-6 text-sm font-medium text-text-primary">الحالة</th>
+                                        <th class="text-right py-4 px-6 text-sm font-medium text-text-primary">الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-border">
+                                    <!-- Invoice Row 1 -->
+                                    <tr class="hover:bg-secondary-50 transition-fast">
+                                        <td class="py-4 px-6">
+                                            <span class="font-medium text-text-primary">INV-2025-0847</span>
+                                            <br />
+                                            <span class="text-xs text-text-secondary">QR: Generated</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="text-text-primary">فيلا الرياض الحديثة</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-2">
+                                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=100&auto=format&fit=crop" alt="صورة العميل" class="w-8 h-8 rounded-full object-cover" />
+                                                <span class="text-text-primary">محمد العبدالله</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="font-bold text-text-primary">125,000 ريال</span>
+                                            <br />
+                                            <span class="text-xs text-text-secondary">شامل الضريبة</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="text-text-primary">04/10/2025</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
+                                                <i class="fas fa-check ml-1"></i>
+                                                مدفوعة
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-2">
+                                                <button onclick="viewInvoice('INV-2025-0847')" class="p-2 text-primary hover:bg-primary-100 rounded-lg transition-fast" title="عرض">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button onclick="downloadInvoice('INV-2025-0847')" class="p-2 text-secondary hover:bg-secondary-100 rounded-lg transition-fast" title="تحميل">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button onclick="editInvoice('INV-2025-0847')" class="p-2 text-warning hover:bg-warning-100 rounded-lg transition-fast" title="تعديل">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="sendInvoice('INV-2025-0847')" class="p-2 text-accent hover:bg-accent-100 rounded-lg transition-fast" title="إرسال">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Invoice Row 2 -->
+                                    <tr class="hover:bg-secondary-50 transition-fast">
+                                        <td class="py-4 px-6">
+                                            <span class="font-medium text-text-primary">INV-2025-0846</span>
+                                            <br />
+                                            <span class="text-xs text-text-secondary">QR: Generated</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="text-text-primary">مجمع تجاري جدة</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-2">
+                                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop" alt="صورة العميل" class="w-8 h-8 rounded-full object-cover" />
+                                                <span class="text-text-primary">شركة الأندلس</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="font-bold text-text-primary">85,000 ريال</span>
+                                            <br />
+                                            <span class="text-xs text-text-secondary">شامل الضريبة</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="text-text-primary">02/10/2025</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">
+                                                <i class="fas fa-clock ml-1"></i>
+                                                معلقة
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-2">
+                                                <button onclick="viewInvoice('INV-2025-0846')" class="p-2 text-primary hover:bg-primary-100 rounded-lg transition-fast" title="عرض">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button onclick="downloadInvoice('INV-2025-0846')" class="p-2 text-secondary hover:bg-secondary-100 rounded-lg transition-fast" title="تحميل">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button onclick="editInvoice('INV-2025-0846')" class="p-2 text-warning hover:bg-warning-100 rounded-lg transition-fast" title="تعديل">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="sendInvoice('INV-2025-0846')" class="p-2 text-accent hover:bg-accent-100 rounded-lg transition-fast" title="إرسال">
+                                                    <i class="fas fa-envelope"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Invoice Row 3 -->
+                                    <tr class="hover:bg-secondary-50 transition-fast">
+                                        <td class="py-4 px-6">
+                                            <span class="font-medium text-text-primary">INV-2025-0845</span>
+                                            <br />
+                                            <span class="text-xs text-text-secondary">QR: Generated</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="text-text-primary">مشروع سكني الدمام</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-2">
+                                                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop" alt="صورة العميل" class="w-8 h-8 rounded-full object-cover" />
+                                                <span class="text-text-primary">فهد الخالدي</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="font-bold text-text-primary">45,000 ريال</span>
+                                            <br />
+                                            <span class="text-xs text-text-secondary">شامل الضريبة</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="text-text-primary">28/09/2025</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-error-100 text-error">
+                                                <i class="fas fa-exclamation-triangle ml-1"></i>
+                                                متأخرة
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-2">
+                                                <button onclick="viewInvoice('INV-2025-0845')" class="p-2 text-primary hover:bg-primary-100 rounded-lg transition-fast" title="عرض">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button onclick="downloadInvoice('INV-2025-0845')" class="p-2 text-secondary hover:bg-secondary-100 rounded-lg transition-fast" title="تحميل">
+                                                    <i class="fas fa-download"></i>
+                                                </button>
+                                                <button onclick="editInvoice('INV-2025-0845')" class="p-2 text-warning hover:bg-warning-100 rounded-lg transition-fast" title="تعديل">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="sendReminder('INV-2025-0845')" class="p-2 text-error hover:bg-error-100 rounded-lg transition-fast" title="تذكير">
+                                                    <i class="fas fa-bell"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Invoice Row 4 -->
+                                    <tr class="hover:bg-secondary-50 transition-fast">
+                                        <td class="py-4 px-6">
+                                            <span class="font-medium text-text-primary">INV-2025-0844</span>
+                                            <br />
+                                            <span class="text-xs text-text-secondary">QR: Pending</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="text-text-primary">فيلا الخبر الفاخرة</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-2">
+                                                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=100&auto=format&fit=crop" alt="صورة العميل" class="w-8 h-8 rounded-full object-cover" />
+                                                <span class="text-text-primary">عبدالرحمن السعود</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="font-bold text-text-primary">95,000 ريال</span>
+                                            <br />
+                                            <span class="text-xs text-text-secondary">شامل الضريبة</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="text-text-primary">30/09/2025</span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary-200 text-secondary">
+                                                <i class="fas fa-file-alt ml-1"></i>
+                                                مسودة
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-2">
+                                                <button onclick="viewInvoice('INV-2025-0844')" class="p-2 text-primary hover:bg-primary-100 rounded-lg transition-fast" title="عرض">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button onclick="finalizeInvoice('INV-2025-0844')" class="p-2 text-success hover:bg-success-100 rounded-lg transition-fast" title="إتمام">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button onclick="editInvoice('INV-2025-0844')" class="p-2 text-warning hover:bg-warning-100 rounded-lg transition-fast" title="تعديل">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="deleteInvoice('INV-2025-0844')" class="p-2 text-error hover:bg-error-100 rounded-lg transition-fast" title="حذف">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="bg-secondary-50 border-t border-border px-6 py-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-text-secondary">عرض 1-4 من 27 فاتورة</span>
+                                <div class="flex items-center gap-2">
+                                    <button class="px-3 py-1 border border-border rounded hover:bg-white transition-fast text-sm">السابق</button>
+                                    <button class="px-3 py-1 bg-primary text-white rounded text-sm">1</button>
+                                    <button class="px-3 py-1 border border-border rounded hover:bg-white transition-fast text-sm">2</button>
+                                    <button class="px-3 py-1 border border-border rounded hover:bg-white transition-fast text-sm">3</button>
+                                    <button class="px-3 py-1 border border-border rounded hover:bg-white transition-fast text-sm">التالي</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quotations Tab Content -->
+                <div id="quotationsContent" class="tab-content p-6 hidden">
+                    <!-- Quotation Management Actions -->
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-text-primary">إدارة عروض الأسعار</h3>
+                            <p class="text-text-secondary">إنشاء عروض أسعار احترافية وتحويلها إلى فواتير</p>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            <button onclick="openQuotationModal()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-fast">
+                                <i class="fas fa-plus ml-2"></i>
+                                عرض سعر جديد
+                            </button>
+                            <button onclick="importQuotations()" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-upload ml-2"></i>
+                                استيراد
+                            </button>
+                            <button onclick="exportQuotations()" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-download ml-2"></i>
+                                تصدير
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quotation Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-primary-100 rounded-xl p-6 text-center">
+                            <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-file-contract text-white text-xl"></i>
+                            </div>
+                            <p class="text-2xl font-bold text-primary">24</p>
+                            <p class="text-sm text-primary-700">إجمالي العروض</p>
+                        </div>
+
+                        <div class="bg-success-100 rounded-xl p-6 text-center">
+                            <div class="w-12 h-12 bg-success rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-check-circle text-white text-xl"></i>
+                            </div>
+                            <p class="text-2xl font-bold text-success">8</p>
+                            <p class="text-sm text-success-700">معتمدة</p>
+                        </div>
+
+                        <div class="bg-warning-100 rounded-xl p-6 text-center">
+                            <div class="w-12 h-12 bg-warning rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-clock text-white text-xl"></i>
+                            </div>
+                            <p class="text-2xl font-bold text-warning">12</p>
+                            <p class="text-sm text-warning-700">قيد المراجعة</p>
+                        </div>
+
+                        <div class="bg-accent-100 rounded-xl p-6 text-center">
+                            <div class="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-exchange-alt text-white text-xl"></i>
+                            </div>
+                            <p class="text-2xl font-bold text-accent">6</p>
+                            <p class="text-sm text-accent-700">تم تحويلها لفواتير</p>
+                        </div>
+                    </div>
+
+                    <!-- Quotations Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <!-- Quotation Card 1 -->
+                        <div class="bg-white rounded-xl border border-border p-6 hover:shadow-modal transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h4 class="font-bold text-text-primary text-lg">QUO-2025-0156</h4>
+                                    <p class="text-sm text-text-secondary">فيلا الخبر الفاخرة</p>
+                                </div>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-accent-100 text-accent">
+                                    قيد المراجعة
+                                </span>
+                            </div>
+
+                            <div class="space-y-3 mb-4">
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">العميل:</span>
+                                    <span class="text-text-primary font-medium">عبدالرحمن السعود</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">القيمة:</span>
+                                    <span class="text-text-primary font-bold">750,000 ريال</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">التاريخ:</span>
+                                    <span class="text-text-primary">03/10/2025</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">صالح حتى:</span>
+                                    <span class="text-text-primary">03/11/2025</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button onclick="viewQuotation('QUO-2025-0156')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-fast text-sm">
+                                    <i class="fas fa-eye ml-1"></i>
+                                    عرض
+                                </button>
+                                <button onclick="convertToInvoice('QUO-2025-0156')" class="px-4 py-2 bg-success text-white rounded-lg hover:bg-success-700 transition-fast text-sm" title="تحويل لفاتورة">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </button>
+                                <button onclick="editQuotation('QUO-2025-0156')" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-sm" title="تعديل">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="downloadQuotation('QUO-2025-0156')" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-sm" title="تحميل">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quotation Card 2 -->
+                        <div class="bg-white rounded-xl border border-border p-6 hover:shadow-modal transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h4 class="font-bold text-text-primary text-lg">QUO-2025-0155</h4>
+                                    <p class="text-sm text-text-secondary">مكاتب نورا التجارية</p>
+                                </div>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
+                                    موافق عليه
+                                </span>
+                            </div>
+
+                            <div class="space-y-3 mb-4">
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">العميل:</span>
+                                    <span class="text-text-primary font-medium">نورا التجارية</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">القيمة:</span>
+                                    <span class="text-text-primary font-bold">420,000 ريال</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">التاريخ:</span>
+                                    <span class="text-text-primary">01/10/2025</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">معتمد في:</span>
+                                    <span class="text-text-primary">03/10/2025</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button onclick="viewQuotation('QUO-2025-0155')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-fast text-sm">
+                                    <i class="fas fa-eye ml-1"></i>
+                                    عرض
+                                </button>
+                                <button onclick="convertToInvoice('QUO-2025-0155')" class="px-4 py-2 bg-success text-white rounded-lg hover:bg-success-700 transition-fast text-sm" title="تحويل لفاتورة">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </button>
+                                <button onclick="duplicateQuotation('QUO-2025-0155')" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-sm" title="تكرار">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button onclick="downloadQuotation('QUO-2025-0155')" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-sm" title="تحميل">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quotation Card 3 -->
+                        <div class="bg-white rounded-xl border border-border p-6 hover:shadow-modal transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h4 class="font-bold text-text-primary text-lg">QUO-2025-0154</h4>
+                                    <p class="text-sm text-text-secondary">مستودعات خالد الشركة</p>
+                                </div>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary-200 text-secondary">
+                                    مسودة
+                                </span>
+                            </div>
+
+                            <div class="space-y-3 mb-4">
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">العميل:</span>
+                                    <span class="text-text-primary font-medium">خالد الشركة</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">القيمة:</span>
+                                    <span class="text-text-primary font-bold">280,000 ريال</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">التاريخ:</span>
+                                    <span class="text-text-primary">30/09/2025</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">الحالة:</span>
+                                    <span class="text-secondary">قيد الإعداد</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button onclick="editQuotation('QUO-2025-0154')" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-fast text-sm">
+                                    <i class="fas fa-edit ml-1"></i>
+                                    إكمال
+                                </button>
+                                <button onclick="previewQuotation('QUO-2025-0154')" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-sm" title="معاينة">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="duplicateQuotation('QUO-2025-0154')" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-sm" title="تكرار">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button onclick="deleteQuotation('QUO-2025-0154')" class="px-4 py-2 text-error hover:bg-error-100 rounded-lg transition-fast text-sm" title="حذف">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quotation Card 4 -->
+                        <div class="bg-white rounded-xl border border-border p-6 hover:shadow-modal transition-shadow">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h4 class="font-bold text-text-primary text-lg">QUO-2025-0153</h4>
+                                    <p class="text-sm text-text-secondary">توسعة مجمع الرياض</p>
+                                </div>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-error-100 text-error">
+                                    منتهي الصلاحية
+                                </span>
+                            </div>
+
+                            <div class="space-y-3 mb-4">
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">العميل:</span>
+                                    <span class="text-text-primary font-medium">مجموعة الرياض</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">القيمة:</span>
+                                    <span class="text-text-primary font-bold">1,500,000 ريال</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">التاريخ:</span>
+                                    <span class="text-text-primary">15/09/2025</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-text-secondary">انتهت في:</span>
+                                    <span class="text-error">15/10/2025</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                <button onclick="renewQuotation('QUO-2025-0153')" class="flex-1 bg-warning text-white py-2 px-4 rounded-lg hover:bg-warning-700 transition-fast text-sm">
+                                    <i class="fas fa-redo ml-1"></i>
+                                    تجديد
+                                </button>
+                                <button onclick="viewQuotation('QUO-2025-0153')" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-sm" title="عرض">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button onclick="duplicateQuotation('QUO-2025-0153')" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast text-sm" title="تكرار">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button onclick="archiveQuotation('QUO-2025-0153')" class="px-4 py-2 text-error hover:bg-error-100 rounded-lg transition-fast text-sm" title="أرشفة">
+                                    <i class="fas fa-archive"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Saudi Tax Authority Integration Status -->
+            <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                <h3 class="text-lg font-bold text-text-primary mb-6">حالة التكامل مع هيئة الزكاة والضريبة والجمارك</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- ZATCA Status -->
+                    <div class="text-center p-6 border border-border rounded-lg bg-success-50">
+                        <div class="w-16 h-16 bg-success-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-shield-check text-success text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-text-primary mb-2">هيئة الزكاة والضريبة</h4>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-success-100 text-success">
+                            <i class="fas fa-check ml-1"></i>
+                            متصل ومتوافق
+                        </span>
+                        <p class="text-xs text-text-secondary mt-2">آخر مزامنة: اليوم 11:10</p>
+                        <p class="text-xs text-text-secondary">847 فاتورة مرسلة بنجاح</p>
+                    </div>
+
+                    <!-- QR Code Generation -->
+                    <div class="text-center p-6 border border-border rounded-lg bg-primary-50">
+                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-qrcode text-primary text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-text-primary mb-2">مولد رمز الاستجابة السريعة</h4>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary">
+                            <i class="fas fa-cog ml-1"></i>
+                            نشط ومحدث
+                        </span>
+                        <p class="text-xs text-text-secondary mt-2">847 رمز QR تم إنشاؤه</p>
+                        <p class="text-xs text-text-secondary">متوافق مع المرحلة الثانية</p>
+                    </div>
+
+                    <!-- E-Invoicing Status -->
+                    <div class="text-center p-6 border border-border rounded-lg bg-accent-50">
+                        <div class="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-file-signature text-accent text-2xl"></i>
+                        </div>
+                        <h4 class="font-medium text-text-primary mb-2">الفوترة الإلكترونية</h4>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-accent-100 text-accent">
+                            <i class="fas fa-certificate ml-1"></i>
+                            معتمد ومفعل
+                        </span>
+                        <p class="text-xs text-text-secondary mt-2">شهادة صالحة حتى 2026</p>
+                        <p class="text-xs text-text-secondary">API: v2.1 متوافق</p>
+                    </div>
+                </div>
+
+                <!-- Integration Actions -->
+                <div class="mt-8 pt-6 border-t border-border">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div>
+                            <h4 class="font-medium text-text-primary">إعدادات التكامل المتقدمة</h4>
+                            <p class="text-sm text-text-secondary">إدارة الاتصال والمزامنة مع الأنظمة الحكومية السعودية</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="syncWithZATCA()" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-sync-alt ml-2"></i>
+                                مزامنة فورية
+                            </button>
+                            <button onclick="testConnection()" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <i class="fas fa-plug ml-2"></i>
+                                اختبار الاتصال
+                            </button>
+                            <button onclick="openIntegrationSettings()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-fast">
+                                <i class="fas fa-cogs ml-2"></i>
+                                إعدادات التكامل
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-surface border-t border-border px-6 py-4 mt-8">
+            <div class="flex items-center justify-between text-sm text-text-secondary">
+                <p>© 2025 ContractorPro. جميع الحقوق محفوظة.</p>
+                <p id="currentTime">آخر تحديث: 4 أكتوبر 2025 - 11:10</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile menu functionality
+        document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('transform');
+            sidebar.classList.toggle('translate-x-full');
+        });
+
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('border-primary', 'text-primary', 'active');
+                button.classList.add('border-transparent', 'text-text-secondary');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + 'Content').classList.remove('hidden');
+            
+            // Add active class to selected tab button
+            const activeButton = document.getElementById(tabName + 'Tab');
+            activeButton.classList.remove('border-transparent', 'text-text-secondary');
+            activeButton.classList.add('border-primary', 'text-primary', 'active');
+        }
+
+        // Report generation functions
+        function generateReport(type) {
+            const reportTypes = {
+                'monthly': 'التقرير الشهري',
+                'quarterly': 'التقرير الربعي',
+                'tax': 'التقرير الضريبي',
+                'custom': 'التقرير المخصص'
+            };
+            
+            alert(`جاري إنشاء ${reportTypes[type]}...`);
+            
+            // Simulate report generation
+            setTimeout(() => {
+                alert(`تم إنشاء ${reportTypes[type]} بنجاح!`);
+            }, 2000);
+        }
+
+        // Invoice management functions
+        function openInvoiceModal() {
+            window.location.href = 'invoice_management_center.html';
+        }
+
+        function viewInvoice(invoiceId) {
+            alert(`عرض الفاتورة: ${invoiceId}`);
+        }
+
+        function downloadInvoice(invoiceId) {
+            alert(`تحميل الفاتورة: ${invoiceId}`);
+        }
+
+        function editInvoice(invoiceId) {
+            alert(`تعديل الفاتورة: ${invoiceId}`);
+        }
+
+        function sendInvoice(invoiceId) {
+            alert(`إرسال الفاتورة: ${invoiceId}`);
+        }
+
+        function sendReminder(invoiceId) {
+            alert(`إرسال تذكير للفاتورة: ${invoiceId}`);
+        }
+
+        function finalizeInvoice(invoiceId) {
+            alert(`إتمام الفاتورة: ${invoiceId}`);
+        }
+
+        function deleteInvoice(invoiceId) {
+            if (confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) {
+                alert(`تم حذف الفاتورة: ${invoiceId}`);
+            }
+        }
+
+        function importInvoices() {
+            alert('سيتم فتح نافذة استيراد الفواتير...');
+        }
+
+        function exportInvoices() {
+            alert('سيتم تصدير الفواتير...');
+        }
+
+        function applyInvoiceFilters() {
+            alert('تم تطبيق الفلترة على الفواتير');
+        }
+
+        // Quotation management functions
+        function openQuotationModal() {
+            window.location.href = 'quotation_management.html';
+        }
+
+        function viewQuotation(quotationId) {
+            alert(`عرض عرض السعر: ${quotationId}`);
+        }
+
+        function editQuotation(quotationId) {
+            alert(`تعديل عرض السعر: ${quotationId}`);
+        }
+
+        function convertToInvoice(quotationId) {
+            if (confirm('هل تريد تحويل عرض السعر هذا إلى فاتورة؟')) {
+                alert(`تم تحويل ${quotationId} إلى فاتورة بنجاح!`);
+            }
+        }
+
+        function downloadQuotation(quotationId) {
+            alert(`تحميل عرض السعر: ${quotationId}`);
+        }
+
+        function duplicateQuotation(quotationId) {
+            alert(`تم إنشاء نسخة من عرض السعر: ${quotationId}`);
+        }
+
+        function deleteQuotation(quotationId) {
+            if (confirm('هل أنت متأكد من حذف عرض السعر هذا؟')) {
+                alert(`تم حذف عرض السعر: ${quotationId}`);
+            }
+        }
+
+        function renewQuotation(quotationId) {
+            alert(`تجديد عرض السعر: ${quotationId}`);
+        }
+
+        function archiveQuotation(quotationId) {
+            alert(`أرشفة عرض السعر: ${quotationId}`);
+        }
+
+        function previewQuotation(quotationId) {
+            alert(`معاينة عرض السعر: ${quotationId}`);
+        }
+
+        function importQuotations() {
+            alert('سيتم فتح نافذة استيراد عروض الأسعار...');
+        }
+
+        function exportQuotations() {
+            alert('سيتم تصدير عروض الأسعار...');
+        }
+
+        // ZATCA Integration functions
+        function syncWithZATCA() {
+            alert('جاري المزامنة مع هيئة الزكاة والضريبة...');
+            setTimeout(() => {
+                alert('تمت المزامنة بنجاح!');
+            }, 2000);
+        }
+
+        function testConnection() {
+            alert('جاري اختبار الاتصال...');
+            setTimeout(() => {
+                alert('الاتصال ناجح ✓');
+            }, 1500);
+        }
+
+        function openIntegrationSettings() {
+            alert('سيتم فتح إعدادات التكامل...');
+        }
+
+        // Real-time clock update
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const timeElement = document.getElementById('currentTime');
+            if (timeElement) {
+                timeElement.textContent = `آخر تحديث: ${timeString}`;
+            }
+        }
+
+        // Update time every minute
+        setInterval(updateTime, 60000);
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate progress bars and charts
+            setTimeout(() => {
+                const progressBars = document.querySelectorAll('[style*="width:"]');
+                progressBars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.transition = 'width 2s ease-out';
+                        bar.style.width = width;
+                    }, 300);
+                });
+            }, 500);
+
+            // Add hover effects to cards
+            const cards = document.querySelectorAll('.shadow-card, .hover\\:shadow-modal');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Initialize mobile responsiveness
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.add('transform', 'translate-x-full');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.remove('transform', 'translate-x-full');
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

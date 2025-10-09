@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الملف الشخصي - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+</head>
+<body class="bg-background font-arabic">
+    <!-- Navigation Sidebar -->
+    <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50 transform transition-transform duration-300" id="sidebar">
+        <div class="p-6 border-b border-border">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fas fa-hard-hat text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
+                    <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="p-4 space-y-2">
+            <!-- Dashboard -->
+            <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-home w-5"></i>
+                <span>الصفحة الرئيسية</span>
+            </a>
+
+            <!-- Projects Section -->
+            <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-building w-5"></i>
+                <span>المشاريع</span>
+                <i class="fas fa-chevron-left mr-auto text-xs"></i>
+            </a>
+
+            <!-- Finance Section -->
+            <a href="financial_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-chart-line w-5"></i>
+                <span>المالية</span>
+                <i class="fas fa-chevron-left mr-auto text-xs"></i>
+            </a>
+
+            <!-- Employees Section -->
+            <a href="employees_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-users w-5"></i>
+                <span>الموظفين</span>
+                <i class="fas fa-chevron-left mr-auto text-xs"></i>
+            </a>
+        </nav>
+
+        <!-- Quick Actions -->
+        <div class="absolute bottom-0 w-full p-4 border-t border-border bg-surface">
+            <div class="grid grid-cols-2 gap-2">
+                <button class="flex items-center justify-center gap-2 px-3 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary-600 transition-fast">
+                    <i class="fas fa-plus text-xs"></i>
+                    <span>مشروع جديد</span>
+                </button>
+                <button class="flex items-center justify-center gap-2 px-3 py-2 bg-success text-white rounded-lg text-sm hover:bg-success-600 transition-fast">
+                    <i class="fas fa-file-invoice text-xs"></i>
+                    <span>فاتورة جديدة</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mr-64 min-h-screen">
+        <!-- Top Header -->
+        <header class="bg-surface shadow-card px-6 py-4 border-b border-border">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-text-primary">الملف الشخصي</h1>
+                    <p class="text-text-secondary">إدارة المعلومات الشخصية والإعدادات</p>
+                </div>
+                
+                <!-- Quick Actions & Search -->
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <input type="text" placeholder="البحث في المشاريع والعملاء..." class="w-80 px-4 py-2 pr-10 border border-border rounded-lg focus:border-primary focus:outline-none" />
+                        <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                    </div>
+                    
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button class="p-2 rounded-lg hover:bg-secondary-100 transition-fast relative" onclick="openNotifications()">
+                            <i class="fas fa-bell text-text-secondary text-lg"></i>
+                            <span class="absolute -top-1 -left-1 w-5 h-5 bg-error text-white text-xs rounded-full flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+                    
+                    <!-- User Profile Active -->
+                    <div class="flex items-center gap-3 px-3 py-2 bg-primary-50 rounded-lg border-r-4 border-primary">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="صورة المستخدم" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <div>
+                            <p class="font-medium text-primary">أحمد المالك</p>
+                            <p class="text-sm text-primary-600">مدير عام</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Profile Content -->
+        <main class="p-6 space-y-6">
+            <!-- Welcome Section -->
+            <div class="bg-gradient-to-l from-primary to-primary-600 rounded-xl p-8 text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-3xl font-bold mb-2">الملف الشخصي</h2>
+                    <p class="text-lg opacity-90 mb-6">إدارة معلوماتك الشخصية وإعداداتك الأمنية</p>
+                    <div class="flex items-center gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold">نشط</div>
+                            <div class="text-sm opacity-80">حالة الحساب</div>
+                        </div>
+                        <div class="w-px h-12 bg-white/30"></div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold">مدير عام</div>
+                            <div class="text-sm opacity-80">الصلاحية</div>
+                        </div>
+                        <div class="w-px h-12 bg-white/30"></div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold">2023</div>
+                            <div class="text-sm opacity-80">عضو منذ</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Background Pattern -->
+                <div class="absolute left-0 top-0 w-full h-full opacity-10">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <defs>
+                            <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" stroke-width="1"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100" height="100" fill="url(#grid)"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Profile Overview Card -->
+            <div class="bg-surface rounded-xl p-6 shadow-card border border-border hover:shadow-lg transition-all duration-300">
+                <div class="flex items-start gap-6">
+                    <!-- Profile Image -->
+                    <div class="relative group">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="الصورة الشخصية" class="w-32 h-32 rounded-full object-cover border-4 border-primary-100 group-hover:border-primary-300 transition-colors" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <button class="absolute bottom-2 left-2 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary-700 transition-all hover:scale-110 opacity-0 group-hover:opacity-100">
+                            <i class="fas fa-camera text-sm"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Profile Info -->
+                    <div class="flex-1">
+                        <h2 class="text-3xl font-bold text-text-primary mb-2">أحمد المالك</h2>
+                        <p class="text-xl text-text-secondary mb-4">مدير عام</p>
+                        
+                        <!-- Contact Information -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+                            <div class="flex items-center gap-3 text-text-secondary">
+                                <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-envelope text-primary text-sm"></i>
+                                </div>
+                                <span>admin@contractorpro.sa</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-text-secondary">
+                                <div class="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-phone text-success text-sm"></i>
+                                </div>
+                                <span>+966 50 123 4567</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-text-secondary">
+                                <div class="w-8 h-8 bg-warning-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-calendar text-warning text-sm"></i>
+                                </div>
+                                <span>انضم في يناير 2023</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-text-secondary">
+                                <div class="w-8 h-8 bg-accent-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-map-marker-alt text-accent text-sm"></i>
+                                </div>
+                                <span>الرياض، السعودية</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Badges -->
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-success-100 text-success border border-success-200">
+                                <i class="fas fa-check-circle text-xs ml-2"></i>
+                                حساب نشط
+                            </span>
+                            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-primary-100 text-primary border border-primary-200">
+                                <i class="fas fa-shield-alt text-xs ml-2"></i>
+                                مدير عام
+                            </span>
+                            <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-warning-100 text-warning border border-warning-200">
+                                <i class="fas fa-star text-xs ml-2"></i>
+                                مستوى متقدم
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="flex flex-col gap-3">
+                        <button class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-all hover:scale-105 flex items-center gap-2 shadow-md">
+                            <i class="fas fa-edit text-sm"></i>
+                            <span>تعديل الملف</span>
+                        </button>
+                        
+                        <a href="login.html" class="px-6 py-3 bg-error text-white rounded-lg hover:bg-error-700 transition-all hover:scale-105 flex items-center gap-2 shadow-md">
+                            <i class="fas fa-sign-out-alt text-sm"></i>
+                            <span>تسجيل الخروج</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Management Tabs -->
+            <div class="bg-surface rounded-xl shadow-card border border-border overflow-hidden">
+                <!-- Tab Navigation -->
+                <div class="border-b border-border bg-secondary-50">
+                    <nav class="flex">
+                        <button class="tab-button active px-6 py-4 font-medium text-primary border-b-2 border-primary bg-primary-50" data-tab="personal">
+                            <i class="fas fa-user ml-2"></i>
+                            المعلومات الشخصية
+                        </button>
+                        <button class="tab-button px-6 py-4 font-medium text-text-secondary hover:text-primary hover:bg-secondary-100 transition-all" data-tab="security">
+                            <i class="fas fa-shield-alt ml-2"></i>
+                            الأمان والخصوصية
+                        </button>
+                        <button class="tab-button px-6 py-4 font-medium text-text-secondary hover:text-primary hover:bg-secondary-100 transition-all" data-tab="notifications">
+                            <i class="fas fa-bell ml-2"></i>
+                            الإشعارات
+                        </button>
+                        <button class="tab-button px-6 py-4 font-medium text-text-secondary hover:text-primary hover:bg-secondary-100 transition-all" data-tab="activity">
+                            <i class="fas fa-history ml-2"></i>
+                            سجل الأنشطة
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="p-6">
+                    <!-- Personal Information Tab -->
+                    <div class="tab-content active" id="personal">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-text-primary">المعلومات الشخصية</h3>
+                            <span class="text-sm text-text-secondary">آخر تحديث: منذ 3 أيام</span>
+                        </div>
+                        
+                        <form class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="form-group">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">الاسم الأول</label>
+                                    <input type="text" value="أحمد" class="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all hover:border-primary-300" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">اسم العائلة</label>
+                                    <input type="text" value="المالك" class="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all hover:border-primary-300" />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="form-group">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">البريد الإلكتروني</label>
+                                    <div class="relative">
+                                        <input type="email" value="admin@contractorpro.sa" class="w-full px-4 py-3 pl-10 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all hover:border-primary-300" />
+                                        <i class="fas fa-envelope absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">رقم الهاتف</label>
+                                    <div class="relative">
+                                        <input type="tel" value="+966 50 123 4567" class="w-full px-4 py-3 pl-10 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all hover:border-primary-300" />
+                                        <i class="fas fa-phone absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="form-group">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">المسمى الوظيفي</label>
+                                    <input type="text" value="مدير عام" class="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all hover:border-primary-300" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">القسم</label>
+                                    <select class="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all hover:border-primary-300">
+                                        <option>الإدارة العامة</option>
+                                        <option>إدارة المشاريع</option>
+                                        <option>المالية</option>
+                                        <option>الهندسة</option>
+                                        <option>الموارد البشرية</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-text-primary mb-2">العنوان</label>
+                                <textarea rows="3" class="w-full px-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all hover:border-primary-300" placeholder="الرياض، المملكة العربية السعودية">الرياض، المملكة العربية السعودية</textarea>
+                            </div>
+
+                            <div class="flex gap-4 pt-4">
+                                <button type="submit" class="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-all hover:scale-105 shadow-md flex items-center gap-2">
+                                    <i class="fas fa-save text-sm"></i>
+                                    <span>حفظ التغييرات</span>
+                                </button>
+                                <button type="button" class="px-8 py-3 border border-border text-text-secondary rounded-lg hover:bg-secondary-50 transition-all flex items-center gap-2">
+                                    <i class="fas fa-times text-sm"></i>
+                                    <span>إلغاء</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Security Tab -->
+                    <div class="tab-content hidden" id="security">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-text-primary">الأمان والخصوصية</h3>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-success-100 text-success">
+                                <i class="fas fa-shield-check text-xs ml-1"></i>
+                                محمي
+                            </span>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <!-- Password Change -->
+                            <div class="bg-gradient-to-r from-secondary-50 to-primary-50 rounded-xl p-6 border border-secondary-200">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-key text-primary"></i>
+                                    </div>
+                                    <h4 class="font-bold text-text-primary text-lg">تغيير كلمة المرور</h4>
+                                </div>
+                                
+                                <form class="space-y-4">
+                                    <div class="form-group">
+                                        <label class="block text-sm font-medium text-text-primary mb-2">كلمة المرور الحالية</label>
+                                        <div class="relative">
+                                            <input type="password" class="w-full px-4 py-3 pl-10 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none" />
+                                            <i class="fas fa-lock absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="form-group">
+                                            <label class="block text-sm font-medium text-text-primary mb-2">كلمة المرور الجديدة</label>
+                                            <div class="relative">
+                                                <input type="password" class="w-full px-4 py-3 pl-10 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none" />
+                                                <i class="fas fa-lock absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="block text-sm font-medium text-text-primary mb-2">تأكيد كلمة المرور</label>
+                                            <div class="relative">
+                                                <input type="password" class="w-full px-4 py-3 pl-10 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none" />
+                                                <i class="fas fa-check absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-700 transition-all hover:scale-105 shadow-md flex items-center gap-2">
+                                        <i class="fas fa-sync text-sm"></i>
+                                        <span>تحديث كلمة المرور</span>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Two-Factor Authentication -->
+                            <div class="bg-gradient-to-r from-warning-50 to-accent-50 rounded-xl p-6 border border-warning-200">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-warning-100 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-shield-alt text-warning text-lg"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h4 class="font-bold text-text-primary mb-2 text-lg">المصادقة الثنائية</h4>
+                                        <p class="text-text-secondary text-sm mb-4">أضف طبقة حماية إضافية لحسابك باستخدام رمز التحقق</p>
+                                        <div class="flex gap-3">
+                                            <button class="px-6 py-2 bg-warning text-white rounded-lg hover:bg-warning-600 transition-all hover:scale-105 flex items-center gap-2">
+                                                <i class="fas fa-mobile-alt text-sm"></i>
+                                                <span>تفعيل المصادقة الثنائية</span>
+                                            </button>
+                                            <button class="px-4 py-2 border border-warning text-warning rounded-lg hover:bg-warning-50 transition-all">
+                                                <i class="fas fa-info-circle text-sm ml-1"></i>
+                                                تعلم المزيد
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Session Management -->
+                            <div>
+                                <h4 class="font-bold text-text-primary mb-4 text-lg">الجلسات النشطة</h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-success-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-desktop text-success"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium text-text-primary">Chrome على Windows</p>
+                                                <p class="text-sm text-text-secondary">الرياض، السعودية - الآن</p>
+                                            </div>
+                                        </div>
+                                        <span class="px-3 py-1 bg-success-100 text-success text-xs rounded-full font-medium">الحالي</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 bg-warning-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-mobile-alt text-warning"></i>
+                                            </div>
+                                            <div>
+                                                <p class="font-medium text-text-primary">Safari على iPhone</p>
+                                                <p class="text-sm text-text-secondary">الرياض، السعودية - منذ ساعتين</p>
+                                            </div>
+                                        </div>
+                                        <button class="text-error hover:text-error-700 text-sm font-medium px-3 py-1 rounded hover:bg-error-50 transition-all">
+                                            إنهاء الجلسة
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Tab -->
+                    <div class="tab-content hidden" id="notifications">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-text-primary">إعدادات الإشعارات</h3>
+                            <button class="px-4 py-2 bg-primary-100 text-primary rounded-lg hover:bg-primary-200 transition-all text-sm">
+                                <i class="fas fa-sync text-xs ml-1"></i>
+                                إعادة تعيين الافتراضية
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <!-- System Notifications -->
+                            <div class="bg-secondary-50 rounded-xl p-6 border border-secondary-200">
+                                <h4 class="font-bold text-text-primary mb-4 flex items-center gap-2">
+                                    <i class="fas fa-cog text-primary"></i>
+                                    إشعارات النظام
+                                </h4>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between p-4 bg-white border border-border rounded-lg">
+                                        <div>
+                                            <p class="font-medium text-text-primary">تحديثات المشاريع</p>
+                                            <p class="text-sm text-text-secondary">إشعارات حول تقدم المشاريع والمراحل</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" checked class="sr-only peer" />
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-4 bg-white border border-border rounded-lg">
+                                        <div>
+                                            <p class="font-medium text-text-primary">الفواتير والمدفوعات</p>
+                                            <p class="text-sm text-text-secondary">إشعارات المعاملات المالية</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" checked class="sr-only peer" />
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between p-4 bg-white border border-border rounded-lg">
+                                        <div>
+                                            <p class="font-medium text-text-primary">إدارة الفريق</p>
+                                            <p class="text-sm text-text-secondary">تحديثات الموظفين والمقاولين</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" class="sr-only peer" />
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notification Methods -->
+                            <div>
+                                <h4 class="font-bold text-text-primary mb-4 flex items-center gap-2">
+                                    <i class="fas fa-paper-plane text-success"></i>
+                                    وسائل الإشعار
+                                </h4>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="p-6 border border-border rounded-xl text-center hover:shadow-lg transition-all hover:scale-105 cursor-pointer group">
+                                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-200 transition-colors">
+                                            <i class="fas fa-envelope text-primary text-2xl"></i>
+                                        </div>
+                                        <p class="font-bold text-text-primary mb-2">البريد الإلكتروني</p>
+                                        <p class="text-sm text-text-secondary mb-4">إشعارات فورية عبر البريد</p>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" checked class="sr-only peer" />
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="p-6 border border-border rounded-xl text-center hover:shadow-lg transition-all hover:scale-105 cursor-pointer group">
+                                        <div class="w-16 h-16 bg-warning-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-warning-200 transition-colors">
+                                            <i class="fas fa-sms text-warning text-2xl"></i>
+                                        </div>
+                                        <p class="font-bold text-text-primary mb-2">رسائل نصية</p>
+                                        <p class="text-sm text-text-secondary mb-4">إشعارات عبر الرسائل القصيرة</p>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" class="sr-only peer" />
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="p-6 border border-border rounded-xl text-center hover:shadow-lg transition-all hover:scale-105 cursor-pointer group">
+                                        <div class="w-16 h-16 bg-success-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-success-200 transition-colors">
+                                            <i class="fas fa-bell text-success text-2xl"></i>
+                                        </div>
+                                        <p class="font-bold text-text-primary mb-2">إشعارات المتصفح</p>
+                                        <p class="text-sm text-text-secondary mb-4">تنبيهات فورية على الشاشة</p>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" checked class="sr-only peer" />
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Log Tab -->
+                    <div class="tab-content hidden" id="activity">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-text-primary">سجل الأنشطة</h3>
+                            <div class="flex gap-2">
+                                <select class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
+                                    <option>آخر 7 أيام</option>
+                                    <option>آخر 30 يوم</option>
+                                    <option>آخر 3 أشهر</option>
+                                </select>
+                                <button class="px-4 py-2 bg-secondary-100 text-text-secondary rounded-lg hover:bg-secondary-200 transition-all text-sm">
+                                    <i class="fas fa-download text-xs ml-1"></i>
+                                    تصدير
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4 p-4 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-sign-in-alt text-primary"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium text-text-primary">تسجيل دخول جديد</p>
+                                    <p class="text-sm text-text-secondary">من Chrome على Windows - الرياض، السعودية</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <p class="text-xs text-text-secondary">اليوم 08:30 ص</p>
+                                        <span class="px-2 py-1 bg-success-100 text-success text-xs rounded-full">نجح</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4 p-4 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <div class="w-10 h-10 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-edit text-success"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium text-text-primary">تحديث معلومات المشروع</p>
+                                    <p class="text-sm text-text-secondary">تم تحديث حالة مشروع فيلا الرياض الحديثة</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <p class="text-xs text-text-secondary">أمس 03:45 م</p>
+                                        <span class="px-2 py-1 bg-primary-100 text-primary text-xs rounded-full">تعديل</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4 p-4 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <div class="w-10 h-10 bg-warning-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-file-invoice text-warning"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium text-text-primary">إنشاء فاتورة جديدة</p>
+                                    <p class="text-sm text-text-secondary">فاتورة رقم #INV-2025-0342 بقيمة 125,000 ريال</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <p class="text-xs text-text-secondary">أمس 11:20 ص</p>
+                                        <span class="px-2 py-1 bg-warning-100 text-warning text-xs rounded-full">إنشاء</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4 p-4 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <div class="w-10 h-10 bg-accent-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-users text-accent"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium text-text-primary">إضافة موظف جديد</p>
+                                    <p class="text-sm text-text-secondary">سعد المطيري - مهندس مدني</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <p class="text-xs text-text-secondary">منذ 3 أيام</p>
+                                        <span class="px-2 py-1 bg-accent-100 text-accent text-xs rounded-full">إضافة</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 p-4 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                <div class="w-10 h-10 bg-error-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-key text-error"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium text-text-primary">تغيير كلمة المرور</p>
+                                    <p class="text-sm text-text-secondary">تم تحديث كلمة المرور بنجاح</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <p class="text-xs text-text-secondary">منذ أسبوع</p>
+                                        <span class="px-2 py-1 bg-error-100 text-error text-xs rounded-full">أمان</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-8">
+                            <button class="px-8 py-3 border border-border text-text-secondary rounded-lg hover:bg-secondary-50 transition-all hover:scale-105 flex items-center gap-2 mx-auto">
+                                <i class="fas fa-history text-sm"></i>
+                                <span>عرض المزيد من الأنشطة</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-surface border-t border-border px-6 py-4 mt-8">
+            <div class="flex items-center justify-between text-sm text-text-secondary">
+                <p>© 2025 ContractorPro. جميع الحقوق محفوظة.</p>
+                <p id="lastUpdate">آخر تحديث: 5 أكتوبر 2025 - 08:15</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Real-time clock update
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const footerTime = document.getElementById('lastUpdate');
+            if (footerTime) {
+                footerTime.textContent = `آخر تحديث: ${timeString}`;
+            }
+        }
+
+        // Update time every minute
+        setInterval(updateTime, 60000);
+
+        // Navigation Functions
+        function openNotifications() {
+            window.location.href = 'notifications.html';
+        }
+
+        // Tab functionality with enhanced animations
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetTab = this.dataset.tab;
+                
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active', 'text-primary', 'border-primary', 'bg-primary-50');
+                    btn.classList.add('text-text-secondary');
+                    btn.style.borderBottomWidth = '0';
+                });
+                
+                // Hide all content with fade effect
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.style.opacity = '0';
+                    setTimeout(() => {
+                        content.classList.remove('active');
+                        content.classList.add('hidden');
+                    }, 150);
+                });
+                
+                // Add active class to clicked tab
+                this.classList.add('active', 'text-primary', 'border-primary', 'bg-primary-50');
+                this.classList.remove('text-text-secondary');
+                this.style.borderBottomWidth = '2px';
+                
+                // Show target content with fade effect
+                setTimeout(() => {
+                    const targetContent = document.getElementById(targetTab);
+                    targetContent.classList.add('active');
+                    targetContent.classList.remove('hidden');
+                    targetContent.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        targetContent.style.opacity = '1';
+                    }, 50);
+                }, 150);
+            });
+        });
+
+        // Enhanced profile image upload functionality
+        document.querySelector('.group button').addEventListener('click', function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.style.display = 'none';
+            
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Show loading state
+                    const button = document.querySelector('.group button');
+                    const originalHTML = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i>';
+                    button.disabled = true;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        // Update both profile images
+                        const profileImages = document.querySelectorAll('img[alt*="الصورة الشخصية"], img[alt*="صورة المستخدم"]');
+                        profileImages.forEach(img => {
+                            img.src = event.target.result;
+                        });
+                        
+                        // Restore button
+                        setTimeout(() => {
+                            button.innerHTML = originalHTML;
+                            button.disabled = false;
+                            
+                            // Show success feedback
+                            button.innerHTML = '<i class="fas fa-check text-sm"></i>';
+                            button.classList.add('bg-success');
+                            
+                            setTimeout(() => {
+                                button.innerHTML = originalHTML;
+                                button.classList.remove('bg-success');
+                            }, 2000);
+                        }, 1000);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            document.body.appendChild(input);
+            input.click();
+            document.body.removeChild(input);
+        });
+
+        // Enhanced form submission with better feedback
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i>جاري الحفظ...';
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-75');
+                
+                // Simulate API call
+                setTimeout(() => {
+                    // Success state
+                    submitBtn.innerHTML = '<i class="fas fa-check ml-2"></i>تم الحفظ بنجاح';
+                    submitBtn.classList.remove('bg-primary', 'opacity-75');
+                    submitBtn.classList.add('bg-success');
+                    
+                    // Show success notification
+                    showNotification('تم حفظ التغييرات بنجاح', 'success');
+                    
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.classList.remove('bg-success');
+                        submitBtn.classList.add('bg-primary');
+                        submitBtn.disabled = false;
+                    }, 3000);
+                }, 1500);
+            });
+        });
+
+        // Session termination with confirmation
+        document.querySelectorAll('button[onclick*="إنهاء"], button:contains("إنهاء الجلسة")').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (confirm('هل أنت متأكد من إنهاء هذه الجلسة؟')) {
+                    const sessionRow = this.closest('.flex');
+                    
+                    // Add loading state
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        sessionRow.style.opacity = '0.5';
+                        this.innerHTML = '<i class="fas fa-check ml-1"></i>تم الإنهاء';
+                        this.classList.remove('text-error', 'hover:text-error-700');
+                        this.classList.add('text-success');
+                        
+                        showNotification('تم إنهاء الجلسة بنجاح', 'success');
+                    }, 1000);
+                }
+            });
+        });
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 left-4 px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300 ${
+                type === 'success' ? 'bg-success text-white' : 
+                type === 'error' ? 'bg-error text-white' : 
+                'bg-primary text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Animate out after 4 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+
+        // Search functionality
+        document.querySelector('input[type="text"]').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const searchTerm = this.value.trim();
+                if (searchTerm) {
+                    showNotification(`البحث عن: ${searchTerm}`, 'info');
+                    // Here you would implement actual search functionality
+                }
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            
+            // Add smooth scroll behavior
+            document.documentElement.style.scrollBehavior = 'smooth';
+            
+            // Animate elements on load
+            const cards = document.querySelectorAll('.bg-surface, .form-group');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

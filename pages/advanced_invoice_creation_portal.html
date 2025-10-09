@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوابة إنشاء الفواتير المتقدمة - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-blue-50 font-arabic min-h-screen">
+    
+    <!-- Top Navigation Bar -->
+    <nav class="bg-white/80 backdrop-blur-md shadow-lg px-8 py-4 border-b border-white/20 sticky top-0 z-50">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <button onclick="goBack()" class="w-12 h-12 bg-gradient-to-br from-primary to-primary-600 rounded-2xl flex items-center justify-center text-white hover:shadow-lg transition-all">
+                    <i class="fas fa-arrow-right text-lg"></i>
+                </button>
+                
+                <div>
+                    <h1 class="text-2xl font-black text-text-primary bg-gradient-to-r from-primary to-primary-600 bg-clip-text text-transparent">بوابة إنشاء الفواتير المتقدمة</h1>
+                    <p class="text-text-secondary font-medium">إنشاء فواتير ضريبية متوافقة مع هيئة الزكاة والضريبة والجمارك</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Progress Indicator -->
+                <div class="flex items-center gap-2 bg-white/60 rounded-2xl px-4 py-2">
+                    <i class="fas fa-tasks text-primary"></i>
+                    <span class="text-sm font-medium text-text-secondary">خطوة <span id="current-step" class="text-primary font-bold">1</span> من 4</span>
+                </div>
+                
+                <!-- Save Draft -->
+                <button onclick="saveDraft()" class="bg-white/60 text-text-secondary px-4 py-2 rounded-2xl hover:bg-white hover:shadow-md transition-all flex items-center gap-2">
+                    <i class="fas fa-save"></i>
+                    <span>حفظ مسودة</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto p-8">
+        <!-- Progress Steps -->
+        <div class="mb-8">
+            <div class="flex items-center justify-center gap-4 mb-8">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-r from-primary to-primary-600 text-white rounded-full flex items-center justify-center font-bold step-indicator active" data-step="1">1</div>
+                    <span class="mr-3 font-medium text-primary">معلومات العميل</span>
+                </div>
+                <div class="w-16 h-1 bg-gray-200 rounded"></div>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-bold step-indicator" data-step="2">2</div>
+                    <span class="mr-3 font-medium text-gray-500">تفاصيل الفاتورة</span>
+                </div>
+                <div class="w-16 h-1 bg-gray-200 rounded"></div>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-bold step-indicator" data-step="3">3</div>
+                    <span class="mr-3 font-medium text-gray-500">المراجعة</span>
+                </div>
+                <div class="w-16 h-1 bg-gray-200 rounded"></div>
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center font-bold step-indicator" data-step="4">4</div>
+                    <span class="mr-3 font-medium text-gray-500">الإنهاء</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Content -->
+            <div class="lg:col-span-2">
+                <!-- Step 1: Client Information -->
+                <div id="step-1" class="step-content">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-16 h-16 bg-gradient-to-br from-primary to-primary-600 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-user-tie text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-3xl font-bold text-text-primary">معلومات العميل</h2>
+                                <p class="text-text-secondary">اختر العميل أو أضف عميل جديد</p>
+                            </div>
+                        </div>
+
+                        <!-- Client Selection -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <label class="text-lg font-bold text-text-primary">اختيار العميل</label>
+                                <button onclick="toggleClientForm()" class="bg-gradient-to-r from-success to-success-600 text-white px-4 py-2 rounded-2xl hover:shadow-lg transition-all flex items-center gap-2" id="add-client-btn">
+                                    <i class="fas fa-plus"></i>
+                                    <span>إضافة عميل جديد</span>
+                                </button>
+                            </div>
+
+                            <!-- Existing Client Search -->
+                            <div id="client-search-section">
+                                <div class="relative mb-6">
+                                    <input type="text" id="client-search" placeholder="ابحث عن العميل..." class="w-full px-6 py-4 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none text-lg transition-all" oninput="searchClients(this.value)" />
+                                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                                </div>
+
+                                <!-- Client List -->
+                                <div id="clients-list" class="space-y-3">
+                                    <div class="client-option bg-gradient-to-r from-white to-blue-50 p-4 rounded-2xl border border-blue-100 hover:shadow-lg transition-all cursor-pointer" onclick="selectClient('محمد العبدالله', '1234567890', 'mohammed@example.com', 'الرياض، المملكة العربية السعودية')">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-600 rounded-2xl flex items-center justify-center text-white font-bold">م.ع</div>
+                                            <div class="flex-1">
+                                                <h4 class="font-bold text-text-primary text-lg">محمد العبدالله</h4>
+                                                <p class="text-sm text-text-secondary">الهاتف: 1234567890 • البريد: mohammed@example.com</p>
+                                                <p class="text-xs text-text-secondary">الرياض، المملكة العربية السعودية</p>
+                                            </div>
+                                            <div class="text-success">
+                                                <i class="fas fa-check-circle text-2xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="client-option bg-gradient-to-r from-white to-green-50 p-4 rounded-2xl border border-green-100 hover:shadow-lg transition-all cursor-pointer" onclick="selectClient('شركة الأندلس للمقاولات', '9876543210', 'info@andalus.com', 'جدة، المملكة العربية السعودية')">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-12 h-12 bg-gradient-to-br from-success to-success-600 rounded-2xl flex items-center justify-center text-white font-bold">ش.أ</div>
+                                            <div class="flex-1">
+                                                <h4 class="font-bold text-text-primary text-lg">شركة الأندلس للمقاولات</h4>
+                                                <p class="text-sm text-text-secondary">الهاتف: 9876543210 • البريد: info@andalus.com</p>
+                                                <p class="text-xs text-text-secondary">جدة، المملكة العربية السعودية</p>
+                                            </div>
+                                            <div class="text-success">
+                                                <i class="fas fa-check-circle text-2xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- New Client Form -->
+                            <div id="new-client-form" class="hidden">
+                                <div class="bg-gradient-to-r from-white to-green-50 rounded-2xl p-6 border border-green-100">
+                                    <h3 class="text-xl font-bold text-text-primary mb-6 flex items-center gap-3">
+                                        <i class="fas fa-user-plus text-success"></i>
+                                        إضافة عميل جديد
+                                    </h3>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-bold text-text-primary mb-2">اسم العميل *</label>
+                                            <input type="text" id="new-client-name" placeholder="أدخل اسم العميل" class="w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" />
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-bold text-text-primary mb-2">رقم الهاتف *</label>
+                                            <input type="tel" id="new-client-phone" placeholder="+966 5X XXX XXXX" class="w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" />
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-bold text-text-primary mb-2">البريد الإلكتروني</label>
+                                            <input type="email" id="new-client-email" placeholder="client@example.com" class="w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" />
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-bold text-text-primary mb-2">الرقم الضريبي</label>
+                                            <input type="text" id="new-client-tax-id" placeholder="300000000000003" class="w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" />
+                                        </div>
+                                        
+                                        <div class="md:col-span-2">
+                                            <label class="block text-sm font-bold text-text-primary mb-2">العنوان *</label>
+                                            <textarea id="new-client-address" placeholder="العنوان الكامل للعميل" rows="3" class="w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all resize-none"></textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-4 mt-6">
+                                        <button onclick="saveNewClient()" class="bg-gradient-to-r from-success to-success-600 text-white px-6 py-3 rounded-2xl font-bold hover:shadow-lg transition-all flex items-center gap-2">
+                                            <i class="fas fa-save"></i>
+                                            حفظ العميل
+                                        </button>
+                                        <button onclick="toggleClientForm()" class="bg-gray-200 text-text-secondary px-6 py-3 rounded-2xl font-bold hover:bg-gray-300 transition-all">
+                                            إلغاء
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Selected Client Display -->
+                            <div id="selected-client" class="hidden">
+                                <div class="bg-gradient-to-r from-primary-50 to-primary-100 p-6 rounded-2xl border border-primary-200">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="text-xl font-bold text-primary">العميل المحدد</h3>
+                                        <button onclick="clearSelectedClient()" class="text-error hover:bg-error-100 rounded-xl p-2 transition-all">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-sm font-bold text-text-primary">اسم العميل</label>
+                                            <p id="selected-client-name" class="text-lg font-bold text-text-primary">-</p>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-bold text-text-primary">رقم الهاتف</label>
+                                            <p id="selected-client-phone" class="text-lg font-medium text-text-secondary">-</p>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-bold text-text-primary">البريد الإلكتروني</label>
+                                            <p id="selected-client-email" class="text-lg font-medium text-text-secondary">-</p>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-bold text-text-primary">العنوان</label>
+                                            <p id="selected-client-address" class="text-lg font-medium text-text-secondary">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Association -->
+                        <div class="mb-8">
+                            <label class="block text-lg font-bold text-text-primary mb-4">ربط المشروع (اختياري)</label>
+                            <select id="project-select" class="w-full px-6 py-4 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none text-lg transition-all">
+                                <option value>اختر مشروع (اختياري)</option>
+                                <option value="villa-riyadh">فيلا الرياض الحديثة</option>
+                                <option value="complex-jeddah">مجمع تجاري جدة</option>
+                                <option value="residential-dammam">مشروع سكني الدمام</option>
+                            </select>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center justify-between pt-6 border-t border-white/30">
+                            <div></div>
+                            <button onclick="nextStep()" id="step-1-next" class="bg-gradient-to-r from-primary to-primary-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg transition-all flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <span>التالي</span>
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Invoice Details -->
+                <div id="step-2" class="step-content hidden">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-16 h-16 bg-gradient-to-br from-success to-success-600 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-file-invoice-dollar text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-3xl font-bold text-text-primary">تفاصيل الفاتورة</h2>
+                                <p class="text-text-secondary">أدخل البنود والخدمات والمبالغ</p>
+                            </div>
+                        </div>
+
+                        <!-- Invoice Header Info -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div>
+                                <label class="block text-sm font-bold text-text-primary mb-2">رقم الفاتورة</label>
+                                <input type="text" id="invoice-number" value="INV-2025-004" class="w-full px-4 py-3 rounded-2xl bg-gray-100 border border-gray-200 text-lg font-bold" readonly />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-text-primary mb-2">تاريخ الفاتورة</label>
+                                <input type="date" id="invoice-date" class="w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-text-primary mb-2">تاريخ الاستحقاق</label>
+                                <input type="date" id="due-date" class="w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" />
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-text-primary mb-2">عملة الفاتورة</label>
+                                <select id="invoice-currency" class="w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all">
+                                    <option value="SAR">ريال سعودي (SAR)</option>
+                                    <option value="USD">دولار أمريكي (USD)</option>
+                                    <option value="EUR">يورو (EUR)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Invoice Items -->
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-bold text-text-primary">بنود الفاتورة</h3>
+                                <button onclick="addInvoiceItem()" class="bg-gradient-to-r from-success to-success-600 text-white px-4 py-2 rounded-2xl hover:shadow-lg transition-all flex items-center gap-2">
+                                    <i class="fas fa-plus"></i>
+                                    إضافة بند
+                                </button>
+                            </div>
+
+                            <div id="invoice-items" class="space-y-4">
+                                <!-- Default Item -->
+                                <div class="invoice-item bg-gradient-to-r from-white to-blue-50 p-6 rounded-2xl border border-blue-100">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="font-bold text-text-primary">بند رقم 1</h4>
+                                        <button onclick="removeInvoiceItem(this)" class="text-error hover:bg-error-100 rounded-xl p-2 transition-all">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                        <div class="md:col-span-2">
+                                            <label class="block text-sm font-bold text-text-primary mb-2">وصف البند</label>
+                                            <input type="text" class="item-description w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" placeholder="أعمال البناء والتشطيب" />
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-bold text-text-primary mb-2">الكمية</label>
+                                            <input type="number" class="item-quantity w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" value="1" min="1" onchange="calculateItemTotal(this)" />
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-bold text-text-primary mb-2">السعر الوحدة</label>
+                                            <input type="number" class="item-price w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" placeholder="0.00" step="0.01" onchange="calculateItemTotal(this)" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/30">
+                                        <div class="flex items-center gap-4">
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" class="item-taxable rounded" checked onchange="calculateItemTotal(this)" />
+                                                <span class="text-sm font-medium">خاضع للضريبة (15%)</span>
+                                            </label>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-sm text-text-secondary">إجمالي البند</div>
+                                            <div class="item-total text-xl font-bold text-primary">0.00 ريال</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-8">
+                            <label class="block text-lg font-bold text-text-primary mb-4">ملاحظات إضافية</label>
+                            <textarea id="invoice-notes" placeholder="أي ملاحظات أو تعليمات خاصة..." rows="4" class="w-full px-6 py-4 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all resize-none"></textarea>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center justify-between pt-6 border-t border-white/30">
+                            <button onclick="prevStep()" class="bg-gray-200 text-text-secondary px-8 py-4 rounded-2xl font-bold hover:bg-gray-300 transition-all flex items-center gap-3">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>السابق</span>
+                            </button>
+                            <button onclick="nextStep()" class="bg-gradient-to-r from-primary to-primary-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg transition-all flex items-center gap-3">
+                                <span>التالي</span>
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Review -->
+                <div id="step-3" class="step-content hidden">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-16 h-16 bg-gradient-to-br from-warning to-warning-600 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-eye text-white text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-3xl font-bold text-text-primary">مراجعة الفاتورة</h2>
+                                <p class="text-text-secondary">تأكد من صحة جميع البيانات قبل الإنهاء</p>
+                            </div>
+                        </div>
+
+                        <div id="invoice-preview" class="bg-gradient-to-r from-white to-gray-50 rounded-2xl p-8 border border-gray-100">
+                            <div class="text-center py-20">
+                                <i class="fas fa-file-invoice text-6xl text-gray-300 mb-4"></i>
+                                <p class="text-text-secondary">معاينة الفاتورة ستظهر هنا...</p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center justify-between pt-6 border-t border-white/30">
+                            <button onclick="prevStep()" class="bg-gray-200 text-text-secondary px-8 py-4 rounded-2xl font-bold hover:bg-gray-300 transition-all flex items-center gap-3">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>السابق</span>
+                            </button>
+                            <button onclick="nextStep()" class="bg-gradient-to-r from-primary to-primary-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg transition-all flex items-center gap-3">
+                                <span>إنهاء وإنشاء الفاتورة</span>
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Complete -->
+                <div id="step-4" class="step-content hidden">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50 text-center">
+                        <div class="w-24 h-24 bg-gradient-to-br from-success to-success-600 rounded-full flex items-center justify-center mx-auto mb-8">
+                            <i class="fas fa-check text-white text-4xl"></i>
+                        </div>
+                        
+                        <h2 class="text-4xl font-bold text-text-primary mb-4">تم إنشاء الفاتورة بنجاح!</h2>
+                        <p class="text-text-secondary text-lg mb-8">رقم الفاتورة: INV-2025-004</p>
+                        
+                        <div class="flex items-center justify-center gap-4">
+                            <button onclick="downloadInvoice()" class="bg-gradient-to-r from-success to-success-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg transition-all flex items-center gap-3">
+                                <i class="fas fa-download"></i>
+                                <span>تحميل PDF</span>
+                            </button>
+                            
+                            <button onclick="printInvoice()" class="bg-gradient-to-r from-primary to-primary-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg transition-all flex items-center gap-3">
+                                <i class="fas fa-print"></i>
+                                <span>طباعة</span>
+                            </button>
+                            
+                            <button onclick="sendInvoice()" class="bg-gradient-to-r from-warning to-warning-600 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-lg transition-all flex items-center gap-3">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>إرسال للعميل</span>
+                            </button>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <button onclick="createNewInvoice()" class="text-primary hover:text-primary-600 font-medium">
+                                إنشاء فاتورة جديدة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <!-- Invoice Summary -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/50 mb-6 sticky top-32">
+                    <h3 class="text-xl font-bold text-text-primary mb-6 flex items-center gap-3">
+                        <i class="fas fa-calculator text-primary"></i>
+                        ملخص الفاتورة
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="text-text-secondary">المجموع الفرعي:</span>
+                            <span id="subtotal" class="font-bold text-text-primary">0.00 ريال</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="text-text-secondary">ضريبة القيمة المضافة (15%):</span>
+                            <span id="vat-amount" class="font-bold text-text-primary">0.00 ريال</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center py-3 border-t-2 border-primary">
+                            <span class="text-lg font-bold text-text-primary">المجموع الكلي:</span>
+                            <span id="total-amount" class="text-2xl font-black text-primary">0.00 ريال</span>
+                        </div>
+                    </div>
+
+                    <!-- QR Code Placeholder -->
+                    <div class="mt-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl text-center">
+                        <i class="fas fa-qrcode text-4xl text-gray-300 mb-2"></i>
+                        <p class="text-sm text-gray-500">رمز QR للفاتورة</p>
+                        <p class="text-xs text-gray-400">متوافق مع هيئة الزكاة</p>
+                    </div>
+                </div>
+
+                <!-- Quick Templates -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/50">
+                    <h3 class="text-xl font-bold text-text-primary mb-6 flex items-center gap-3">
+                        <i class="fas fa-templates text-primary"></i>
+                        قوالب سريعة
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <button onclick="applyTemplate('construction')" class="w-full bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-2xl text-right hover:shadow-md transition-all">
+                            <div class="font-bold text-primary">أعمال البناء</div>
+                            <div class="text-sm text-text-secondary">قالب للأعمال الإنشائية</div>
+                        </button>
+                        
+                        <button onclick="applyTemplate('finishing')" class="w-full bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-2xl text-right hover:shadow-md transition-all">
+                            <div class="font-bold text-success">أعمال التشطيب</div>
+                            <div class="text-sm text-text-secondary">قالب لأعمال الديكور</div>
+                        </button>
+                        
+                        <button onclick="applyTemplate('maintenance')" class="w-full bg-gradient-to-r from-warning-50 to-warning-100 p-4 rounded-2xl text-right hover:shadow-md transition-all">
+                            <div class="font-bold text-warning">أعمال الصيانة</div>
+                            <div class="text-sm text-text-secondary">قالب للصيانة العامة</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let selectedClient = null;
+        let invoiceItems = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStepProgress();
+            setCurrentDate();
+        });
+
+        // Navigation Functions
+        function goBack() {
+            window.history.back();
+        }
+
+        function nextStep() {
+            if (currentStep < 4) {
+                // Validate current step
+                if (validateCurrentStep()) {
+                    currentStep++;
+                    updateStepProgress();
+                    showCurrentStep();
+                }
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepProgress();
+                showCurrentStep();
+            }
+        }
+
+        function updateStepProgress() {
+            document.getElementById('current-step').textContent = currentStep;
+            
+            // Update step indicators
+            document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+                const stepNumber = index + 1;
+                if (stepNumber <= currentStep) {
+                    indicator.classList.add('bg-gradient-to-r', 'from-primary', 'to-primary-600', 'text-white');
+                    indicator.classList.remove('bg-gray-200', 'text-gray-500');
+                } else {
+                    indicator.classList.remove('bg-gradient-to-r', 'from-primary', 'to-primary-600', 'text-white');
+                    indicator.classList.add('bg-gray-200', 'text-gray-500');
+                }
+            });
+        }
+
+        function showCurrentStep() {
+            document.querySelectorAll('.step-content').forEach(step => {
+                step.classList.add('hidden');
+            });
+            document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+        }
+
+        function validateCurrentStep() {
+            switch(currentStep) {
+                case 1:
+                    return selectedClient !== null;
+                case 2:
+                    return validateInvoiceDetails();
+                case 3:
+                    return true; // Review step always valid
+                default:
+                    return true;
+            }
+        }
+
+        // Client Management
+        function toggleClientForm() {
+            const searchSection = document.getElementById('client-search-section');
+            const newClientForm = document.getElementById('new-client-form');
+            const addClientBtn = document.getElementById('add-client-btn');
+            
+            if (newClientForm.classList.contains('hidden')) {
+                searchSection.classList.add('hidden');
+                newClientForm.classList.remove('hidden');
+                addClientBtn.innerHTML = '<i class="fas fa-times"></i><span>إلغاء</span>';
+            } else {
+                searchSection.classList.remove('hidden');
+                newClientForm.classList.add('hidden');
+                addClientBtn.innerHTML = '<i class="fas fa-plus"></i><span>إضافة عميل جديد</span>';
+            }
+        }
+
+        function searchClients(query) {
+            // Implement client search functionality
+            console.log('Searching for:', query);
+        }
+
+        function selectClient(name, phone, email, address) {
+            selectedClient = { name, phone, email, address };
+            
+            // Update selected client display
+            document.getElementById('selected-client-name').textContent = name;
+            document.getElementById('selected-client-phone').textContent = phone;
+            document.getElementById('selected-client-email').textContent = email;
+            document.getElementById('selected-client-address').textContent = address;
+            
+            // Show selected client section
+            document.getElementById('client-search-section').classList.add('hidden');
+            document.getElementById('selected-client').classList.remove('hidden');
+            
+            // Enable next button
+            document.getElementById('step-1-next').disabled = false;
+        }
+
+        function clearSelectedClient() {
+            selectedClient = null;
+            document.getElementById('client-search-section').classList.remove('hidden');
+            document.getElementById('selected-client').classList.add('hidden');
+            document.getElementById('step-1-next').disabled = true;
+        }
+
+        function saveNewClient() {
+            const name = document.getElementById('new-client-name').value;
+            const phone = document.getElementById('new-client-phone').value;
+            const email = document.getElementById('new-client-email').value;
+            const address = document.getElementById('new-client-address').value;
+            
+            if (name && phone && address) {
+                selectClient(name, phone, email, address);
+                toggleClientForm();
+                
+                // Clear form
+                document.getElementById('new-client-name').value = '';
+                document.getElementById('new-client-phone').value = '';
+                document.getElementById('new-client-email').value = '';
+                document.getElementById('new-client-address').value = '';
+            } else {
+                alert('يرجى ملء الحقول المطلوبة');
+            }
+        }
+
+        // Invoice Item Management
+        function addInvoiceItem() {
+            const itemsContainer = document.getElementById('invoice-items');
+            const itemCount = itemsContainer.children.length + 1;
+            
+            const itemHTML = `
+                <div class="invoice-item bg-gradient-to-r from-white to-blue-50 p-6 rounded-2xl border border-blue-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="font-bold text-text-primary">بند رقم ${itemCount}</h4>
+                        <button onclick="removeInvoiceItem(this)" class="text-error hover:bg-error-100 rounded-xl p-2 transition-all">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-bold text-text-primary mb-2">وصف البند</label>
+                            <input type="text" class="item-description w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" placeholder="وصف الخدمة أو المنتج">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-text-primary mb-2">الكمية</label>
+                            <input type="number" class="item-quantity w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" value="1" min="1" onchange="calculateItemTotal(this)">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-text-primary mb-2">السعر الوحدة</label>
+                            <input type="number" class="item-price w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/30 focus:bg-white focus:border-primary focus:outline-none transition-all" placeholder="0.00" step="0.01" onchange="calculateItemTotal(this)">
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/30">
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2">
+                                <input type="checkbox" class="item-taxable rounded" checked onchange="calculateItemTotal(this)">
+                                <span class="text-sm font-medium">خاضع للضريبة (15%)</span>
+                            </label>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-text-secondary">إجمالي البند</div>
+                            <div class="item-total text-xl font-bold text-primary">0.00 ريال</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            itemsContainer.insertAdjacentHTML('beforeend', itemHTML);
+        }
+
+        function removeInvoiceItem(button) {
+            const item = button.closest('.invoice-item');
+            item.remove();
+            calculateInvoiceTotal();
+        }
+
+        function calculateItemTotal(element) {
+            const item = element.closest('.invoice-item');
+            const quantity = parseFloat(item.querySelector('.item-quantity').value) || 0;
+            const price = parseFloat(item.querySelector('.item-price').value) || 0;
+            const isTaxable = item.querySelector('.item-taxable').checked;
+            
+            let total = quantity * price;
+            if (isTaxable) {
+                total = total * 1.15; // Add 15% VAT
+            }
+            
+            item.querySelector('.item-total').textContent = total.toFixed(2) + ' ريال';
+            calculateInvoiceTotal();
+        }
+
+        function calculateInvoiceTotal() {
+            let subtotal = 0;
+            let vatAmount = 0;
+            
+            document.querySelectorAll('.invoice-item').forEach(item => {
+                const quantity = parseFloat(item.querySelector('.item-quantity').value) || 0;
+                const price = parseFloat(item.querySelector('.item-price').value) || 0;
+                const isTaxable = item.querySelector('.item-taxable').checked;
+                
+                const itemSubtotal = quantity * price;
+                subtotal += itemSubtotal;
+                
+                if (isTaxable) {
+                    vatAmount += itemSubtotal * 0.15;
+                }
+            });
+            
+            const total = subtotal + vatAmount;
+            
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' ريال';
+            document.getElementById('vat-amount').textContent = vatAmount.toFixed(2) + ' ريال';
+            document.getElementById('total-amount').textContent = total.toFixed(2) + ' ريال';
+        }
+
+        function validateInvoiceDetails() {
+            const items = document.querySelectorAll('.invoice-item');
+            if (items.length === 0) return false;
+            
+            for (let item of items) {
+                const description = item.querySelector('.item-description').value;
+                const price = item.querySelector('.item-price').value;
+                if (!description || !price) return false;
+            }
+            return true;
+        }
+
+        // Template Functions
+        function applyTemplate(type) {
+            const templates = {
+                construction: {
+                    description: 'أعمال البناء والإنشاء',
+                    quantity: 1,
+                    price: 50000
+                },
+                finishing: {
+                    description: 'أعمال التشطيب والديكور',
+                    quantity: 1,
+                    price: 30000
+                },
+                maintenance: {
+                    description: 'أعمال الصيانة العامة',
+                    quantity: 1,
+                    price: 15000
+                }
+            };
+            
+            const template = templates[type];
+            if (template) {
+                const firstItem = document.querySelector('.invoice-item');
+                firstItem.querySelector('.item-description').value = template.description;
+                firstItem.querySelector('.item-quantity').value = template.quantity;
+                firstItem.querySelector('.item-price').value = template.price;
+                calculateItemTotal(firstItem.querySelector('.item-price'));
+            }
+        }
+
+        // Utility Functions
+        function setCurrentDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invoice-date').value = today;
+            
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + 30);
+            document.getElementById('due-date').value = dueDate.toISOString().split('T')[0];
+        }
+
+        function saveDraft() {
+            alert('تم حفظ المسودة بنجاح');
+        }
+
+        function downloadInvoice() {
+            alert('جاري تحميل الفاتورة...');
+        }
+
+        function printInvoice() {
+            window.print();
+        }
+
+        function sendInvoice() {
+            alert('تم إرسال الفاتورة للعميل بنجاح');
+        }
+
+        function createNewInvoice() {
+            window.location.reload();
+        }
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

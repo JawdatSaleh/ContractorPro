@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ContractorPro - نظام إدارة المقاولات</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        /* Custom animations for login/dashboard transition */
+        .login-container {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .dashboard-container {
+            animation: slideInFromRight 0.6s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .transition-container {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .kpi-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .chart-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+</head>
+<body class="bg-gradient-to-br from-primary-50 via-background to-secondary-50 min-h-screen font-arabic">
+    
+    <!-- Login Interface (Shown when not authenticated) -->
+    <div id="loginInterface" class="min-h-screen flex items-center justify-center p-6">
+        <div class="max-w-md w-full space-y-8 login-container">
+            <!-- Logo and Title -->
+            <div class="text-center">
+                <div class="mx-auto w-24 h-24 bg-primary rounded-3xl flex items-center justify-center shadow-xl mb-6">
+                    <i class="fas fa-hard-hat text-white text-4xl"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-text-primary mb-2">ContractorPro</h1>
+                <p class="text-text-secondary text-lg">نظام إدارة المقاولات المتقدم</p>
+                <p class="text-text-secondary text-sm mt-2">إدارة شاملة لجميع مشاريعك الإنشائية</p>
+            </div>
+            
+            <!-- Login Form -->
+            <div class="bg-surface rounded-2xl shadow-2xl p-8 border border-border">
+                <h2 class="text-2xl font-bold text-text-primary mb-6 text-center">تسجيل الدخول</h2>
+                
+                <form id="loginForm" class="space-y-6">
+                    <!-- Username Field -->
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-text-primary mb-2">
+                            <i class="fas fa-user ml-2"></i>اسم المستخدم
+                        </label>
+                        <input type="text" id="username" name="username" required class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="أدخل اسم المستخدم" />
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-text-primary mb-2">
+                            <i class="fas fa-lock ml-2"></i>كلمة المرور
+                        </label>
+                        <div class="relative">
+                            <input type="password" id="password" name="password" required class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="أدخل كلمة المرور" />
+                            <button type="button" id="togglePassword" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary hover:text-primary">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input id="remember" type="checkbox" class="ml-2 h-4 w-4 text-primary rounded border-border focus:ring-primary" />
+                            <label for="remember" class="text-sm text-text-secondary">
+                                تذكرني
+                            </label>
+                        </div>
+                        <a href="#" class="text-sm text-primary hover:text-primary-600 transition-colors">
+                            نسيت كلمة المرور؟
+                        </a>
+                    </div>
+                    
+                    <!-- Login Button -->
+                    <button type="submit" class="w-full bg-gradient-to-l from-primary to-primary-600 text-white py-3 px-4 rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all duration-300 transform hover:scale-105 font-medium shadow-lg">
+                        <i class="fas fa-sign-in-alt ml-2"></i>
+                        دخول
+                    </button>
+                </form>
+                
+                <!-- Error Message -->
+                <div id="loginError" class="hidden mt-4 p-4 bg-error-100 border border-error-200 rounded-xl">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-error ml-2"></i>
+                        <span class="text-error text-sm">خطأ في بيانات الدخول. يرجى المحاولة مرة أخرى.</span>
+                    </div>
+                </div>
+                
+                <!-- System Info -->
+                <div class="mt-6 p-4 bg-secondary-50 rounded-xl border border-secondary-200">
+                    <h4 class="font-medium text-text-primary mb-2">معلومات النظام</h4>
+                    <div class="text-sm text-text-secondary space-y-1">
+                        <p><i class="fas fa-shield-alt ml-2 text-success"></i>حماية متقدمة للبيانات</p>
+                        <p><i class="fas fa-mobile-alt ml-2 text-primary"></i>متوافق مع الأجهزة المحمولة</p>
+                        <p><i class="fas fa-language ml-2 text-accent"></i>دعم كامل للغة العربية</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Interface (Shown when authenticated) -->
+    <div id="dashboardInterface" class="hidden">
+        <!-- Top Header -->
+        <header class="bg-surface shadow-lg border-b border-border">
+            <div class="max-w-7xl mx-auto px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <!-- Logo and Title -->
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                            <i class="fas fa-hard-hat text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-text-primary">ContractorPro</h1>
+                            <p class="text-sm text-text-secondary">لوحة التحكم التنفيذية</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Header Actions -->
+                    <div class="flex items-center gap-4">
+                        <!-- Search -->
+                        <div class="relative">
+                            <input type="text" placeholder="البحث السريع..." class="w-80 px-4 py-2 pr-10 border border-border rounded-xl focus:border-primary focus:outline-none transition-all" />
+                            <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                        </div>
+                        
+                        <!-- Notifications -->
+                        <button class="relative p-3 rounded-xl hover:bg-secondary-100 transition-all">
+                            <i class="fas fa-bell text-text-secondary text-lg"></i>
+                            <span class="absolute -top-1 -left-1 w-6 h-6 bg-error text-white text-xs rounded-full flex items-center justify-center">
+                                5
+                            </span>
+                        </button>
+                        
+                        <!-- User Profile -->
+                        <div class="flex items-center gap-3 cursor-pointer hover:bg-secondary-100 rounded-xl p-2 transition-all">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="صورة المستخدم" class="w-10 h-10 rounded-full object-cover" />
+                            <div>
+                                <p class="font-medium text-text-primary" id="userFullName">أحمد المالك</p>
+                                <p class="text-sm text-text-secondary">مدير عام</p>
+                            </div>
+                            <i class="fas fa-chevron-down text-text-secondary"></i>
+                        </div>
+                        
+                        <!-- Logout -->
+                        <button id="logoutBtn" class="px-4 py-2 bg-error-100 text-error rounded-xl hover:bg-error-200 transition-all">
+                            <i class="fas fa-sign-out-alt ml-2"></i>خروج
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Dashboard Content -->
+        <main class="max-w-7xl mx-auto px-6 py-8 dashboard-container">
+            <!-- Welcome Section -->
+            <div class="mb-8 p-8 bg-gradient-to-l from-primary to-primary-600 rounded-2xl text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-3xl font-bold mb-3">مرحباً بك في لوحة التحكم</h2>
+                    <p class="text-xl opacity-90 mb-6">نظرة شاملة على أداء مشاريعك وعملياتك اليومية</p>
+                    <div class="flex items-center gap-8">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">15</div>
+                            <div class="text-sm opacity-80">مشاريع نشطة</div>
+                        </div>
+                        <div class="w-px h-16 bg-white/30"></div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">2.8M</div>
+                            <div class="text-sm opacity-80">ريال إيرادات</div>
+                        </div>
+                        <div class="w-px h-16 bg-white/30"></div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">52</div>
+                            <div class="text-sm opacity-80">موظف</div>
+                        </div>
+                        <div class="w-px h-16 bg-white/30"></div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold">8</div>
+                            <div class="text-sm opacity-80">عملاء جدد</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Background Pattern -->
+                <div class="absolute left-0 top-0 w-full h-full opacity-20">
+                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                        <defs>
+                            <pattern id="dashboardGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" stroke-width="1"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100" height="100" fill="url(#dashboardGrid)"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- KPI Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Active Projects KPI -->
+                <div class="bg-surface rounded-2xl p-6 shadow-card border border-border hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-building text-primary text-2xl"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-2xl font-bold text-text-primary">15</div>
+                            <div class="text-xs text-success">+2 هذا الأسبوع</div>
+                        </div>
+                    </div>
+                    <h3 class="font-medium text-text-primary mb-2">المشاريع النشطة</h3>
+                    <div class="flex items-center text-sm text-text-secondary">
+                        <div class="w-full bg-secondary-200 rounded-full h-2 ml-3">
+                            <div class="bg-primary h-2 rounded-full" style="width: 78%"></div>
+                        </div>
+                        <span>78%</span>
+                    </div>
+                </div>
+                
+                <!-- Total Revenue KPI -->
+                <div class="bg-surface rounded-2xl p-6 shadow-card border border-border hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 bg-success-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-chart-line text-success text-2xl"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-2xl font-bold text-text-primary">2.8M</div>
+                            <div class="text-xs text-success">+15% هذا الشهر</div>
+                        </div>
+                    </div>
+                    <h3 class="font-medium text-text-primary mb-2">إجمالي الإيرادات</h3>
+                    <div class="flex items-center text-sm text-text-secondary">
+                        <div class="w-full bg-secondary-200 rounded-full h-2 ml-3">
+                            <div class="bg-success h-2 rounded-full" style="width: 85%"></div>
+                        </div>
+                        <span>85%</span>
+                    </div>
+                </div>
+                
+                <!-- Pending Payments KPI -->
+                <div class="bg-surface rounded-2xl p-6 shadow-card border border-border hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 bg-warning-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-file-invoice text-warning text-2xl"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-2xl font-bold text-text-primary">12</div>
+                            <div class="text-xs text-warning">480K ريال</div>
+                        </div>
+                    </div>
+                    <h3 class="font-medium text-text-primary mb-2">الدفعات المعلقة</h3>
+                    <div class="flex items-center text-sm text-text-secondary">
+                        <div class="w-full bg-secondary-200 rounded-full h-2 ml-3">
+                            <div class="bg-warning h-2 rounded-full" style="width: 45%"></div>
+                        </div>
+                        <span>45%</span>
+                    </div>
+                </div>
+                
+                <!-- Completion Rate KPI -->
+                <div class="bg-surface rounded-2xl p-6 shadow-card border border-border hover:shadow-lg transition-all cursor-pointer group">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-14 h-14 bg-accent-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i class="fas fa-tasks text-accent text-2xl"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-2xl font-bold text-text-primary">87%</div>
+                            <div class="text-xs text-success">+3% هذا الأسبوع</div>
+                        </div>
+                    </div>
+                    <h3 class="font-medium text-text-primary mb-2">معدل الإنجاز</h3>
+                    <div class="flex items-center text-sm text-text-secondary">
+                        <div class="w-full bg-secondary-200 rounded-full h-2 ml-3">
+                            <div class="bg-accent h-2 rounded-full" style="width: 87%"></div>
+                        </div>
+                        <span>87%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Interactive Charts and Quick Actions -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Progress Charts -->
+                <div class="lg:col-span-2 bg-surface rounded-2xl p-6 shadow-card border border-border">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-text-primary">تقدم المشاريع - تحليل تفاعلي</h3>
+                        <select class="px-4 py-2 border border-border rounded-xl text-sm focus:border-primary focus:outline-none">
+                            <option>آخر 30 يوم</option>
+                            <option>آخر 3 أشهر</option>
+                            <option>آخر 6 أشهر</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Interactive Chart Container -->
+                    <div class="h-80 chart-container rounded-xl flex items-center justify-center relative overflow-hidden">
+                        <svg class="w-full h-full" viewBox="0 0 500 300">
+                            <!-- Chart Background Grid -->
+                            <defs>
+                                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:rgba(255,255,255,0.4);stop-opacity:1"/>
+                                    <stop offset="100%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1"/>
+                                </linearGradient>
+                            </defs>
+                            
+                            <!-- Progress Line Chart -->
+                            <polyline fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="4" points="50,250 100,200 150,180 200,160 250,140 300,120 350,100 400,80 450,50"/>
+                            
+                            <!-- Chart Area Fill -->
+                            <polygon fill="url(#progressGradient)" points="50,250 100,200 150,180 200,160 250,140 300,120 350,100 400,80 450,50 450,280 50,280"/>
+                            
+                            <!-- Data Points -->
+                            <circle cx="50" cy="250" r="6" fill="white" opacity="0.9"/>
+                            <circle cx="100" cy="200" r="6" fill="white" opacity="0.9"/>
+                            <circle cx="150" cy="180" r="6" fill="white" opacity="0.9"/>
+                            <circle cx="200" cy="160" r="6" fill="white" opacity="0.9"/>
+                            <circle cx="250" cy="140" r="6" fill="white" opacity="0.9"/>
+                            <circle cx="300" cy="120" r="6" fill="white" opacity="0.9"/>
+                            <circle cx="350" cy="100" r="6" fill="white" opacity="0.9"/>
+                            <circle cx="400" cy="80" r="6" fill="white" opacity="0.9"/>
+                            <circle cx="450" cy="50" r="8" fill="white"/>
+                        </svg>
+                        
+                        <!-- Chart Labels -->
+                        <div class="absolute top-4 right-4 text-white">
+                            <div class="text-2xl font-bold">87.3%</div>
+                            <div class="text-sm opacity-80">معدل الإنجاز العام</div>
+                        </div>
+                        
+                        <div class="absolute bottom-4 right-4 text-white text-sm opacity-80">
+                            اتجاه صاعد +12% هذا الشهر
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Action Cards -->
+                <div class="space-y-6">
+                    <!-- New Project Action -->
+                    <div class="bg-surface rounded-2xl p-6 shadow-card border border-border hover:shadow-lg transition-all cursor-pointer group" onclick="window.location.href='project_creation_wizard.html'">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fas fa-plus text-primary text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-text-primary">إضافة مشروع جديد</h4>
+                                <p class="text-sm text-text-secondary">ابدأ مشروع إنشائي جديد</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            <span class="text-xs text-text-secondary">معالج التكوين</span>
+                            <i class="fas fa-arrow-left text-primary group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Create Invoice Action -->
+                    <div class="bg-surface rounded-2xl p-6 shadow-card border border-border hover:shadow-lg transition-all cursor-pointer group" onclick="window.location.href='invoice_management_center.html'">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-success-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fas fa-file-invoice text-success text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-text-primary">إنشاء فاتورة</h4>
+                                <p class="text-sm text-text-secondary">فوترة سريعة ومتطورة</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            <span class="text-xs text-text-secondary">نظام فوترة ذكي</span>
+                            <i class="fas fa-arrow-left text-success group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Team Management Action -->
+                    <div class="bg-surface rounded-2xl p-6 shadow-card border border-border hover:shadow-lg transition-all cursor-pointer group" onclick="window.location.href='team_management.html'">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-accent-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fas fa-users text-accent text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-text-primary">إدارة الفريق</h4>
+                                <p class="text-sm text-text-secondary">أعضاء الفريق والصلاحيات</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            <span class="text-xs text-text-secondary">52 عضو نشط</span>
+                            <i class="fas fa-arrow-left text-accent group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activities Action -->
+                    <div class="bg-surface rounded-2xl p-6 shadow-card border border-border hover:shadow-lg transition-all cursor-pointer group" onclick="window.location.href='notifications.html'">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-warning-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <i class="fas fa-clock text-warning text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-text-primary">الأنشطة الأخيرة</h4>
+                                <p class="text-sm text-text-secondary">تحديثات وإشعارات</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            <span class="text-xs text-text-secondary">15 نشاط جديد</span>
+                            <i class="fas fa-arrow-left text-warning group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Projects Table -->
+            <div class="mt-8 bg-surface rounded-2xl shadow-card border border-border">
+                <div class="p-6 border-b border-border">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-text-primary">آخر المشاريع</h3>
+                        <button class="text-primary hover:text-primary-600 text-sm font-medium" onclick="window.location.href='projects_management_center.html'">
+                            عرض جميع المشاريع
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-secondary-50">
+                            <tr>
+                                <th class="text-right py-4 px-6 text-sm font-medium text-text-secondary">اسم المشروع</th>
+                                <th class="text-right py-4 px-6 text-sm font-medium text-text-secondary">العميل</th>
+                                <th class="text-right py-4 px-6 text-sm font-medium text-text-secondary">التقدم</th>
+                                <th class="text-right py-4 px-6 text-sm font-medium text-text-secondary">القيمة</th>
+                                <th class="text-right py-4 px-6 text-sm font-medium text-text-secondary">الحالة</th>
+                                <th class="text-center py-4 px-6 text-sm font-medium text-text-secondary">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-border hover:bg-secondary-50 transition-all">
+                                <td class="py-4 px-6">
+                                    <div class="font-medium text-text-primary">فيلا الرياض الحديثة</div>
+                                    <div class="text-sm text-text-secondary">مشروع سكني - 3 طوابق</div>
+                                </td>
+                                <td class="py-4 px-6 text-text-primary">محمد العبدالله</td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-24 bg-secondary-200 rounded-full h-2">
+                                            <div class="bg-success h-2 rounded-full" style="width: 85%"></div>
+                                        </div>
+                                        <span class="text-sm text-text-secondary">85%</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-medium text-text-primary">850K ريال</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success">قيد التنفيذ</span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <button class="text-primary hover:text-primary-600 mx-1">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="text-accent hover:text-accent-600 mx-1">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-border hover:bg-secondary-50 transition-all">
+                                <td class="py-4 px-6">
+                                    <div class="font-medium text-text-primary">مجمع تجاري جدة</div>
+                                    <div class="text-sm text-text-secondary">مجمع تجاري - 5 طوابق</div>
+                                </td>
+                                <td class="py-4 px-6 text-text-primary">شركة الأندلس للاستثمار</td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-24 bg-secondary-200 rounded-full h-2">
+                                            <div class="bg-warning h-2 rounded-full" style="width: 45%"></div>
+                                        </div>
+                                        <span class="text-sm text-text-secondary">45%</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-medium text-text-primary">1.2M ريال</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">مرحلة الأساسات</span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <button class="text-primary hover:text-primary-600 mx-1">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="text-accent hover:text-accent-600 mx-1">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            
+                            <tr class="hover:bg-secondary-50 transition-all">
+                                <td class="py-4 px-6">
+                                    <div class="font-medium text-text-primary">مشروع سكني الدمام</div>
+                                    <div class="text-sm text-text-secondary">مجمع سكني - 8 وحدات</div>
+                                </td>
+                                <td class="py-4 px-6 text-text-primary">فهد الخالدي</td>
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-24 bg-secondary-200 rounded-full h-2">
+                                            <div class="bg-primary h-2 rounded-full" style="width: 20%"></div>
+                                        </div>
+                                        <span class="text-sm text-text-secondary">20%</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-medium text-text-primary">650K ريال</td>
+                                <td class="py-4 px-6">
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary">بداية المشروع</span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <button class="text-primary hover:text-primary-600 mx-1">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="text-accent hover:text-accent-600 mx-1">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="bg-surface border-t border-border px-6 py-6 mt-12">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-center justify-between text-sm text-text-secondary">
+                    <p>© 2025 ContractorPro. جميع الحقوق محفوظة.</p>
+                    <p id="dashboardTime">آخر تحديث: 5 أكتوبر 2025 - 20:25</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // Authentication state management
+        let isAuthenticated = false;
+        let currentUser = null;
+        
+        // Sample user credentials (in real app, this would be handled securely)
+        const users = {
+            'admin': 'admin123',
+            'manager': 'manager123',
+            'ahmed': 'ahmed123'
+        };
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+        });
+        
+        function initializeApp() {
+            // Check if user is already authenticated (from sessionStorage)
+            const savedUser = sessionStorage.getItem('contractorProUser');
+            if (savedUser) {
+                currentUser = savedUser;
+                isAuthenticated = true;
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        }
+        
+        function setupEventListeners() {
+            // Login form submission
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+            
+            // Password toggle
+            const togglePassword = document.getElementById('togglePassword');
+            if (togglePassword) {
+                togglePassword.addEventListener('click', function() {
+                    const passwordField = document.getElementById('password');
+                    const icon = this.querySelector('i');
+                    
+                    if (passwordField.type === 'password') {
+                        passwordField.type = 'text';
+                        icon.className = 'fas fa-eye-slash';
+                    } else {
+                        passwordField.type = 'password';
+                        icon.className = 'fas fa-eye';
+                    }
+                });
+            }
+            
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', handleLogout);
+            }
+            
+            // Real-time clock update for dashboard
+            setInterval(updateDashboardTime, 1000);
+        }
+        
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            // Hide any previous error messages
+            hideLoginError();
+            
+            // Validate credentials
+            if (users[username] && users[username] === password) {
+                currentUser = username;
+                isAuthenticated = true;
+                
+                // Save to sessionStorage or localStorage based on remember me
+                if (remember) {
+                    localStorage.setItem('contractorProUser', username);
+                } else {
+                    sessionStorage.setItem('contractorProUser', username);
+                }
+                
+                // Show success feedback
+                showLoginSuccess();
+                
+                // Transition to dashboard after brief delay
+                setTimeout(() => {
+                    showDashboard();
+                }, 1000);
+                
+            } else {
+                showLoginError();
+            }
+        }
+        
+        function handleLogout() {
+            // Clear authentication
+            currentUser = null;
+            isAuthenticated = false;
+            
+            // Clear storage
+            sessionStorage.removeItem('contractorProUser');
+            localStorage.removeItem('contractorProUser');
+            
+            // Show login interface
+            showLogin();
+        }
+        
+        function showLogin() {
+            document.getElementById('loginInterface').classList.remove('hidden');
+            document.getElementById('dashboardInterface').classList.add('hidden');
+            
+            // Clear form
+            document.getElementById('loginForm').reset();
+            hideLoginError();
+        }
+        
+        function showDashboard() {
+            document.getElementById('loginInterface').classList.add('hidden');
+            document.getElementById('dashboardInterface').classList.remove('hidden');
+            
+            // Update user name in dashboard
+            updateUserInfo();
+            
+            // Initialize dashboard animations
+            initializeDashboardAnimations();
+        }
+        
+        function showLoginError() {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.classList.remove('hidden');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(hideLoginError, 5000);
+        }
+        
+        function hideLoginError() {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.classList.add('hidden');
+        }
+        
+        function showLoginSuccess() {
+            const submitBtn = document.querySelector('#loginForm button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-check ml-2"></i>نجح التسجيل!';
+            submitBtn.className = submitBtn.className.replace('from-primary to-primary-600', 'from-success to-success-600');
+            
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.className = submitBtn.className.replace('from-success to-success-600', 'from-primary to-primary-600');
+            }, 1000);
+        }
+        
+        function updateUserInfo() {
+            const userNameElement = document.getElementById('userFullName');
+            if (userNameElement) {
+                // Map usernames to full names
+                const fullNames = {
+                    'admin': 'أحمد المالك',
+                    'manager': 'محمد الإدارة',
+                    'ahmed': 'أحمد المهندس'
+                };
+                
+                userNameElement.textContent = fullNames[currentUser] || currentUser;
+            }
+        }
+        
+        function updateDashboardTime() {
+            const timeElement = document.getElementById('dashboardTime');
+            if (timeElement && isAuthenticated) {
+                const now = new Date();
+                const timeString = now.toLocaleString('ar-SA', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                timeElement.textContent = `آخر تحديث: ${timeString}`;
+            }
+        }
+        
+        function initializeDashboardAnimations() {
+            // Animate KPI cards on load
+            const kpiCards = document.querySelectorAll('.bg-surface.rounded-2xl');
+            kpiCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('dashboard-container');
+            });
+            
+            // Animate progress bars
+            setTimeout(() => {
+                const progressBars = document.querySelectorAll('[style*="width:"]');
+                progressBars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    bar.style.transition = 'width 1s ease-out';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 100);
+                });
+            }, 500);
+        }
+        
+        // Additional utility functions for enhanced UX
+        function enhanceFormValidation() {
+            const inputs = document.querySelectorAll('#loginForm input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('border-error-500');
+                    hideLoginError();
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (this.value.length < 3) {
+                        this.classList.add('border-error-500');
+                    }
+                });
+            });
+        }
+        
+        // Enhanced search functionality
+        function initializeSearch() {
+            const searchInput = document.querySelector('input[placeholder="البحث السريع..."]');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value;
+                    if (searchTerm.length > 2) {
+                        // Implement search logic here
+                        console.log('البحث عن:', searchTerm);
+                    }
+                });
+            }
+        }
+        
+        // Initialize enhanced features when dashboard loads
+        setTimeout(() => {
+            if (isAuthenticated) {
+                enhanceFormValidation();
+                initializeSearch();
+            }
+        }, 1000);
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

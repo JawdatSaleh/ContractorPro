@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الصفحة الرئيسية</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+</head>
+<body class="bg-background font-arabic">
+
+<!-- Sidebar -->
+<div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50" id="sidebar">
+    <div class="p-6 border-b border-border">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                <i class="fas fa-hard-hat text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
+                <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
+            </div>
+        </div>
+    </div>
+    <nav class="p-4 space-y-2">
+        <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+            <i class="fas fa-tachometer-alt w-5"></i>
+            <span class="font-medium">الصفحة الرئيسية</span>
+        </a>
+        <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
+            <i class="fas fa-building w-5"></i>
+            <span>المشاريع</span>
+            <i class="fas fa-chevron-left mr-auto text-xs"></i>
+        </a>
+        <a href="financial_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+            <i class="fas fa-chart-line w-5"></i>
+            <span>المالية</span>
+            <i class="fas fa-chevron-left mr-auto text-xs"></i>
+        </a>
+        <a href="employees_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+            <i class="fas fa-users w-5"></i>
+            <span>الموظفين</span>
+            <i class="fas fa-chevron-left mr-auto text-xs"></i>
+        </a>
+        <a href="settings.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+            <i class="fas fa-cog w-5"></i>
+            <span>الإعدادات</span>
+        </a>
+    </nav>
+</div>
+
+<!-- Main Content -->
+<div class="mr-64 min-h-screen">
+    <!-- Header -->
+    <header class="bg-surface shadow-card px-6 py-4 border-b border-border flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-text-primary">الصفحة الرئيسية</h1>
+        <div class="flex items-center gap-4">
+            <i class="fas fa-search text-text-secondary text-lg cursor-pointer"></i>
+            <i class="fas fa-bell text-text-secondary text-lg cursor-pointer"></i>
+            <i class="fas fa-user text-text-secondary text-lg cursor-pointer"></i>
+        </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <main class="p-6 space-y-8">
+        <!-- Main Statistics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Total Projects Card - Clickable -->
+            <a href="projects_management_center.html" class="bg-surface border border-border rounded-xl p-6 shadow-card hover:shadow-lg transition-all duration-200 hover:border-primary block">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-text-secondary text-sm">إجمالي المشاريع</p>
+                        <h2 class="text-2xl font-bold text-primary mt-2">12</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-diagram-project text-primary text-lg"></i>
+                    </div>
+                </div>
+                <div class="w-full bg-secondary-200 rounded-full h-2">
+                    <div class="bg-primary h-2 rounded-full" style="width:75%"></div>
+                </div>
+                <p class="text-xs text-text-secondary mt-2">+15% من الشهر الماضي</p>
+            </a>
+
+            <!-- Active Projects Card - Clickable -->
+            <a href="projects_management_center.html" class="bg-surface border border-border rounded-xl p-6 shadow-card hover:shadow-lg transition-all duration-200 hover:border-success block">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-text-secondary text-sm">المشاريع النشطة</p>
+                        <h2 class="text-2xl font-bold text-success mt-2">8</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-briefcase text-success text-lg"></i>
+                    </div>
+                </div>
+                <div class="w-full bg-secondary-200 rounded-full h-2">
+                    <div class="bg-success h-2 rounded-full" style="width:60%"></div>
+                </div>
+                <p class="text-xs text-text-secondary mt-2">قيد التنفيذ</p>
+            </a>
+
+            <div class="bg-surface border border-border rounded-xl p-6 shadow-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-text-secondary text-sm">إجمالي الميزانية</p>
+                        <h2 class="text-2xl font-bold text-warning mt-2">2.4M ر.س</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-money-bill-wave text-warning text-lg"></i>
+                    </div>
+                </div>
+                <div class="w-full bg-secondary-200 rounded-full h-2">
+                    <div class="bg-warning h-2 rounded-full" style="width:82%"></div>
+                </div>
+                <p class="text-xs text-text-secondary mt-2">+8% من الشهر الماضي</p>
+            </div>
+
+            <div class="bg-surface border border-border rounded-xl p-6 shadow-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-text-secondary text-sm">متوسط الإنجاز</p>
+                        <h2 class="text-2xl font-bold text-info mt-2">68%</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-info-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-line text-info text-lg"></i>
+                    </div>
+                </div>
+                <div class="w-full bg-secondary-200 rounded-full h-2">
+                    <div class="bg-info h-2 rounded-full" style="width:68%"></div>
+                </div>
+                <p class="text-xs text-text-secondary mt-2">+5% هذا الأسبوع</p>
+            </div>
+        </div>
+
+        <!-- Additional Statistics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Total Employees -->
+            <a href="employees_management_center.html" class="bg-surface border border-border rounded-xl p-6 shadow-card hover:shadow-lg transition-all duration-200 hover:border-purple-500 block">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-text-secondary text-sm">إجمالي الموظفين</p>
+                        <h2 class="text-2xl font-bold text-purple-600 mt-2">45</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-users text-purple-600 text-lg"></i>
+                    </div>
+                </div>
+                <div class="w-full bg-secondary-200 rounded-full h-2">
+                    <div class="bg-purple-600 h-2 rounded-full" style="width:90%"></div>
+                </div>
+                <p class="text-xs text-text-secondary mt-2">+3 هذا الشهر</p>
+            </a>
+
+            <!-- Completed Projects -->
+            <div class="bg-surface border border-border rounded-xl p-6 shadow-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-text-secondary text-sm">المشاريع المكتملة</p>
+                        <h2 class="text-2xl font-bold text-green-600 mt-2">24</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-600 text-lg"></i>
+                    </div>
+                </div>
+                <div class="w-full bg-secondary-200 rounded-full h-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width:95%"></div>
+                </div>
+                <p class="text-xs text-text-secondary mt-2">معدل نجاح 95%</p>
+            </div>
+
+            <!-- Pending Invoices -->
+            <a href="invoice_management_center.html" class="bg-surface border border-border rounded-xl p-6 shadow-card hover:shadow-lg transition-all duration-200 hover:border-orange-500 block">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-text-secondary text-sm">الفواتير المعلقة</p>
+                        <h2 class="text-2xl font-bold text-orange-600 mt-2">7</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-file-invoice text-orange-600 text-lg"></i>
+                    </div>
+                </div>
+                <div class="w-full bg-secondary-200 rounded-full h-2">
+                    <div class="bg-orange-600 h-2 rounded-full" style="width:35%"></div>
+                </div>
+                <p class="text-xs text-text-secondary mt-2">750,000 ر.س</p>
+            </a>
+
+            <!-- Client Satisfaction -->
+            <div class="bg-surface border border-border rounded-xl p-6 shadow-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-text-secondary text-sm">رضا العملاء</p>
+                        <h2 class="text-2xl font-bold text-teal-600 mt-2">92%</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-star text-teal-600 text-lg"></i>
+                    </div>
+                </div>
+                <div class="w-full bg-secondary-200 rounded-full h-2">
+                    <div class="bg-teal-600 h-2 rounded-full" style="width:92%"></div>
+                </div>
+                <p class="text-xs text-text-secondary mt-2">4.6/5 تقييم متوسط</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Project Performance Chart -->
+            <div class="bg-surface border border-border rounded-xl p-6 shadow-card">
+                <h3 class="text-lg font-bold text-text-primary mb-4">أداء المشاريع الشهري</h3>
+                <div class="h-64">
+                    <canvas id="projectPerformanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Budget Distribution Chart -->
+            <div class="bg-surface border border-border rounded-xl p-6 shadow-card">
+                <h3 class="text-lg font-bold text-text-primary mb-4">توزيع الميزانية</h3>
+                <div class="h-64">
+                    <canvas id="budgetDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Revenue This Month -->
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl p-6 shadow-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-blue-100 text-sm">الإيرادات هذا الشهر</p>
+                        <h2 class="text-2xl font-bold mt-2">890,000 ر.س</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-arrow-trend-up text-lg"></i>
+                    </div>
+                </div>
+                <p class="text-blue-100 text-sm">+12% من الشهر الماضي</p>
+            </div>
+
+            <!-- Expenses This Month -->
+            <div class="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl p-6 shadow-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-red-100 text-sm">المصروفات هذا الشهر</p>
+                        <h2 class="text-2xl font-bold mt-2">540,000 ر.س</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-arrow-trend-down text-lg"></i>
+                    </div>
+                </div>
+                <p class="text-red-100 text-sm">-5% من الشهر الماضي</p>
+            </div>
+
+            <!-- Net Profit -->
+            <div class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl p-6 shadow-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-green-100 text-sm">صافي الربح</p>
+                        <h2 class="text-2xl font-bold mt-2">350,000 ر.س</h2>
+                    </div>
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-pie text-lg"></i>
+                    </div>
+                </div>
+                <p class="text-green-100 text-sm">هامش ربح 39%</p>
+            </div>
+        </div>
+
+        <!-- Recent Activity & Quick Stats -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Recent Projects -->
+            <div class="bg-surface border border-border rounded-xl p-6 shadow-card">
+                <h3 class="text-lg font-bold text-text-primary mb-4">المشاريع الحديثة</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="font-medium text-text-primary">مجمع الروضة السكني</p>
+                            <p class="text-sm text-text-secondary">بدء: 15 يناير 2025</p>
+                        </div>
+                        <span class="px-3 py-1 bg-success-100 text-success text-xs rounded-full">جديد</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="font-medium text-text-primary">برج الأعمال المركزي</p>
+                            <p class="text-sm text-text-secondary">التقدم: 45%</p>
+                        </div>
+                        <span class="px-3 py-1 bg-info-100 text-info text-xs rounded-full">قيد التنفيذ</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                            <p class="font-medium text-text-primary">مدرسة النخبة الابتدائية</p>
+                            <p class="text-sm text-text-secondary">التقدم: 89%</p>
+                        </div>
+                        <span class="px-3 py-1 bg-warning-100 text-warning text-xs rounded-full">قرب الانتهاء</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Performance -->
+            <div class="bg-surface border border-border rounded-xl p-6 shadow-card">
+                <h3 class="text-lg font-bold text-text-primary mb-4">أداء الفرق</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">فريق الإنشاءات</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-20 bg-secondary-200 rounded-full h-2">
+                                <div class="bg-success h-2 rounded-full" style="width:85%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-success">85%</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">فريق التشطيبات</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-20 bg-secondary-200 rounded-full h-2">
+                                <div class="bg-info h-2 rounded-full" style="width:72%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-info">72%</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">فريق الكهرباء</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-20 bg-secondary-200 rounded-full h-2">
+                                <div class="bg-warning h-2 rounded-full" style="width:91%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-warning">91%</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">فريق السباكة</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-20 bg-secondary-200 rounded-full h-2">
+                                <div class="bg-purple-600 h-2 rounded-full" style="width:67%"></div>
+                            </div>
+                            <span class="text-sm font-medium text-purple-600">67%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-surface border border-border rounded-xl p-6 shadow-card">
+                <h3 class="text-lg font-bold text-text-primary mb-4">إجراءات سريعة</h3>
+                <div class="space-y-3">
+                    <button class="w-full flex items-center gap-3 p-3 bg-primary-50 hover:bg-primary-100 rounded-lg transition-fast text-right">
+                        <i class="fas fa-plus text-primary"></i>
+                        <span class="text-primary font-medium">إضافة مشروع جديد</span>
+                    </button>
+                    <button class="w-full flex items-center gap-3 p-3 bg-success-50 hover:bg-success-100 rounded-lg transition-fast text-right">
+                        <i class="fas fa-file-invoice text-success"></i>
+                        <span class="text-success font-medium">إنشاء فاتورة</span>
+                    </button>
+                    <button class="w-full flex items-center gap-3 p-3 bg-info-50 hover:bg-info-100 rounded-lg transition-fast text-right">
+                        <i class="fas fa-user-plus text-info"></i>
+                        <span class="text-info font-medium">إضافة موظف</span>
+                    </button>
+                    <button class="w-full flex items-center gap-3 p-3 bg-warning-50 hover:bg-warning-100 rounded-lg transition-fast text-right">
+                        <i class="fas fa-chart-bar text-warning"></i>
+                        <span class="text-warning font-medium">عرض التقارير</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-surface border-t border-border text-center py-4 text-text-secondary text-sm">
+        © 2025 ContractorPro - جميع الحقوق محفوظة
+    </footer>
+</div>
+
+<!-- Login Modal -->
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-surface rounded-2xl p-8 shadow-modal w-full max-w-md">
+        <div class="text-center mb-6">
+            <i class="fas fa-hard-hat text-primary text-3xl mb-2"></i>
+            <h2 class="text-xl font-bold text-text-primary mb-1">مرحباً بك في ContractorPro</h2>
+            <p class="text-text-secondary text-sm">نظام إدارة المشاريع الإنشائية</p>
+        </div>
+        <form>
+            <div class="mb-4">
+                <label class="text-sm text-text-primary mb-1 block">اسم المستخدم</label>
+                <input type="text" class="w-full border border-border rounded-lg px-3 py-2 bg-white" placeholder="أدخل اسم المستخدم" />
+            </div>
+            <div class="mb-4">
+                <label class="text-sm text-text-primary mb-1 block">كلمة المرور</label>
+                <input type="password" class="w-full border border-border rounded-lg px-3 py-2 bg-white" placeholder="أدخل كلمة المرور" />
+            </div>
+            <button type="submit" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-primary-600 transition-fast">
+                دخول
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Project Performance Chart
+const ctxProject = document.getElementById('projectPerformanceChart').getContext('2d');
+new Chart(ctxProject, {
+    type: 'line',
+    data: {
+        labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+        datasets: [{
+            label: 'المشاريع المكتملة',
+            data: [2, 4, 3, 5, 4, 6],
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true
+        }, {
+            label: 'المشاريع الجديدة',
+            data: [3, 2, 4, 3, 5, 4],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    font: { family: 'Arial' }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                grid: { display: true, color: '#f3f4f6' }
+            },
+            x: {
+                grid: { display: false }
+            }
+        }
+    }
+});
+
+// Budget Distribution Chart
+const ctxBudget = document.getElementById('budgetDistributionChart').getContext('2d');
+new Chart(ctxBudget, {
+    type: 'doughnut',
+    data: {
+        labels: ['مواد البناء', 'العمالة', 'المعدات', 'إدارية'],
+        datasets: [{
+            data: [45, 30, 15, 10],
+            backgroundColor: [
+                '#3b82f6',
+                '#10b981',
+                '#f59e0b',
+                '#ef4444'
+            ],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 20,
+                    font: { family: 'Arial', size: 12 }
+                }
+            }
+        }
+    }
+});
+</script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الإشعارات - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+</head>
+<body class="bg-background font-arabic">
+    <!-- Navigation Sidebar -->
+    <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50 transform transition-transform duration-300" id="sidebar">
+        <div class="p-6 border-b border-border">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fas fa-hard-hat text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
+                    <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="p-4 space-y-2">
+            <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-tachometer-alt w-5"></i>
+                <span>لوحة التحكم</span>
+            </a>
+            <a href="project_phases.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-tasks w-5"></i>
+                <span>مراحل المشاريع</span>
+            </a>
+            <a href="financial_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-chart-line w-5"></i>
+                <span>المركز المالي</span>
+            </a>
+            <a href="tax_invoice_generator.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-file-invoice w-5"></i>
+                <span>مولد الفواتير الضريبية</span>
+            </a>
+            <a href="team_management.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-users w-5"></i>
+                <span>إدارة الفريق</span>
+            </a>
+            <a href="project_expenses.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-receipt w-5"></i>
+                <span>مصاريف المشاريع</span>
+            </a>
+            <a href="subcontractor_contracts.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-handshake w-5"></i>
+                <span>عقود المقاولين الفرعيين</span>
+            </a>
+            <a href="project_information.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-info-circle w-5"></i>
+                <span>معلومات المشاريع</span>
+            </a>
+            <a href="payment_tracking.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-credit-card w-5"></i>
+                <span>تتبع المدفوعات</span>
+            </a>
+            <a href="employee_management.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-user-tie w-5"></i>
+                <span>إدارة الموظفين</span>
+            </a>
+            <a href="system_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <i class="fas fa-cog w-5"></i>
+                <span>إعدادات النظام</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="mr-64 min-h-screen">
+        <!-- Top Header -->
+        <header class="bg-surface shadow-card px-6 py-4 border-b border-border">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-text-primary">الإشعارات</h1>
+                    <p class="text-text-secondary">تتبع جميع التحديثات والأنشطة المهمة</p>
+                </div>
+                
+                <!-- Actions -->
+                <div class="flex items-center gap-4">
+                    <!-- Filter Dropdown -->
+                    <div class="relative">
+                        <button class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast flex items-center gap-2" id="filterDropdown">
+                            <i class="fas fa-filter text-sm"></i>
+                            <span>تصفية</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div class="absolute left-0 mt-2 w-48 bg-surface rounded-lg shadow-modal border border-border z-10 hidden" id="filterMenu">
+                            <div class="p-2">
+                                <button class="w-full text-right px-3 py-2 text-sm text-text-primary hover:bg-secondary-50 rounded-lg filter-option" data-filter="all">
+                                    جميع الإشعارات
+                                </button>
+                                <button class="w-full text-right px-3 py-2 text-sm text-text-primary hover:bg-secondary-50 rounded-lg filter-option" data-filter="unread">
+                                    غير المقروءة
+                                </button>
+                                <button class="w-full text-right px-3 py-2 text-sm text-text-primary hover:bg-secondary-50 rounded-lg filter-option" data-filter="projects">
+                                    تحديثات المشاريع
+                                </button>
+                                <button class="w-full text-right px-3 py-2 text-sm text-text-primary hover:bg-secondary-50 rounded-lg filter-option" data-filter="financial">
+                                    المعاملات المالية
+                                </button>
+                                <button class="w-full text-right px-3 py-2 text-sm text-text-primary hover:bg-secondary-50 rounded-lg filter-option" data-filter="team">
+                                    إدارة الفريق
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-fast flex items-center gap-2" id="markAllRead">
+                        <i class="fas fa-check-double text-sm"></i>
+                        <span>تحديد الكل كمقروء</span>
+                    </button>
+                    
+                    <!-- User Profile -->
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="صورة المستخدم" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <div>
+                            <p class="font-medium text-text-primary">أحمد المالك</p>
+                            <p class="text-sm text-text-secondary">مدير عام</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Notifications Content -->
+        <main class="p-6">
+            <!-- Notification Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-text-secondary text-sm font-medium">إجمالي الإشعارات</p>
+                            <p class="text-2xl font-bold text-text-primary mt-1">24</p>
+                        </div>
+                        <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-bell text-primary text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-text-secondary text-sm font-medium">غير المقروءة</p>
+                            <p class="text-2xl font-bold text-error mt-1">3</p>
+                        </div>
+                        <div class="w-12 h-12 bg-error-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-exclamation-circle text-error text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-text-secondary text-sm font-medium">تحديثات المشاريع</p>
+                            <p class="text-2xl font-bold text-success mt-1">12</p>
+                        </div>
+                        <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-tasks text-success text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-text-secondary text-sm font-medium">إشعارات اليوم</p>
+                            <p class="text-2xl font-bold text-warning mt-1">5</p>
+                        </div>
+                        <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clock text-warning text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications List -->
+            <div class="bg-surface rounded-xl shadow-card border border-border">
+                <div class="p-6 border-b border-border">
+                    <h3 class="text-lg font-bold text-text-primary">جميع الإشعارات</h3>
+                </div>
+                
+                <div class="divide-y divide-border" id="notificationsList">
+                    <!-- Unread Notification -->
+                    <div class="notification-item p-6 bg-primary-50 border-r-4 border-primary hover:bg-primary-100 transition-fast cursor-pointer" data-type="projects" data-read="false">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-tasks text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-text-primary">تم إكمال مرحلة اللياسة</h4>
+                                        <p class="text-text-secondary text-sm mt-1">تم الانتهاء من أعمال اللياسة في مشروع فيلا الرياض الحديثة. جاري الانتقال للمرحلة التالية.</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="text-xs text-text-secondary">منذ ساعة</span>
+                                            <span class="text-xs text-primary font-medium">مشروع: فيلا الرياض</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-primary rounded-full"></span>
+                                        <button class="p-2 hover:bg-primary-200 rounded-lg transition-fast mark-read">
+                                            <i class="fas fa-check text-primary text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unread Financial Notification -->
+                    <div class="notification-item p-6 bg-warning-50 border-r-4 border-warning hover:bg-warning-100 transition-fast cursor-pointer" data-type="financial" data-read="false">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-warning rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-dollar-sign text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-text-primary">استلام دفعة جديدة</h4>
+                                        <p class="text-text-secondary text-sm mt-1">تم استلام دفعة بقيمة 125,000 ريال من عميل مجمع تجاري جدة.</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="text-xs text-text-secondary">منذ 3 ساعات</span>
+                                            <span class="text-xs text-warning font-medium">معاملة مالية</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-warning rounded-full"></span>
+                                        <button class="p-2 hover:bg-warning-200 rounded-lg transition-fast mark-read">
+                                            <i class="fas fa-check text-warning text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unread Team Notification -->
+                    <div class="notification-item p-6 bg-error-50 border-r-4 border-error hover:bg-error-100 transition-fast cursor-pointer" data-type="team" data-read="false">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-error rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-bold text-text-primary">تأخير في الجدول الزمني</h4>
+                                        <p class="text-text-secondary text-sm mt-1">تأخر في تسليم مواد البناء لمشروع الدمام السكني. قد يؤثر على الجدول الزمني.</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="text-xs text-text-secondary">منذ 5 ساعات</span>
+                                            <span class="text-xs text-error font-medium">عاجل</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-2 h-2 bg-error rounded-full"></span>
+                                        <button class="p-2 hover:bg-error-200 rounded-lg transition-fast mark-read">
+                                            <i class="fas fa-check text-error text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Read Notification -->
+                    <div class="notification-item p-6 hover:bg-secondary-50 transition-fast cursor-pointer" data-type="projects" data-read="true">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-success rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-check-circle text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-text-primary opacity-75">اعتماد مخططات الأساسات</h4>
+                                        <p class="text-text-secondary text-sm mt-1">تم اعتماد مخططات الأساسات النهائية لمشروع فيلا الرياض الحديثة.</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="text-xs text-text-secondary">أمس 02:30 م</span>
+                                            <span class="text-xs text-success font-medium">مشروع: فيلا الرياض</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-success text-sm"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Read Financial Notification -->
+                    <div class="notification-item p-6 hover:bg-secondary-50 transition-fast cursor-pointer" data-type="financial" data-read="true">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-file-invoice text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-text-primary opacity-75">إنشاء فاتورة جديدة</h4>
+                                        <p class="text-text-secondary text-sm mt-1">تم إنشاء فاتورة #INV-2025-0341 بقيمة 85,000 ريال لمشروع الدمام السكني.</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="text-xs text-text-secondary">أمس 10:15 ص</span>
+                                            <span class="text-xs text-primary font-medium">فاتورة</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-success text-sm"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Read Team Notification -->
+                    <div class="notification-item p-6 hover:bg-secondary-50 transition-fast cursor-pointer" data-type="team" data-read="true">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-user-plus text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-text-primary opacity-75">انضمام موظف جديد</h4>
+                                        <p class="text-text-secondary text-sm mt-1">انضم سعد المطيري كمهندس مدني إلى فريق مشروع فيلا الرياض.</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="text-xs text-text-secondary">منذ يومين</span>
+                                            <span class="text-xs text-accent font-medium">فريق العمل</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-success text-sm"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Read Project Update -->
+                    <div class="notification-item p-6 hover:bg-secondary-50 transition-fast cursor-pointer" data-type="projects" data-read="true">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-secondary-400 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-camera text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-text-primary opacity-75">رفع صور جديدة للمشروع</h4>
+                                        <p class="text-text-secondary text-sm mt-1">تم رفع 15 صورة جديدة لتوثيق تقدم أعمال مشروع مجمع جدة التجاري.</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="text-xs text-text-secondary">منذ 3 أيام</span>
+                                            <span class="text-xs text-text-secondary font-medium">توثيق</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-success text-sm"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Read System Notification -->
+                    <div class="notification-item p-6 hover:bg-secondary-50 transition-fast cursor-pointer" data-type="system" data-read="true">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-secondary-400 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-cog text-white"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-start justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-text-primary opacity-75">تحديث النظام</h4>
+                                        <p class="text-text-secondary text-sm mt-1">تم تحديث النظام إلى الإصدار 2.1.5 مع تحسينات في الأداء والأمان.</p>
+                                        <div class="flex items-center gap-4 mt-3">
+                                            <span class="text-xs text-text-secondary">منذ أسبوع</span>
+                                            <span class="text-xs text-text-secondary font-medium">نظام</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-check-circle text-success text-sm"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Load More -->
+                <div class="p-6 text-center border-t border-border">
+                    <button class="px-6 py-3 border border-border text-text-secondary rounded-lg hover:bg-secondary-50 transition-fast" id="loadMore">
+                        تحميل المزيد من الإشعارات
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-surface border-t border-border px-6 py-4 mt-8">
+            <div class="flex items-center justify-between text-sm text-text-secondary">
+                <p>© 2025 ContractorPro. جميع الحقوق محفوظة.</p>
+                <p>آخر تحديث: 4 أكتوبر 2025 - 08:20</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Filter dropdown functionality
+        document.getElementById('filterDropdown').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('filterMenu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('filterMenu');
+            if (!menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        // Filter functionality
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+                const notifications = document.querySelectorAll('.notification-item');
+                
+                notifications.forEach(notification => {
+                    if (filter === 'all') {
+                        notification.style.display = 'block';
+                    } else if (filter === 'unread') {
+                        notification.style.display = notification.dataset.read === 'false' ? 'block' : 'none';
+                    } else {
+                        notification.style.display = notification.dataset.type === filter ? 'block' : 'none';
+                    }
+                });
+
+                // Update filter button text
+                document.querySelector('#filterDropdown span').textContent = this.textContent;
+                document.getElementById('filterMenu').classList.add('hidden');
+                
+                // Update notification counts
+                updateNotificationCounts();
+            });
+        });
+
+        // Mark individual notification as read
+        document.querySelectorAll('.mark-read').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const notification = this.closest('.notification-item');
+                markAsRead(notification);
+            });
+        });
+
+        // Mark all as read functionality
+        document.getElementById('markAllRead').addEventListener('click', function() {
+            const unreadNotifications = document.querySelectorAll('.notification-item[data-read="false"]');
+            
+            if (unreadNotifications.length === 0) {
+                return;
+            }
+
+            // Show confirmation
+            if (confirm(`هل تريد تحديد جميع الإشعارات (${unreadNotifications.length}) كمقروءة؟`)) {
+                unreadNotifications.forEach(notification => {
+                    markAsRead(notification);
+                });
+
+                // Show success message
+                this.innerHTML = '<i class="fas fa-check"></i> <span>تم بنجاح</span>';
+                this.classList.add('bg-success');
+                this.classList.remove('bg-primary');
+                
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-check-double text-sm"></i> <span>تحديد الكل كمقروء</span>';
+                    this.classList.remove('bg-success');
+                    this.classList.add('bg-primary');
+                }, 2000);
+            }
+        });
+
+        // Function to mark notification as read
+        function markAsRead(notification) {
+            notification.dataset.read = 'true';
+            
+            // Update styling
+            notification.classList.remove('bg-primary-50', 'bg-warning-50', 'bg-error-50');
+            notification.classList.remove('border-primary', 'border-warning', 'border-error');
+            notification.style.borderRight = 'none';
+            
+            // Update title styling
+            const title = notification.querySelector('h4');
+            title.classList.remove('font-bold');
+            title.classList.add('font-medium', 'opacity-75');
+            
+            // Replace unread indicator with check mark
+            const indicator = notification.querySelector('.w-2.h-2');
+            const markButton = notification.querySelector('.mark-read');
+            if (indicator && markButton) {
+                markButton.innerHTML = '<i class="fas fa-check-circle text-success text-sm"></i>';
+                indicator.remove();
+            }
+
+            updateNotificationCounts();
+        }
+
+        // Function to update notification counts
+        function updateNotificationCounts() {
+            const total = document.querySelectorAll('.notification-item').length;
+            const unread = document.querySelectorAll('.notification-item[data-read="false"]').length;
+            const projects = document.querySelectorAll('.notification-item[data-type="projects"]').length;
+            const today = 5; // This would be calculated based on actual timestamps
+
+            // Update the stats cards
+            const statsCards = document.querySelectorAll('.grid.grid-cols-1.md\\:grid-cols-4 .text-2xl.font-bold');
+            if (statsCards.length >= 4) {
+                statsCards[0].textContent = total;
+                statsCards[1].textContent = unread;
+                statsCards[2].textContent = projects;
+                statsCards[3].textContent = today;
+            }
+
+            // Update error color for unread count if 0
+            if (unread === 0 && statsCards[1]) {
+                statsCards[1].classList.remove('text-error');
+                statsCards[1].classList.add('text-success');
+            }
+        }
+
+        // Load more functionality
+        document.getElementById('loadMore').addEventListener('click', function() {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحميل...';
+            this.disabled = true;
+            
+            setTimeout(() => {
+                this.innerHTML = 'تحميل المزيد من الإشعارات';
+                this.disabled = false;
+                
+                // In a real app, this would load more notifications
+                console.log('Loading more notifications...');
+            }, 1500);
+        });
+
+        // Notification click handlers
+        document.querySelectorAll('.notification-item').forEach(notification => {
+            notification.addEventListener('click', function() {
+                // Mark as read if unread
+                if (this.dataset.read === 'false') {
+                    markAsRead(this);
+                }
+
+                // Handle different notification types
+                const type = this.dataset.type;
+                switch (type) {
+                    case 'projects':
+                        // window.location.href = 'project_phases.html';
+                        break;
+                    case 'financial':
+                        // window.location.href = 'financial_center.html';
+                        break;
+                    case 'team':
+                        // window.location.href = 'team_management.html';
+                        break;
+                }
+            });
+        });
+
+        // Real-time clock update
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const footerTime = document.querySelector('footer p:last-child');
+            if (footerTime) {
+                footerTime.textContent = `آخر تحديث: ${timeString}`;
+            }
+        }
+
+        // Update time every minute
+        setInterval(updateTime, 60000);
+
+        // Initialize notification counts
+        updateNotificationCounts();
+
+        // Simulate real-time notifications (for demo)
+        function simulateNewNotification() {
+            const types = ['projects', 'financial', 'team'];
+            const randomType = types[Math.floor(Math.random() * types.length)];
+            
+            // This would typically come from a WebSocket or polling mechanism
+            console.log(`New ${randomType} notification received`);
+            
+            // Update unread count
+            const unreadCard = document.querySelector('.text-error.mt-1');
+            if (unreadCard) {
+                const current = parseInt(unreadCard.textContent);
+                unreadCard.textContent = current + 1;
+            }
+        }
+
+        // Simulate new notifications every 2 minutes (for demo)
+        setInterval(simulateNewNotification, 120000);
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>
