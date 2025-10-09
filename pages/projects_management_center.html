@@ -6,6 +6,7 @@
     <title>مركز إدارة المشاريع - ContractorPro</title>
     <link rel="stylesheet" href="../css/main.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
 <script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
@@ -1358,18 +1359,147 @@
                     </div>
 
                     <!-- Financial Analysis Tab -->
-                    <div id="financial-analysis" class="tab-content hidden">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-xl font-bold text-text-primary">التحليل المالي</h3>
-                            <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast flex items-center gap-2" onclick="exportFinancialReport()">
-                                <i class="fas fa-download"></i>
-                                <span>تصدير التقرير</span>
-                            </button>
+                    <div id="financial-analysis" class="tab-content hidden space-y-6">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-text-primary">المركز المالي للمشروع</h3>
+                                <p class="text-text-secondary text-sm">لوحة شاملة تغطي الدفعات والمصاريف والتدفقات النقدية لكل مشروع</p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-3">
+                                <select id="financialReportRange" class="border border-border rounded-lg px-3 py-2 text-sm bg-white">
+                                    <option value="last-6-months">آخر 6 أشهر</option>
+                                    <option value="year-to-date">منذ بداية السنة</option>
+                                    <option value="last-year">العام الماضي</option>
+                                </select>
+                                <select id="financialReportType" class="border border-border rounded-lg px-3 py-2 text-sm bg-white">
+                                    <option value="overview">نظرة عامة</option>
+                                    <option value="cash-flow">تقرير التدفقات النقدية</option>
+                                    <option value="cost-control">تقرير ضبط التكاليف</option>
+                                </select>
+                                <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast flex items-center gap-2" onclick="openFinancialCustomization()">
+                                    <i class="fas fa-sliders-h"></i>
+                                    <span>تخصيص التقارير</span>
+                                </button>
+                                <div class="flex items-center gap-2">
+                                    <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2" onclick="downloadFinancialReport('pdf')">
+                                        <i class="fas fa-file-pdf"></i>
+                                        <span>PDF</span>
+                                    </button>
+                                    <button class="bg-success text-white px-4 py-2 rounded-lg hover:bg-success-600 transition-fast flex items-center gap-2" onclick="downloadFinancialReport('excel')">
+                                        <i class="fas fa-file-excel"></i>
+                                        <span>Excel</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="text-center py-12">
-                            <i class="fas fa-chart-line text-6xl text-text-secondary mb-4"></i>
-                            <p class="text-xl text-text-secondary">سيتم تطوير التحليل المالي قريباً</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="bg-white rounded-xl p-6 border border-border shadow-card">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-text-secondary text-sm">إجمالي الإيرادات</p>
+                                        <p class="text-2xl font-bold text-text-primary mt-2" id="financialKpiRevenue">0 ريال</p>
+                                        <p class="text-xs text-success mt-1" id="financialKpiRevenueTrend">—</p>
+                                    </div>
+                                    <span class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center"><i class="fas fa-money-check text-success"></i></span>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl p-6 border border-border shadow-card">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-text-secondary text-sm">إجمالي المصروفات</p>
+                                        <p class="text-2xl font-bold text-text-primary mt-2" id="financialKpiExpenses">0 ريال</p>
+                                        <p class="text-xs text-error mt-1" id="financialKpiExpensesTrend">—</p>
+                                    </div>
+                                    <span class="w-12 h-12 bg-error-100 rounded-lg flex items-center justify-center"><i class="fas fa-receipt text-error"></i></span>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl p-6 border border-border shadow-card">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-text-secondary text-sm">التدفق النقدي الصافي</p>
+                                        <p class="text-2xl font-bold text-text-primary mt-2" id="financialKpiCashFlow">0 ريال</p>
+                                        <p class="text-xs text-text-secondary mt-1" id="financialKpiCashFlowTrend">—</p>
+                                    </div>
+                                    <span class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center"><i class="fas fa-chart-line text-primary"></i></span>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl p-6 border border-border shadow-card">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-text-secondary text-sm">هامش الربحية</p>
+                                        <p class="text-2xl font-bold text-text-primary mt-2" id="financialKpiMargin">0%</p>
+                                        <p class="text-xs text-text-secondary mt-1" id="financialKpiMarginTrend">—</p>
+                                    </div>
+                                    <span class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center"><i class="fas fa-percentage text-accent"></i></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-xl p-6 border border-border">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-bold text-text-primary">أداء المشروع المالي</h4>
+                                    <span class="text-sm text-text-secondary" id="financialPerformanceSummary">—</span>
+                                </div>
+                                <canvas id="financialPerformanceChart" height="280"></canvas>
+                            </div>
+                            <div class="bg-white rounded-xl p-6 border border-border">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-bold text-text-primary">توزيع المصروفات</h4>
+                                    <button class="text-primary text-sm hover:underline" onclick="toggleCostView()" id="costViewToggle">عرض حسب الفئات</button>
+                                </div>
+                                <canvas id="costBreakdownChart" height="280"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-xl p-6 border border-border">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-bold text-text-primary">مؤشرات التحصيل والدفع</h4>
+                                    <span class="text-sm text-text-secondary" id="collectionInsights">—</span>
+                                </div>
+                                <canvas id="collectionProgressChart" height="260"></canvas>
+                            </div>
+                            <div class="bg-white rounded-xl p-6 border border-border">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-bold text-text-primary">تقارير مالية جاهزة</h4>
+                                    <div class="flex items-center gap-2">
+                                        <select id="financialReportTemplate" class="border border-border rounded-lg px-3 py-2 text-sm bg-white">
+                                            <option value="executive">ملخص تنفيذي</option>
+                                            <option value="detailed">تقرير تفصيلي</option>
+                                            <option value="cash">تقرير التدفقات النقدية</option>
+                                            <option value="risk">تقرير المخاطر المالية</option>
+                                        </select>
+                                        <button class="bg-secondary-200 text-text-primary px-3 py-2 rounded-lg hover:bg-secondary-300 transition-fast" onclick="renderFinancialReportsList()">تحديث</button>
+                                    </div>
+                                </div>
+                                <div class="border border-border rounded-lg overflow-hidden">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-secondary-50">
+                                            <tr>
+                                                <th class="p-3 text-right font-semibold text-text-primary">التقرير</th>
+                                                <th class="p-3 text-right font-semibold text-text-primary">الفترة</th>
+                                                <th class="p-3 text-right font-semibold text-text-primary">الحالة</th>
+                                                <th class="p-3 text-center font-semibold text-text-primary">إجراء</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="financialReportsTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 border border-border">
+                            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                                <h4 class="text-lg font-bold text-text-primary">إعدادات تحليل المركز المالي</h4>
+                                <div class="flex items-center gap-4 text-sm">
+                                    <label class="flex items-center gap-2"><input type="checkbox" id="toggleIncomingSeries" class="rounded border-border" checked onchange="handleFinancialSeriesToggle()" /> <span>الدفعات المستلمة</span></label>
+                                    <label class="flex items-center gap-2"><input type="checkbox" id="toggleOutgoingSeries" class="rounded border-border" checked onchange="handleFinancialSeriesToggle()" /> <span>دفعات المقاولين</span></label>
+                                    <label class="flex items-center gap-2"><input type="checkbox" id="toggleExpenseSeries" class="rounded border-border" checked onchange="handleFinancialSeriesToggle()" /> <span>المصاريف</span></label>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm" id="financialHighlights"></div>
                         </div>
                     </div>
 
@@ -2375,6 +2505,16 @@ let currentProjectData = null;
 let itemToDelete = null;
 let deleteCallback = null;
 let phasesStore = null;
+let paymentFilters = { type: '', status: '', period: '' };
+let paymentSortState = { field: 'dueDate', direction: 'asc' };
+let paymentsTimelineView = 'monthly';
+let monthlyPaymentsChart = null;
+let paymentStatusChart = null;
+let financialPerformanceChart = null;
+let costBreakdownChart = null;
+let collectionProgressChart = null;
+let cachedProjectPayments = [];
+let costBreakdownMode = 'category';
 
 // Daily Reports Store
 class DailyReportsStore {
@@ -2686,6 +2826,7 @@ class ProjectStore {
         this.phases = this.loadPhases();
         this.expenses = this.loadExpenses();
         this.subcontracts = this.loadSubcontracts();
+        this.payments = this.loadPayments();
     }
 
     normalizeProject(project) {
@@ -3015,14 +3156,16 @@ class ProjectStore {
     computeCombinedStats(projectId) {
         const expenseStats = this.computeExpenseTotals(projectId);
         const contractStats = this.computeSubcontractTotals(projectId);
-        
+        const paymentStats = this.computePaymentStats(projectId);
+
         const totalSpend = expenseStats.totalWithVAT + contractStats.totalValue;
-        const contractsToExpensesRatio = expenseStats.totalWithVAT > 0 ? 
+        const contractsToExpensesRatio = expenseStats.totalWithVAT > 0 ?
             (contractStats.totalValue / expenseStats.totalWithVAT) * 100 : 0;
-        
+
         return {
             expenses: expenseStats,
             contracts: contractStats,
+            payments: paymentStats,
             totalSpend,
             contractsToExpensesRatio
         };
@@ -3101,6 +3244,346 @@ class ProjectStore {
     loadSubcontracts() {
         const saved = localStorage.getItem('subcontracts');
         return saved ? JSON.parse(saved) : this.getDefaultSubcontracts();
+    }
+
+    savePayments() {
+        localStorage.setItem('project_payments', JSON.stringify(this.payments));
+    }
+
+    loadPayments() {
+        const saved = localStorage.getItem('project_payments');
+        return saved ? JSON.parse(saved) : this.getDefaultPayments();
+    }
+
+    listPayments(projectId, filters = {}) {
+        let payments = this.payments.filter(payment => payment.projectId === projectId);
+
+        if (filters.type) {
+            payments = payments.filter(payment => payment.type === filters.type);
+        }
+
+        if (filters.status) {
+            payments = payments.filter(payment => payment.status === filters.status);
+        }
+
+        if (filters.period) {
+            const now = new Date();
+            let startDate = null;
+            switch (filters.period) {
+                case 'this-month':
+                    startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                    break;
+                case 'this-quarter':
+                    const quarterStartMonth = Math.floor(now.getMonth() / 3) * 3;
+                    startDate = new Date(now.getFullYear(), quarterStartMonth, 1);
+                    break;
+                case 'this-year':
+                    startDate = new Date(now.getFullYear(), 0, 1);
+                    break;
+            }
+
+            if (startDate) {
+                payments = payments.filter(payment => {
+                    const dueDate = new Date(payment.dueDate);
+                    return !Number.isNaN(dueDate.getTime()) && dueDate >= startDate;
+                });
+            }
+        }
+
+        return payments
+            .slice()
+            .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+    }
+
+    getPayment(id) {
+        return this.payments.find(payment => payment.id === id);
+    }
+
+    createPayment(projectId, data) {
+        const payment = {
+            id: 'payment-' + Date.now(),
+            projectId,
+            type: data.type,
+            party: data.party,
+            name: data.name,
+            amount: parseFloat(data.amount || 0),
+            dueDate: data.dueDate,
+            paidDate: data.paidDate || null,
+            status: data.status,
+            method: data.method || 'bank_transfer',
+            notes: data.notes || '',
+            attachmentName: data.attachmentName || null,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+
+        this.payments.push(payment);
+        this.savePayments();
+        return payment;
+    }
+
+    updatePayment(id, data) {
+        const paymentIndex = this.payments.findIndex(payment => payment.id === id);
+        if (paymentIndex === -1) return null;
+
+        const existing = this.payments[paymentIndex];
+        this.payments[paymentIndex] = {
+            ...existing,
+            ...data,
+            amount: data.amount !== undefined ? parseFloat(data.amount || 0) : existing.amount,
+            updatedAt: new Date().toISOString()
+        };
+
+        this.savePayments();
+        return this.payments[paymentIndex];
+    }
+
+    deletePayment(id) {
+        const index = this.payments.findIndex(payment => payment.id === id);
+        if (index === -1) return false;
+
+        this.payments.splice(index, 1);
+        this.savePayments();
+        return true;
+    }
+
+    computePaymentStats(projectId) {
+        const payments = this.payments.filter(payment => payment.projectId === projectId);
+        const incoming = payments.filter(payment => payment.type === 'incoming');
+        const outgoing = payments.filter(payment => payment.type === 'outgoing');
+
+        const sum = list => list.reduce((total, item) => total + (parseFloat(item.amount) || 0), 0);
+
+        const incomingReceived = incoming.filter(payment => payment.status === 'received');
+        const incomingPending = incoming.filter(payment => payment.status === 'pending');
+        const incomingOverdue = incoming.filter(payment => payment.status === 'overdue');
+
+        const outgoingPaid = outgoing.filter(payment => payment.status === 'received');
+        const outgoingPending = outgoing.filter(payment => payment.status === 'pending');
+        const outgoingOverdue = outgoing.filter(payment => payment.status === 'overdue');
+
+        const outstanding = payments.filter(payment => payment.status !== 'received');
+        const overdue = payments.filter(payment => payment.status === 'overdue');
+
+        const nextDue = outstanding
+            .slice()
+            .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))[0] || null;
+
+        return {
+            totalCount: payments.length,
+            incomingTotal: sum(incoming),
+            incomingReceived: sum(incomingReceived),
+            incomingPending: sum(incomingPending),
+            incomingOverdue: sum(incomingOverdue),
+            outgoingTotal: sum(outgoing),
+            outgoingPaid: sum(outgoingPaid),
+            outgoingPending: sum(outgoingPending),
+            outgoingOverdue: sum(outgoingOverdue),
+            outstandingCount: outstanding.length,
+            overdueCount: overdue.length,
+            nextDuePayment: nextDue,
+            monthlyGroups: this.groupPaymentsByMonth(payments, 6),
+            statusCounts: payments.reduce((acc, payment) => {
+                acc[payment.status] = (acc[payment.status] || 0) + 1;
+                return acc;
+            }, {}),
+            payments
+        };
+    }
+
+    groupPaymentsByMonth(payments, months = 6) {
+        if (!Array.isArray(payments) || payments.length === 0) {
+            return [];
+        }
+
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth() - (months - 1), 1);
+        const monthMap = new Map();
+
+        payments.forEach(payment => {
+            const dueDate = new Date(payment.dueDate);
+            if (Number.isNaN(dueDate.getTime()) || dueDate < start) {
+                return;
+            }
+
+            const key = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, '0')}`;
+            if (!monthMap.has(key)) {
+                monthMap.set(key, { incoming: 0, outgoing: 0, date: dueDate });
+            }
+
+            const entry = monthMap.get(key);
+            if (payment.type === 'incoming') {
+                entry.incoming += parseFloat(payment.amount) || 0;
+            } else {
+                entry.outgoing += parseFloat(payment.amount) || 0;
+            }
+
+            monthMap.set(key, entry);
+        });
+
+        const result = [];
+        for (let i = 0; i < months; i++) {
+            const monthDate = new Date(start.getFullYear(), start.getMonth() + i, 1);
+            const key = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, '0')}`;
+            const entry = monthMap.get(key) || { incoming: 0, outgoing: 0, date: monthDate };
+            result.push({
+                key,
+                label: monthDate.toLocaleString('ar-SA', { month: 'short', year: 'numeric' }),
+                incoming: entry.incoming,
+                outgoing: entry.outgoing
+            });
+        }
+
+        return result;
+    }
+
+    groupExpensesByMonth(projectId, months = 6) {
+        const expenses = this.listExpenses(projectId);
+        if (!Array.isArray(expenses) || expenses.length === 0) {
+            return [];
+        }
+
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth() - (months - 1), 1);
+        const map = new Map();
+
+        expenses.forEach(expense => {
+            const date = new Date(expense.date);
+            if (Number.isNaN(date.getTime()) || date < start) return;
+
+            const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            if (!map.has(key)) {
+                map.set(key, { amount: 0, date });
+            }
+
+            const entry = map.get(key);
+            entry.amount += parseFloat(expense.total) || parseFloat(expense.amount) || 0;
+            map.set(key, entry);
+        });
+
+        const result = [];
+        for (let i = 0; i < months; i++) {
+            const monthDate = new Date(start.getFullYear(), start.getMonth() + i, 1);
+            const key = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, '0')}`;
+            const entry = map.get(key) || { amount: 0, date: monthDate };
+            result.push({
+                key,
+                label: monthDate.toLocaleString('ar-SA', { month: 'short', year: 'numeric' }),
+                amount: entry.amount
+            });
+        }
+
+        return result;
+    }
+
+    getDefaultPayments() {
+        return [
+            {
+                id: 'payment-001',
+                projectId: 'project-001',
+                type: 'incoming',
+                party: 'محمد العبدالله',
+                name: 'دفعة مقدمة',
+                amount: 150000,
+                dueDate: '2025-01-05',
+                paidDate: '2025-01-05',
+                status: 'received',
+                method: 'bank_transfer',
+                notes: 'دفعة توقيع العقد',
+                attachmentName: 'receipt-001.pdf',
+                createdAt: '2025-01-05T08:00:00.000Z'
+            },
+            {
+                id: 'payment-002',
+                projectId: 'project-001',
+                type: 'incoming',
+                party: 'محمد العبدالله',
+                name: 'دفعة أعمال الهيكل',
+                amount: 180000,
+                dueDate: '2025-01-28',
+                paidDate: '2025-01-29',
+                status: 'received',
+                method: 'bank_transfer',
+                notes: 'دفعة بعد إنجاز 40% من المشروع',
+                attachmentName: 'receipt-002.pdf',
+                createdAt: '2025-01-29T10:30:00.000Z'
+            },
+            {
+                id: 'payment-003',
+                projectId: 'project-001',
+                type: 'incoming',
+                party: 'محمد العبدالله',
+                name: 'دفعة التشطيبات',
+                amount: 220000,
+                dueDate: '2025-02-15',
+                paidDate: null,
+                status: 'pending',
+                method: 'bank_transfer',
+                notes: 'مستحقة عند اكتمال التشطيبات بنسبة 90%',
+                attachmentName: null,
+                createdAt: '2025-02-01T09:00:00.000Z'
+            },
+            {
+                id: 'payment-004',
+                projectId: 'project-001',
+                type: 'outgoing',
+                party: 'شركة التشطيبات المتقدمة',
+                name: 'دفعة مقاول التشطيبات',
+                amount: 60000,
+                dueDate: '2025-02-05',
+                paidDate: '2025-02-06',
+                status: 'received',
+                method: 'bank_transfer',
+                notes: 'مقابل أعمال التشطيبات الداخلية',
+                attachmentName: 'subcontract-payment-001.pdf',
+                createdAt: '2025-02-06T13:00:00.000Z'
+            },
+            {
+                id: 'payment-005',
+                projectId: 'project-002',
+                type: 'incoming',
+                party: 'شركة الأندلس للاستثمار',
+                name: 'دفعة تأسيس المشروع',
+                amount: 320000,
+                dueDate: '2025-01-18',
+                paidDate: '2025-01-20',
+                status: 'received',
+                method: 'bank_transfer',
+                notes: 'دفعة أولى للمجمع التجاري',
+                attachmentName: 'receipt-1001.pdf',
+                createdAt: '2025-01-20T09:40:00.000Z'
+            },
+            {
+                id: 'payment-006',
+                projectId: 'project-002',
+                type: 'incoming',
+                party: 'شركة الأندلس للاستثمار',
+                name: 'دفعة الهياكل الخرسانية',
+                amount: 410000,
+                dueDate: '2025-02-28',
+                paidDate: null,
+                status: 'overdue',
+                method: 'bank_transfer',
+                notes: 'مطالبة متأخرة - تم إرسال تذكير',
+                attachmentName: null,
+                createdAt: '2025-02-20T15:10:00.000Z'
+            },
+            {
+                id: 'payment-007',
+                projectId: 'project-002',
+                type: 'outgoing',
+                party: 'شركة الحديد والخرسانة',
+                name: 'دفعة عقود المقاولين',
+                amount: 125000,
+                dueDate: '2025-02-10',
+                paidDate: null,
+                status: 'pending',
+                method: 'bank_transfer',
+                notes: 'دفعة مستحقة بعد تسليم المرحلة الأولى',
+                attachmentName: null,
+                createdAt: '2025-02-10T10:10:00.000Z'
+            }
+        ];
     }
 
     getDefaultProjects() {
@@ -3805,6 +4288,9 @@ class PhasesStore {
 
 // Initialize project store first
 let projectStore = new ProjectStore();
+if (typeof window !== 'undefined') {
+    window.projectStore = projectStore;
+}
 
 // Daily Reports Functions
 function loadDailyReports(projectId) {
@@ -4371,22 +4857,38 @@ function updateProjectInformation() {
 }
 
 function updateProjectKPIs() {
-    if (!currentProjectId) return;
+    if (!currentProjectId || !projectStore) return;
 
     const combinedStats = projectStore.computeCombinedStats(currentProjectId);
-    
-    document.getElementById('kpiTotalExpenses').textContent = formatCurrency(combinedStats.expenses.totalWithVAT);
-    document.getElementById('kpiReceivedPayments').textContent = '425,000 ريال'; // Placeholder
-    document.getElementById('kpiSubcontracts').textContent = combinedStats.contracts.count + ' عقود';
-    
-    const expenseRatio = currentProjectData.value > 0 ? 
-        (combinedStats.expenses.totalWithVAT / currentProjectData.value * 100).toFixed(1) : 0;
-    document.getElementById('kpiExpenseRatio').textContent = expenseRatio + '%';
-    
-    document.getElementById('receivedPayments').textContent = '425,000 ر.س';
-    document.getElementById('remainingPayments').textContent = (currentProjectData.value - 425000).toLocaleString() + ' ر.س';
-    document.getElementById('receivedPercentage').textContent = Math.round((425000 / currentProjectData.value) * 100) + '%';
-    document.getElementById('remainingPercentage').textContent = Math.round(((currentProjectData.value - 425000) / currentProjectData.value) * 100) + '%';
+    const paymentStats = combinedStats.payments;
+    const projectValue = currentProjectData?.value || 0;
+    const receivedAmount = paymentStats.incomingReceived;
+    const remainingAmount = Math.max(projectValue - receivedAmount, 0);
+    const receivedPercent = projectValue > 0 ? Math.round((receivedAmount / projectValue) * 100) : 0;
+    const remainingPercent = Math.max(0, 100 - receivedPercent);
+
+    const totalExpensesEl = document.getElementById('kpiTotalExpenses');
+    const receivedPaymentsEl = document.getElementById('kpiReceivedPayments');
+    const subcontractCountEl = document.getElementById('kpiSubcontracts');
+    const expenseRatioEl = document.getElementById('kpiExpenseRatio');
+    const receivedValueEl = document.getElementById('receivedPayments');
+    const remainingValueEl = document.getElementById('remainingPayments');
+    const receivedPercentEl = document.getElementById('receivedPercentage');
+    const remainingPercentEl = document.getElementById('remainingPercentage');
+
+    if (totalExpensesEl) totalExpensesEl.textContent = formatCurrency(combinedStats.expenses.totalWithVAT);
+    if (receivedPaymentsEl) receivedPaymentsEl.textContent = formatCurrency(receivedAmount);
+    if (subcontractCountEl) subcontractCountEl.textContent = `${combinedStats.contracts.count} عقود`;
+
+    const expenseRatio = projectValue > 0
+        ? (combinedStats.expenses.totalWithVAT / projectValue * 100).toFixed(1)
+        : '0.0';
+    if (expenseRatioEl) expenseRatioEl.textContent = expenseRatio + '%';
+
+    if (receivedValueEl) receivedValueEl.textContent = formatCurrency(receivedAmount);
+    if (remainingValueEl) remainingValueEl.textContent = formatCurrency(remainingAmount);
+    if (receivedPercentEl) receivedPercentEl.textContent = receivedPercent + '%';
+    if (remainingPercentEl) remainingPercentEl.textContent = remainingPercent + '%';
 }
 
 function loadAdditionalContracts() {
@@ -5653,7 +6155,94 @@ document.addEventListener('DOMContentLoaded', function() {
             closeSubcontractModal();
         });
     }
-    
+
+    const paymentForm = document.getElementById('paymentForm');
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!currentProjectId || !projectStore) {
+                showToast('يرجى اختيار مشروع أولاً', false);
+                return;
+            }
+
+            const formData = new FormData(paymentForm);
+            const attachmentInput = document.getElementById('paymentAttachment');
+            const attachmentName = attachmentInput?.files?.[0]?.name || attachmentInput?.dataset.currentAttachment || null;
+
+            const paymentData = {
+                type: formData.get('type'),
+                party: formData.get('party'),
+                name: formData.get('name'),
+                amount: formData.get('amount'),
+                dueDate: formData.get('dueDate'),
+                paidDate: formData.get('paidDate') || null,
+                status: formData.get('status'),
+                notes: formData.get('notes') || '',
+                attachmentName
+            };
+
+            if (!paymentData.type || !paymentData.party || !paymentData.name || !paymentData.dueDate || !paymentData.status) {
+                showToast('يرجى تعبئة جميع الحقول المطلوبة للدفعة', false);
+                return;
+            }
+
+            const paymentId = formData.get('id');
+
+            if (paymentId) {
+                projectStore.updatePayment(paymentId, paymentData);
+                showToast('تم تحديث الدفعة بنجاح');
+            } else {
+                projectStore.createPayment(currentProjectId, paymentData);
+                showToast('تم إضافة الدفعة بنجاح');
+            }
+
+            loadProjectPayments(currentProjectId);
+            loadFinancialAnalysis(currentProjectId);
+            closePaymentModal();
+        });
+    }
+
+    const paymentTypeField = document.getElementById('paymentType');
+    if (paymentTypeField) {
+        paymentTypeField.addEventListener('change', function() {
+            populatePaymentPartyOptions(this.value);
+        });
+    }
+
+    const paymentPartyField = document.getElementById('paymentParty');
+    if (paymentPartyField) {
+        paymentPartyField.addEventListener('change', function() {
+            if (this.value === '__custom__') {
+                const customName = prompt('أدخل اسم الجهة الجديدة:');
+                if (customName) {
+                    const option = document.createElement('option');
+                    option.value = customName;
+                    option.textContent = customName;
+                    this.insertBefore(option, this.querySelector('option[value="__custom__"]'));
+                    this.value = customName;
+                } else {
+                    this.value = '';
+                }
+            }
+        });
+    }
+
+    const financialRangeSelect = document.getElementById('financialReportRange');
+    if (financialRangeSelect) {
+        financialRangeSelect.addEventListener('change', () => loadFinancialAnalysis(currentProjectId));
+    }
+
+    const financialTypeSelect = document.getElementById('financialReportType');
+    if (financialTypeSelect) {
+        financialTypeSelect.addEventListener('change', () => loadFinancialAnalysis(currentProjectId));
+    }
+
+    const financialTemplateSelect = document.getElementById('financialReportTemplate');
+    if (financialTemplateSelect) {
+        financialTemplateSelect.addEventListener('change', renderFinancialReportsList);
+    }
+
     console.log('Project management center initialized successfully');
 });
 
@@ -5749,12 +6338,82 @@ function uploadContractFile() {
 }
 
 function loadProjectPayments(projectId) {
-    console.log('Loading payments for project:', projectId);
-    // Initialize payments system here
+    if (!projectId || !projectStore) {
+        return;
+    }
+
+    const typeFilter = document.getElementById('filterPaymentType');
+    const statusFilter = document.getElementById('filterPaymentStatus');
+    const periodFilter = document.getElementById('filterPaymentPeriod');
+
+    if (typeFilter) typeFilter.value = paymentFilters.type || '';
+    if (statusFilter) statusFilter.value = paymentFilters.status || '';
+    if (periodFilter) periodFilter.value = paymentFilters.period || '';
+
+    cachedProjectPayments = projectStore.listPayments(projectId);
+    const filteredPayments = projectStore.listPayments(projectId, paymentFilters);
+    const sortedPayments = sortPayments(filteredPayments);
+    const paymentStats = projectStore.computePaymentStats(projectId);
+
+    renderPaymentsTable(sortedPayments, paymentStats);
+    updatePaymentKPIs(paymentStats);
+    renderPaymentsTimeline(filteredPayments);
+    renderPaymentCharts(filteredPayments, paymentStats);
+    updateFinancialProgress(paymentStats);
+    updateProjectKPIs();
 }
 
 function loadFinancialAnalysis(projectId) {
-    console.log('Loading financial analysis for project:', projectId);
+    if (!projectId || !projectStore) return;
+
+    const rangeSelect = document.getElementById('financialReportRange');
+    const typeSelect = document.getElementById('financialReportType');
+    const range = rangeSelect ? rangeSelect.value : 'last-6-months';
+    const reportType = typeSelect ? typeSelect.value : 'overview';
+
+    const combinedStats = projectStore.computeCombinedStats(projectId);
+    const paymentStats = combinedStats.payments;
+    const expenseStats = combinedStats.expenses;
+    const contractStats = combinedStats.contracts;
+
+    const totalRevenue = paymentStats.incomingReceived;
+    const totalExpenses = expenseStats.totalWithVAT + paymentStats.outgoingPaid;
+    const pendingReceivables = paymentStats.incomingPending + paymentStats.incomingOverdue;
+    const netCashFlow = totalRevenue - totalExpenses;
+    const margin = totalRevenue > 0 ? ((totalRevenue - totalExpenses) / totalRevenue) * 100 : 0;
+
+    const revenueEl = document.getElementById('financialKpiRevenue');
+    const revenueTrendEl = document.getElementById('financialKpiRevenueTrend');
+    const expenseEl = document.getElementById('financialKpiExpenses');
+    const expenseTrendEl = document.getElementById('financialKpiExpensesTrend');
+    const cashFlowEl = document.getElementById('financialKpiCashFlow');
+    const cashFlowTrendEl = document.getElementById('financialKpiCashFlowTrend');
+    const marginEl = document.getElementById('financialKpiMargin');
+    const marginTrendEl = document.getElementById('financialKpiMarginTrend');
+
+    if (revenueEl) revenueEl.textContent = formatCurrency(totalRevenue);
+    if (revenueTrendEl) revenueTrendEl.textContent = pendingReceivables > 0
+        ? `${formatCurrency(pendingReceivables)} قيد التحصيل`
+        : 'تم تحصيل جميع الدفعات';
+    if (expenseEl) expenseEl.textContent = formatCurrency(totalExpenses);
+    if (expenseTrendEl) expenseTrendEl.textContent = formatCurrency(expenseStats.totalAmount) + ' مصاريف مباشرة';
+    if (cashFlowEl) cashFlowEl.textContent = formatCurrency(netCashFlow);
+    if (cashFlowTrendEl) cashFlowTrendEl.textContent = paymentStats.outgoingPending > 0
+        ? `${formatCurrency(paymentStats.outgoingPending)} مدفوعات مستحقة`
+        : 'لا توجد التزامات حالية';
+    if (marginEl) marginEl.textContent = margin.toFixed(1) + '%';
+    if (marginTrendEl) marginTrendEl.textContent = `${contractStats.count} عقود باطن نشطة`;
+
+    const summaryEl = document.getElementById('financialPerformanceSummary');
+    if (summaryEl) {
+        summaryEl.textContent = `تحصيل ${formatCurrency(totalRevenue)} مقابل مصروفات ${formatCurrency(totalExpenses)}`;
+    }
+
+    renderFinancialPerformanceChart(projectId, range, paymentStats, expenseStats, reportType);
+    renderCostBreakdownChart(projectId, reportType);
+    renderCollectionProgressChart(paymentStats);
+    renderFinancialHighlights(paymentStats, expenseStats, contractStats, reportType);
+    renderFinancialReportsList();
 }
 
 // Filter functions
@@ -5813,11 +6472,15 @@ function exportUnifiedData() {
 }
 
 function exportFinancialReport() {
-    alert('تصدير التقرير المالي - قيد التطوير');
+    downloadFinancialReport('pdf');
 }
 
 function switchTimelineView(viewType) {
-    console.log('Switching timeline view to:', viewType);
+    paymentsTimelineView = viewType;
+    if (currentProjectId) {
+        const filtered = projectStore.listPayments(currentProjectId, paymentFilters);
+        renderPaymentsTimeline(filtered);
+    }
 }
 
 // Phase management placeholder functions for CSV import
@@ -5840,33 +6503,782 @@ function clearLogs() {
     }
 }
 
-// Payment management placeholder functions
-function openAddPaymentModal() {
-    alert('إضافة دفعة جديدة - قيد التطوير');
+// Payment management
+function openAddPaymentModal(paymentId = null) {
+    if (!currentProjectId) return;
+
+    const modal = document.getElementById('modalPaymentForm');
+    const title = document.getElementById('modalPaymentTitle');
+    const form = document.getElementById('paymentForm');
+    const attachmentInput = document.getElementById('paymentAttachment');
+
+    if (!modal || !form) return;
+
+    resetPaymentForm();
+
+    if (paymentId) {
+        const payment = projectStore.getPayment(paymentId);
+        if (!payment) return;
+
+        if (title) title.textContent = 'تعديل الدفعة';
+        document.getElementById('paymentId').value = payment.id;
+        document.getElementById('paymentType').value = payment.type;
+        populatePaymentPartyOptions(payment.type, payment.party);
+        document.getElementById('paymentName').value = payment.name;
+        document.getElementById('paymentAmount').value = payment.amount;
+        document.getElementById('paymentDueDate').value = payment.dueDate;
+        document.getElementById('paymentPaidDate').value = payment.paidDate || '';
+        document.getElementById('paymentStatus').value = payment.status;
+        document.getElementById('paymentNotes').value = payment.notes || '';
+
+        if (attachmentInput) {
+            attachmentInput.dataset.currentAttachment = payment.attachmentName || '';
+            if (payment.attachmentName) {
+                attachmentInput.title = `المرفق الحالي: ${payment.attachmentName}`;
+            }
+        }
+    } else {
+        if (title) title.textContent = 'إضافة دفعة جديدة';
+        populatePaymentPartyOptions(document.getElementById('paymentType').value || '');
+    }
+
+    modal.classList.remove('hidden');
 }
 
 function closePaymentModal() {
-    alert('إغلاق مودال الدفعة - قيد التطوير');
+    const modal = document.getElementById('modalPaymentForm');
+    const attachmentInput = document.getElementById('paymentAttachment');
+    if (modal) modal.classList.add('hidden');
+    if (attachmentInput) {
+        attachmentInput.value = '';
+        attachmentInput.dataset.currentAttachment = '';
+        attachmentInput.title = '';
+    }
+    resetPaymentForm();
+}
+
+function resetPaymentForm() {
+    const form = document.getElementById('paymentForm');
+    if (!form) return;
+    form.reset();
+    document.getElementById('paymentId').value = '';
+}
+
+function populatePaymentPartyOptions(type, selectedValue = '') {
+    const partySelect = document.getElementById('paymentParty');
+    if (!partySelect) return;
+
+    const options = new Set();
+
+    if (type === 'incoming') {
+        if (currentProjectData?.clientName) options.add(currentProjectData.clientName);
+        if (currentProjectData?.client?.name) options.add(currentProjectData.client.name);
+        cachedProjectPayments
+            .filter(payment => payment.type === 'incoming')
+            .forEach(payment => options.add(payment.party));
+    } else if (type === 'outgoing') {
+        const subcontracts = projectStore.listSubcontracts(currentProjectId) || [];
+        subcontracts.forEach(contract => options.add(contract.contractorName));
+        cachedProjectPayments
+            .filter(payment => payment.type === 'outgoing')
+            .forEach(payment => options.add(payment.party));
+    }
+
+    partySelect.innerHTML = '<option value>اختر الجهة</option>';
+    options.forEach(option => {
+        if (option) {
+            const escaped = option.replace(/"/g, '&quot;');
+            partySelect.insertAdjacentHTML('beforeend', `<option value="${escaped}">${escaped}</option>`);
+        }
+    });
+
+    partySelect.insertAdjacentHTML('beforeend', '<option value="__custom__">إضافة جهة جديدة...</option>');
+
+    if (selectedValue) {
+        if (![...partySelect.options].some(opt => opt.value === selectedValue)) {
+            partySelect.insertAdjacentHTML('afterbegin', `<option value="${selectedValue}" selected>${selectedValue}</option>`);
+        }
+        partySelect.value = selectedValue;
+    }
 }
 
 function applyPaymentFilters() {
-    alert('تطبيق فلاتر الدفعات - قيد التطوير');
+    paymentFilters = {
+        type: document.getElementById('filterPaymentType').value,
+        status: document.getElementById('filterPaymentStatus').value,
+        period: document.getElementById('filterPaymentPeriod').value
+    };
+
+    loadProjectPayments(currentProjectId);
 }
 
 function clearPaymentFilters() {
-    alert('مسح فلاتر الدفعات - قيد التطوير');
+    paymentFilters = { type: '', status: '', period: '' };
+    const typeFilter = document.getElementById('filterPaymentType');
+    const statusFilter = document.getElementById('filterPaymentStatus');
+    const periodFilter = document.getElementById('filterPaymentPeriod');
+
+    if (typeFilter) typeFilter.value = '';
+    if (statusFilter) statusFilter.value = '';
+    if (periodFilter) periodFilter.value = '';
+
+    loadProjectPayments(currentProjectId);
 }
 
 function sortPaymentTable(field) {
-    console.log('Sorting payments by:', field);
+    if (paymentSortState.field === field) {
+        paymentSortState.direction = paymentSortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        paymentSortState.field = field;
+        paymentSortState.direction = 'asc';
+    }
+
+    loadProjectPayments(currentProjectId);
+}
+
+function sortPayments(payments) {
+    const { field, direction } = paymentSortState;
+    const multiplier = direction === 'asc' ? 1 : -1;
+
+    return payments.slice().sort((a, b) => {
+        let comparison = 0;
+        switch (field) {
+            case 'paymentNumber':
+                comparison = (a.name || '').localeCompare(b.name || '');
+                break;
+            case 'party':
+                comparison = (a.party || '').localeCompare(b.party || '');
+                break;
+            case 'amount':
+                comparison = (parseFloat(a.amount) || 0) - (parseFloat(b.amount) || 0);
+                break;
+            case 'status':
+                const order = { received: 0, pending: 1, overdue: 2 };
+                comparison = (order[a.status] ?? 99) - (order[b.status] ?? 99);
+                break;
+            case 'dueDate':
+            default:
+                comparison = new Date(a.dueDate) - new Date(b.dueDate);
+                break;
+        }
+        if (comparison === 0) {
+            comparison = (a.id || '').localeCompare(b.id || '');
+        }
+        return comparison * multiplier;
+    });
+}
+
+function deletePayment(paymentId) {
+    if (!projectStore || !paymentId) return;
+    const payment = projectStore.getPayment(paymentId);
+    if (!payment) return;
+
+    deleteCallback = () => {
+        projectStore.deletePayment(paymentId);
+        loadProjectPayments(currentProjectId);
+        loadFinancialAnalysis(currentProjectId);
+        showToast('تم حذف الدفعة بنجاح');
+    };
+
+    const confirmText = document.getElementById('deleteConfirmText');
+    const confirmButton = document.getElementById('confirmDeleteBtn');
+    if (confirmText) {
+        confirmText.textContent = `هل أنت متأكد من حذف الدفعة "${payment.name}"؟`;
+    }
+    if (confirmButton) {
+        confirmButton.textContent = 'حذف الدفعة';
+    }
+    document.getElementById('modalConfirmDelete').classList.remove('hidden');
 }
 
 function importPaymentsCSV() {
-    alert('استيراد دفعات من CSV - قيد التطوير');
+    showToast('ميزة استيراد الدفعات من CSV ستتوفر قريباً', false);
 }
 
 function refreshTimeline() {
-    alert('تحديث الخط الزمني - قيد التطوير');
+    if (!currentProjectId) return;
+    const filtered = projectStore.listPayments(currentProjectId, paymentFilters);
+    renderPaymentsTimeline(filtered);
+    showToast('تم تحديث الخط الزمني للدفعات');
+}
+
+function renderPaymentsTable(payments, paymentStats) {
+    const tbody = document.getElementById('paymentsTableBody');
+    if (!tbody) return;
+
+    if (!payments.length) {
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center p-6 text-text-secondary">لا توجد دفعات مطابقة للمعايير الحالية</td></tr>';
+        return;
+    }
+
+    const projectValue = currentProjectData?.value || 0;
+
+    tbody.innerHTML = payments.map(payment => {
+        const percent = projectValue > 0 ? ((parseFloat(payment.amount) || 0) / projectValue * 100).toFixed(1) : '0.0';
+        const statusBadge = getPaymentStatusBadge(payment.status);
+        const typeBadge = getPaymentTypeBadge(payment.type);
+        const attachmentBadge = payment.attachmentName
+            ? `<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded bg-secondary-100 text-text-primary"><i class="fas fa-file-pdf"></i> ${payment.attachmentName}</span>`
+            : '<span class="text-xs text-text-secondary">لا يوجد</span>';
+        const paidInfo = payment.paidDate ? `<span class="block text-xs text-success mt-1">تم السداد: ${formatDate(payment.paidDate)}</span>` : '';
+
+        return `
+            <tr class="hover:bg-secondary-50 transition-fast">
+                <td class="p-4 border-b border-border font-medium">
+                    <div class="flex flex-col">
+                        <span class="text-text-primary">${payment.name || 'دفعة بدون اسم'}</span>
+                        <span class="text-xs text-text-secondary mt-1">${typeBadge}</span>
+                    </div>
+                </td>
+                <td class="p-4 border-b border-border">
+                    <div class="text-sm font-medium text-text-primary">${payment.party || 'غير محدد'}</div>
+                </td>
+                <td class="p-4 border-b border-border text-center">
+                    <span class="text-sm text-text-primary">${formatDate(payment.dueDate)}</span>
+                    ${paidInfo}
+                </td>
+                <td class="p-4 border-b border-border text-center">
+                    <span class="font-bold text-text-primary">${formatCurrency(payment.amount)}</span>
+                </td>
+                <td class="p-4 border-b border-border text-center">${statusBadge}</td>
+                <td class="p-4 border-b border-border text-center">
+                    <span class="text-sm font-semibold text-text-primary">${percent}%</span>
+                </td>
+                <td class="p-4 border-b border-border text-center">${attachmentBadge}</td>
+                <td class="p-4 border-b border-border text-sm text-text-secondary">${payment.notes || '—'}</td>
+                <td class="p-4 border-b border-border text-center">
+                    <div class="flex items-center justify-center gap-2">
+                        <button onclick="openAddPaymentModal('${payment.id}')" class="bg-primary text-white px-3 py-1 rounded text-xs hover:bg-primary-600 transition-fast"><i class="fas fa-edit"></i></button>
+                        <button onclick="deletePayment('${payment.id}')" class="bg-error text-white px-3 py-1 rounded text-xs hover:bg-error-600 transition-fast"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function getPaymentTypeBadge(type) {
+    if (type === 'incoming') {
+        return '<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-success-100 text-success"><i class="fas fa-arrow-down"></i> من العميل</span>';
+    }
+    if (type === 'outgoing') {
+        return '<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-primary-100 text-primary"><i class="fas fa-arrow-up"></i> مقاول باطن</span>';
+    }
+    return '<span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-secondary-100 text-text-secondary">غير محدد</span>';
+}
+
+function getPaymentStatusBadge(status) {
+    const statusMap = {
+        received: { label: 'مستلمة', classes: 'bg-success-100 text-success' },
+        pending: { label: 'مستحقة', classes: 'bg-warning-100 text-warning' },
+        overdue: { label: 'متأخرة', classes: 'bg-error-100 text-error' }
+    };
+    const selected = statusMap[status] || { label: status, classes: 'bg-secondary-100 text-text-secondary' };
+    return `<span class="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium ${selected.classes}">${selected.label}</span>`;
+}
+
+function updatePaymentKPIs(paymentStats) {
+    const projectValue = currentProjectData?.value || 0;
+    const remainingAmount = Math.max(projectValue - paymentStats.incomingReceived, 0);
+    const collectionRatio = projectValue > 0 ? (paymentStats.incomingReceived / projectValue) * 100 : 0;
+
+    const totalReceivedEl = document.getElementById('kpiReceivedPaymentsTotal');
+    const remainingEl = document.getElementById('kpiRemainingPayments');
+    const subcontractPaymentsEl = document.getElementById('kpiSubcontractorPayments');
+    const collectionRatioEl = document.getElementById('kpiCollectionRatio');
+
+    if (totalReceivedEl) totalReceivedEl.textContent = formatCurrency(paymentStats.incomingReceived);
+    if (remainingEl) remainingEl.textContent = formatCurrency(remainingAmount);
+    if (subcontractPaymentsEl) subcontractPaymentsEl.textContent = formatCurrency(paymentStats.outgoingTotal);
+    if (collectionRatioEl) collectionRatioEl.textContent = collectionRatio.toFixed(1) + '%';
+
+    const collectionInsights = document.getElementById('collectionInsights');
+    if (collectionInsights) {
+        if (paymentStats.nextDuePayment) {
+            collectionInsights.textContent = `أقرب استحقاق: ${formatDate(paymentStats.nextDuePayment.dueDate)} بقيمة ${formatCurrency(paymentStats.nextDuePayment.amount)}`;
+        } else {
+            collectionInsights.textContent = 'لا توجد دفعات مستحقة حالياً';
+        }
+    }
+}
+
+function updateFinancialProgress(paymentStats) {
+    const totalValue = currentProjectData?.value || 0;
+    const collected = paymentStats.incomingReceived;
+    const remaining = Math.max(totalValue - collected, 0);
+    const progressPercent = totalValue > 0 ? Math.min(100, (collected / totalValue) * 100) : 0;
+
+    const percentLabel = document.getElementById('financialProgressPercent');
+    const progressBar = document.getElementById('financialProgressBar');
+    const progressText = document.getElementById('financialProgressText');
+    const totalValueEl = document.getElementById('totalProjectValue');
+    const collectedEl = document.getElementById('collectedAmount');
+    const remainingEl = document.getElementById('remainingCollectionAmount');
+
+    if (percentLabel) percentLabel.textContent = progressPercent.toFixed(1) + '%';
+    if (progressBar) progressBar.style.width = progressPercent.toFixed(1) + '%';
+    if (progressText) progressText.textContent = progressPercent.toFixed(1) + '%';
+    if (totalValueEl) totalValueEl.textContent = formatCurrency(totalValue);
+    if (collectedEl) collectedEl.textContent = formatCurrency(collected);
+    if (remainingEl) remainingEl.textContent = formatCurrency(remaining);
+}
+
+function renderPaymentsTimeline(payments) {
+    const container = document.getElementById('paymentsTimeline');
+    if (!container) return;
+
+    if (!payments || !payments.length) {
+        container.innerHTML = '<div class="text-center text-text-secondary py-8">لم يتم تسجيل أي دفعات بعد.</div>';
+        return;
+    }
+
+    const groups = buildPaymentTimelineGroups(payments, paymentsTimelineView);
+
+    container.innerHTML = groups.map(group => {
+        const totals = group.totals;
+        return `
+            <div class="mb-6 last:mb-0">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg font-bold text-text-primary">${group.label}</span>
+                        <span class="text-xs bg-secondary-100 text-text-secondary px-2 py-1 rounded">${group.payments.length} دفعات</span>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs">
+                        <span class="text-success font-semibold">مستلمة: ${formatCurrency(totals.received)}</span>
+                        <span class="text-warning font-semibold">مستحقة: ${formatCurrency(totals.pending)}</span>
+                        <span class="text-error font-semibold">متأخرة: ${formatCurrency(totals.overdue)}</span>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    ${group.payments.map(payment => `
+                        <div class="flex items-center justify-between border border-border rounded-lg px-4 py-3 bg-white">
+                            <div class="flex items-center gap-3">
+                                <span class="inline-flex w-2 h-2 rounded-full ${payment.status === 'received' ? 'bg-success' : payment.status === 'overdue' ? 'bg-error' : 'bg-warning'}"></span>
+                                <div>
+                                    <div class="font-medium text-text-primary">${payment.name}</div>
+                                    <div class="text-xs text-text-secondary">${formatDate(payment.dueDate)} • ${payment.party || 'غير محدد'}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 text-sm">
+                                <span class="font-bold text-text-primary">${formatCurrency(payment.amount)}</span>
+                                ${getPaymentStatusBadge(payment.status)}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function buildPaymentTimelineGroups(payments, viewType) {
+    const map = new Map();
+
+    payments.forEach(payment => {
+        const dueDate = new Date(payment.dueDate);
+        if (Number.isNaN(dueDate.getTime())) return;
+
+        let key;
+        let label;
+        if (viewType === 'quarterly') {
+            const quarter = Math.floor(dueDate.getMonth() / 3) + 1;
+            key = `${dueDate.getFullYear()}-Q${quarter}`;
+            label = `الربع ${quarter} ${dueDate.getFullYear()}`;
+        } else {
+            key = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, '0')}`;
+            label = dueDate.toLocaleString('ar-SA', { month: 'long', year: 'numeric' });
+        }
+
+        if (!map.has(key)) {
+            map.set(key, {
+                key,
+                label,
+                payments: [],
+                totals: { received: 0, pending: 0, overdue: 0 },
+                sortDate: dueDate
+            });
+        }
+
+        const entry = map.get(key);
+        entry.payments.push(payment);
+        entry.totals[payment.status] = (entry.totals[payment.status] || 0) + (parseFloat(payment.amount) || 0);
+        if (dueDate < entry.sortDate) {
+            entry.sortDate = dueDate;
+        }
+        map.set(key, entry);
+    });
+
+    return Array.from(map.values()).sort((a, b) => a.sortDate - b.sortDate);
+}
+
+function renderPaymentCharts(filteredPayments, paymentStats) {
+    if (typeof Chart === 'undefined') return;
+
+    const monthlyCanvas = document.getElementById('monthlyPaymentsChart');
+    const statusCanvas = document.getElementById('paymentStatusChart');
+
+    if (!monthlyCanvas || !statusCanvas) return;
+
+    const monthlyData = projectStore.groupPaymentsByMonth(filteredPayments.length ? filteredPayments : paymentStats.payments, 6);
+    const labels = monthlyData.map(entry => entry.label);
+    const incomingData = monthlyData.map(entry => entry.incoming);
+    const outgoingData = monthlyData.map(entry => entry.outgoing);
+
+    if (monthlyPaymentsChart) {
+        monthlyPaymentsChart.destroy();
+    }
+
+    monthlyPaymentsChart = new Chart(monthlyCanvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'دفعات العملاء',
+                    backgroundColor: '#10B981',
+                    borderRadius: 6,
+                    data: incomingData
+                },
+                {
+                    label: 'دفعات المقاولين',
+                    backgroundColor: '#3B82F6',
+                    borderRadius: 6,
+                    data: outgoingData
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    ticks: {
+                        callback: value => `${Number(value).toLocaleString('ar-SA')}`
+                    }
+                }
+            }
+        }
+    });
+
+    const statusTotals = { received: 0, pending: 0, overdue: 0 };
+    (filteredPayments.length ? filteredPayments : paymentStats.payments).forEach(payment => {
+        statusTotals[payment.status] = (statusTotals[payment.status] || 0) + (parseFloat(payment.amount) || 0);
+    });
+
+    if (paymentStatusChart) {
+        paymentStatusChart.destroy();
+    }
+
+    paymentStatusChart = new Chart(statusCanvas.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: ['مستلمة', 'مستحقة', 'متأخرة'],
+            datasets: [
+                {
+                    data: [statusTotals.received, statusTotals.pending, statusTotals.overdue],
+                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444']
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            cutout: '60%'
+        }
+    });
+}
+
+function renderFinancialPerformanceChart(projectId, range, paymentStats, expenseStats, reportType) {
+    if (typeof Chart === 'undefined') return;
+    const canvas = document.getElementById('financialPerformanceChart');
+    if (!canvas) return;
+
+    let months = 6;
+    if (range === 'year-to-date') {
+        months = new Date().getMonth() + 1;
+    } else if (range === 'last-year') {
+        months = 12;
+    }
+
+    const monthlyPayments = projectStore.groupPaymentsByMonth(paymentStats.payments, months);
+    const monthlyExpenses = projectStore.groupExpensesByMonth(projectId, months);
+
+    const labels = monthlyPayments.map(entry => entry.label);
+    const incomingData = monthlyPayments.map(entry => entry.incoming);
+    const outgoingData = monthlyPayments.map(entry => entry.outgoing);
+    const expensesData = monthlyExpenses.map(entry => entry.amount);
+
+    if (financialPerformanceChart) {
+        financialPerformanceChart.destroy();
+    }
+
+    financialPerformanceChart = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'دفعات العملاء',
+                    data: incomingData,
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                    tension: 0.35,
+                    fill: true
+                },
+                {
+                    label: 'مدفوعات المقاولين',
+                    data: outgoingData,
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.35,
+                    fill: true
+                },
+                {
+                    label: 'المصاريف',
+                    data: expensesData,
+                    borderColor: '#F59E0B',
+                    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                    tension: 0.35,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            scales: {
+                y: {
+                    ticks: {
+                        callback: value => `${Number(value).toLocaleString('ar-SA')}`
+                    }
+                }
+            }
+        }
+    });
+
+    handleFinancialSeriesToggle();
+}
+
+function renderCostBreakdownChart(projectId, reportType) {
+    if (typeof Chart === 'undefined') return;
+    const canvas = document.getElementById('costBreakdownChart');
+    if (!canvas) return;
+
+    const expenses = projectStore.listExpenses(projectId);
+    const paymentStats = projectStore.computePaymentStats(projectId);
+
+    let labels = [];
+    let data = [];
+
+    if (costBreakdownMode === 'category') {
+        const categoryTotals = expenses.reduce((acc, expense) => {
+            const key = expense.category || 'أخرى';
+            acc[key] = (acc[key] || 0) + (parseFloat(expense.total) || parseFloat(expense.amount) || 0);
+            return acc;
+        }, {});
+
+        labels = Object.keys(categoryTotals);
+        data = Object.values(categoryTotals);
+    } else {
+        labels = ['دفعات العملاء', 'دفعات المقاولين', 'المصاريف'];
+        data = [paymentStats.incomingReceived, paymentStats.outgoingTotal, expenses.reduce((sum, expense) => sum + (parseFloat(expense.total) || parseFloat(expense.amount) || 0), 0)];
+    }
+
+    if (!labels.length) {
+        labels = ['لا توجد بيانات'];
+        data = [1];
+    }
+
+    if (costBreakdownChart) {
+        costBreakdownChart.destroy();
+    }
+
+    costBreakdownChart = new Chart(canvas.getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels,
+            datasets: [
+                {
+                    data,
+                    backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#14B8A6']
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    const toggleButton = document.getElementById('costViewToggle');
+    if (toggleButton) {
+        toggleButton.textContent = costBreakdownMode === 'category' ? 'عرض حسب التدفقات' : 'عرض حسب الفئات';
+    }
+}
+
+function renderCollectionProgressChart(paymentStats) {
+    if (typeof Chart === 'undefined') return;
+    const canvas = document.getElementById('collectionProgressChart');
+    if (!canvas) return;
+
+    const dataset = [
+        paymentStats.incomingReceived,
+        paymentStats.incomingPending,
+        paymentStats.incomingOverdue,
+        paymentStats.outgoingPaid
+    ];
+
+    if (collectionProgressChart) {
+        collectionProgressChart.destroy();
+    }
+
+    collectionProgressChart = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['دفعات مستلمة', 'دفعات مستحقة', 'دفعات متأخرة', 'مدفوعات للمقاولين'],
+            datasets: [
+                {
+                    data: dataset,
+                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444', '#3B82F6'],
+                    borderRadius: 6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    ticks: {
+                        callback: value => `${Number(value).toLocaleString('ar-SA')}`
+                    }
+                }
+            }
+        }
+    });
+}
+
+function renderFinancialHighlights(paymentStats, expenseStats, contractStats, reportType) {
+    const container = document.getElementById('financialHighlights');
+    if (!container) return;
+
+    const totalValue = currentProjectData?.value || 0;
+    const remainingAmount = Math.max(totalValue - paymentStats.incomingReceived, 0);
+
+    const highlights = [
+        {
+            title: 'الدفعات المتبقية',
+            value: formatCurrency(remainingAmount),
+            icon: 'fa-wallet',
+            color: 'text-warning'
+        },
+        {
+            title: 'دفعات متأخرة',
+            value: `${paymentStats.overdueCount} دفعات (${formatCurrency(paymentStats.incomingOverdue)})`,
+            icon: 'fa-exclamation-circle',
+            color: 'text-error'
+        },
+        {
+            title: 'عقود باطن نشطة',
+            value: `${contractStats.activeCount || 0} عقود`,
+            icon: 'fa-handshake',
+            color: 'text-primary'
+        }
+    ];
+
+    container.innerHTML = highlights.map(item => `
+        <div class="bg-secondary-50 border border-border rounded-lg p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-text-secondary">${item.title}</p>
+                    <p class="text-base font-bold text-text-primary mt-2">${item.value}</p>
+                </div>
+                <span class="w-10 h-10 bg-white border border-border rounded-lg flex items-center justify-center ${item.color}">
+                    <i class="fas ${item.icon}"></i>
+                </span>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderFinancialReportsList() {
+    const tableBody = document.getElementById('financialReportsTableBody');
+    const templateSelect = document.getElementById('financialReportTemplate');
+    if (!tableBody || !templateSelect) return;
+
+    const template = templateSelect.value;
+    const rowsByTemplate = {
+        executive: [
+            { title: 'تقرير التدفق النقدي السريع', period: 'آخر 30 يوم', status: 'جاهز', action: 'تنزيل' },
+            { title: 'نظرة عامة على التحصيل', period: 'آخر ربع', status: 'مكتمل', action: 'عرض' },
+            { title: 'ملخص العقود والالتزامات', period: 'السنة الحالية', status: 'محدث', action: 'تحميل' }
+        ],
+        detailed: [
+            { title: 'تحليل تفصيلي للدفعات', period: 'آخر 60 يوم', status: 'قيد المراجعة', action: 'تصدير' },
+            { title: 'كشف المصروفات التفصيلي', period: 'شهر حالي', status: 'جاهز', action: 'تحميل' },
+            { title: 'تقرير المطابقة المحاسبية', period: 'الربع السابق', status: 'قيد الإعداد', action: 'متابعة' }
+        ],
+        cash: [
+            { title: 'ملخص التدفقات اليومية', period: 'آخر 14 يوم', status: 'جاهز', action: 'تحميل' },
+            { title: 'توقع التدفقات القادمة', period: '30 يوم قادمة', status: 'قيد التحضير', action: 'متابعة' },
+            { title: 'تحليل مصادر التدفق', period: 'آخر 90 يوم', status: 'مكتمل', action: 'تحميل' }
+        ],
+        risk: [
+            { title: 'تقرير مخاطر التعثر', period: 'آخر 45 يوم', status: 'تنبيه', action: 'عرض' },
+            { title: 'تحليل الاعتمادات', period: 'شهر حالي', status: 'جاهز', action: 'تحميل' },
+            { title: 'خطة المعالجات المالية', period: 'الربع القادم', status: 'قيد التنفيذ', action: 'متابعة' }
+        ]
+    };
+
+    const rows = rowsByTemplate[template] || rowsByTemplate.executive;
+
+    tableBody.innerHTML = rows.map(row => `
+        <tr class="border-b border-border last:border-0 hover:bg-secondary-50 transition-fast">
+            <td class="p-3 font-medium text-text-primary">${row.title}</td>
+            <td class="p-3 text-text-secondary">${row.period}</td>
+            <td class="p-3">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-secondary-100 text-text-secondary">${row.status}</span>
+            </td>
+            <td class="p-3 text-center">
+                <button class="text-primary text-sm font-medium hover:underline" onclick="downloadFinancialReport('pdf')">${row.action}</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function handleFinancialSeriesToggle() {
+    if (!financialPerformanceChart) return;
+    const incomingCheckbox = document.getElementById('toggleIncomingSeries');
+    const outgoingCheckbox = document.getElementById('toggleOutgoingSeries');
+    const expenseCheckbox = document.getElementById('toggleExpenseSeries');
+
+    if (incomingCheckbox && financialPerformanceChart.data.datasets[0]) {
+        financialPerformanceChart.data.datasets[0].hidden = !incomingCheckbox.checked;
+    }
+    if (outgoingCheckbox && financialPerformanceChart.data.datasets[1]) {
+        financialPerformanceChart.data.datasets[1].hidden = !outgoingCheckbox.checked;
+    }
+    if (expenseCheckbox && financialPerformanceChart.data.datasets[2]) {
+        financialPerformanceChart.data.datasets[2].hidden = !expenseCheckbox.checked;
+    }
+    financialPerformanceChart.update();
+}
+
+function toggleCostView() {
+    costBreakdownMode = costBreakdownMode === 'category' ? 'flow' : 'category';
+    loadFinancialAnalysis(currentProjectId);
+}
+
+function downloadFinancialReport(format) {
+    const message = format === 'excel'
+        ? 'سيتم تنزيل تقرير Excel يتضمن تفاصيل الدفعات والمصاريف.'
+        : 'سيتم تنزيل تقرير PDF بملخص المركز المالي.';
+    showToast(message);
+}
+
+function openFinancialCustomization() {
+    showToast('يمكنك تخصيص التقارير باختيار القيم والرسوم المراد عرضها.', false);
 }
 </script>
 
