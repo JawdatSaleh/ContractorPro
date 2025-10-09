@@ -1,0 +1,75 @@
+{
+  "baseUrl": "https://contractorpro.sa/",
+  "publicPages": [
+    {
+      "path": "index.html",
+      "description": "شاشة تمهيدية مع إعادة توجيه آلية إلى صفحة تسجيل الدخول"
+    },
+    {
+      "path": "login.html",
+      "description": "صفحة تسجيل الدخول مع بيانات تجريبية وخيارات دعم"
+    },
+    {
+      "path": "pages/about.html",
+      "description": "تعريف تفصيلي بالشركة، القيم، والروابط الرئيسية"
+    },
+    {
+      "path": "pages/contact.html",
+      "description": "نموذج تواصل تفاعلي مع تخزين محلي للطلبات"
+    },
+    {
+      "path": "pages/faq.html",
+      "description": "مركز مساعدة بأسئلة شائعة وروابط تحميل"
+    },
+    {
+      "path": "pages/privacy-policy.html",
+      "description": "سياسة الخصوصية والالتزام بحماية البيانات"
+    }
+  ],
+  "secureSections": [
+    {
+      "name": "لوحة التحكم الرئيسية",
+      "entries": [
+        "pages/main_dashboard.html",
+        "pages/projects_management_center.html",
+        "pages/project_creation_wizard.html",
+        "pages/projects_hub.html"
+      ]
+    },
+    {
+      "name": "الإدارة المالية",
+      "entries": [
+        "pages/financial_management_center.html",
+        "pages/financial_operations_dashboard.html",
+        "pages/financial_center.html",
+        "pages/comprehensive_invoice_management_hub.html",
+        "pages/advanced_invoice_creation_portal.html",
+        "pages/advanced_quotation_invoice_designer.html"
+      ]
+    },
+    {
+      "name": "الموارد البشرية",
+      "entries": [
+        "pages/employees_management_center.html",
+        "pages/human_resources_center.html",
+        "pages/team_management.html",
+        "pages/user_profile.html"
+      ]
+    },
+    {
+      "name": "المتابعة والجودة",
+      "entries": [
+        "pages/navigation_system_audit_testing_center.html",
+        "pages/html_implementation_dashboard.html",
+        "pages/notifications.html",
+        "pages/authentication_main_dashboard.html"
+      ]
+    },
+    {
+      "name": "الإعدادات",
+      "entries": [
+        "pages/settings.html"
+      ]
+    }
+  ]
+}

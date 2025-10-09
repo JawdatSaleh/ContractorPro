@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>الإعدادات - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+</head>
+<body class="bg-background font-arabic">
+    <div class="flex min-h-screen">
+        <aside class="w-64 bg-surface border-l border-border shadow-modal hidden lg:block">
+            <div class="p-6 border-b border-border">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-hard-hat text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
+                        <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="p-4 space-y-2">
+                <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                    <i class="fas fa-tachometer-alt w-5"></i>
+                    <span class="font-medium">الصفحة الرئيسية</span>
+                </a>
+                <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                    <i class="fas fa-building w-5"></i>
+                    <span>المشاريع</span>
+                </a>
+                <a href="financial_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                    <i class="fas fa-chart-line w-5"></i>
+                    <span>المالية</span>
+                </a>
+                <a href="employees_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                    <i class="fas fa-users w-5"></i>
+                    <span>الموظفين</span>
+                </a>
+                <a href="settings.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
+                    <i class="fas fa-sliders-h w-5"></i>
+                    <span>الإعدادات</span>
+                </a>
+            </nav>
+        </aside>
+        <main class="flex-1">
+            <header class="bg-surface border-b border-border px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-text-primary">إعدادات الحساب والنظام</h1>
+                    <p class="text-text-secondary text-sm">قم بتخصيص طريقة عمل النظام، التحكم في الصلاحيات، وإدارة الربط مع الأنظمة الأخرى</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="text-sm text-text-secondary hidden md:block" data-current-user></div>
+                    <button data-logout-button class="px-4 py-2 bg-error-100 text-error rounded-lg hover:bg-error-200 transition-fast">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>تسجيل الخروج</span>
+                    </button>
+                </div>
+            </header>
+
+            <section class="p-6 space-y-8">
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    <div class="xl:col-span-2 bg-surface border border-border rounded-2xl shadow-card">
+                        <div class="px-6 py-5 border-b border-border flex items-center justify-between">
+                            <div>
+                                <h2 class="text-lg font-semibold text-text-primary">إعدادات الحساب</h2>
+                                <p class="text-sm text-text-secondary">تحديث بيانات المستخدم الحالي وتفعيل التحقق الثنائي</p>
+                            </div>
+                            <span class="px-3 py-1 bg-success-100 text-success text-xs rounded-full">موصى به</span>
+                        </div>
+                        <form class="px-6 py-6 space-y-5" id="accountSettingsForm">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="space-y-2 text-sm text-text-secondary">
+                                    <span class="text-text-primary font-medium">الاسم الكامل</span>
+                                    <input type="text" name="fullName" required class="w-full border border-border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="محمد أحمد" />
+                                </label>
+                                <label class="space-y-2 text-sm text-text-secondary">
+                                    <span class="text-text-primary font-medium">البريد الإلكتروني</span>
+                                    <input type="email" name="email" required class="w-full border border-border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="user@contractorpro.sa" />
+                                </label>
+                                <label class="space-y-2 text-sm text-text-secondary">
+                                    <span class="text-text-primary font-medium">رقم الجوال</span>
+                                    <input type="tel" name="phone" pattern="^\d{9,15}$" class="w-full border border-border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="0561234567" />
+                                </label>
+                                <label class="space-y-2 text-sm text-text-secondary">
+                                    <span class="text-text-primary font-medium">الدور الوظيفي</span>
+                                    <select name="role" class="w-full border border-border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="admin">مدير النظام</option>
+                                        <option value="finance">المالية</option>
+                                        <option value="project">مدير مشروع</option>
+                                        <option value="hr">الموارد البشرية</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="flex items-center gap-3 bg-secondary-50 border border-secondary-200 rounded-xl px-4 py-3">
+                                    <input type="checkbox" name="twoFactor" class="w-4 h-4 text-primary border-border rounded" />
+                                    <div>
+                                        <p class="text-text-primary text-sm font-medium">تفعيل التحقق الثنائي</p>
+                                        <p class="text-text-secondary text-xs">إضافة طبقة أمان إضافية عبر تطبيق المصادقة</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 bg-secondary-50 border border-secondary-200 rounded-xl px-4 py-3">
+                                    <input type="checkbox" name="projectAlerts" class="w-4 h-4 text-primary border-border rounded" />
+                                    <div>
+                                        <p class="text-text-primary text-sm font-medium">تنبيهات حالة المشاريع</p>
+                                        <p class="text-text-secondary text-xs">إرسال إشعارات عند تجاوز الميزانية أو التأخير</p>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="flex items-center gap-3 justify-end">
+                                <p id="accountSettingsMessage" class="text-sm text-success hidden">تم حفظ الإعدادات بنجاح</p>
+                                <button type="submit" class="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast">
+                                    <i class="fas fa-save ml-2"></i>
+                                    <span>حفظ التعديلات</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-5">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-semibold text-text-primary">المجلدات والنسخ الاحتياطية</h2>
+                            <i class="fas fa-folder-tree text-primary"></i>
+                        </div>
+                        <div class="space-y-3 text-sm text-text-secondary">
+                            <p>تحقق من سلامة تنظيم الملفات وتأكد من الاحتفاظ بنسخ احتياطية محدثة.</p>
+                            <ul class="list-disc pr-5 space-y-2">
+                                <li>تنزيل نسخة احتياطية أسبوعية تلقائية.</li>
+                                <li>التحقق من تكامل الملفات المشتركة بين الفرق.</li>
+                                <li>مزامنة الوثائق مع الخدمات السحابية المعتمدة.</li>
+                            </ul>
+                            <button class="w-full px-4 py-2 bg-secondary-200 text-text-primary rounded-lg hover:bg-secondary-300 transition-fast">إدارة النسخ الاحتياطية</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-full bg-primary-100 text-primary flex items-center justify-center">
+                                <i class="fas fa-user-shield"></i>
+                            </span>
+                            <div>
+                                <h3 class="text-lg font-semibold text-text-primary">سياسات الصلاحيات</h3>
+                                <p class="text-sm text-text-secondary">تحكم كامل في أدوار المستخدمين وحقوق الوصول</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-3 text-sm text-text-secondary">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check text-success mt-1"></i>
+                                <span>تعيين أدوار مخصصة لكل فريق مع تحديد نطاق الصلاحيات.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check text-success mt-1"></i>
+                                <span>تفعيل سجل التدقيق للتغييرات الحساسة في النظام.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check text-success mt-1"></i>
+                                <span>ضبط صلاحيات الوصول للملفات حسب نوع المشروع.</span>
+                            </li>
+                        </ul>
+                        <a href="../pages/privacy-policy.html" class="text-primary text-sm hover:text-primary-700">قراءة سياسة الخصوصية</a>
+                    </div>
+                    <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-full bg-info-100 text-info flex items-center justify-center">
+                                <i class="fas fa-plug"></i>
+                            </span>
+                            <div>
+                                <h3 class="text-lg font-semibold text-text-primary">تكامل الأنظمة</h3>
+                                <p class="text-sm text-text-secondary">إدارة الربط مع أنظمة المحاسبة وإدارة الموارد</p>
+                            </div>
+                        </div>
+                        <div class="space-y-3 text-sm text-text-secondary">
+                            <div class="flex items-center justify-between bg-secondary-50 border border-secondary-200 rounded-xl px-4 py-3">
+                                <span>واجهة API المالية</span>
+                                <span class="text-success text-xs">متصل</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-secondary-50 border border-secondary-200 rounded-xl px-4 py-3">
+                                <span>نظام الموارد البشرية</span>
+                                <span class="text-warning text-xs">يحتاج إلى تحديث</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-secondary-50 border border-secondary-200 rounded-xl px-4 py-3">
+                                <span>خدمة إدارة العقود</span>
+                                <span class="text-error text-xs">غير متصل</span>
+                            </div>
+                        </div>
+                        <button class="px-4 py-2 bg-info-100 text-info rounded-lg hover:bg-info-200 transition-fast">إدارة تكامل الأنظمة</button>
+                    </div>
+                </div>
+
+                <div class="bg-surface border border-border rounded-2xl shadow-card p-6">
+                    <h2 class="text-lg font-semibold text-text-primary mb-4">جودة البيانات والتنبيهات الذكية</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-text-secondary">
+                        <div class="bg-secondary-50 border border-secondary-200 rounded-xl p-4">
+                            <p class="text-text-primary font-semibold mb-1">مراقبة البيانات</p>
+                            <p>فحص أسبوعي لضمان عدم تكرار السجلات وتكامل جداول المشاريع.</p>
+                        </div>
+                        <div class="bg-secondary-50 border border-secondary-200 rounded-xl p-4">
+                            <p class="text-text-primary font-semibold mb-1">تنبيهات الميزانية</p>
+                            <p>إشعارات فورية عند تجاوز حدود الصرف المحددة لكل مشروع.</p>
+                        </div>
+                        <div class="bg-secondary-50 border border-secondary-200 rounded-xl p-4">
+                            <p class="text-text-primary font-semibold mb-1">الصيانة الوقائية</p>
+                            <p>إدارة جدول الصيانة الدورية للمعدات والآلات المرتبطة بالمشاريع.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="bg-surface border-t border-border px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-sm text-text-secondary">
+                <p>© 2025 ContractorPro. جميع الحقوق محفوظة.</p>
+                <nav class="flex flex-wrap items-center gap-4">
+                    <a href="../pages/about.html" class="hover:text-primary">من نحن</a>
+                    <a href="../pages/contact.html" class="hover:text-primary">اتصل بنا</a>
+                    <a href="../pages/faq.html" class="hover:text-primary">الأسئلة الشائعة</a>
+                    <a href="../pages/privacy-policy.html" class="hover:text-primary">سياسة الخصوصية</a>
+                </nav>
+            </footer>
+        </main>
+    </div>
+
+    <script src="../js/session.js" data-login-path="../login.html"></script>
+    <script>
+    const accountForm = document.getElementById('accountSettingsForm');
+    const feedback = document.getElementById('accountSettingsMessage');
+
+    if (accountForm) {
+        accountForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(accountForm);
+            const payload = Object.fromEntries(formData.entries());
+            localStorage.setItem('contractorpro_settings', JSON.stringify(payload));
+            if (feedback) {
+                feedback.classList.remove('hidden');
+                feedback.textContent = 'تم حفظ الإعدادات بنجاح';
+                setTimeout(() => feedback.classList.add('hidden'), 3000);
+            }
+        });
+    }
+
+    document.addEventListener('contractorpro-auth-ready', (event) => {
+        if (event.detail && event.detail.user && accountForm) {
+            accountForm.elements.email.value = event.detail.user.email;
+        }
+    });
+    </script>
+</body>
+</html>

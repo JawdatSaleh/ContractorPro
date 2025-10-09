@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>اتصل بنا - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+</head>
+<body class="bg-background font-arabic" data-public-page="true">
+    <header class="bg-surface border-b border-border shadow-card">
+        <div class="container mx-auto px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                    <i class="fas fa-hard-hat text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-text-primary">تواصل مع فريق ContractorPro</h1>
+                    <p class="text-text-secondary text-sm">يسعدنا مساعدتك في أي استفسار يتعلق بالنظام</p>
+                </div>
+            </div>
+            <nav class="flex flex-wrap items-center gap-4 text-sm text-text-secondary">
+                <a href="../login.html" class="hover:text-primary transition-fast">تسجيل الدخول</a>
+                <a href="about.html" class="hover:text-primary transition-fast">من نحن</a>
+                <a href="contact.html" class="text-primary font-semibold">اتصل بنا</a>
+                <a href="faq.html" class="hover:text-primary transition-fast">الأسئلة الشائعة</a>
+                <a href="privacy-policy.html" class="hover:text-primary transition-fast">سياسة الخصوصية</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12 space-y-12">
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-surface border border-border rounded-3xl p-8 shadow-modal">
+                <h2 class="text-2xl font-bold text-text-primary mb-6">أرسل رسالتك</h2>
+                <form id="contactForm" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="flex flex-col gap-2 text-sm text-text-secondary">
+                            <span class="text-text-primary font-medium">الاسم الكامل</span>
+                            <input type="text" name="name" required minlength="3" class="border border-border rounded-lg px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="محمد أحمد" />
+                        </label>
+                        <label class="flex flex-col gap-2 text-sm text-text-secondary">
+                            <span class="text-text-primary font-medium">البريد الإلكتروني</span>
+                            <input type="email" name="email" required class="border border-border rounded-lg px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="you@company.com" />
+                        </label>
+                    </div>
+                    <label class="flex flex-col gap-2 text-sm text-text-secondary">
+                        <span class="text-text-primary font-medium">جهة العمل</span>
+                        <input type="text" name="company" class="border border-border rounded-lg px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="شركة المقاولات العربية" />
+                    </label>
+                    <label class="flex flex-col gap-2 text-sm text-text-secondary">
+                        <span class="text-text-primary font-medium">موضوع الرسالة</span>
+                        <select name="topic" required class="border border-border rounded-lg px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="support">دعم فني</option>
+                            <option value="demo">طلب عرض توضيحي</option>
+                            <option value="pricing">الأسعار والاشتراكات</option>
+                            <option value="integration">التكامل مع الأنظمة الأخرى</option>
+                        </select>
+                    </label>
+                    <label class="flex flex-col gap-2 text-sm text-text-secondary">
+                        <span class="text-text-primary font-medium">نص الرسالة</span>
+                        <textarea name="message" rows="5" required minlength="20" class="border border-border rounded-xl px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-primary" placeholder="أخبرنا بالتفاصيل لنتمكن من مساعدتك بشكل أفضل"></textarea>
+                    </label>
+                    <div class="flex items-start gap-3">
+                        <input type="checkbox" id="privacyAgreement" name="privacy" required class="mt-1 w-4 h-4 text-primary border-border rounded" />
+                        <label for="privacyAgreement" class="text-xs text-text-secondary leading-relaxed">
+                            أوافق على معالجة بياناتي وفق <a href="privacy-policy.html" class="text-primary hover:text-primary-700">سياسة الخصوصية</a> الخاصة بالمنصة.
+                        </label>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <p id="contactFeedback" class="text-sm hidden"></p>
+                        <button type="submit" class="px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-600 transition-fast flex items-center gap-2">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>إرسال الرسالة</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <aside class="space-y-6">
+                <div class="bg-surface border border-border rounded-3xl p-6 shadow-card space-y-4 text-sm text-text-secondary">
+                    <h3 class="text-lg font-semibold text-text-primary">معلومات التواصل</h3>
+                    <p>فريق الدعم متواجد على مدار الساعة لتقديم المساعدة الفورية.</p>
+                    <div class="space-y-3">
+                        <p class="flex items-center gap-3"><i class="fas fa-phone text-primary"></i><span>9200 12345</span></p>
+                        <p class="flex items-center gap-3"><i class="fas fa-envelope text-primary"></i><span>support@contractorpro.sa</span></p>
+                        <p class="flex items-center gap-3"><i class="fas fa-map-marker-alt text-primary"></i><span>الرياض، المملكة العربية السعودية</span></p>
+                    </div>
+                </div>
+                <div class="bg-surface border border-border rounded-3xl p-6 shadow-card space-y-4 text-sm text-text-secondary">
+                    <h3 class="text-lg font-semibold text-text-primary">ساعات العمل</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center justify-between"><span>الأحد - الخميس</span><span>8 صباحًا - 6 مساءً</span></li>
+                        <li class="flex items-center justify-between"><span>الجمعة</span><span>دعم طارئ فقط</span></li>
+                        <li class="flex items-center justify-between"><span>السبت</span><span>10 صباحًا - 4 مساءً</span></li>
+                    </ul>
+                </div>
+                <div class="bg-secondary-50 border border-secondary-200 rounded-3xl p-6 space-y-4 text-sm text-text-secondary">
+                    <h3 class="text-lg font-semibold text-text-primary">هل تحتاج مساعدة سريعة؟</h3>
+                    <p>اطلع على مركز المعرفة لدينا للحصول على أدلة خطوة بخطوة حول استخدام المنصة.</p>
+                    <a href="faq.html" class="inline-flex items-center gap-2 text-primary hover:text-primary-700">
+                        <i class="fas fa-book-open"></i>
+                        <span>انتقل إلى مركز المساعدة</span>
+                    </a>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <footer class="bg-surface border-t border-border mt-12">
+        <div class="container mx-auto px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-sm text-text-secondary">
+            <p>© 2025 ContractorPro. جميع الحقوق محفوظة.</p>
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="about.html" class="hover:text-primary">من نحن</a>
+                <a href="contact.html" class="text-primary">اتصل بنا</a>
+                <a href="faq.html" class="hover:text-primary">الأسئلة الشائعة</a>
+                <a href="privacy-policy.html" class="hover:text-primary">سياسة الخصوصية</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/pages/contact.js"></script>
+</body>
+</html>
