@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>تسجيل الدخول - ContractorPro</title>
-    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="css/main.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 
 <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
@@ -95,11 +95,24 @@
     </div>
 
     <script>
+        const SESSION_KEY = 'contractorpro_user';
+
+        // Redirect authenticated users straight to the main dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            const storedUser = localStorage.getItem(SESSION_KEY);
+            if (storedUser) {
+                window.location.replace('pages/main_dashboard.html');
+                return;
+            }
+
+            document.getElementById('email').focus();
+        });
+
         // Password toggle functionality
         document.getElementById('togglePassword').addEventListener('click', function() {
             const passwordInput = document.getElementById('password');
             const icon = this.querySelector('i');
-            
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 icon.classList.remove('fa-eye');
@@ -166,15 +179,15 @@
                     loginBtn.classList.remove('bg-primary');
                     
                     // Store user session (simplified)
-                    localStorage.setItem('contractorpro_user', JSON.stringify({
+                    localStorage.setItem(SESSION_KEY, JSON.stringify({
                         email: email,
                         loginTime: new Date().toISOString(),
                         role: email.includes('admin') ? 'admin' : 'finance'
                     }));
-                    
+
                     // Redirect to dashboard
                     setTimeout(() => {
-                        window.location.href = 'main_dashboard.html';
+                        window.location.href = 'pages/main_dashboard.html';
                     }, 1000);
                 } else {
                     // Error state
@@ -193,11 +206,7 @@
             }, 1500);
         });
 
-        // Auto-focus on email field
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('email').focus();
-        });
     </script>
-<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+<script id="dhws-dataInjector" src="public/dhws-data-injector.js"></script>
 </body>
 </html>
