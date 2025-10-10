@@ -1,40 +1,40 @@
-import { Suspense } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Suspense, useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import { useAuth } from './lib/auth';
 import { AppRouter } from './router';
+import Sidebar from './components/layout/Sidebar';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
 
 function Layout() {
-  const { user, logout } = useAuth();
+  const { hasPermission, loading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <div className="min-h-screen flex bg-slate-100">
-      <aside className="w-64 bg-white border-l border-slate-200 p-4 flex flex-col gap-4">
-        <h1 className="text-xl font-semibold">ContractorPro</h1>
-        <nav className="flex flex-col gap-2 text-right">
-          <NavLink to="/employees" className={({ isActive }) => (isActive ? 'text-primary-600 font-semibold' : '')}>
-            الموظفون
-          </NavLink>
-          <NavLink to="/contracts">العقود</NavLink>
-          <NavLink to="/attendance">الحضور</NavLink>
-          <NavLink to="/leaves">الإجازات</NavLink>
-          <NavLink to="/finance/advances">السلف والقروض</NavLink>
-          <NavLink to="/payroll">الرواتب</NavLink>
-          <NavLink to="/reports">التقارير</NavLink>
-          <NavLink to="/rbac">إدارة الصلاحيات</NavLink>
-        </nav>
-        {user && (
-          <div className="mt-auto text-sm">
-            <p>{user.email}</p>
-            <button className="text-red-500" onClick={logout}>
-              تسجيل الخروج
-            </button>
+    <div className="min-h-screen bg-slate-100 text-right transition dark:bg-slate-950">
+      <div className="flex min-h-screen flex-col lg:flex-row">
+        <Sidebar hasPermission={hasPermission} isLoading={loading} />
+
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-40 flex lg:hidden">
+            <div className="fixed inset-0 bg-slate-900/60" onClick={() => setSidebarOpen(false)} />
+            <div className="relative ml-auto w-72 bg-white p-4 shadow-xl dark:bg-slate-950">
+              <Sidebar hasPermission={hasPermission} className="flex lg:hidden" isLoading={loading} />
+            </div>
           </div>
         )}
-      </aside>
-      <main className="flex-1 p-6">
-        <Suspense fallback={<p>يتم التحميل...</p>}>
-          <Outlet />
-        </Suspense>
-      </main>
+
+        <div className="flex min-h-screen flex-1 flex-col">
+          <Header onOpenSidebar={() => setSidebarOpen(true)} />
+          <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6">
+            <Suspense fallback={<p className="text-center text-slate-500">جاري التحميل...</p>}>
+              <Outlet />
+            </Suspense>
+          </main>
+          <Footer />
+        </div>
+      </div>
     </div>
   );
 }
