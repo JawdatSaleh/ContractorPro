@@ -75,6 +75,13 @@ apps/
   web/       # React + Vite + Tailwind frontend
 ```
 
+### أين أجد النظام الآن؟
+
+- **واجهة البرمجة الخلفية (API)**: موجودة داخل المسار `apps/api`. يمكنك تشغيلها محليًا عبر `pnpm --filter api dev` أو من خلال خدمة Docker `api` في ملف `docker-compose.yml`.
+- **واجهة الإدارة (الويب)**: الكود الكامل لواجهة React موجود داخل `apps/web`. شغّلها بواسطة `pnpm --filter web dev` وسيتم تقديم لوحة التحكم على `http://localhost:5173`.
+- **قواعد البيانات والمخططات**: مخطط Prisma، ملفات الهجرة، وسكربت التهيئة الأولية موجودة في `apps/api/prisma/`، وتشمل إنشاء الأدوار والصلاحيات والمستخدم الإداري.
+- **وثائق التشغيل**: يحتوي هذا الملف (`README.md`) على جميع خطوات الإعداد، كما يمكن الرجوع إلى `apps/api/src/openapi.yaml` لرؤية توصيف REST الكامل.
+
 ## Features
 
 - JWT authentication with role- and permission-based access controls.
