@@ -7,6 +7,8 @@ import { iamRoutes } from './iam/routes.js';
 import { hrRoutes } from './hr/routes.js';
 import { financeRoutes } from './finance/routes.js';
 import { errorHandler } from './common/errors.js';
+import { activityRoutes } from './activity/routes.js';
+import { scheduleDailySnapshots } from './activity/service.js';
 
 const server = Fastify({
   logger: true
@@ -30,8 +32,11 @@ registerAuthExtractor(server);
 iamRoutes(server);
 hrRoutes(server);
 financeRoutes(server);
+activityRoutes(server);
 
 server.setErrorHandler(errorHandler);
+
+scheduleDailySnapshots(server);
 
 const port = Number(process.env.PORT ?? 3000);
 const host = '0.0.0.0';
