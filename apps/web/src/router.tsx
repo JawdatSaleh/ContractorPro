@@ -13,6 +13,7 @@ const AdvancesLoansPage = lazy(() => import('./features/finance/advances-loans/A
 const PayrollPage = lazy(() => import('./features/payroll/PayrollPage'));
 const ReportsPage = lazy(() => import('./features/reports/ReportsPage'));
 const RBACPage = lazy(() => import('./features/rbac/RolesPermissionsPage'));
+const ActivityCenterPage = lazy(() => import('./features/activity/ActivityCenterPage'));
 
 interface Props {
   layout: React.ReactNode;
@@ -35,6 +36,7 @@ export function AppRouter({ layout }: Props) {
           <Route path="payroll" element={<PayrollPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="rbac" element={<RBACPage />} />
+          <Route path="activity" element={<ActivityCenterPage />} />
         </Route>
       </Routes>
     </AuthProvider>
