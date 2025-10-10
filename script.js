@@ -108,6 +108,12 @@ class AuthenticationSystem {
 // PROJECT MANAGEMENT SYSTEM
 // ===========================
 
+const PROJECT_STORAGE_KEYS = [
+    'contractorPro.projects',
+    'contractorProjects',
+    'projects'
+];
+
 class ProjectManager {
     constructor() {
         this.projects = this.loadProjects();
@@ -263,33 +269,73 @@ class ProjectManager {
     }
 
     saveProject() {
+        const now = new Date();
+        const generatedId = 'PRJ-' + now.getTime();
+        const statusValue = document.getElementById('status').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const durationDays = this.calculateDuration(startDate, endDate);
+
         const projectData = {
-            id: 'PRJ-' + Date.now(),
+            id: generatedId,
+            code: '#' + generatedId,
             name: document.getElementById('name').value.trim(),
-            client: document.getElementById('client').value.trim(),
-            budget: parseFloat(document.getElementById('budget').value),
-            status: document.getElementById('status').value,
-            startDate: document.getElementById('startDate').value,
-            endDate: document.getElementById('endDate').value,
             description: document.getElementById('description').value.trim(),
-            location: document.getElementById('location').value.trim(),
-            createdDate: new Date().toISOString(),
-            createdBy: localStorage.getItem('currentUser'),
-            progress: this.calculateInitialProgress(document.getElementById('status').value)
+            status: statusValue,
+            progress: this.calculateInitialProgress(statusValue),
+            client: {
+                name: document.getElementById('client').value.trim()
+            },
+            clientName: document.getElementById('client').value.trim(),
+            budget: {
+                contractValue: parseFloat(document.getElementById('budget').value) || 0,
+                currency: 'SAR',
+                advancePayment: 0,
+                paymentTerms: '',
+                paymentTermsLabel: '',
+                paymentsCount: null
+            },
+            value: parseFloat(document.getElementById('budget').value) || 0,
+            timeline: {
+                startDate: startDate,
+                endDate: endDate,
+                durationDays: durationDays
+            },
+            startDate: startDate,
+            endDate: endDate,
+            location: this.normalizeLocation(document.getElementById('location').value.trim()),
+            phases: [],
+            createdAt: now.toISOString(),
+            createdBy: localStorage.getItem('currentUser') || 'system'
         };
-        
-        // Save to projects array and localStorage
-        this.projects.push(projectData);
-        this.saveProjects();
-        
+
+        const normalizedProject = this.normalizeProject(projectData);
+        this.upsertProject(normalizedProject);
+
         this.showMessage('تم حفظ المشروع بنجاح!', 'success');
-        
+
         // Clear draft and reset form
         this.clearDraft();
         setTimeout(() => {
             document.getElementById('projectForm').reset();
             this.resetFormValidation();
         }, 2000);
+    }
+
+    calculateDuration(startDate, endDate) {
+        if (!startDate || !endDate) {
+            return 0;
+        }
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const diff = end - start;
+
+        if (Number.isNaN(diff) || diff <= 0) {
+            return 0;
+        }
+
+        return Math.max(1, Math.round(diff / (1000 * 60 * 60 * 24)));
     }
 
     calculateInitialProgress(status) {
@@ -300,6 +346,148 @@ class ProjectManager {
             'completed': 100
         };
         return progressMap[status] || 10;
+    }
+
+    normalizeLocation(rawLocation) {
+        if (!rawLocation) {
+            return {};
+        }
+
+        if (typeof rawLocation === 'string') {
+            return {
+                city: rawLocation,
+                address: rawLocation
+            };
+        }
+
+        if (typeof rawLocation === 'object') {
+            return { ...rawLocation };
+        }
+
+        return {};
+    }
+
+    parseNumber(value) {
+        if (value === undefined || value === null) {
+            return 0;
+        }
+
+        if (typeof value === 'number') {
+            return Number.isFinite(value) ? value : 0;
+        }
+
+        const cleaned = String(value).replace(/[^0-9.-]/g, '');
+        const parsed = Number(cleaned);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    normalizeProject(project) {
+        if (!project || typeof project !== 'object') {
+            return null;
+        }
+
+        const now = new Date().toISOString();
+        const normalized = { ...project };
+
+        normalized.id = normalized.id || ('PRJ-' + Date.now());
+        normalized.code = normalized.code || ('#' + normalized.id);
+        normalized.name = normalized.name || normalized.title || 'مشروع جديد';
+        normalized.description = normalized.description || '';
+        normalized.status = normalized.status || 'planning';
+        const rawProgress = this.parseNumber(normalized.progress);
+        normalized.progress = Math.max(0, Math.min(100, rawProgress));
+
+        const client = normalized.client || {};
+        const clientName = client.name || normalized.clientName || (typeof normalized.client === 'string' ? normalized.client : '');
+        normalized.client = typeof normalized.client === 'object' && !Array.isArray(normalized.client)
+            ? { ...normalized.client, name: client.name || clientName }
+            : { name: clientName };
+        normalized.clientName = clientName;
+
+        if (!normalized.location) {
+            normalized.location = {};
+        } else if (typeof normalized.location === 'string') {
+            normalized.location = {
+                city: normalized.location,
+                address: normalized.location
+            };
+        } else {
+            normalized.location = { ...normalized.location };
+        }
+
+        normalized.timeline = { ...(normalized.timeline || {}) };
+        normalized.timeline.startDate = normalized.timeline.startDate || normalized.startDate || '';
+        normalized.timeline.endDate = normalized.timeline.endDate || normalized.endDate || '';
+
+        if (!normalized.timeline.durationDays) {
+            const calculated = this.calculateDuration(normalized.timeline.startDate, normalized.timeline.endDate);
+            normalized.timeline.durationDays = calculated;
+        }
+
+        normalized.startDate = normalized.timeline.startDate;
+        normalized.endDate = normalized.timeline.endDate;
+        normalized.durationDays = normalized.timeline.durationDays;
+
+        const budget = { ...(normalized.budget || {}) };
+        const valueCandidate = this.parseNumber(
+            budget.contractValue ?? normalized.value ?? budget.total ?? normalized.totalBudget
+        );
+
+        budget.contractValue = valueCandidate;
+        budget.currency = budget.currency || 'SAR';
+        budget.advancePayment = budget.advancePayment ?? normalized.advancePayment ?? 0;
+        budget.paymentTerms = budget.paymentTerms || normalized.paymentTerms || '';
+        budget.paymentTermsLabel = budget.paymentTermsLabel || normalized.paymentTermsLabel || '';
+        if (budget.paymentsCount !== null && budget.paymentsCount !== undefined) {
+            const count = Number(budget.paymentsCount);
+            budget.paymentsCount = Number.isFinite(count) ? count : null;
+        }
+
+        normalized.budget = budget;
+        normalized.value = valueCandidate;
+
+        if (!Array.isArray(normalized.phases)) {
+            normalized.phases = [];
+        }
+
+        normalized.createdAt = normalized.createdAt || now;
+
+        return normalized;
+    }
+
+    normalizeProjects(projects) {
+        if (!Array.isArray(projects)) {
+            return [];
+        }
+
+        const normalized = [];
+        const seen = new Set();
+
+        projects.forEach(project => {
+            const normalizedProject = this.normalizeProject(project);
+            if (!normalizedProject) return;
+
+            if (!seen.has(normalizedProject.id)) {
+                seen.add(normalizedProject.id);
+                normalized.push(normalizedProject);
+            }
+        });
+
+        return normalized;
+    }
+
+    upsertProject(project) {
+        const normalizedProject = this.normalizeProject(project);
+        if (!normalizedProject) return;
+
+        const index = this.projects.findIndex(p => p.id === normalizedProject.id);
+        if (index >= 0) {
+            this.projects[index] = normalizedProject;
+        } else {
+            this.projects.push(normalizedProject);
+        }
+
+        this.saveProjects();
     }
 
     resetFormValidation() {
@@ -318,11 +506,37 @@ class ProjectManager {
     }
 
     loadProjects() {
-        return JSON.parse(localStorage.getItem('contractorProjects') || '[]');
+        let storedProjects = [];
+
+        for (const key of PROJECT_STORAGE_KEYS) {
+            try {
+                const raw = localStorage.getItem(key);
+                if (!raw) continue;
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed) && parsed.length) {
+                    storedProjects = parsed;
+                    break;
+                }
+            } catch (error) {
+                // Ignore and continue to next key
+            }
+        }
+
+        const normalized = this.normalizeProjects(storedProjects);
+        this.projects = normalized;
+        this.saveProjects();
+        return normalized;
     }
 
     saveProjects() {
-        localStorage.setItem('contractorProjects', JSON.stringify(this.projects));
+        const serialized = JSON.stringify(this.projects);
+        PROJECT_STORAGE_KEYS.forEach(key => {
+            try {
+                localStorage.setItem(key, serialized);
+            } catch (error) {
+                // Skip keys that cannot be written
+            }
+        });
     }
 
     // Auto-save draft functionality

@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>مركز إدارة المشاريع - ContractorPro</title>
+    <meta name="description" content="مركز إدارة المشاريع في ContractorPro يوفر نظرة شاملة على المشاريع، المراحل، العقود، والبيانات المالية في منصة واحدة." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://contractorpro.local/projects_management_center.html" />
+    <meta property="og:title" content="مركز إدارة المشاريع - ContractorPro" />
+    <meta property="og:description" content="تابع جميع المشاريع، المراحل، الدفعات، والتقارير اليومية مع تحليلات مالية متقدمة." />
+    <meta property="og:type" content="website" />
     <link rel="stylesheet" href="../css/main.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -337,8 +343,20 @@
                                 </h3>
                                 <div class="space-y-4">
                                     <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                                        <span class="text-text-secondary">تاريخ البداية:</span>
+                                        <span class="font-medium text-text-primary" id="projectStartDate">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                                        <span class="text-text-secondary">تاريخ التسليم المتوقع:</span>
+                                        <span class="font-medium text-text-primary" id="projectEndDate">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
                                         <span class="text-text-secondary">المدة الزمنية:</span>
                                         <span class="font-bold text-text-primary" id="projectDuration">120 يوم</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                                        <span class="text-text-secondary">نوع المشروع:</span>
+                                        <span class="font-medium text-text-primary" id="projectTypeLabel">-</span>
                                     </div>
                                     <div class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
                                         <span class="text-text-secondary">قيمة المشروع:</span>
@@ -373,6 +391,202 @@
                                         </button>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+                            <div class="bg-white rounded-xl border border-border p-6">
+                                <h3 class="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+                                    <i class="fas fa-clipboard-list text-primary"></i>
+                                    نظرة عامة على المشروع
+                                </h3>
+                                <p class="text-sm leading-7 text-text-secondary bg-secondary-50 rounded-lg p-4" id="projectDescriptionText">
+                                    لا يوجد وصف تفصيلي للمشروع.
+                                </p>
+                                <div class="mt-4 space-y-3 text-sm">
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">قالب المشروع:</span>
+                                        <span class="font-medium text-text-primary" id="projectTemplateLabel">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">تاريخ الإنشاء في النظام:</span>
+                                        <span class="font-medium text-text-primary" id="projectCreatedAt">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl border border-border p-6">
+                                <h3 class="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+                                    <i class="fas fa-user-tie text-primary"></i>
+                                    بيانات العميل
+                                </h3>
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">الاسم:</span>
+                                        <span class="font-medium text-text-primary" id="clientNameText">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">نوع العميل:</span>
+                                        <span class="font-medium text-text-primary" id="clientTypeText">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">رقم الهاتف:</span>
+                                        <span class="font-medium text-text-primary" id="clientPhoneText">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">البريد الإلكتروني:</span>
+                                        <span class="font-medium text-text-primary ltr" id="clientEmailText">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">السجل التجاري / الهوية:</span>
+                                        <span class="font-medium text-text-primary" id="clientIdText">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">الرقم الضريبي:</span>
+                                        <span class="font-medium text-text-primary" id="clientTaxText">-</span>
+                                    </div>
+                                    <div class="p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary block mb-1">عنوان المراسلات:</span>
+                                        <span class="font-medium text-text-primary text-sm leading-6 block" id="clientAddressText">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+                            <div class="bg-white rounded-xl border border-border p-6">
+                                <h3 class="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+                                    <i class="fas fa-map-marker-alt text-error"></i>
+                                    موقع المشروع
+                                </h3>
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">المدينة:</span>
+                                        <span class="font-medium text-text-primary" id="projectCityText">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">الحي:</span>
+                                        <span class="font-medium text-text-primary" id="projectDistrictText">-</span>
+                                    </div>
+                                    <div class="p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary block mb-1">العنوان التفصيلي:</span>
+                                        <span class="font-medium text-text-primary leading-6 block" id="projectAddressText">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl border border-border p-6">
+                                <h3 class="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+                                    <i class="fas fa-ruler-combined text-accent"></i>
+                                    الخصائص الفنية للمشروع
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                                    <div class="p-3 bg-secondary-50 rounded-lg flex items-center justify-between">
+                                        <span class="text-text-secondary">المساحة الكلية:</span>
+                                        <span class="font-medium text-text-primary" id="projectTotalArea">-</span>
+                                    </div>
+                                    <div class="p-3 bg-secondary-50 rounded-lg flex items-center justify-between">
+                                        <span class="text-text-secondary">المساحة المبنية:</span>
+                                        <span class="font-medium text-text-primary" id="projectBuiltArea">-</span>
+                                    </div>
+                                    <div class="p-3 bg-secondary-50 rounded-lg flex items-center justify-between">
+                                        <span class="text-text-secondary">عدد الأدوار:</span>
+                                        <span class="font-medium text-text-primary" id="projectFloors">-</span>
+                                    </div>
+                                    <div class="p-3 bg-secondary-50 rounded-lg flex items-center justify-between">
+                                        <span class="text-text-secondary">عدد الوحدات:</span>
+                                        <span class="font-medium text-text-primary" id="projectUnits">-</span>
+                                    </div>
+                                    <div class="p-3 bg-secondary-50 rounded-lg flex items-center justify-between">
+                                        <span class="text-text-secondary">نوع الأساسات:</span>
+                                        <span class="font-medium text-text-primary" id="projectFoundation">-</span>
+                                    </div>
+                                    <div class="p-3 bg-secondary-50 rounded-lg flex items-center justify-between">
+                                        <span class="text-text-secondary">نوع الهيكل:</span>
+                                        <span class="font-medium text-text-primary" id="projectStructure">-</span>
+                                    </div>
+                                    <div class="p-3 bg-secondary-50 rounded-lg flex items-center justify-between">
+                                        <span class="text-text-secondary">نوع الجدران:</span>
+                                        <span class="font-medium text-text-primary" id="projectWall">-</span>
+                                    </div>
+                                    <div class="p-3 bg-secondary-50 rounded-lg flex items-center justify-between">
+                                        <span class="text-text-secondary">نوع السقف:</span>
+                                        <span class="font-medium text-text-primary" id="projectRoof">-</span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 p-3 bg-secondary-50 rounded-lg text-sm">
+                                    <span class="text-text-secondary block mb-1">متطلبات خاصة:</span>
+                                    <span class="font-medium text-text-primary leading-6 block" id="projectSpecialRequirements">لا توجد متطلبات خاصة.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+                            <div class="bg-white rounded-xl border border-border p-6">
+                                <h3 class="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+                                    <i class="fas fa-hand-holding-usd text-success"></i>
+                                    الخطة المالية وشروط الدفع
+                                </h3>
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">الدفعة المقدمة:</span>
+                                        <span class="font-medium text-text-primary" id="projectAdvancePayment">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">عدد الدفعات:</span>
+                                        <span class="font-medium text-text-primary" id="projectPaymentsCount">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">آلية الدفع:</span>
+                                        <span class="font-medium text-text-primary" id="projectPaymentTerms">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">هامش الربح:</span>
+                                        <span class="font-medium text-text-primary" id="projectProfitMargin">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">التكلفة لكل متر مربع:</span>
+                                        <span class="font-medium text-text-primary" id="projectCostPerMeter">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl border border-border p-6">
+                                <h3 class="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+                                    <i class="fas fa-chart-column text-primary"></i>
+                                    توزيع ميزانية المشروع
+                                </h3>
+                                <div class="space-y-3 text-sm" id="projectBudgetBreakdown">
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">تكلفة المواد:</span>
+                                        <span class="font-medium text-text-primary" id="projectBudgetMaterials">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">تكلفة العمالة:</span>
+                                        <span class="font-medium text-text-primary" id="projectBudgetLabor">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">المعدات:</span>
+                                        <span class="font-medium text-text-primary" id="projectBudgetEquipment">-</span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                                        <span class="text-text-secondary">مصروفات إضافية:</span>
+                                        <span class="font-medium text-text-primary" id="projectBudgetAdditional">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl border border-border p-6 mb-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-text-primary flex items-center gap-2">
+                                    <i class="fas fa-layer-group text-primary"></i>
+                                    ملخص مراحل المشروع
+                                </h3>
+                                <span class="text-sm text-text-secondary" id="projectPhasesCount">لا توجد مراحل مسجلة</span>
+                            </div>
+                            <div class="space-y-3" id="projectPhasesSummary">
+                                <div class="text-sm text-text-secondary bg-secondary-50 rounded-lg p-4">سيتم عرض مراحل المشروع هنا بعد إضافتها.</div>
                             </div>
                         </div>
 
@@ -2815,6 +3029,34 @@ class DailyReportsStore {
 // Initialize daily reports store
 let dailyReportsStore = null;
 
+const PROJECT_TYPE_LABELS = {
+    residential_villa: 'فيلا سكنية',
+    residential_complex: 'مجمع سكني',
+    commercial: 'مشروع تجاري',
+    industrial: 'مشروع صناعي',
+    infrastructure: 'بنية تحتية',
+    renovation: 'تجديد وترميم',
+    governmental: 'جهة حكومية',
+    custom: 'تكوين مخصص'
+};
+
+const CITY_LABELS = {
+    riyadh: 'الرياض',
+    jeddah: 'جدة',
+    dammam: 'الدمام',
+    mecca: 'مكة المكرمة',
+    medina: 'المدينة المنورة',
+    khobar: 'الخبر',
+    tabuk: 'تبوك',
+    abha: 'أبها'
+};
+
+function resolveCityLabel(value, fallback = '') {
+    if (!value) return fallback || '';
+    if (CITY_LABELS[value]) return CITY_LABELS[value];
+    return fallback || value;
+}
+
 const PROJECTS_STORAGE_KEY = 'contractorPro.projects';
 const PROJECTS_LEGACY_KEY = 'projects';
 
@@ -2836,11 +3078,34 @@ class ProjectStore {
 
         const normalized = {...project};
 
+        normalized.location = normalized.location || {};
+        if (normalized.location.cityCode) {
+            normalized.location.city = resolveCityLabel(normalized.location.cityCode, normalized.location.city);
+        } else if (normalized.location.city) {
+            const resolvedCity = resolveCityLabel(normalized.location.city);
+            if (resolvedCity !== normalized.location.city) {
+                normalized.location.cityCode = normalized.location.city;
+                normalized.location.city = resolvedCity;
+            }
+        }
+
+        normalized.specs = normalized.specs || {};
+        normalized.phases = Array.isArray(normalized.phases) ? normalized.phases : [];
+        normalized.typeLabel = normalized.typeLabel || PROJECT_TYPE_LABELS[normalized.type] || normalized.type || '';
+
         if (typeof normalized.client === 'string') {
             normalized.clientName = normalized.client;
             normalized.client = { name: normalized.client };
         } else {
             normalized.clientName = normalized.client?.name || normalized.clientName || '';
+        }
+
+        normalized.client = normalized.client || {};
+        if (!normalized.client.name && normalized.clientName) {
+            normalized.client.name = normalized.clientName;
+        }
+        if (!normalized.client.type && normalized.clientType) {
+            normalized.client.type = normalized.clientType;
         }
 
         if (!normalized.startDate && normalized.timeline?.startDate) {
@@ -2858,6 +3123,27 @@ class ProjectStore {
             endDate: normalized.endDate || '',
             durationDays: normalized.durationDays || 0
         };
+
+        normalized.phases = normalized.phases.map((phase, index) => {
+            const normalizedPhase = {...phase};
+            normalizedPhase.projectId = normalizedPhase.projectId || normalized.id;
+            normalizedPhase.id = normalizedPhase.id || `phase-${normalized.id || Date.now()}-${index + 1}`;
+            normalizedPhase.name = normalizedPhase.name || `مرحلة ${index + 1}`;
+            normalizedPhase.durationDays = Number(normalizedPhase.durationDays) || 0;
+            normalizedPhase.order = Number.isFinite(Number(normalizedPhase.order)) ? Number(normalizedPhase.order) : index + 1;
+            normalizedPhase.status = normalizedPhase.status || 'planned';
+            normalizedPhase.progressPercent = Number(normalizedPhase.progressPercent) || 0;
+            normalizedPhase.dependencies = Array.isArray(normalizedPhase.dependencies) ? normalizedPhase.dependencies : [];
+            normalizedPhase.priority = normalizedPhase.priority || 'medium';
+            if (!normalizedPhase.startDate && normalized.timeline?.startDate) {
+                normalizedPhase.startDate = normalized.timeline.startDate;
+            }
+            if (!normalizedPhase.endDate && normalized.timeline?.endDate) {
+                normalizedPhase.endDate = normalized.timeline.endDate;
+            }
+            normalizedPhase.createdAt = normalizedPhase.createdAt || new Date().toISOString();
+            return normalizedPhase;
+        });
 
         if (!normalized.timeline.startDate && normalized.startDate) {
             normalized.timeline.startDate = normalized.startDate;
@@ -2892,6 +3178,22 @@ class ProjectStore {
         }
         if (!normalized.budget.currency) {
             normalized.budget.currency = 'SAR';
+        }
+        if (normalized.budget.advancePayment === undefined || normalized.budget.advancePayment === null) {
+            normalized.budget.advancePayment = 0;
+        }
+        if (!normalized.budget.paymentTerms && normalized.paymentTerms) {
+            normalized.budget.paymentTerms = normalized.paymentTerms;
+        }
+        if (!normalized.budget.paymentTermsLabel && normalized.paymentTermsLabel) {
+            normalized.budget.paymentTermsLabel = normalized.paymentTermsLabel;
+        }
+        if (!normalized.budget.paymentsCount && normalized.paymentsCount) {
+            normalized.budget.paymentsCount = normalized.paymentsCount;
+        }
+        if (normalized.budget.paymentsCount && !Number.isFinite(Number(normalized.budget.paymentsCount))) {
+            const parsedCount = parseInt(normalized.budget.paymentsCount, 10);
+            normalized.budget.paymentsCount = Number.isFinite(parsedCount) ? parsedCount : null;
         }
 
         if (!normalized.status) {
@@ -3152,6 +3454,73 @@ class ProjectStore {
         };
     }
 
+    syncPhasesRepository(projects) {
+        if (!Array.isArray(projects) || !projects.length) {
+            return;
+        }
+
+        let storedPhases = [];
+        try {
+            storedPhases = JSON.parse(localStorage.getItem('project_phases_all') || '[]');
+        } catch (error) {
+            storedPhases = [];
+        }
+
+        const phasesByProject = new Map();
+        if (Array.isArray(storedPhases)) {
+            storedPhases.forEach(phase => {
+                if (!phase || !phase.projectId) return;
+                if (!phasesByProject.has(phase.projectId)) {
+                    phasesByProject.set(phase.projectId, []);
+                }
+                phasesByProject.get(phase.projectId).push(phase);
+            });
+        }
+
+        let changed = false;
+        const ensurePhaseShape = (phase, index, project) => {
+            const shaped = {...phase};
+            shaped.projectId = shaped.projectId || project.id;
+            shaped.id = shaped.id || `phase-${project.id}-${index + 1}`;
+            shaped.name = shaped.name || `مرحلة ${index + 1}`;
+            shaped.durationDays = Number(shaped.durationDays) || 0;
+            shaped.order = Number.isFinite(Number(shaped.order)) ? Number(shaped.order) : index + 1;
+            shaped.status = shaped.status || 'planned';
+            shaped.progressPercent = Number(shaped.progressPercent) || 0;
+            shaped.dependencies = Array.isArray(shaped.dependencies) ? shaped.dependencies : [];
+            shaped.priority = shaped.priority || 'medium';
+            shaped.startDate = shaped.startDate || project.timeline?.startDate || project.startDate || '';
+            shaped.endDate = shaped.endDate || project.timeline?.endDate || project.endDate || '';
+            shaped.createdAt = shaped.createdAt || new Date().toISOString();
+            return shaped;
+        };
+
+        projects.forEach(project => {
+            if (!project || !project.id) return;
+            if (!Array.isArray(project.phases) || !project.phases.length) return;
+            if (phasesByProject.has(project.id)) return;
+
+            const shapedPhases = project.phases.map((phase, index) => ensurePhaseShape(phase, index, project));
+            if (shapedPhases.length) {
+                phasesByProject.set(project.id, shapedPhases);
+                changed = true;
+            }
+        });
+
+        if (!changed) {
+            return;
+        }
+
+        const merged = [];
+        phasesByProject.forEach(list => {
+            merged.push(...list);
+        });
+
+        const serialized = JSON.stringify(merged);
+        localStorage.setItem('project_phases_all', serialized);
+        localStorage.setItem('phases', serialized);
+    }
+
     // Combined analytics
     computeCombinedStats(projectId) {
         const expenseStats = this.computeExpenseTotals(projectId);
@@ -3174,6 +3543,7 @@ class ProjectStore {
     // Storage methods
     saveProjects() {
         this.projects = this.normalizeProjects(this.projects);
+        this.syncPhasesRepository(this.projects);
         const serialized = JSON.stringify(this.projects);
         localStorage.setItem(PROJECTS_STORAGE_KEY, serialized);
         localStorage.setItem(PROJECTS_LEGACY_KEY, serialized);
@@ -3204,6 +3574,7 @@ class ProjectStore {
         }
 
         const normalized = this.normalizeProjects(parsed || this.getDefaultProjects());
+        this.syncPhasesRepository(normalized);
         const serialized = JSON.stringify(normalized);
         localStorage.setItem(PROJECTS_STORAGE_KEY, serialized);
         localStorage.setItem(PROJECTS_LEGACY_KEY, serialized);
@@ -4840,18 +5211,107 @@ function updateProjectInformation() {
 
     console.log('Updating project information for:', currentProjectData);
 
-    // Update basic project details
-    document.getElementById('projectDuration').textContent = calculateDuration(currentProjectData.startDate, currentProjectData.endDate) + ' يوم';
-    document.getElementById('projectValue').textContent = formatCurrency(currentProjectData.value);
-    
+    const setText = (id, value, fallback = '-') => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const displayValue = (value !== undefined && value !== null && value !== '') ? value : fallback;
+        el.textContent = displayValue;
+    };
+
+    const timeline = currentProjectData.timeline || {};
+    let durationDays = Number(timeline.durationDays);
+    if (!Number.isFinite(durationDays) || durationDays <= 0) {
+        durationDays = Number(currentProjectData.durationDays);
+    }
+    if ((!Number.isFinite(durationDays) || durationDays <= 0) && timeline.startDate && timeline.endDate) {
+        durationDays = calculateDuration(timeline.startDate, timeline.endDate);
+    }
+
+    const durationText = Number.isFinite(durationDays) && durationDays > 0 ? `${durationDays} يوم` : '-';
+    setText('projectDuration', durationText);
+    setText('projectStartDate', formatDateLocalized(timeline.startDate || currentProjectData.startDate));
+    setText('projectEndDate', formatDateLocalized(timeline.endDate || currentProjectData.endDate));
+    setText('projectValue', formatCurrency(currentProjectData.value));
+    const projectTypeLabelValue = currentProjectData.typeLabel || formatProjectType(currentProjectData.type);
+    setText('projectTypeLabel', projectTypeLabelValue);
+
+    const templateLabel = currentProjectData.templateLabel
+        || ({
+            villa: 'قالب فيلا سكنية',
+            commercial: 'قالب مبنى تجاري',
+            custom: 'تكوين مخصص'
+        }[currentProjectData.template])
+        || (currentProjectData.template ? currentProjectData.template : 'بدون قالب محدد');
+    setText('projectTemplateLabel', templateLabel);
+
+    setText('projectDescriptionText', currentProjectData.description || 'لا يوجد وصف تفصيلي للمشروع.');
+    setText('projectCreatedAt', formatDateTimeLocalized(currentProjectData.createdAt));
+
+    const location = currentProjectData.location || {};
+    setText('projectCityText', location.city || '-');
+    setText('projectDistrictText', location.district || '-');
+    setText('projectAddressText', location.address || currentProjectData.address || '-');
+
+    const client = currentProjectData.client || {};
+    const clientName = client.name || currentProjectData.clientName || '-';
+    setText('clientNameText', clientName);
+    setText('clientTypeText', formatClientType(client.type));
+    setText('clientPhoneText', client.phone || '-');
+    setText('clientEmailText', client.email || '-');
+    setText('clientIdText', client.id || '-');
+    setText('clientTaxText', client.tax || '-');
+    setText('clientAddressText', client.address || location.address || '-');
+
+    const specs = currentProjectData.specs || {};
+    setText('projectTotalArea', formatAreaValue(specs.totalArea));
+    setText('projectBuiltArea', formatAreaValue(specs.builtArea));
+    setText('projectFloors', formatCountValue(specs.floorsCount, 'دور'));
+    setText('projectUnits', formatCountValue(specs.unitsCount, 'وحدة'));
+    setText('projectFoundation', specs.foundationType || '-');
+    setText('projectStructure', specs.structureType || '-');
+    setText('projectWall', specs.wallType || '-');
+    setText('projectRoof', specs.roofType || '-');
+    setText('projectSpecialRequirements', specs.specialRequirements || 'لا توجد متطلبات خاصة.');
+
+    const budget = currentProjectData.budget || {};
+    setText('projectAdvancePayment', formatPercentageValue(budget.advancePayment));
+    const paymentsCount = budget.paymentsCount || budget.paymentCount || null;
+    if (paymentsCount) {
+        const numericPayments = Number(paymentsCount);
+        if (Number.isFinite(numericPayments) && numericPayments > 0) {
+            const label = numericPayments === 1 ? 'دفعة' : 'دفعات';
+            setText('projectPaymentsCount', `${numericPayments} ${label}`);
+        } else {
+            setText('projectPaymentsCount', '-');
+        }
+    } else {
+        setText('projectPaymentsCount', '-');
+    }
+    setText('projectPaymentTerms', formatPaymentTermsLabel(budget));
+    setText('projectProfitMargin', formatPercentageValue(budget.profitMargin));
+    setText('projectCostPerMeter', formatCostPerMeterValue(currentProjectData.value, specs.totalArea));
+    setText('projectBudgetMaterials', formatCurrency(budget.materials));
+    setText('projectBudgetLabor', formatCurrency(budget.labor));
+    setText('projectBudgetEquipment', formatCurrency(budget.equipment));
+    setText('projectBudgetAdditional', formatCurrency(budget.additional));
+
+    const phases = Array.isArray(currentProjectData.phases) ? currentProjectData.phases : [];
+    setText('projectPhasesCount', phases.length ? `${phases.length} مرحلة` : 'لا توجد مراحل مسجلة');
+    const phasesSummary = document.getElementById('projectPhasesSummary');
+    if (phasesSummary) {
+        phasesSummary.innerHTML = buildPhasesSummary(phases);
+    }
+
     // Update status badge
     const statusBadge = document.getElementById('projectStatusBadge');
-    statusBadge.textContent = getStatusText(currentProjectData.status);
-    statusBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-${getStatusColor(currentProjectData.status)}-100 text-${getStatusColor(currentProjectData.status)}`;
+    const statusLabel = getStatusText(currentProjectData.status);
+    const statusColor = getStatusColor(currentProjectData.status);
+    statusBadge.textContent = statusLabel;
+    statusBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-${statusColor}-100 text-${statusColor}`;
 
     // Load additional contracts
     loadAdditionalContracts();
-    
+
     // Update KPIs with real data
     updateProjectKPIs();
 }
@@ -5570,7 +6030,8 @@ function openEditProjectModal() {
     
     document.getElementById('editProjectName').value = currentProjectData.name;
     document.getElementById('editProjectCode').value = currentProjectData.code;
-    document.getElementById('editClientName').value = currentProjectData.client;
+    const clientName = currentProjectData.client?.name || currentProjectData.clientName || '';
+    document.getElementById('editClientName').value = clientName;
     document.getElementById('editStartDate').value = currentProjectData.startDate;
     document.getElementById('editEndDate').value = currentProjectData.endDate;
     document.getElementById('editProjectValue').value = currentProjectData.value;
@@ -5793,6 +6254,121 @@ function getStatusText(status) {
         'pending': 'قيد التنفيذ'
     };
     return textMap[status] || status;
+}
+
+function formatDateLocalized(dateString) {
+    if (!dateString) return '-';
+    if (typeof formatDate === 'function') {
+        try {
+            const formatted = formatDate(dateString);
+            if (formatted && formatted.trim()) return formatted;
+        } catch (error) {
+            // fall back to manual formatting
+        }
+    }
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return '-';
+    return date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function formatDateTimeLocalized(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return '-';
+    return date.toLocaleString('ar-EG', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function formatProjectType(type) {
+    if (!type) return 'غير محدد';
+    return PROJECT_TYPE_LABELS[type] || type;
+}
+
+function formatClientType(type) {
+    const map = {
+        individual: 'عميل فردي',
+        company: 'شركة',
+        government: 'جهة حكومية'
+    };
+    return map[type] || (type ? type : 'غير محدد');
+}
+
+function formatPercentageValue(value, digits = 0) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return '-';
+    return number.toFixed(digits) + '%';
+}
+
+function formatAreaValue(value) {
+    const number = Number(value);
+    if (!Number.isFinite(number) || number <= 0) return '-';
+    return number.toLocaleString('ar-EG', { maximumFractionDigits: 2 }) + ' م²';
+}
+
+function formatCountValue(value, suffix = '') {
+    const number = Number(value);
+    if (!Number.isFinite(number) || number <= 0) return '-';
+    return number.toLocaleString('ar-EG') + (suffix ? ` ${suffix}` : '');
+}
+
+function formatCostPerMeterValue(contractValue, totalArea) {
+    const valueNumber = Number(contractValue);
+    const areaNumber = Number(totalArea);
+    if (!Number.isFinite(valueNumber) || !Number.isFinite(areaNumber) || areaNumber <= 0) return '-';
+    const cost = valueNumber / areaNumber;
+    return cost.toLocaleString('ar-EG', { maximumFractionDigits: 2 }) + ' ر.س/م²';
+}
+
+function formatPaymentTermsLabel(budget = {}) {
+    if (budget.paymentTermsLabel) return budget.paymentTermsLabel;
+    const map = {
+        lumpsum: 'دفعة واحدة',
+        '2payments': 'دفعتان',
+        '3payments': '3 دفعات',
+        '4payments': '4 دفعات',
+        monthly: 'دفعات شهرية',
+        milestone: 'حسب مراحل الإنجاز'
+    };
+    const value = budget.paymentTerms;
+    return map[value] || (value || '-');
+}
+
+function escapeHtml(value) {
+    if (value === undefined || value === null) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function buildPhasesSummary(phases = []) {
+    if (!Array.isArray(phases) || phases.length === 0) {
+        return '<div class="text-sm text-text-secondary bg-secondary-50 rounded-lg p-4">لا توجد مراحل مسجلة لهذا المشروع حتى الآن.</div>';
+    }
+
+    return phases
+        .sort((a, b) => (a.order || 0) - (b.order || 0))
+        .map((phase, index) => {
+            const duration = Number(phase.durationDays);
+            const durationText = Number.isFinite(duration) && duration > 0 ? `${duration} يوم` : '-';
+            return `
+                <div class="flex items-start justify-between bg-secondary-50 rounded-lg p-4">
+                    <div>
+                        <div class="font-medium text-text-primary">${escapeHtml(phase.name || `مرحلة ${index + 1}`)}</div>
+                        <div class="text-xs text-text-secondary mt-1">الترتيب: ${escapeHtml(phase.order || index + 1)}</div>
+                    </div>
+                    <div class="text-sm font-medium text-text-primary">${durationText}</div>
+                </div>
+            `;
+        })
+        .join('');
 }
 
 function getCategoryColor(category) {
@@ -7308,7 +7884,11 @@ function openFinancialCustomization() {
 
     return [];
   }
-  function saveProjects(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+  function saveProjects(arr){
+    const serialized = JSON.stringify(arr);
+    localStorage.setItem(STORAGE_KEY, serialized);
+    localStorage.setItem('projects', serialized);
+  }
 
   function statusArabic(s){
     return ({active:'نشط', in_progress:'قيد التنفيذ', planned:'بداية المشروع', paused:'موقوف', done:'مكتمل'}[s] || 'قيد التنفيذ');
@@ -7331,6 +7911,47 @@ function openFinancialCustomization() {
     if(p>=40) return 'bg-warning';
     return 'bg-primary';
   }
+  function projectTypeLabel(type){
+    if (!type) return 'غير محدد';
+    return PROJECT_TYPE_LABELS[type] || type;
+  }
+  function formatLocationText(location){
+    if (!location || typeof location !== 'object') return '-';
+    const cityCode = location.cityCode || location.city_code || '';
+    const cityLabel = resolveCityLabel(cityCode, location.city);
+    const district = location.district;
+    const address = location.address;
+    const parts = [cityLabel, district].filter(Boolean);
+    if (parts.length) {
+      return parts.join(' • ');
+    }
+    if (address) {
+      return address;
+    }
+    return cityLabel || '-';
+  }
+  function formatDateSafe(value){
+    if (!value) return '-';
+    if (typeof formatDateLocalized === 'function') {
+      try {
+        const formatted = formatDateLocalized(value);
+        if (formatted && formatted.trim()) return formatted;
+      } catch (error) {
+        // ignore fallback
+      }
+    }
+    if (typeof formatDate === 'function') {
+      try {
+        const formatted = formatDate(value);
+        if (formatted && formatted.trim()) return formatted;
+      } catch (error) {
+        // ignore fallback
+      }
+    }
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '-';
+    return date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
   function formatCurrency(v){
     if(v === undefined || v === null || v === '') return '-';
     const num = Number(v);
@@ -7349,7 +7970,19 @@ function openFinancialCustomization() {
       grid.dataset.enhanced = 'true';
     }
 
-    const projects = (getProjects() || [])
+    const storedProjects = getProjects() || [];
+    const normalizedProjects = window.projectStore
+      ? window.projectStore.normalizeProjects(storedProjects)
+      : storedProjects.slice();
+
+    if (window.projectStore) {
+      window.projectStore.projects = normalizedProjects.slice();
+      window.projectStore.saveProjects();
+    } else {
+      saveProjects(normalizedProjects);
+    }
+
+    const projects = normalizedProjects
       .slice()
       .sort((a, b) => {
         const aTime = new Date(a.createdAt || a.id || 0).getTime();
@@ -7357,10 +7990,22 @@ function openFinancialCustomization() {
         return bTime - aTime;
       });
 
-    projects.forEach(p => {
-      const existingCard = grid.querySelector(`[data-proj-id="${p.id}"]`);
-      if (existingCard) return;
+    grid.querySelectorAll('.project-card[data-proj-id]').forEach(el => el.remove());
 
+    const emptyState = grid.querySelector('[data-empty-state]');
+    if (!projects.length) {
+      if (!emptyState) {
+        const placeholder = document.createElement('div');
+        placeholder.setAttribute('data-empty-state', 'true');
+        placeholder.className = 'col-span-full bg-white border border-dashed border-border rounded-xl p-8 text-center text-text-secondary';
+        placeholder.innerHTML = '<i class="fas fa-folder-open text-3xl text-primary mb-3 block"></i>لا توجد مشاريع مسجلة بعد. ابدأ بإنشاء مشروع جديد من الإجراءات السريعة.';
+        grid.appendChild(placeholder);
+      }
+    } else if (emptyState) {
+      emptyState.remove();
+    }
+
+    projects.forEach(p => {
       const card = document.createElement('div');
       card.className = 'border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card';
       card.setAttribute('data-proj-id', p.id);
@@ -7373,8 +8018,12 @@ function openFinancialCustomization() {
       const progressValue = Math.max(0, Math.min(100, Number(p.progress ?? 0)));
       const clientDisplay = (p.client && p.client.name) || p.clientName || (typeof p.client === 'string' ? p.client : 'غير محدد');
       const budgetValue = p.budget?.contractValue ?? p.value;
-      const startDate = p.timeline?.startDate || p.startDate || '-';
-      const endDate = p.timeline?.endDate || p.endDate || '-';
+      const startDate = p.timeline?.startDate || p.startDate || null;
+      const endDate = p.timeline?.endDate || p.endDate || null;
+      const startDateLabel = formatDateSafe(startDate);
+      const endDateLabel = formatDateSafe(endDate);
+      const typeLabel = p.typeLabel || projectTypeLabel(p.type);
+      const locationLabel = formatLocationText(p.location || p.projectLocation || {});
 
       card.innerHTML = `
         <div class="flex items-start justify-between mb-4">
@@ -7394,7 +8043,11 @@ function openFinancialCustomization() {
           </div>
           <div class="flex justify-between">
             <span class="text-text-secondary">تاريخ البداية:</span>
-            <span class="font-medium">${startDate || '-'}</span>
+            <span class="font-medium">${startDateLabel}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-text-secondary">تاريخ التسليم:</span>
+            <span class="font-medium">${endDateLabel}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-text-secondary">نسبة الإنجاز:</span>
@@ -7408,7 +8061,11 @@ function openFinancialCustomization() {
 
         <div class="flex items-center gap-2 text-sm text-text-secondary">
           <i class="fas fa-calendar-alt"></i>
-          <span>ينتهي في: ${endDate || '-'}</span>
+          <span>ينتهي في: ${endDateLabel}</span>
+        </div>
+        <div class="flex items-center justify-between gap-3 text-xs text-text-secondary mt-4 pt-3 border-t border-border">
+          <span class="inline-flex items-center gap-1"><i class="fas fa-layer-group text-primary"></i>${typeLabel}</span>
+          <span class="inline-flex items-center gap-1"><i class="fas fa-map-pin text-error"></i>${locationLabel}</span>
         </div>
       `;
 
@@ -7430,6 +8087,8 @@ function openFinancialCustomization() {
     if (activeCounter) {
       activeCounter.textContent = String(projects.length);
     }
+
+    return projects;
   }
 
   // Repurpose the existing "مشروع جديد" button handler to navigate to the wizard page.
@@ -7454,10 +8113,27 @@ function openFinancialCustomization() {
       showToast('تم إنشاء المشروع بنجاح ✅', true);
     }
 
-    renderStoredProjects(createdId);
+    const renderedProjects = renderStoredProjects(createdId) || [];
 
-    if (createdId) {
-      url.searchParams.delete('created');
+    const directProjectId = url.searchParams.get('project');
+    const autoOpenId = directProjectId || createdId;
+
+    if (autoOpenId) {
+      const targetProject = renderedProjects.find(p => p.id === autoOpenId);
+      if (targetProject && typeof openProjectDetails === 'function') {
+        setTimeout(() => {
+          openProjectDetails(targetProject.id, targetProject.name || 'مشروع');
+        }, 120);
+      }
+    }
+
+    if (createdId || directProjectId) {
+      if (createdId) {
+        url.searchParams.delete('created');
+      }
+      if (directProjectId) {
+        url.searchParams.delete('project');
+      }
       const newSearch = url.searchParams.toString();
       history.replaceState({}, '', newSearch ? `${url.pathname}?${newSearch}` : url.pathname);
     }

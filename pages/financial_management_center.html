@@ -511,7 +511,7 @@
                                 <p class="text-xs text-text-secondary">المجموع: {{grand_total}} ({{tax.rate}} ضريبة)</p>
                             </div>
                         </div>
-                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4" id="invoiceQuickForm">
                             <header class="flex items-center justify-between">
                                 <div>
                                     <h3 class="text-lg font-semibold">نماذج إنشاء وتعديل</h3>
@@ -690,7 +690,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                        <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4" id="smartQuoteBuilder">
                             <header class="flex items-center justify-between">
                                 <div>
                                     <h3 class="text-lg font-semibold">محرر العرض الذكي</h3>
@@ -1587,26 +1587,361 @@
         </main>
     </div>
 
+    <!-- Quick create modals -->
+    <div id="invoiceQuickCreateModal" class="finance-modal hidden" aria-hidden="true">
+        <div class="finance-modal__panel" role="dialog" aria-modal="true" aria-labelledby="invoiceQuickCreateTitle">
+            <header class="flex items-start justify-between gap-4 border-b border-border pb-4">
+                <div>
+                    <p id="invoiceQuickCreateTitle" class="text-lg font-semibold">إنشاء فاتورة ضريبية سريعة</p>
+                    <p class="text-sm text-text-secondary">
+                        املأ الحقول الأساسية ثم عدل التفاصيل لاحقًا من قسم الفواتير أو صدّرها مباشرةً للعميل.
+                    </p>
+                </div>
+                <button class="icon-button" type="button" data-close-modal aria-label="إغلاق نافذة إنشاء الفاتورة">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </header>
+            <form class="space-y-5 pt-5" data-form="finance-quick-create" data-success-message="تم إنشاء مسودة فاتورة وربطها بالقائمة الرئيسية." novalidate>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <label class="form-label" for="invoiceQuickClient">العميل</label>
+                        <input id="invoiceQuickClient" name="client" type="text" class="form-field" placeholder="اختر العميل" data-autofocus />
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickClientNumber">رقم العميل</label>
+                        <input id="invoiceQuickClientNumber" name="client_number" type="text" class="form-field" placeholder="C-1024" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickProject">المشروع</label>
+                        <input id="invoiceQuickProject" name="project" type="text" class="form-field" placeholder="رمز المشروع (اختياري)" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickCurrency">العملة</label>
+                        <select id="invoiceQuickCurrency" name="currency" class="form-field">
+                            <option>ريال سعودي</option>
+                            <option>درهم إماراتي</option>
+                            <option>دينار كويتي</option>
+                            <option>دولار أمريكي</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickIssueDate">تاريخ الإصدار</label>
+                        <input id="invoiceQuickIssueDate" name="issue_date" type="date" class="form-field" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickDueDate">تاريخ الاستحقاق</label>
+                        <input id="invoiceQuickDueDate" name="due_date" type="date" class="form-field" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickStatus">الحالة</label>
+                        <select id="invoiceQuickStatus" name="status" class="form-field">
+                            <option value="draft">مسودة</option>
+                            <option value="sent">مرسل</option>
+                            <option value="partial">مدفوع جزئيًا</option>
+                            <option value="paid">مدفوع</option>
+                            <option value="overdue">متأخر</option>
+                            <option value="void">ملغي</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="invoiceQuickTax">الضريبة</label>
+                        <select id="invoiceQuickTax" name="tax" class="form-field">
+                            <option>15% ضريبة قيمة مضافة</option>
+                            <option>5% ضريبة خدمات</option>
+                            <option>بدون ضريبة</option>
+                        </select>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="form-label" for="invoiceQuickItems">البنود</label>
+                        <textarea id="invoiceQuickItems" name="items" class="form-field" rows="4" placeholder="الوصف، الكمية، الوحدة، السعر، الخصم، الضريبة…"></textarea>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="form-label" for="invoiceQuickTerms">شروط الدفع</label>
+                        <textarea id="invoiceQuickTerms" name="terms" class="form-field" rows="3" placeholder="مدة السداد، غرامات التأخير، تفاصيل التحويل البنكي"></textarea>
+                    </div>
+                </div>
+                <div class="bg-background border border-dashed border-border rounded-xl p-4 text-xs text-text-secondary space-y-2">
+                    <p class="font-medium text-text-primary">المتغيرات المتاحة للقالب الذكي</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="token">{{client.name}}</span>
+                        <span class="token">{{client.number}}</span>
+                        <span class="token">{{invoice.number}}</span>
+                        <span class="token">{{project.code}}</span>
+                        <span class="token">{{issue_date}}</span>
+                        <span class="token">{{due_date}}</span>
+                        <span class="token">{{line.total}}</span>
+                        <span class="token">{{tax.rate}}</span>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 text-xs text-text-secondary">
+                        <i class="fas fa-bell text-warning"></i>
+                        <span>سيتم إنشاء تذكيرات استحقاق تلقائية 7/3/1 أيام قبل الموعد.</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="btn-primary" type="submit" data-success-message="تم حفظ الفاتورة كمسودة ويمكنك استكمالها لاحقًا.">حفظ كمسودة</button>
+                        <button class="btn-secondary" type="submit" data-success-message="تم إرسال الفاتورة للعميل مع إشعار تلقائي بالتذكيرات.">إرسال فوري</button>
+                        <button class="btn-ghost" type="button" data-close-modal>إلغاء</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="smartQuoteLaunchModal" class="finance-modal hidden" aria-hidden="true">
+        <div class="finance-modal__panel" role="dialog" aria-modal="true" aria-labelledby="smartQuoteLaunchTitle">
+            <header class="flex items-start justify-between gap-4 border-b border-border pb-4">
+                <div>
+                    <p id="smartQuoteLaunchTitle" class="text-lg font-semibold">إطلاق العرض الذكي</p>
+                    <p class="text-sm text-text-secondary">
+                        استخدم القالب الذكي لإعداد عرض سعر قابل للتحويل إلى فاتورة مع نسخة PDF متسقة بصريًا.
+                    </p>
+                </div>
+                <button class="icon-button" type="button" data-close-modal aria-label="إغلاق نافذة العرض الذكي">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </header>
+            <form class="space-y-5 pt-5" data-form="finance-quick-create" data-success-message="تم حفظ مسودة العرض الذكي مع ربط المشروع والعميل." novalidate>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <label class="form-label" for="quoteQuickClient">العميل</label>
+                        <input id="quoteQuickClient" name="client" type="text" class="form-field" placeholder="اسم العميل" data-autofocus />
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickProject">المشروع</label>
+                        <input id="quoteQuickProject" name="project" type="text" class="form-field" placeholder="رمز المشروع (اختياري)" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickIssueDate">تاريخ الإصدار</label>
+                        <input id="quoteQuickIssueDate" name="issue_date" type="date" class="form-field" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickExpiryDate">تاريخ انتهاء الصلاحية</label>
+                        <input id="quoteQuickExpiryDate" name="expiry_date" type="date" class="form-field" />
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="form-label" for="quoteQuickIntro">المقدمة</label>
+                        <textarea id="quoteQuickIntro" name="intro" class="form-field" rows="3" placeholder="تحية العميل وملخص الحل المقترح"></textarea>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="form-label" for="quoteQuickScope">وصف الأعمال</label>
+                        <textarea id="quoteQuickScope" name="scope" class="form-field" rows="3" placeholder="تفاصيل الخدمات أو البنود المقترحة"></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickItems">البنود</label>
+                        <textarea id="quoteQuickItems" name="items" class="form-field" rows="4" placeholder="الوصف، الكمية، الوحدة، السعر، الخصم، الضريبة"></textarea>
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickTaxes">الضرائب والخصومات</label>
+                        <input id="quoteQuickTaxes" name="tax" type="text" class="form-field" placeholder="مثال: 15% ضريبة + خصم 5%" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickStatus">الحالة</label>
+                        <select id="quoteQuickStatus" name="status" class="form-field">
+                            <option value="draft">مسودة</option>
+                            <option value="sent">مرسل</option>
+                            <option value="accepted">مقبول</option>
+                            <option value="rejected">مرفوض</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="quoteQuickAttachments">مرفقات</label>
+                        <input id="quoteQuickAttachments" name="attachments" type="file" class="form-field" multiple />
+                    </div>
+                </div>
+                <div class="bg-background border border-dashed border-border rounded-xl p-4 space-y-3 text-xs text-text-secondary">
+                    <p class="font-medium text-text-primary">تفعيل القالب الذكي</p>
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" class="accent-primary" checked />
+                        <span>إظهار المقدمة تلقائيًا عند إرسال PDF</span>
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <input type="checkbox" class="accent-primary" checked />
+                        <span>إدراج وصف الأعمال في الفاتورة عند التحويل</span>
+                    </label>
+                    <div class="flex flex-wrap gap-2 text-[11px]">
+                        <span class="token">{{quote.number}}</span>
+                        <span class="token">{{client.name}}</span>
+                        <span class="token">{{project.code}}</span>
+                        <span class="token">{{line.total}}</span>
+                        <span class="token">{{tax.rate}}</span>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 text-xs text-text-secondary">
+                        <i class="fas fa-rocket text-primary"></i>
+                        <span>يمكن تحويل العرض إلى فاتورة بنقرة واحدة مع الحفاظ على الترقيم.</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="btn-primary" type="submit" data-success-message="تم إرسال العرض الذكي للعميل مع نسخة PDF متوافقة مع الهوية.">حفظ وإرسال</button>
+                        <button class="btn-secondary" type="submit" data-success-message="تم حفظ مسودة العرض الذكي للتعديل لاحقًا دون إرسال.">حفظ كمسودة فقط</button>
+                        <button class="btn-ghost" type="button" data-close-modal>إلغاء</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
 
+        const activateTab = (targetId) => {
+            if (!targetId) return;
+
+            tabButtons.forEach((btn) => {
+                const isActive = btn.dataset.target === targetId;
+                btn.classList.toggle('is-active', isActive);
+                btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+        }
+
+            tabContents.forEach((content) => {
+                content.classList.toggle('hidden', content.id !== targetId);
+            });
+        };
+
         tabButtons.forEach((button) => {
             button.addEventListener('click', () => {
-                const targetId = button.dataset.target;
-
-                tabButtons.forEach((btn) => btn.classList.remove('is-active'));
-                button.classList.add('is-active');
-
-                tabContents.forEach((content) => {
-                    if (content.id === targetId) {
-                        content.classList.remove('hidden');
-                    } else {
-                        content.classList.add('hidden');
-                    }
-                });
+                activateTab(button.dataset.target);
             });
         });
+
+        const defaultTab = document.querySelector('.tab-button.is-active')?.dataset.target || tabButtons[0]?.dataset.target;
+        if (defaultTab) {
+            activateTab(defaultTab);
+        }
+
+        const runAfterFrame = (callback) => {
+            if (typeof window.requestAnimationFrame === 'function') {
+                window.requestAnimationFrame(callback);
+            } else {
+                setTimeout(callback, 0);
+            }
+        };
+
+        const scrollToFinanceSection = (selector) => {
+            const target = document.querySelector(selector);
+            if (!target) return;
+
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.classList.add('finance-focus-ring');
+            setTimeout(() => target.classList.remove('finance-focus-ring'), 1800);
+        };
+
+        const invoiceModal = document.getElementById('invoiceQuickCreateModal');
+        const quoteModal = document.getElementById('smartQuoteLaunchModal');
+        let activeFinanceModal = null;
+
+        function lockBodyScroll() {
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function unlockBodyScroll() {
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function closeFinanceModal(modal, restoreFocus = true) {
+            if (!modal) return;
+
+            modal.setAttribute('aria-hidden', 'true');
+            setTimeout(() => {
+                if (modal.getAttribute('aria-hidden') === 'true') {
+                    modal.classList.add('hidden');
+                }
+            }, 220);
+
+            if (activeFinanceModal === modal) {
+                activeFinanceModal = null;
+                unlockBodyScroll();
+            }
+
+            const trigger = modal.__trigger;
+            modal.__trigger = null;
+
+            if (restoreFocus && trigger instanceof HTMLElement) {
+                trigger.focus();
+            }
+        }
+
+        function openFinanceModal(modal, trigger) {
+            if (!modal) return;
+
+            if (activeFinanceModal && activeFinanceModal !== modal) {
+                closeFinanceModal(activeFinanceModal, false);
+            }
+
+            modal.classList.remove('hidden');
+            modal.__trigger = trigger || null;
+            activeFinanceModal = modal;
+            lockBodyScroll();
+
+            runAfterFrame(() => {
+                modal.setAttribute('aria-hidden', 'false');
+                const focusTarget = modal.querySelector('[data-autofocus]') || modal.querySelector('input, textarea, select');
+                if (focusTarget instanceof HTMLElement) {
+                    focusTarget.focus();
+                }
+            });
+        }
+
+        [invoiceModal, quoteModal].forEach((modal) => {
+            if (!modal) return;
+
+            modal.addEventListener('mousedown', (event) => {
+                if (event.target === modal) {
+                    closeFinanceModal(modal);
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-close-modal]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.finance-modal');
+                closeFinanceModal(modal);
+            });
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && activeFinanceModal) {
+                closeFinanceModal(activeFinanceModal);
+            }
+        });
+
+        document.querySelectorAll('[data-form="finance-quick-create"]').forEach((form) => {
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const modal = form.closest('.finance-modal');
+                const submitter = event.submitter;
+                const successMessage = submitter?.dataset.successMessage || form.dataset.successMessage;
+                closeFinanceModal(modal);
+                if (successMessage) {
+                    alert(successMessage);
+                }
+            });
+        });
+
+        const newInvoiceTrigger = document.querySelector('[data-action="new-invoice"]');
+        if (newInvoiceTrigger) {
+            newInvoiceTrigger.addEventListener('click', () => {
+                activateTab('tab-invoices');
+                runAfterFrame(() => {
+                    scrollToFinanceSection('#invoiceQuickForm');
+                });
+                openFinanceModal(invoiceModal, newInvoiceTrigger);
+            });
+        }
+
+        const newQuoteTrigger = document.querySelector('[data-action="new-quote"]');
+        if (newQuoteTrigger) {
+            newQuoteTrigger.addEventListener('click', () => {
+                activateTab('tab-quotes');
+                runAfterFrame(() => {
+                    scrollToFinanceSection('#smartQuoteBuilder');
+                });
+                openFinanceModal(quoteModal, newQuoteTrigger);
+            });
+        }
 
         const rangeChips = document.querySelectorAll('.range-chip');
         rangeChips.forEach((chip) => {

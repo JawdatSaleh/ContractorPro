@@ -357,7 +357,7 @@ body {
                             <i class="fas fa-templates ml-2 text-accent"></i>قوالب المشاريع (اختياري)
                         </h4>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('villa')">
+                            <div class="project-template-card bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('villa', this)">
                                 <div class="text-center">
                                     <i class="fas fa-home text-primary text-2xl mb-2"></i>
                                     <h5 class="font-medium text-text-primary">قالب فيلا سكنية</h5>
@@ -365,7 +365,7 @@ body {
                                 </div>
                             </div>
                             
-                            <div class="bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('commercial')">
+                            <div class="project-template-card bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('commercial', this)">
                                 <div class="text-center">
                                     <i class="fas fa-building text-success text-2xl mb-2"></i>
                                     <h5 class="font-medium text-text-primary">قالب مبنى تجاري</h5>
@@ -373,7 +373,7 @@ body {
                                 </div>
                             </div>
                             
-                            <div class="bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('custom')">
+                            <div class="project-template-card bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('custom', this)">
                                 <div class="text-center">
                                     <i class="fas fa-cog text-warning text-2xl mb-2"></i>
                                     <h5 class="font-medium text-text-primary">تكوين مخصص</h5>
@@ -857,6 +857,7 @@ body {
         let currentStep = 1;
         const totalSteps = 5;
         let projectData = {};
+        let selectedProjectTemplate = null;
         
         // Sample data for team members
         const teamMembers = {
@@ -1492,16 +1493,17 @@ body {
             document.getElementById('clientSearch').value = '';
         }
         
-        function selectTemplate(template) {
-            // Remove previous selections
-            document.querySelectorAll('[onclick*="selectTemplate"]').forEach(btn => {
-                btn.classList.remove('border-primary', 'bg-primary-50');
+        function selectTemplate(template, element) {
+            selectedProjectTemplate = template;
+
+            document.querySelectorAll('.project-template-card').forEach(card => {
+                card.classList.remove('border-primary', 'bg-primary-50', 'shadow-lg');
             });
-            
-            // Add selection to clicked template
-            event.target.classList.add('border-primary', 'bg-primary-50');
-            
-            // Apply template values based on selection
+
+            if (element) {
+                element.classList.add('border-primary', 'bg-primary-50', 'shadow-lg');
+            }
+
             const projectType = document.getElementById('projectType');
             if (template === 'villa') {
                 if (projectType.value === '') projectType.value = 'residential_villa';
@@ -1578,12 +1580,46 @@ body {
 <script>
 (() => {
   const STORAGE_KEY = 'contractorPro.projects';
+  const LEGACY_KEY = 'projects';
+  const CITY_LABELS = {
+    riyadh: 'الرياض',
+    jeddah: 'جدة',
+    dammam: 'الدمام',
+    mecca: 'مكة المكرمة',
+    medina: 'المدينة المنورة',
+    khobar: 'الخبر',
+    tabuk: 'تبوك',
+    abha: 'أبها'
+  };
+
+  function resolveCityLabel(value, fallback = '') {
+    if (!value) return fallback || '';
+    return CITY_LABELS[value] || fallback || value;
+  }
 
   function getProjects(){
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-    catch(e){ return []; }
+    let parsed = [];
+    try {
+      parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    } catch (error) {
+      parsed = [];
+    }
+
+    if ((!Array.isArray(parsed) || !parsed.length) && localStorage.getItem(LEGACY_KEY)) {
+      try {
+        parsed = JSON.parse(localStorage.getItem(LEGACY_KEY) || '[]');
+      } catch (error) {
+        parsed = [];
+      }
+    }
+
+    return Array.isArray(parsed) ? parsed : [];
   }
-  function saveProjects(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+  function saveProjects(arr){
+    const serialized = JSON.stringify(arr);
+    localStorage.setItem(STORAGE_KEY, serialized);
+    localStorage.setItem(LEGACY_KEY, serialized);
+  }
 
   function collectField(id){
     const el = document.getElementById(id);
@@ -1592,11 +1628,20 @@ body {
     return (el.value || '').trim();
   }
 
+  function collectSelectValueWithLabel(id) {
+    const el = document.getElementById(id);
+    if (!el) return { value: '', label: '' };
+    const value = (el.value || '').trim();
+    const label = el.options?.[el.selectedIndex]?.textContent?.trim() || value;
+    return { value, label };
+  }
+
   function validate(project){
     const requiredText = {
       'projectName': 'اسم المشروع',
       'projectType': 'نوع المشروع',
       'projectDescription': 'وصف المشروع',
+      'projectCity': 'المدينة',
       'clientName': 'اسم العميل',
       'clientPhone': 'رقم الهاتف',
       'clientId': 'رقم الهوية / السجل'
@@ -1658,10 +1703,102 @@ body {
       return {
         id: `phase-${Date.now()}-${index}`,
         name,
-        durationDays: duration,
-        order: index + 1
+        durationDays: Number.isFinite(Number(duration)) ? Number(duration) : 0,
+        order: index + 1,
+        progressPercent: 0,
+        status: 'planned',
+        dependencies: [],
+        priority: 'medium'
       };
     });
+  }
+
+  function schedulePhases(phases, projectId, projectStart){
+    if (!Array.isArray(phases) || !phases.length) return [];
+
+    let cursor = null;
+    if (projectStart) {
+      const start = new Date(projectStart);
+      cursor = Number.isNaN(start.getTime()) ? null : start;
+    }
+
+    return phases.map((phase, index) => {
+      const duration = Math.max(0, Number(phase.durationDays) || 0);
+      const normalized = {
+        id: phase.id || `phase-${projectId}-${index + 1}`,
+        projectId,
+        name: phase.name || `مرحلة ${index + 1}`,
+        description: phase.description || '',
+        order: Number.isFinite(Number(phase.order)) ? Number(phase.order) : index + 1,
+        durationDays: duration,
+        progressPercent: Number(phase.progressPercent) || 0,
+        status: phase.status || 'planned',
+        assignee: phase.assignee || '',
+        dependencies: Array.isArray(phase.dependencies) ? phase.dependencies : [],
+        priority: phase.priority || 'medium',
+        createdAt: new Date().toISOString()
+      };
+
+      if (cursor) {
+        const start = new Date(cursor);
+        normalized.startDate = start.toISOString().split('T')[0];
+
+        const span = duration > 0 ? duration - 1 : 0;
+        const end = new Date(cursor);
+        if (span > 0) {
+          end.setDate(end.getDate() + span);
+        }
+        normalized.endDate = end.toISOString().split('T')[0];
+
+        if (duration > 0) {
+          cursor.setDate(cursor.getDate() + duration);
+        }
+      }
+
+      return normalized;
+    });
+  }
+
+  function persistPhases(projectId, phases){
+    const storageKeys = ['project_phases_all', 'phases'];
+    storageKeys.forEach(key => {
+      let stored = [];
+      try {
+        stored = JSON.parse(localStorage.getItem(key) || '[]');
+      } catch (error) {
+        stored = [];
+      }
+      const filtered = Array.isArray(stored) ? stored.filter(item => item.projectId !== projectId) : [];
+      localStorage.setItem(key, JSON.stringify([...filtered, ...phases]));
+    });
+    appendPhaseLogs(projectId, phases);
+  }
+
+  function appendPhaseLogs(projectId, phases){
+    if (!Array.isArray(phases) || !phases.length) return;
+    let logs = [];
+    try {
+      logs = JSON.parse(localStorage.getItem('phases_logs') || '[]');
+    } catch (error) {
+      logs = [];
+    }
+
+    const timestamp = new Date().toISOString();
+    const newLogs = phases.map(phase => ({
+      id: `phase-log-${phase.id}`,
+      timestamp,
+      type: 'create',
+      phaseId: phase.id,
+      phaseName: phase.name,
+      before: null,
+      after: phase,
+      actor: 'معالج إنشاء المشروع',
+      projectId,
+      description: `تم إنشاء المرحلة "${phase.name}" ضمن المشروع الجديد`
+    }));
+
+    const merged = [...newLogs, ...(Array.isArray(logs) ? logs : [])].slice(0, 500);
+    localStorage.setItem('phases_logs', JSON.stringify(merged));
   }
 
   function resolveTeamMember(group, id){
@@ -1672,6 +1809,7 @@ body {
 
   function gatherWizardData(){
     const projectId = 'PRJ-' + Date.now();
+    const projectTypeSelection = collectSelectValueWithLabel('projectType');
     const startDate = collectField('startDate') || collectField('projectStartDate');
     const endDate = collectField('endDate') || collectField('projectEndDate');
     let durationDays = parseDuration(document.getElementById('projectDuration')?.textContent || '');
@@ -1689,6 +1827,8 @@ body {
     if ((!durationDays || Number.isNaN(durationDays)) && phases.length) {
       durationDays = phases.reduce((sum, phase) => sum + (Number(phase.durationDays) || 0), 0);
     }
+
+    const scheduledPhases = schedulePhases(phases, projectId, startDate);
 
     const materialsCost = parseFloat(document.getElementById('materialsCost')?.value || 0);
     const laborCost = parseFloat(document.getElementById('laborCost')?.value || 0);
@@ -1729,14 +1869,49 @@ body {
       address: collectField('clientAddress')
     };
 
+    const citySelection = collectSelectValueWithLabel('projectCity');
+    const resolvedCityLabel = resolveCityLabel(citySelection.value, citySelection.label);
+
+    const templateLabels = {
+      villa: 'قالب فيلا سكنية',
+      commercial: 'قالب مبنى تجاري',
+      custom: 'تكوين مخصص'
+    };
+    const templateLabel = selectedProjectTemplate ? (templateLabels[selectedProjectTemplate] || 'تكوين مخصص') : '';
+
+    const paymentTermsValue = collectField('paymentTerms');
+    const paymentTermsLabelMap = {
+      lumpsum: 'دفعة واحدة',
+      '2payments': 'دفعتان',
+      '3payments': '3 دفعات',
+      '4payments': '4 دفعات',
+      monthly: 'دفعات شهرية',
+      milestone: 'حسب مراحل الإنجاز'
+    };
+    const paymentTermsLabel = paymentTermsValue ? (paymentTermsLabelMap[paymentTermsValue] || paymentTermsValue) : '';
+
+    let paymentsCount = null;
+    if (paymentTermsValue) {
+      const match = paymentTermsValue.match(/(\d+)/);
+      if (match) {
+        paymentsCount = Number(match[1]);
+      } else if (paymentTermsValue === 'lumpsum') {
+        paymentsCount = 1;
+      }
+    }
+
     const project = {
       id: projectId,
       code: '#' + projectId,
       name: collectField('projectName'),
-      type: collectField('projectType'),
+      type: projectTypeSelection.value,
+      typeLabel: projectTypeSelection.label,
       description: collectField('projectDescription'),
+      template: selectedProjectTemplate,
+      templateLabel,
       location: {
-        city: collectField('projectCity'),
+        city: resolvedCityLabel,
+        cityCode: citySelection.value,
         district: collectField('projectDistrict'),
         address: collectField('projectAddress')
       },
@@ -1770,7 +1945,9 @@ body {
         contractValue,
         currency: 'SAR',
         advancePayment: parseFloat(document.getElementById('advancePayment')?.value || 0),
-        paymentTerms: collectField('paymentTerms')
+        paymentTerms: paymentTermsValue,
+        paymentTermsLabel,
+        paymentsCount
       },
       value: contractValue,
       status: 'active',
@@ -1783,7 +1960,7 @@ body {
       equipment: equipmentSelections,
       materials: materialsSelections,
       subcontractors: subcontractorSelections,
-      phases,
+      phases: scheduledPhases,
       attachments: uploadedFiles,
       expenses: [],
       subcontracts: [],
@@ -1795,6 +1972,9 @@ body {
     const arr = getProjects();
     arr.push(project);
     saveProjects(arr);
+    if (scheduledPhases.length) {
+      persistPhases(projectId, scheduledPhases);
+    }
     window.location.href = 'projects_management_center.html?created=' + encodeURIComponent(project.id);
   }
 

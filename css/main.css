@@ -4359,3 +4359,103 @@ body {
   display: inline-flex;
   gap: 0.5rem;
 }
+
+
+.finance-focus-ring {
+  position: relative;
+}
+
+.finance-focus-ring::after {
+  content: "";
+  position: absolute;
+  inset: -0.45rem;
+  border-radius: inherit;
+  border: 2px solid rgba(37, 99, 235, 0.45);
+  pointer-events: none;
+  animation: financeFocusPulse 1.6s ease-out;
+  opacity: 0;
+}
+
+@keyframes financeFocusPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+.finance-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background-color: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(10px);
+  transition: opacity 0.25s ease;
+}
+
+.finance-modal[aria-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.finance-modal[aria-hidden="false"] {
+  opacity: 1;
+}
+
+.finance-modal__panel {
+  width: min(720px, 100%);
+  max-height: min(90vh, 860px);
+  overflow-y: auto;
+  background-color: var(--color-surface);
+  border-radius: 1.25rem;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+  padding: 1.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  animation: financeModalSlide 0.32s ease;
+}
+
+@keyframes financeModalSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background-color: rgba(255, 255, 255, 0.4);
+  color: var(--color-text-secondary);
+  transition: all var(--duration-fast) ease-out;
+}
+
+.icon-button:hover,
+.icon-button:focus-visible {
+  color: var(--color-text-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
