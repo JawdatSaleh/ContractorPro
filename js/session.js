@@ -48,7 +48,7 @@ function initializeApplicationLayout() {
 
     const activeLink = body.dataset.activeLink || activeMap[path] || 'home';
 
-    const legacyHeader = document.querySelector('header');
+    const legacyHeader = document.querySelector('[data-layout-header]') || document.querySelector('header');
     const legacyTitle = body.dataset.pageTitle || (legacyHeader && legacyHeader.querySelector('h1') ? legacyHeader.querySelector('h1').textContent.trim() : '') || document.title;
     const legacySubtitle = body.dataset.pageSubtitle || (legacyHeader && legacyHeader.querySelector('p') ? legacyHeader.querySelector('p').textContent.trim() : '');
     let legacyActions = null;
@@ -66,7 +66,9 @@ function initializeApplicationLayout() {
     }
 
     const originalMain = document.querySelector('main');
-    const mainHTML = originalMain ? originalMain.innerHTML : body.innerHTML;
+    const manualContentRoot = body.querySelector('[data-page-root]');
+    const contentSource = originalMain || manualContentRoot;
+    const mainHTML = contentSource ? contentSource.innerHTML : body.innerHTML;
 
     const bodyScripts = [];
     document.querySelectorAll('body script').forEach((script) => {
