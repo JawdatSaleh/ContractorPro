@@ -771,6 +771,7 @@
                                         <i class="fas fa-upload"></i>
                                         <span>استيراد CSV</span>
                                     </button>
+                                    <input type="file" id="phaseCsvInput" accept=".csv" class="hidden" />
                                 </div>
                             </div>
                             
@@ -2011,7 +2012,7 @@
                                 <!-- Dynamic photo gallery will be loaded here -->
                             </div>
                             <div class="mt-4 text-center">
-                                <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast" onclick="loadMorePhotos()">
+                                <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast" onclick="loadMorePhotos()" id="btnLoadMorePhotos">
                                     <i class="fas fa-download"></i> عرض المزيد
                                 </button>
                             </div>
@@ -2817,6 +2818,100 @@
         </div>
     </div>
 
+    <!-- Daily Report Details Modal -->
+    <div id="modalDailyReportDetails" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-modal max-w-3xl w-full mx-4">
+            <div class="flex items-center justify-between border-b border-border px-6 py-4">
+                <div>
+                    <h3 class="text-xl font-bold text-text-primary">تفاصيل التقرير اليومي</h3>
+                    <p class="text-sm text-text-secondary" id="detailsReportMeta"></p>
+                </div>
+                <button onclick="closeDailyReportDetails()" class="text-text-secondary hover:text-text-primary">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-secondary-50 rounded-lg">
+                        <p class="text-xs text-text-secondary mb-1">تاريخ التقرير</p>
+                        <p class="text-lg font-semibold text-text-primary" id="detailsReportDate"></p>
+                    </div>
+                    <div class="p-4 bg-secondary-50 rounded-lg">
+                        <p class="text-xs text-text-secondary mb-1">المرحلة</p>
+                        <p class="text-lg font-semibold text-text-primary" id="detailsReportPhase"></p>
+                    </div>
+                    <div class="p-4 bg-secondary-50 rounded-lg">
+                        <p class="text-xs text-text-secondary mb-1">نسبة الإنجاز</p>
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 h-2 bg-secondary-200 rounded-full overflow-hidden">
+                                <div id="detailsReportProgressBar" class="h-2 bg-primary rounded-full" style="width: 0%"></div>
+                            </div>
+                            <span class="text-lg font-semibold text-text-primary" id="detailsReportProgress"></span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-secondary-50 rounded-lg">
+                        <p class="text-xs text-text-secondary mb-1">الحالة</p>
+                        <span id="detailsReportStatus" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-secondary-200 text-text-primary"></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="text-sm font-semibold text-text-primary mb-2">تفاصيل الأعمال المنفذة</h4>
+                        <p class="text-sm leading-6 text-text-secondary whitespace-pre-line" id="detailsReportWork"></p>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="text-sm font-semibold text-text-primary mb-2">التحديات والملاحظات</h4>
+                            <p class="text-sm leading-6 text-text-secondary whitespace-pre-line" id="detailsReportIssues"></p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="p-3 bg-secondary-50 rounded-lg">
+                                <p class="text-xs text-text-secondary">حالة الطقس</p>
+                                <p class="text-sm font-medium text-text-primary" id="detailsReportWeather"></p>
+                            </div>
+                            <div class="p-3 bg-secondary-50 rounded-lg">
+                                <p class="text-xs text-text-secondary">عدد العمال</p>
+                                <p class="text-sm font-medium text-text-primary" id="detailsReportWorkers"></p>
+                            </div>
+                            <div class="md:col-span-2 p-3 bg-secondary-50 rounded-lg">
+                                <p class="text-xs text-text-secondary">المعدات المستخدمة</p>
+                                <p class="text-sm font-medium text-text-primary" id="detailsReportEquipment"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-sm font-semibold text-text-primary">المرفقات</h4>
+                        <span class="text-xs text-text-secondary" id="detailsReportAttachmentCount"></span>
+                    </div>
+                    <div id="dailyReportDetailsAttachments" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Attachments will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Previous Reports Modal -->
+    <div id="modalPreviousReports" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-modal max-w-4xl w-full mx-4">
+            <div class="flex items-center justify-between border-b border-border px-6 py-4">
+                <h3 class="text-xl font-bold text-text-primary">سجل التقارير السابقة</h3>
+                <button onclick="closePreviousReportsModal()" class="text-text-secondary hover:text-text-primary">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5">
+                <div id="previousReportsList" class="space-y-4 max-h-[70vh] overflow-y-auto">
+                    <!-- Previous reports will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
 // Global variables
 let currentProjectId = null;
@@ -2828,6 +2923,11 @@ let paymentFilters = { type: '', status: '', period: '' };
 let paymentSortState = { field: 'dueDate', direction: 'asc' };
 let paymentsTimelineView = 'monthly';
 let monthlyPaymentsChart = null;
+let dailyReportFilters = { phaseId: '', status: '', dateFrom: '', dateTo: '' };
+let dailyReportSortState = { field: 'date', direction: 'desc' };
+let photoGalleryState = { allPhotos: [], sortedPhotos: [], displayedCount: 0, filter: 'date', currentIndex: 0 };
+let activeReportDetailsId = null;
+let ganttZoomLevel = 1;
 let paymentStatusChart = null;
 let financialPerformanceChart = null;
 let costBreakdownChart = null;
@@ -4798,19 +4898,69 @@ function loadDailyReportsTable() {
         return;
     }
 
-    const reports = dailyReportsStore.listDailyReports(currentProjectId);
     const tbody = document.getElementById('dailyReportsTableBody');
-    
+    if (!tbody) return;
+
+    const filters = { ...dailyReportFilters };
+    const reports = dailyReportsStore.listDailyReports(currentProjectId, filters);
+
     if (reports.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" class="text-center p-8 text-text-secondary">لا توجد تقارير يومية مسجلة</td></tr>';
         return;
     }
 
-    tbody.innerHTML = reports.map(report => {
-        const phase = phasesStore ? phasesStore.listPhases(currentProjectId).find(p => p.id === report.phaseId) : null;
-        const phaseName = phase ? phase.name : 'مرحلة محذوفة';
-        const attachmentCount = dailyReportsStore.listAttachments(report.id).length;
-        
+    const phasesById = phasesStore ? Object.fromEntries(phasesStore.listPhases(currentProjectId).map(phase => [phase.id, phase])) : {};
+
+    const enrichedReports = reports.map(report => {
+        const phase = phasesById[report.phaseId];
+        const attachments = dailyReportsStore.listAttachments(report.id);
+
+        return {
+            report,
+            phaseName: phase ? phase.name : 'مرحلة محذوفة',
+            attachmentCount: attachments.length
+        };
+    });
+
+    const { field, direction } = dailyReportSortState;
+    const multiplier = direction === 'asc' ? 1 : -1;
+
+    enrichedReports.sort((a, b) => {
+        const valueFor = (item) => {
+            switch (field) {
+                case 'phase':
+                    return item.phaseName || '';
+                case 'progressPercent':
+                    return item.report.progressPercent || 0;
+                case 'workDone':
+                    return item.report.workDescription || '';
+                case 'photoCount':
+                    return item.attachmentCount || 0;
+                case 'status':
+                    return getReportStatusText(item.report.status || '');
+                case 'date':
+                default:
+                    return new Date(item.report.date).getTime();
+            }
+        };
+
+        const aValue = valueFor(a);
+        const bValue = valueFor(b);
+
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+            return (aValue - bValue) * multiplier;
+        }
+
+        if (field === 'date') {
+            return (aValue - bValue) * multiplier;
+        }
+
+        return String(aValue).localeCompare(String(bValue), 'ar', { sensitivity: 'base' }) * multiplier;
+    });
+
+    tbody.innerHTML = enrichedReports.map(({ report, phaseName, attachmentCount }) => {
+        const workDescription = report.workDescription || '';
+
         return `
         <tr class="hover:bg-secondary-50 transition-fast cursor-pointer" onclick="viewDailyReportDetails('${report.id}')">
             <td class="p-4 border-b border-border">
@@ -4829,7 +4979,7 @@ function loadDailyReportsTable() {
             </td>
             <td class="p-4 border-b border-border">
                 <div class="text-sm text-text-primary">
-                    ${report.workDescription.length > 50 ? report.workDescription.substring(0, 50) + '...' : report.workDescription}
+                    ${workDescription.length > 50 ? workDescription.substring(0, 50) + '...' : workDescription}
                 </div>
             </td>
             <td class="p-4 border-b border-border text-center">
@@ -4857,7 +5007,8 @@ function loadDailyReportsTable() {
                 </div>
             </td>
         </tr>
-    `}).join('');
+    `;
+    }).join('');
 }
 
 function updateDailyReportKPIs() {
@@ -4875,36 +5026,83 @@ function loadPhotoGallery() {
     if (!dailyReportsStore || !currentProjectId) return;
 
     const reports = dailyReportsStore.listDailyReports(currentProjectId);
-    const gallery = document.getElementById('photoGallery');
-    let photos = [];
+    const phasesMap = phasesStore ? Object.fromEntries(phasesStore.listPhases(currentProjectId).map(phase => [phase.id, phase.name])) : {};
 
-    // Collect all photos from all reports
+    const photos = [];
     reports.forEach(report => {
-        const attachments = dailyReportsStore.listAttachments(report.id)
-            .filter(att => att.fileType === 'image');
-        
+        const attachments = dailyReportsStore.listAttachments(report.id).filter(att => att.fileType === 'image');
         attachments.forEach(att => {
             photos.push({
                 ...att,
                 reportDate: report.date,
-                phaseId: report.phaseId
+                phaseId: report.phaseId,
+                phaseName: phasesMap[report.phaseId] || 'مرحلة غير معروفة'
             });
         });
     });
 
+    photoGalleryState.allPhotos = photos;
+
     if (photos.length === 0) {
-        gallery.innerHTML = '<div class="col-span-full text-center p-8 text-text-secondary">لا توجد صور مرفوعة بعد</div>';
+        photoGalleryState.sortedPhotos = [];
+        photoGalleryState.displayedCount = 0;
+        renderPhotoGallery();
+        renderFullScreenGallery();
         return;
     }
 
-    // Sort photos by date (newest first)
-    photos.sort((a, b) => new Date(b.reportDate) - new Date(a.reportDate));
+    sortGalleryPhotos(true);
+}
 
-    // Show only first 8 photos initially
-    const displayPhotos = photos.slice(0, 8);
-    
+function sortGalleryPhotos(resetDisplay = false) {
+    const filterSelect = document.getElementById('galleryFilter');
+    const filterValue = filterSelect ? filterSelect.value : 'date';
+    photoGalleryState.filter = filterValue;
+
+    let sorted = [...photoGalleryState.allPhotos];
+    if (filterValue === 'phase') {
+        sorted.sort((a, b) => {
+            const byPhase = String(a.phaseName || '').localeCompare(String(b.phaseName || ''), 'ar', { sensitivity: 'base' });
+            if (byPhase !== 0) return byPhase;
+            return new Date(b.reportDate) - new Date(a.reportDate);
+        });
+    } else {
+        sorted.sort((a, b) => new Date(b.reportDate) - new Date(a.reportDate));
+    }
+
+    photoGalleryState.sortedPhotos = sorted;
+
+    if (sorted.length === 0) {
+        photoGalleryState.currentIndex = 0;
+    } else if (resetDisplay) {
+        photoGalleryState.currentIndex = 0;
+    } else {
+        photoGalleryState.currentIndex = Math.min(photoGalleryState.currentIndex, sorted.length - 1);
+    }
+
+    if (resetDisplay || photoGalleryState.displayedCount === 0) {
+        photoGalleryState.displayedCount = Math.min(sorted.length, 8);
+    } else {
+        photoGalleryState.displayedCount = Math.min(photoGalleryState.displayedCount, sorted.length);
+    }
+
+    renderPhotoGallery();
+    renderFullScreenGallery();
+}
+
+function renderPhotoGallery() {
+    const gallery = document.getElementById('photoGallery');
+    if (!gallery) return;
+
+    if (photoGalleryState.sortedPhotos.length === 0) {
+        gallery.innerHTML = '<div class="col-span-full text-center p-8 text-text-secondary">لا توجد صور مرفوعة بعد</div>';
+        updateLoadMoreButton(true);
+        return;
+    }
+
+    const displayPhotos = photoGalleryState.sortedPhotos.slice(0, photoGalleryState.displayedCount);
     gallery.innerHTML = displayPhotos.map((photo, index) => `
-        <div class="aspect-square bg-secondary-100 rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-all" onclick="openPhotoLightbox(${index}, '${photo.id}')">
+        <div class="aspect-square bg-secondary-100 rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-all" onclick="openPhotoLightbox(${index})">
             <img src="${photo.fileUrl}" alt="${photo.fileName}" class="w-full h-full object-cover" />
             <div class="p-2">
                 <p class="text-xs text-text-secondary truncate">${photo.fileName}</p>
@@ -4912,6 +5110,82 @@ function loadPhotoGallery() {
             </div>
         </div>
     `).join('');
+
+    updateLoadMoreButton(photoGalleryState.displayedCount >= photoGalleryState.sortedPhotos.length);
+}
+
+function renderFullScreenGallery() {
+    const grid = document.getElementById('fullScreenGalleryGrid');
+    if (!grid) return;
+
+    if (photoGalleryState.sortedPhotos.length === 0) {
+        grid.innerHTML = '<div class="col-span-full text-center p-8 text-white/80">لا توجد صور للعرض</div>';
+        return;
+    }
+
+    grid.innerHTML = photoGalleryState.sortedPhotos.map((photo, index) => `
+        <div class="bg-white/10 rounded-lg overflow-hidden cursor-pointer hover:bg-white/20 transition-all" onclick="openPhotoLightbox(${index})">
+            <img src="${photo.fileUrl}" alt="${photo.fileName}" class="w-full h-48 object-cover" />
+            <div class="p-3 text-white">
+                <p class="text-sm font-medium truncate">${photo.fileName}</p>
+                <p class="text-xs text-white/70">${formatDate(photo.reportDate)} • ${photo.phaseName}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateLoadMoreButton(disabled = false) {
+    const btn = document.getElementById('btnLoadMorePhotos');
+    if (!btn) return;
+
+    if (photoGalleryState.sortedPhotos.length === 0) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        return;
+    }
+
+    if (disabled) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+}
+
+function getPhotoIndexById(photoId) {
+    return photoGalleryState.sortedPhotos.findIndex(photo => photo.id === photoId);
+}
+
+function openPhotoLightboxById(photoId) {
+    const index = getPhotoIndexById(photoId);
+    if (index !== -1) {
+        openPhotoLightbox(index);
+    }
+}
+
+function renderLightboxPhoto() {
+    const photo = photoGalleryState.sortedPhotos[photoGalleryState.currentIndex];
+    if (!photo) return;
+
+    const lightboxContent = document.getElementById('lightboxContent');
+    const photoInfo = document.getElementById('photoInfo');
+
+    if (lightboxContent) {
+        lightboxContent.innerHTML = `<img src="${photo.fileUrl}" alt="${photo.fileName}" class="max-h-[80vh] object-contain rounded-lg shadow-2xl" />`;
+    }
+
+    if (photoInfo) {
+        const phaseLabel = photo.phaseName ? ` • ${photo.phaseName}` : '';
+        photoInfo.textContent = `${photo.fileName}${phaseLabel} • ${formatDate(photo.reportDate)}`;
+    }
+}
+
+function formatFileSize(bytes) {
+    if (!bytes || isNaN(bytes)) return '';
+    if (bytes < 1024) return `${bytes} بايت`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} كيلوبايت`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} ميجابايت`;
 }
 
 function loadWeeklySummary() {
@@ -5076,6 +5350,9 @@ function deleteDailyReport(reportId) {
         updateDailyReportKPIs();
         loadPhotoGallery();
         loadWeeklySummary();
+        if (activeReportDetailsId === reportId) {
+            closeDailyReportDetails();
+        }
     };
     
     document.getElementById('deleteConfirmText').textContent = `هل أنت متأكد من حذف التقرير اليومي بتاريخ "${formatDate(report.date)}"؟`;
@@ -5084,16 +5361,100 @@ function deleteDailyReport(reportId) {
 }
 
 function viewDailyReportDetails(reportId) {
-    // Open detailed view modal (would be implemented as separate modal)
-    console.log('Viewing daily report details for:', reportId);
-    alert('عرض تفاصيل التقرير - قيد التطوير');
+    if (!dailyReportsStore || !currentProjectId) return;
+
+    const report = dailyReportsStore.getDailyReport(reportId);
+    if (!report) return;
+
+    const phase = phasesStore ? phasesStore.listPhases(currentProjectId).find(p => p.id === report.phaseId) : null;
+    const attachments = dailyReportsStore.listAttachments(reportId);
+
+    activeReportDetailsId = reportId;
+
+    const metaElement = document.getElementById('detailsReportMeta');
+    if (metaElement) {
+        const createdBy = report.createdBy || 'غير معروف';
+        const createdAt = report.createdAt ? formatDateTime(report.createdAt) : '';
+        metaElement.textContent = createdAt ? `تم الإنشاء بواسطة ${createdBy} في ${createdAt}` : `تم الإنشاء بواسطة ${createdBy}`;
+    }
+
+    document.getElementById('detailsReportDate').textContent = formatDate(report.date);
+    document.getElementById('detailsReportPhase').textContent = phase ? phase.name : 'مرحلة محذوفة';
+    document.getElementById('detailsReportProgress').textContent = `${report.progressPercent}%`;
+    document.getElementById('detailsReportProgressBar').style.width = `${report.progressPercent}%`;
+
+    const statusElement = document.getElementById('detailsReportStatus');
+    if (statusElement) {
+        const statusColor = getReportStatusColor(report.status);
+        statusElement.className = `inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-${statusColor}-100 text-${statusColor}`;
+        statusElement.textContent = getReportStatusText(report.status);
+    }
+
+    document.getElementById('detailsReportWork').textContent = report.workDescription || 'لم يتم تسجيل تفاصيل الأعمال المنفذة';
+    document.getElementById('detailsReportIssues').textContent = report.issues || 'لا توجد ملاحظات أو تحديات';
+    document.getElementById('detailsReportWeather').textContent = report.weather || 'غير محدد';
+    document.getElementById('detailsReportWorkers').textContent = report.workersCount ? `${report.workersCount} عامل` : 'غير محدد';
+    document.getElementById('detailsReportEquipment').textContent = report.equipmentUsed || 'لم يتم تسجيل معدات مستخدمة';
+
+    const attachmentsCount = document.getElementById('detailsReportAttachmentCount');
+    if (attachmentsCount) {
+        attachmentsCount.textContent = attachments.length ? `عدد المرفقات: ${attachments.length}` : 'لا توجد مرفقات';
+    }
+
+    const attachmentsContainer = document.getElementById('dailyReportDetailsAttachments');
+    if (attachmentsContainer) {
+        if (attachments.length === 0) {
+            attachmentsContainer.innerHTML = '<div class="col-span-full text-sm text-text-secondary">لا توجد مرفقات مرتبطة بهذا التقرير</div>';
+        } else {
+            attachmentsContainer.innerHTML = attachments.map(attachment => {
+                const sizeLabel = attachment.fileSize ? formatFileSize(attachment.fileSize) : '';
+                const uploadedAt = attachment.uploadedAt ? formatDateTime(attachment.uploadedAt) : '';
+
+                if (attachment.fileType === 'image') {
+                    return `
+                        <div class="p-4 border border-border rounded-lg bg-secondary-50">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <p class="text-sm font-semibold text-text-primary">${attachment.fileName}</p>
+                                    <p class="text-xs text-text-secondary">${sizeLabel} ${uploadedAt ? '• ' + uploadedAt : ''}</p>
+                                </div>
+                                <button class="bg-primary text-white px-3 py-1 rounded text-xs hover:bg-primary-600 transition-fast" onclick="openPhotoLightboxById('${attachment.id}')">
+                                    عرض الصورة
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="p-4 border border-border rounded-lg bg-secondary-50">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-sm font-semibold text-text-primary">${attachment.fileName}</p>
+                                <p class="text-xs text-text-secondary">${sizeLabel} ${uploadedAt ? '• ' + uploadedAt : ''}</p>
+                            </div>
+                            <a href="${attachment.fileUrl}" download class="bg-secondary-200 text-text-primary px-3 py-1 rounded text-xs hover:bg-secondary-300 transition-fast">
+                                تحميل
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    document.getElementById('modalDailyReportDetails').classList.remove('hidden');
+}
+
+function closeDailyReportDetails() {
+    document.getElementById('modalDailyReportDetails').classList.add('hidden');
+    activeReportDetailsId = null;
 }
 
 // Photo Gallery Functions
 function openFullScreenGallery() {
     document.getElementById('modalFullScreenGallery').classList.remove('hidden');
-    // Load full gallery
-    loadFullScreenGallery();
+    renderFullScreenGallery();
 }
 
 function closeFullScreenGallery() {
@@ -5101,16 +5462,27 @@ function closeFullScreenGallery() {
 }
 
 function loadFullScreenGallery() {
-    const gallery = document.getElementById('fullScreenGalleryGrid');
-    // Load all photos in full screen mode
-    gallery.innerHTML = '<div class="col-span-full text-center p-8 text-white">معرض الصور الكامل - قيد التطوير</div>';
+    renderFullScreenGallery();
 }
 
-function openPhotoLightbox(index, photoId) {
+function openPhotoLightbox(index = 0, photoId = null) {
+    if (typeof photoId === 'string') {
+        const byId = getPhotoIndexById(photoId);
+        if (byId !== -1) {
+            index = byId;
+        }
+    }
+
+    if (photoGalleryState.sortedPhotos.length === 0) return;
+
+    if (index < 0 || index >= photoGalleryState.sortedPhotos.length) {
+        index = 0;
+    }
+
+    photoGalleryState.currentIndex = index;
+
     document.getElementById('modalPhotoLightbox').classList.remove('hidden');
-    // Load photo in lightbox
-    const lightboxContent = document.getElementById('lightboxContent');
-    lightboxContent.innerHTML = '<div class="text-white text-center">عرض الصورة - قيد التطوير</div>';
+    renderLightboxPhoto();
 }
 
 function closePhotoLightbox() {
@@ -5118,27 +5490,40 @@ function closePhotoLightbox() {
 }
 
 function previousPhoto() {
-    console.log('Previous photo');
+    if (photoGalleryState.sortedPhotos.length === 0) return;
+
+    photoGalleryState.currentIndex = (photoGalleryState.currentIndex - 1 + photoGalleryState.sortedPhotos.length) % photoGalleryState.sortedPhotos.length;
+    renderLightboxPhoto();
 }
 
 function nextPhoto() {
-    console.log('Next photo');
+    if (photoGalleryState.sortedPhotos.length === 0) return;
+
+    photoGalleryState.currentIndex = (photoGalleryState.currentIndex + 1) % photoGalleryState.sortedPhotos.length;
+    renderLightboxPhoto();
 }
 
 function downloadPhoto() {
-    console.log('Download photo');
+    const photo = photoGalleryState.sortedPhotos[photoGalleryState.currentIndex];
+    if (!photo) return;
+
+    const link = document.createElement('a');
+    link.href = photo.fileUrl;
+    link.download = photo.fileName || 'photo.jpg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 // Filter and Search Functions
 function applyDailyReportFilters() {
-    const filters = {
+    dailyReportFilters = {
         phaseId: document.getElementById('filterReportPhase').value,
         status: document.getElementById('filterReportStatus').value,
         dateFrom: document.getElementById('filterReportDateFrom').value,
         dateTo: document.getElementById('filterReportDateTo').value
     };
-    
-    console.log('Applying daily report filters:', filters);
+
     loadDailyReportsTable();
 }
 
@@ -5147,12 +5532,20 @@ function clearDailyReportFilters() {
     document.getElementById('filterReportStatus').value = '';
     document.getElementById('filterReportDateFrom').value = '';
     document.getElementById('filterReportDateTo').value = '';
-    
+
+    dailyReportFilters = { phaseId: '', status: '', dateFrom: '', dateTo: '' };
     loadDailyReportsTable();
 }
 
 function sortDailyReportTable(field) {
-    console.log('Sorting daily reports by:', field);
+    if (dailyReportSortState.field === field) {
+        dailyReportSortState.direction = dailyReportSortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        dailyReportSortState.field = field;
+        dailyReportSortState.direction = field === 'date' ? 'desc' : 'asc';
+    }
+
+    loadDailyReportsTable();
 }
 
 // Chart and Analytics Functions
@@ -5162,7 +5555,19 @@ function refreshProgressChart() {
 }
 
 function loadMorePhotos() {
-    console.log('Loading more photos');
+    if (photoGalleryState.sortedPhotos.length === 0) return;
+
+    if (photoGalleryState.displayedCount >= photoGalleryState.sortedPhotos.length) {
+        updateLoadMoreButton(true);
+        return;
+    }
+
+    photoGalleryState.displayedCount = Math.min(
+        photoGalleryState.displayedCount + 8,
+        photoGalleryState.sortedPhotos.length
+    );
+
+    renderPhotoGallery();
 }
 
 // Utility Functions for Daily Reports
@@ -5198,7 +5603,49 @@ function getPerformanceText(progressPercent) {
 
 // Placeholder functions for other features
 function viewPreviousReports() {
-    alert('عرض التقارير السابقة - قيد التطوير');
+    if (!dailyReportsStore || !currentProjectId) return;
+
+    const listContainer = document.getElementById('previousReportsList');
+    if (!listContainer) return;
+
+    const reports = dailyReportsStore.listDailyReports(currentProjectId);
+    const phasesById = phasesStore ? Object.fromEntries(phasesStore.listPhases(currentProjectId).map(phase => [phase.id, phase])) : {};
+
+    if (reports.length === 0) {
+        listContainer.innerHTML = '<div class="text-center py-8 text-text-secondary">لا توجد تقارير مسجلة حتى الآن</div>';
+    } else {
+        listContainer.innerHTML = reports.slice(0, 20).map(report => {
+            const phase = phasesById[report.phaseId];
+            const attachments = dailyReportsStore.listAttachments(report.id);
+            const statusColor = getReportStatusColor(report.status);
+
+            return `
+                <div class="border border-border rounded-lg p-4 bg-secondary-50 hover:bg-secondary-100 transition-fast">
+                    <div class="flex items-center justify-between gap-3 mb-3">
+                        <div>
+                            <p class="text-sm font-semibold text-text-primary">${formatDate(report.date)}</p>
+                            <p class="text-xs text-text-secondary">${phase ? phase.name : 'مرحلة محذوفة'}</p>
+                        </div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-${statusColor}-100 text-${statusColor}">
+                            ${getReportStatusText(report.status)}
+                        </span>
+                    </div>
+                    <p class="text-sm text-text-secondary leading-6 mb-3">${(report.workDescription || '').substring(0, 160) || 'لا توجد تفاصيل مسجلة'}${(report.workDescription || '').length > 160 ? '...' : ''}</p>
+                    <div class="flex items-center justify-between text-xs text-text-secondary">
+                        <span>نسبة الإنجاز: <strong class="text-text-primary">${report.progressPercent}%</strong></span>
+                        <span>عدد المرفقات: <strong class="text-text-primary">${attachments.length}</strong></span>
+                        <button class="text-primary hover:underline" onclick="viewDailyReportDetails('${report.id}')">عرض التفاصيل</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    document.getElementById('modalPreviousReports').classList.remove('hidden');
+}
+
+function closePreviousReportsModal() {
+    document.getElementById('modalPreviousReports').classList.add('hidden');
 }
 
 function updateCumulativeProgress() {
@@ -5246,6 +5693,9 @@ function openProjectDetails(projectId, projectName) {
         expenseSortState = { field: 'date', direction: 'desc' };
         subcontractFilters = { contractorName: '', status: '', startDate: '', endDate: '' };
         subcontractSortState = { field: 'startDate', direction: 'asc' };
+        dailyReportFilters = { phaseId: '', status: '', dateFrom: '', dateTo: '' };
+        dailyReportSortState = { field: 'date', direction: 'desc' };
+        photoGalleryState = { allPhotos: [], sortedPhotos: [], displayedCount: 0, filter: 'date', currentIndex: 0 };
 
         ['filterExpenseCategory', 'filterPaymentMethod', 'filterDateFrom', 'filterDateTo', 'filterContractor', 'filterContractStatus', 'filterContractStartDate', 'filterContractEndDate'].forEach(id => {
             const element = document.getElementById(id);
@@ -5253,6 +5703,16 @@ function openProjectDetails(projectId, projectName) {
                 element.value = '';
             }
         });
+        ['filterReportPhase', 'filterReportStatus', 'filterReportDateFrom', 'filterReportDateTo'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = '';
+            }
+        });
+        const galleryFilter = document.getElementById('galleryFilter');
+        if (galleryFilter) {
+            galleryFilter.value = 'date';
+        }
         const searchInput = document.getElementById('searchExpenses');
         if (searchInput) {
             searchInput.value = '';
@@ -5673,9 +6133,11 @@ function loadPhasesLogs() {
 
 function renderGanttChart(phases) {
     const container = document.getElementById('ganttContainer');
-    
+
     if (phases.length === 0) {
         container.innerHTML = '<div class="text-center py-8 text-text-secondary">لا توجد مراحل لعرضها في مخطط جانت</div>';
+        container.style.transform = `scale(${ganttZoomLevel})`;
+        container.style.transformOrigin = 'top right';
         return;
     }
 
@@ -5704,9 +6166,12 @@ function renderGanttChart(phases) {
             </div>
         `;
     });
-    
+
     ganttHTML += '</div>';
     container.innerHTML = ganttHTML;
+    container.style.transform = `scale(${ganttZoomLevel})`;
+    container.style.transformOrigin = 'top right';
+    container.style.transition = 'transform 0.2s ease-in-out';
 }
 
 function switchPhaseSubTab(tabName) {
@@ -5957,11 +6422,19 @@ function formatDateTime(isoString) {
 
 // Gantt chart functions
 function zoomGanttIn() {
-    console.log('Zooming Gantt chart in');
+    ganttZoomLevel = Math.min(ganttZoomLevel + 0.25, 2);
+    if (phasesStore) {
+        const phases = phasesStore.listPhases(currentProjectId);
+        renderGanttChart(phases);
+    }
 }
 
 function zoomGanttOut() {
-    console.log('Zooming Gantt chart out');
+    ganttZoomLevel = Math.max(ganttZoomLevel - 0.25, 0.5);
+    if (phasesStore) {
+        const phases = phasesStore.listPhases(currentProjectId);
+        renderGanttChart(phases);
+    }
 }
 
 function refreshGantt() {
@@ -6833,7 +7306,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (uploadPhotosForm) {
         uploadPhotosForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(e.target);
             const phaseId = formData.get('phaseId');
             const notes = formData.get('notes');
@@ -6851,6 +7324,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('يرجى اختيار المرحلة والصور');
             }
         });
+    }
+
+    const galleryFilter = document.getElementById('galleryFilter');
+    if (galleryFilter) {
+        galleryFilter.addEventListener('change', () => sortGalleryPhotos(true));
+    }
+
+    const phaseCsvInput = document.getElementById('phaseCsvInput');
+    if (phaseCsvInput) {
+        phaseCsvInput.addEventListener('change', handlePhaseCsvImport);
     }
 
     // File drop zone handlers
@@ -7497,11 +7980,152 @@ function switchTimelineView(viewType) {
 
 // Phase management placeholder functions for CSV import
 function importPhasesCSV() {
-    alert('استيراد مراحل من CSV - قيد التطوير');
+    const input = document.getElementById('phaseCsvInput');
+    if (!input) return;
+
+    input.value = '';
+    input.click();
+}
+
+function handlePhaseCsvImport(event) {
+    if (!phasesStore || !currentProjectId) return;
+
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const content = e.target.result;
+            const rows = content.split(/\r?\n/).map(row => row.trim()).filter(row => row.length > 0);
+
+            if (rows.length <= 1) {
+                alert('ملف CSV لا يحتوي على بيانات صالحة للاستيراد.');
+                return;
+            }
+
+            const headers = splitCsvLine(rows[0]).map(header => header.toLowerCase());
+            const headerIndex = (name) => headers.indexOf(name.toLowerCase());
+
+            const nameIndex = headerIndex('name');
+            const startIndex = headerIndex('startdate');
+            const endIndex = headerIndex('enddate');
+
+            if (nameIndex === -1 || startIndex === -1 || endIndex === -1) {
+                alert('يجب أن يحتوي الملف على الأعمدة name, startDate, endDate على الأقل.');
+                return;
+            }
+
+            let importedCount = 0;
+
+            for (let i = 1; i < rows.length; i++) {
+                const columns = splitCsvLine(rows[i]);
+                const name = columns[nameIndex];
+                const startDate = columns[startIndex];
+                const endDate = columns[endIndex];
+
+                if (!name || !startDate || !endDate) {
+                    continue;
+                }
+
+                const phaseData = {
+                    name,
+                    description: headerIndex('description') !== -1 ? columns[headerIndex('description')] : '',
+                    startDate,
+                    endDate,
+                    progressPercent: headerIndex('progresspercent') !== -1 ? parseFloat(columns[headerIndex('progresspercent')] || 0) : 0,
+                    status: headerIndex('status') !== -1 ? columns[headerIndex('status')] || 'planned' : 'planned',
+                    assignee: headerIndex('assignee') !== -1 ? columns[headerIndex('assignee')] : ''
+                };
+
+                phasesStore.createPhase(currentProjectId, phaseData);
+                importedCount++;
+            }
+
+            if (importedCount > 0) {
+                loadProjectPhases(currentProjectId);
+                updatePhasesAnalytics();
+                loadPhasesLogs();
+                if (typeof showToast === 'function') {
+                    showToast(`تم استيراد ${importedCount} مرحلة بنجاح ✅`, true);
+                } else {
+                    alert(`تم استيراد ${importedCount} مرحلة بنجاح`);
+                }
+            } else {
+                alert('لم يتم العثور على مراحل صالحة للاستيراد في الملف.');
+            }
+        } catch (error) {
+            console.error('Error importing phases CSV:', error);
+            alert('حدث خطأ أثناء استيراد الملف. يرجى التحقق من التنسيق والمحاولة مرة أخرى.');
+        }
+    };
+
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+function splitCsvLine(line) {
+    const result = [];
+    let current = '';
+    let insideQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+            if (insideQuotes && line[i + 1] === '"') {
+                current += '"';
+                i++;
+            } else {
+                insideQuotes = !insideQuotes;
+            }
+        } else if (char === ',' && !insideQuotes) {
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+
+    result.push(current.trim());
+    return result.map(value => value.replace(/^"|"$/g, '').trim());
 }
 
 function exportLogs() {
-    alert('تصدير السجل - قيد التطوير');
+    if (!phasesStore) {
+        alert('لا توجد بيانات مراحل لتصدير السجل.');
+        return;
+    }
+
+    const phases = currentProjectId ? phasesStore.listPhases(currentProjectId) : [];
+    const phaseIds = new Set(phases.map(phase => phase.id));
+
+    const logs = phasesStore.logs.filter(log => phaseIds.size === 0 || phaseIds.has(log.phaseId));
+
+    if (logs.length === 0) {
+        alert('لا توجد سجلات للتصدير حالياً.');
+        return;
+    }
+
+    const exportData = logs.map(log => ({
+        ...log,
+        projectId: currentProjectId,
+        exportedAt: new Date().toISOString()
+    }));
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `phase-logs-${currentProjectId || 'all'}-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    if (typeof showToast === 'function') {
+        showToast('تم تنزيل سجل المراحل بنجاح ✅', true);
+    }
 }
 
 function clearLogs() {
