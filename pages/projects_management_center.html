@@ -2834,6 +2834,11 @@ let costBreakdownChart = null;
 let collectionProgressChart = null;
 let cachedProjectPayments = [];
 let costBreakdownMode = 'category';
+let expenseFilters = { category: '', paymentMethod: '', dateFrom: '', dateTo: '' };
+let expenseSearchTerm = '';
+let expenseSortState = { field: 'date', direction: 'desc' };
+let subcontractFilters = { contractorName: '', status: '', startDate: '', endDate: '' };
+let subcontractSortState = { field: 'startDate', direction: 'asc' };
 
 // Daily Reports Store
 class DailyReportsStore {
@@ -5235,8 +5240,31 @@ function openProjectDetails(projectId, projectName) {
         document.getElementById('currentProjectCode').textContent = currentProjectData.code || '#PRJ-001';
         document.getElementById('projectProgress').textContent = currentProjectData.progress + '%';
 
+        // Reset unified filters to default state
+        expenseFilters = { category: '', paymentMethod: '', dateFrom: '', dateTo: '' };
+        expenseSearchTerm = '';
+        expenseSortState = { field: 'date', direction: 'desc' };
+        subcontractFilters = { contractorName: '', status: '', startDate: '', endDate: '' };
+        subcontractSortState = { field: 'startDate', direction: 'asc' };
+
+        ['filterExpenseCategory', 'filterPaymentMethod', 'filterDateFrom', 'filterDateTo', 'filterContractor', 'filterContractStatus', 'filterContractStartDate', 'filterContractEndDate'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = '';
+            }
+        });
+        const searchInput = document.getElementById('searchExpenses');
+        if (searchInput) {
+            searchInput.value = '';
+        }
+
         // Load project information tab by default
         switchProjectTab('project-information');
+
+        // Prepare unified tables with default filters
+        loadExpensesSubTab();
+        loadSubcontractsSubTab();
+        updateUnifiedKPIs();
         
         // Update project details
         updateProjectInformation();
@@ -6014,11 +6042,17 @@ function updateUnifiedKPIs() {
 }
 
 function loadExpensesSubTab() {
-    const expenses = projectStore.listExpenses(currentProjectId);
+    if (!projectStore || !currentProjectId) return;
+
+    const expenses = getFilteredExpenses();
     const tbody = document.getElementById('expensesTableBody');
-    
+
     if (expenses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="text-center p-8 text-text-secondary">لا توجد مصاريف مسجلة</td></tr>';
+        const hasFilters = hasExpenseFiltersApplied();
+        const emptyMessage = hasFilters
+            ? 'لا توجد مصاريف مطابقة لخيارات البحث الحالية'
+            : 'لا توجد مصاريف مسجلة';
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center p-8 text-text-secondary">${emptyMessage}</td></tr>`;
         return;
     }
 
@@ -6064,12 +6098,22 @@ function loadExpensesSubTab() {
     `).join('');
 }
 
+
 function loadSubcontractsSubTab() {
-    const subcontracts = projectStore.listSubcontracts(currentProjectId);
+    if (!projectStore || !currentProjectId) return;
+
+    const allSubcontracts = projectStore.listSubcontracts(currentProjectId);
+    updateContractorFilterOptions(allSubcontracts);
+
+    const subcontracts = getFilteredSubcontracts();
     const tbody = document.getElementById('subcontractsTableBody');
-    
+
     if (subcontracts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="text-center p-8 text-text-secondary">لا توجد عقود باطن مسجلة</td></tr>';
+        const hasFilters = hasSubcontractFiltersApplied();
+        const emptyMessage = hasFilters
+            ? 'لا توجد عقود مطابقة لخيارات التصفية الحالية'
+            : 'لا توجد عقود باطن مسجلة';
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center p-8 text-text-secondary">${emptyMessage}</td></tr>`;
         return;
     }
 
@@ -6114,6 +6158,192 @@ function loadSubcontractsSubTab() {
         </tr>
     `).join('');
 }
+
+
+function hasExpenseFiltersApplied() {
+    return Boolean(
+        expenseFilters.category ||
+        expenseFilters.paymentMethod ||
+        expenseFilters.dateFrom ||
+        expenseFilters.dateTo ||
+        expenseSearchTerm
+    );
+}
+
+function getFilteredExpenses() {
+    if (!projectStore || !currentProjectId) return [];
+    let expenses = projectStore.listExpenses(currentProjectId, expenseFilters);
+
+    if (expenseSearchTerm) {
+        const term = expenseSearchTerm.toLowerCase();
+        expenses = expenses.filter(expense => {
+            const fields = [
+                expense.description,
+                expense.category,
+                expense.notes,
+                expense.paymentMethod
+            ];
+            return fields.some(field => (field || '').toString().toLowerCase().includes(term));
+        });
+    }
+
+    return sortExpenses(expenses);
+}
+
+function sortExpenses(expenses) {
+    const { field, direction } = expenseSortState;
+    const multiplier = direction === 'asc' ? 1 : -1;
+    const config = {
+        category: { type: 'string', accessor: expense => expense.category },
+        description: { type: 'string', accessor: expense => expense.description },
+        date: { type: 'date', accessor: expense => expense.date },
+        amount: { type: 'number', accessor: expense => expense.amount },
+        vatPercent: { type: 'number', accessor: expense => expense.vatPercent },
+        total: { type: 'number', accessor: expense => expense.total },
+        paymentMethod: { type: 'string', accessor: expense => expense.paymentMethod }
+    };
+
+    const { type, accessor } = config[field] || { type: 'string', accessor: expense => expense[field] };
+
+    return expenses.slice().sort((a, b) => {
+        const valueA = accessor ? accessor(a) : a[field];
+        const valueB = accessor ? accessor(b) : b[field];
+        let comparison = 0;
+
+        switch (type) {
+            case 'number': {
+                const numberA = parseFloat(valueA) || 0;
+                const numberB = parseFloat(valueB) || 0;
+                comparison = numberA - numberB;
+                break;
+            }
+            case 'date': {
+                const timeA = new Date(valueA).getTime();
+                const timeB = new Date(valueB).getTime();
+                comparison = (Number.isNaN(timeA) ? 0 : timeA) - (Number.isNaN(timeB) ? 0 : timeB);
+                break;
+            }
+            default: {
+                const stringA = (valueA ?? '').toString();
+                const stringB = (valueB ?? '').toString();
+                comparison = stringA.localeCompare(stringB, 'ar');
+                break;
+            }
+        }
+
+        if (comparison === 0) {
+            comparison = (a.id || '').toString().localeCompare((b.id || '').toString(), 'ar');
+        }
+
+        return comparison * multiplier;
+    });
+}
+
+function hasSubcontractFiltersApplied() {
+    return Boolean(
+        subcontractFilters.contractorName ||
+        subcontractFilters.status ||
+        subcontractFilters.startDate ||
+        subcontractFilters.endDate
+    );
+}
+
+function getFilteredSubcontracts() {
+    if (!projectStore || !currentProjectId) return [];
+    const subcontracts = projectStore.listSubcontracts(currentProjectId, subcontractFilters);
+    return sortSubcontracts(subcontracts);
+}
+
+function sortSubcontracts(subcontracts) {
+    const { field, direction } = subcontractSortState;
+    const multiplier = direction === 'asc' ? 1 : -1;
+
+    const config = {
+        contractorName: { type: 'string', accessor: contract => contract.contractorName },
+        contractTitle: { type: 'string', accessor: contract => contract.contractTitle },
+        value: { type: 'number', accessor: contract => contract.value },
+        startDate: { type: 'date', accessor: contract => contract.startDate },
+        endDate: { type: 'date', accessor: contract => contract.endDate },
+        paidAmount: { type: 'number', accessor: contract => contract.paidAmount },
+        remainingAmount: { type: 'number', accessor: contract => contract.remainingAmount },
+        status: { type: 'status', accessor: contract => contract.status }
+    };
+
+    const { type, accessor } = config[field] || { type: 'string', accessor: contract => contract[field] };
+    const statusOrder = { active: 0, in_progress: 1, pending: 2, completed: 3 };
+
+    return subcontracts.slice().sort((a, b) => {
+        const valueA = accessor ? accessor(a) : a[field];
+        const valueB = accessor ? accessor(b) : b[field];
+        let comparison = 0;
+
+        switch (type) {
+            case 'number': {
+                const numberA = parseFloat(valueA) || 0;
+                const numberB = parseFloat(valueB) || 0;
+                comparison = numberA - numberB;
+                break;
+            }
+            case 'date': {
+                const timeA = new Date(valueA).getTime();
+                const timeB = new Date(valueB).getTime();
+                comparison = (Number.isNaN(timeA) ? 0 : timeA) - (Number.isNaN(timeB) ? 0 : timeB);
+                break;
+            }
+            case 'status': {
+                const rankA = statusOrder[valueA] ?? 99;
+                const rankB = statusOrder[valueB] ?? 99;
+                comparison = rankA - rankB;
+                break;
+            }
+            default: {
+                const stringA = (valueA ?? '').toString();
+                const stringB = (valueB ?? '').toString();
+                comparison = stringA.localeCompare(stringB, 'ar');
+                break;
+            }
+        }
+
+        if (comparison === 0) {
+            comparison = (a.id || '').toString().localeCompare((b.id || '').toString(), 'ar');
+        }
+
+        return comparison * multiplier;
+    });
+}
+
+function updateContractorFilterOptions(allSubcontracts) {
+    const select = document.getElementById('filterContractor');
+    if (!select) return;
+
+    const previousValue = subcontractFilters.contractorName || select.value || '';
+    select.querySelectorAll('option[data-dynamic="true"]').forEach(option => option.remove());
+
+    const uniqueNames = Array.from(new Set(
+        allSubcontracts
+            .map(contract => contract.contractorName)
+            .filter(Boolean)
+    ));
+
+    uniqueNames.sort((a, b) => a.localeCompare(b, 'ar'));
+
+    uniqueNames.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        option.dataset.dynamic = 'true';
+        select.appendChild(option);
+    });
+
+    if (previousValue && uniqueNames.includes(previousValue)) {
+        select.value = previousValue;
+    } else {
+        select.value = '';
+    }
+
+    subcontractFilters.contractorName = select.value || '';
+}
+
 
 function loadCombinedAnalytics() {
     console.log('Loading combined analytics...');
@@ -6314,6 +6544,32 @@ function confirmDelete() {
 }
 
 // Utility functions
+function triggerFileDownload(filename, content, mimeType = 'application/json') {
+    try {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Failed to trigger file download:', error);
+    }
+}
+
+function downloadJSONFile(filename, data) {
+    try {
+        const serialized = JSON.stringify(data, null, 2);
+        triggerFileDownload(filename, serialized, 'application/json');
+    } catch (error) {
+        console.error('Failed to serialise data for download:', error);
+        alert('تعذر تجهيز الملف للتنزيل. يرجى المحاولة مرة أخرى.');
+    }
+}
+
 function formatCurrency(amount) {
     return new Intl.NumberFormat('ar-SA', {
         style: 'decimal',
@@ -6800,6 +7056,14 @@ document.addEventListener('DOMContentLoaded', function() {
             amountInput.addEventListener('input', updateTotal);
             vatInput.addEventListener('input', updateTotal);
         }
+    const searchExpensesInput = document.getElementById('searchExpenses');
+    if (searchExpensesInput) {
+        searchExpensesInput.addEventListener('input', function() {
+            expenseSearchTerm = this.value.trim();
+            loadExpensesSubTab();
+        });
+    }
+
     }
 
     // Subcontract form
@@ -6999,7 +7263,23 @@ function removePhoto(index) {
 function openNewProjectModal(){ window.location.href = 'project_creation_wizard.html'; }
 
 function exportProjectsData() {
-    alert('تصدير البيانات - قيد التطوير');
+    if (!projectStore) {
+        alert('لا توجد بيانات مشاريع متاحة للتصدير حالياً.');
+        return;
+    }
+
+    const projects = projectStore.normalizeProjects(projectStore.projects || []);
+    const exportPayload = {
+        generatedAt: new Date().toISOString(),
+        totalProjects: projects.length,
+        projects
+    };
+
+    const fileName = `contractorpro-projects-${new Date().toISOString().slice(0, 10)}.json`;
+    downloadJSONFile(fileName, exportPayload);
+    if (typeof showToast === 'function') {
+        showToast('تم تصدير بيانات المشاريع بنجاح');
+    }
 }
 
 function editProjectValue() {
@@ -7097,57 +7377,110 @@ function loadFinancialAnalysis(projectId) {
 
 // Filter functions
 function applyExpenseFilters() {
-    const filters = {
+    expenseFilters = {
         category: document.getElementById('filterExpenseCategory').value,
         paymentMethod: document.getElementById('filterPaymentMethod').value,
         dateFrom: document.getElementById('filterDateFrom').value,
         dateTo: document.getElementById('filterDateTo').value
     };
-    
-    console.log('Applying expense filters:', filters);
+
+    const searchInput = document.getElementById('searchExpenses');
+    expenseSearchTerm = searchInput ? searchInput.value.trim() : '';
+
     loadExpensesSubTab();
 }
 
 function clearExpenseFilters() {
-    document.getElementById('filterExpenseCategory').value = '';
-    document.getElementById('filterPaymentMethod').value = '';
-    document.getElementById('filterDateFrom').value = '';
-    document.getElementById('filterDateTo').value = '';
-    
+    expenseFilters = { category: '', paymentMethod: '', dateFrom: '', dateTo: '' };
+    expenseSearchTerm = '';
+
+    const categorySelect = document.getElementById('filterExpenseCategory');
+    const methodSelect = document.getElementById('filterPaymentMethod');
+    const dateFrom = document.getElementById('filterDateFrom');
+    const dateTo = document.getElementById('filterDateTo');
+    const searchInput = document.getElementById('searchExpenses');
+
+    if (categorySelect) categorySelect.value = '';
+    if (methodSelect) methodSelect.value = '';
+    if (dateFrom) dateFrom.value = '';
+    if (dateTo) dateTo.value = '';
+    if (searchInput) searchInput.value = '';
+
     loadExpensesSubTab();
 }
 
 function applySubcontractFilters() {
-    const filters = {
+    subcontractFilters = {
         contractorName: document.getElementById('filterContractor').value,
         status: document.getElementById('filterContractStatus').value,
         startDate: document.getElementById('filterContractStartDate').value,
         endDate: document.getElementById('filterContractEndDate').value
     };
-    
-    console.log('Applying subcontract filters:', filters);
+
     loadSubcontractsSubTab();
 }
 
 function clearSubcontractFilters() {
-    document.getElementById('filterContractor').value = '';
-    document.getElementById('filterContractStatus').value = '';
-    document.getElementById('filterContractStartDate').value = '';
-    document.getElementById('filterContractEndDate').value = '';
-    
+    subcontractFilters = { contractorName: '', status: '', startDate: '', endDate: '' };
+
+    const contractorSelect = document.getElementById('filterContractor');
+    const statusSelect = document.getElementById('filterContractStatus');
+    const startDateInput = document.getElementById('filterContractStartDate');
+    const endDateInput = document.getElementById('filterContractEndDate');
+
+    if (contractorSelect) contractorSelect.value = '';
+    if (statusSelect) statusSelect.value = '';
+    if (startDateInput) startDateInput.value = '';
+    if (endDateInput) endDateInput.value = '';
+
     loadSubcontractsSubTab();
 }
 
 function sortExpenseTable(field) {
-    console.log('Sorting expenses by:', field);
+    if (expenseSortState.field === field) {
+        expenseSortState.direction = expenseSortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        expenseSortState.field = field;
+        expenseSortState.direction = ['amount', 'total', 'vatPercent', 'date'].includes(field) ? 'desc' : 'asc';
+    }
+
+    loadExpensesSubTab();
 }
 
 function sortSubcontractTable(field) {
-    console.log('Sorting subcontracts by:', field);
+    if (subcontractSortState.field === field) {
+        subcontractSortState.direction = subcontractSortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        subcontractSortState.field = field;
+        subcontractSortState.direction = ['value', 'paidAmount', 'remainingAmount', 'startDate', 'endDate'].includes(field) ? 'desc' : 'asc';
+    }
+
+    loadSubcontractsSubTab();
 }
 
 function exportUnifiedData() {
-    alert('تصدير بيانات المصاريف والعقود - قيد التطوير');
+    if (!currentProjectId || !projectStore) {
+        alert('يرجى اختيار مشروع لتصدير بياناته.');
+        return;
+    }
+
+    const exportPayload = {
+        projectId: currentProjectId,
+        projectName: currentProjectData?.name || '',
+        generatedAt: new Date().toISOString(),
+        filters: {
+            expenses: Object.assign({}, expenseFilters, { searchTerm: expenseSearchTerm }),
+            subcontracts: Object.assign({}, subcontractFilters)
+        },
+        expenses: getFilteredExpenses(),
+        subcontracts: getFilteredSubcontracts()
+    };
+
+    const fileName = `project-${currentProjectId}-expenses-contracts-${new Date().toISOString().slice(0, 10)}.json`;
+    downloadJSONFile(fileName, exportPayload);
+    if (typeof showToast === 'function') {
+        showToast('تم تنزيل ملف المصاريف والعقود بنجاح');
+    }
 }
 
 function exportFinancialReport() {
@@ -8207,6 +8540,7 @@ function openFinancialCustomization() {
     document.body.appendChild(t);
     setTimeout(()=> t.remove(), 3000);
   }
+  window.showToast = showToast;
 
   document.addEventListener('DOMContentLoaded', () => {
     const url = new URL(window.location.href);
