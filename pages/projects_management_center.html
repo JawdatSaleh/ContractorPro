@@ -49,8 +49,8 @@
             align-items: center;
             justify-content: center;
             font-size: 1.35rem;
-            background-color: var(--primary-50);
-            color: var(--primary);
+            background-color: #EFF6FF;
+            color: #2563EB;
             flex-shrink: 0;
         }
 
@@ -67,7 +67,7 @@
         }
 
         .project-nav-btn.active {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
             color: #ffffff;
             border-color: transparent;
             box-shadow: var(--shadow-lg);
@@ -7682,6 +7682,86 @@ document.addEventListener('DOMContentLoaded', function() {
             contractUploadForm.reset();
             closeContractUploadModal();
         });
+    }
+
+    const reportFilesInput = document.getElementById('reportFiles');
+    if (reportFilesInput) {
+        reportFilesInput.addEventListener('change', (e) => handleFileSelection(e.target.files));
+    }
+
+    const photosInput = document.getElementById('photosInput');
+    if (photosInput) {
+        photosInput.addEventListener('change', (e) => handlePhotoSelection(e.target.files));
+    }
+
+    const galleryFilter = document.getElementById('galleryFilter');
+    if (galleryFilter) {
+        galleryFilter.addEventListener('change', () => sortGalleryPhotos(true));
+    }
+
+    const phaseCsvInput = document.getElementById('phaseCsvInput');
+    if (phaseCsvInput) {
+        phaseCsvInput.addEventListener('change', handlePhaseCsvImport);
+    }
+
+    const contractUploadForm = document.getElementById('contractUploadForm');
+    if (contractUploadForm) {
+        contractUploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!currentProjectId || !projectStore) {
+                showToast('يرجى اختيار مشروع قبل رفع العقد الرئيسي', false);
+                return;
+            }
+
+            const fileInput = document.getElementById('mainContractFile');
+            const notesInput = document.getElementById('contractNotes');
+            const file = fileInput?.files?.[0];
+
+            if (!file) {
+                showToast('يرجى اختيار ملف العقد بصيغة PDF', false);
+                return;
+            }
+
+            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                showToast('الرجاء رفع ملف PDF صالح للعقد', false);
+                return;
+            }
+
+            let dataUrl;
+            try {
+                dataUrl = await fileToDataUrl(file);
+            } catch (error) {
+                console.error('Failed to read contract file', error);
+                showToast('تعذر قراءة ملف العقد. حاول مرة أخرى.', false);
+                return;
+            }
+            const contractDocument = {
+                id: 'main-contract-' + Date.now(),
+                fileName: file.name,
+                fileSize: file.size,
+                uploadedAt: new Date().toISOString(),
+                notes: notesInput?.value?.trim() || '',
+                dataUrl: dataUrl
+            };
+
+            projectStore.updateProject(currentProjectId, { contractDocument });
+            currentProjectData = projectStore.getProject(currentProjectId);
+            renderContractFileSection();
+            showToast('تم رفع عقد العمل بنجاح');
+            contractUploadForm.reset();
+            closeContractUploadModal();
+        });
+    }
+
+    const galleryFilter = document.getElementById('galleryFilter');
+    if (galleryFilter) {
+        galleryFilter.addEventListener('change', () => sortGalleryPhotos(true));
+    }
+
+    const phaseCsvInput = document.getElementById('phaseCsvInput');
+    if (phaseCsvInput) {
+        phaseCsvInput.addEventListener('change', handlePhaseCsvImport);
     }
 
     // File drop zone handlers
