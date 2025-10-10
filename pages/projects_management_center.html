@@ -3023,6 +3023,34 @@ class DailyReportsStore {
 // Initialize daily reports store
 let dailyReportsStore = null;
 
+const PROJECT_TYPE_LABELS = {
+    residential_villa: 'فيلا سكنية',
+    residential_complex: 'مجمع سكني',
+    commercial: 'مشروع تجاري',
+    industrial: 'مشروع صناعي',
+    infrastructure: 'بنية تحتية',
+    renovation: 'تجديد وترميم',
+    governmental: 'جهة حكومية',
+    custom: 'تكوين مخصص'
+};
+
+const CITY_LABELS = {
+    riyadh: 'الرياض',
+    jeddah: 'جدة',
+    dammam: 'الدمام',
+    mecca: 'مكة المكرمة',
+    medina: 'المدينة المنورة',
+    khobar: 'الخبر',
+    tabuk: 'تبوك',
+    abha: 'أبها'
+};
+
+function resolveCityLabel(value, fallback = '') {
+    if (!value) return fallback || '';
+    if (CITY_LABELS[value]) return CITY_LABELS[value];
+    return fallback || value;
+}
+
 const PROJECTS_STORAGE_KEY = 'contractorPro.projects';
 const PROJECTS_LEGACY_KEY = 'projects';
 
@@ -3045,8 +3073,19 @@ class ProjectStore {
         const normalized = {...project};
 
         normalized.location = normalized.location || {};
+        if (normalized.location.cityCode) {
+            normalized.location.city = resolveCityLabel(normalized.location.cityCode, normalized.location.city);
+        } else if (normalized.location.city) {
+            const resolvedCity = resolveCityLabel(normalized.location.city);
+            if (resolvedCity !== normalized.location.city) {
+                normalized.location.cityCode = normalized.location.city;
+                normalized.location.city = resolvedCity;
+            }
+        }
+
         normalized.specs = normalized.specs || {};
         normalized.phases = Array.isArray(normalized.phases) ? normalized.phases : [];
+        normalized.typeLabel = normalized.typeLabel || PROJECT_TYPE_LABELS[normalized.type] || normalized.type || '';
 
         if (typeof normalized.client === 'string') {
             normalized.clientName = normalized.client;
@@ -3078,6 +3117,27 @@ class ProjectStore {
             endDate: normalized.endDate || '',
             durationDays: normalized.durationDays || 0
         };
+
+        normalized.phases = normalized.phases.map((phase, index) => {
+            const normalizedPhase = {...phase};
+            normalizedPhase.projectId = normalizedPhase.projectId || normalized.id;
+            normalizedPhase.id = normalizedPhase.id || `phase-${normalized.id || Date.now()}-${index + 1}`;
+            normalizedPhase.name = normalizedPhase.name || `مرحلة ${index + 1}`;
+            normalizedPhase.durationDays = Number(normalizedPhase.durationDays) || 0;
+            normalizedPhase.order = Number.isFinite(Number(normalizedPhase.order)) ? Number(normalizedPhase.order) : index + 1;
+            normalizedPhase.status = normalizedPhase.status || 'planned';
+            normalizedPhase.progressPercent = Number(normalizedPhase.progressPercent) || 0;
+            normalizedPhase.dependencies = Array.isArray(normalizedPhase.dependencies) ? normalizedPhase.dependencies : [];
+            normalizedPhase.priority = normalizedPhase.priority || 'medium';
+            if (!normalizedPhase.startDate && normalized.timeline?.startDate) {
+                normalizedPhase.startDate = normalized.timeline.startDate;
+            }
+            if (!normalizedPhase.endDate && normalized.timeline?.endDate) {
+                normalizedPhase.endDate = normalized.timeline.endDate;
+            }
+            normalizedPhase.createdAt = normalizedPhase.createdAt || new Date().toISOString();
+            return normalizedPhase;
+        });
 
         if (!normalized.timeline.startDate && normalized.startDate) {
             normalized.timeline.startDate = normalized.startDate;
@@ -3388,6 +3448,73 @@ class ProjectStore {
         };
     }
 
+    syncPhasesRepository(projects) {
+        if (!Array.isArray(projects) || !projects.length) {
+            return;
+        }
+
+        let storedPhases = [];
+        try {
+            storedPhases = JSON.parse(localStorage.getItem('project_phases_all') || '[]');
+        } catch (error) {
+            storedPhases = [];
+        }
+
+        const phasesByProject = new Map();
+        if (Array.isArray(storedPhases)) {
+            storedPhases.forEach(phase => {
+                if (!phase || !phase.projectId) return;
+                if (!phasesByProject.has(phase.projectId)) {
+                    phasesByProject.set(phase.projectId, []);
+                }
+                phasesByProject.get(phase.projectId).push(phase);
+            });
+        }
+
+        let changed = false;
+        const ensurePhaseShape = (phase, index, project) => {
+            const shaped = {...phase};
+            shaped.projectId = shaped.projectId || project.id;
+            shaped.id = shaped.id || `phase-${project.id}-${index + 1}`;
+            shaped.name = shaped.name || `مرحلة ${index + 1}`;
+            shaped.durationDays = Number(shaped.durationDays) || 0;
+            shaped.order = Number.isFinite(Number(shaped.order)) ? Number(shaped.order) : index + 1;
+            shaped.status = shaped.status || 'planned';
+            shaped.progressPercent = Number(shaped.progressPercent) || 0;
+            shaped.dependencies = Array.isArray(shaped.dependencies) ? shaped.dependencies : [];
+            shaped.priority = shaped.priority || 'medium';
+            shaped.startDate = shaped.startDate || project.timeline?.startDate || project.startDate || '';
+            shaped.endDate = shaped.endDate || project.timeline?.endDate || project.endDate || '';
+            shaped.createdAt = shaped.createdAt || new Date().toISOString();
+            return shaped;
+        };
+
+        projects.forEach(project => {
+            if (!project || !project.id) return;
+            if (!Array.isArray(project.phases) || !project.phases.length) return;
+            if (phasesByProject.has(project.id)) return;
+
+            const shapedPhases = project.phases.map((phase, index) => ensurePhaseShape(phase, index, project));
+            if (shapedPhases.length) {
+                phasesByProject.set(project.id, shapedPhases);
+                changed = true;
+            }
+        });
+
+        if (!changed) {
+            return;
+        }
+
+        const merged = [];
+        phasesByProject.forEach(list => {
+            merged.push(...list);
+        });
+
+        const serialized = JSON.stringify(merged);
+        localStorage.setItem('project_phases_all', serialized);
+        localStorage.setItem('phases', serialized);
+    }
+
     // Combined analytics
     computeCombinedStats(projectId) {
         const expenseStats = this.computeExpenseTotals(projectId);
@@ -3410,6 +3537,7 @@ class ProjectStore {
     // Storage methods
     saveProjects() {
         this.projects = this.normalizeProjects(this.projects);
+        this.syncPhasesRepository(this.projects);
         const serialized = JSON.stringify(this.projects);
         localStorage.setItem(PROJECTS_STORAGE_KEY, serialized);
         localStorage.setItem(PROJECTS_LEGACY_KEY, serialized);
@@ -3440,6 +3568,7 @@ class ProjectStore {
         }
 
         const normalized = this.normalizeProjects(parsed || this.getDefaultProjects());
+        this.syncPhasesRepository(normalized);
         const serialized = JSON.stringify(normalized);
         localStorage.setItem(PROJECTS_STORAGE_KEY, serialized);
         localStorage.setItem(PROJECTS_LEGACY_KEY, serialized);
@@ -5097,7 +5226,8 @@ function updateProjectInformation() {
     setText('projectStartDate', formatDateLocalized(timeline.startDate || currentProjectData.startDate));
     setText('projectEndDate', formatDateLocalized(timeline.endDate || currentProjectData.endDate));
     setText('projectValue', formatCurrency(currentProjectData.value));
-    setText('projectTypeLabel', formatProjectType(currentProjectData.type));
+    const projectTypeLabelValue = currentProjectData.typeLabel || formatProjectType(currentProjectData.type);
+    setText('projectTypeLabel', projectTypeLabelValue);
 
     const templateLabel = currentProjectData.templateLabel
         || ({
@@ -6149,14 +6279,8 @@ function formatDateTimeLocalized(dateString) {
 }
 
 function formatProjectType(type) {
-    const map = {
-        residential_villa: 'فيلا سكنية',
-        commercial: 'مشروع تجاري',
-        industrial: 'مشروع صناعي',
-        infrastructure: 'بنية تحتية',
-        governmental: 'جهة حكومية'
-    };
-    return map[type] || (type ? type : 'غير محدد');
+    if (!type) return 'غير محدد';
+    return PROJECT_TYPE_LABELS[type] || type;
 }
 
 function formatClientType(type) {
@@ -7754,7 +7878,11 @@ function openFinancialCustomization() {
 
     return [];
   }
-  function saveProjects(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+  function saveProjects(arr){
+    const serialized = JSON.stringify(arr);
+    localStorage.setItem(STORAGE_KEY, serialized);
+    localStorage.setItem('projects', serialized);
+  }
 
   function statusArabic(s){
     return ({active:'نشط', in_progress:'قيد التنفيذ', planned:'بداية المشروع', paused:'موقوف', done:'مكتمل'}[s] || 'قيد التنفيذ');
@@ -7778,22 +7906,23 @@ function openFinancialCustomization() {
     return 'bg-primary';
   }
   function projectTypeLabel(type){
-    const map = {
-      residential_villa: 'فيلا سكنية',
-      commercial: 'مشروع تجاري',
-      industrial: 'مشروع صناعي',
-      infrastructure: 'بنية تحتية',
-      governmental: 'جهة حكومية'
-    };
-    return map[type] || (type || 'غير محدد');
+    if (!type) return 'غير محدد';
+    return PROJECT_TYPE_LABELS[type] || type;
   }
   function formatLocationText(location){
     if (!location || typeof location !== 'object') return '-';
-    const parts = [location.city, location.district].filter(Boolean);
+    const cityCode = location.cityCode || location.city_code || '';
+    const cityLabel = resolveCityLabel(cityCode, location.city);
+    const district = location.district;
+    const address = location.address;
+    const parts = [cityLabel, district].filter(Boolean);
     if (parts.length) {
       return parts.join(' • ');
     }
-    return location.address || '-';
+    if (address) {
+      return address;
+    }
+    return cityLabel || '-';
   }
   function formatDateSafe(value){
     if (!value) return '-';
@@ -7835,7 +7964,19 @@ function openFinancialCustomization() {
       grid.dataset.enhanced = 'true';
     }
 
-    const projects = (getProjects() || [])
+    const storedProjects = getProjects() || [];
+    const normalizedProjects = window.projectStore
+      ? window.projectStore.normalizeProjects(storedProjects)
+      : storedProjects.slice();
+
+    if (window.projectStore) {
+      window.projectStore.projects = normalizedProjects.slice();
+      window.projectStore.saveProjects();
+    } else {
+      saveProjects(normalizedProjects);
+    }
+
+    const projects = normalizedProjects
       .slice()
       .sort((a, b) => {
         const aTime = new Date(a.createdAt || a.id || 0).getTime();
@@ -7875,7 +8016,7 @@ function openFinancialCustomization() {
       const endDate = p.timeline?.endDate || p.endDate || null;
       const startDateLabel = formatDateSafe(startDate);
       const endDateLabel = formatDateSafe(endDate);
-      const typeLabel = projectTypeLabel(p.type);
+      const typeLabel = p.typeLabel || projectTypeLabel(p.type);
       const locationLabel = formatLocationText(p.location || p.projectLocation || {});
 
       card.innerHTML = `
