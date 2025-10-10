@@ -11,83 +11,36 @@
 <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
 <script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
 </head>
-<body class="bg-background font-arabic">
-    <!-- Navigation Sidebar -->
-    <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50 transform transition-transform duration-300" id="sidebar">
-        <div class="p-6 border-b border-border">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                    <i class="fas fa-hard-hat text-white text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
-                    <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
-                </div>
+<body class="bg-background font-arabic" data-active-link="finance" data-page-title="مركز إدارة الفواتير الشامل" data-page-subtitle="إدارة كاملة للفواتير الضريبية مع التتبع المتقدم والتحليلات">
+    <header data-layout-header class="bg-surface shadow-card px-6 py-4 border-b border-border">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-text-primary">مركز إدارة الفواتير الشامل</h1>
+                <p class="text-text-secondary">إدارة كاملة للفواتير الضريبية مع التتبع المتقدم والتحليلات</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 justify-end" data-header-actions>
+                <button type="button" onclick="goBack()" class="btn-ghost flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-fast">
+                    <i class="fas fa-arrow-right text-base"></i>
+                    <span>رجوع</span>
+                </button>
+                <button type="button" class="bg-success text-white px-4 py-2 rounded-lg hover:bg-success-600 transition-fast flex items-center gap-2 shadow-md" onclick="createNewInvoice()">
+                    <i class="fas fa-plus"></i>
+                    <span>فاتورة جديدة</span>
+                </button>
+                <button type="button" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2 shadow-md" onclick="bulkOperations()">
+                    <i class="fas fa-tasks"></i>
+                    <span>عمليات مجمعة</span>
+                </button>
+                <button type="button" class="bg-warning text-white px-4 py-2 rounded-lg hover:bg-warning-600 transition-fast flex items-center gap-2 shadow-md" onclick="exportInvoices()">
+                    <i class="fas fa-download"></i>
+                    <span>تصدير</span>
+                </button>
             </div>
         </div>
-        
-        <nav class="p-4 space-y-2">
-            <!-- Dashboard -->
-            <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-tachometer-alt w-5"></i>
-                <span class="font-medium">لوحة التحكم</span>
-            </a>
+    </header>
 
-            <!-- Projects Section -->
-            <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-building w-5"></i>
-                <span>المشاريع</span>
-                <i class="fas fa-chevron-left mr-auto text-xs"></i>
-            </a>
-
-            <!-- Finance Section -->
-            <a href="financial_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
-                <i class="fas fa-chart-line w-5"></i>
-                <span>المالية</span>
-                <i class="fas fa-chevron-left mr-auto text-xs"></i>
-            </a>
-
-            <!-- Employees Section -->
-            <a href="human_resources_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-users w-5"></i>
-                <span>الموظفين</span>
-                <i class="fas fa-chevron-left mr-auto text-xs"></i>
-            </a>
-        </nav>
-    </div>
-
-    <!-- Main Content -->
-    <div class="mr-64 min-h-screen">
-        <!-- Top Header -->
-        <header class="bg-surface shadow-card px-6 py-4 border-b border-border">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    <button onclick="goBack()" class="text-text-secondary hover:text-text-primary transition-fast">
-                        <i class="fas fa-arrow-right text-lg"></i>
-                    </button>
-                    <div>
-                        <h1 class="text-2xl font-bold text-text-primary">مركز إدارة الفواتير الشامل</h1>
-                        <p class="text-text-secondary">إدارة كاملة للفواتير الضريبية مع التتبع المتقدم والتحليلات</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-3">
-                    <button class="bg-success text-white px-4 py-2 rounded-lg hover:bg-success-600 transition-fast flex items-center gap-2 shadow-md" onclick="createNewInvoice()">
-                        <i class="fas fa-plus"></i>
-                        <span>فاتورة جديدة</span>
-                    </button>
-                    <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2 shadow-md" onclick="bulkOperations()">
-                        <i class="fas fa-tasks"></i>
-                        <span>عمليات مجمعة</span>
-                    </button>
-                    <button class="bg-warning text-white px-4 py-2 rounded-lg hover:bg-warning-600 transition-fast flex items-center gap-2 shadow-md" onclick="exportInvoices()">
-                        <i class="fas fa-download"></i>
-                        <span>تصدير</span>
-                    </button>
-                </div>
-            </div>
-        </header>
-
+    <main data-page-root class="min-h-screen space-y-6 px-4 sm:px-6 lg:px-8 py-6">
         <!-- Invoice Statistics -->
         <section class="p-6 bg-gradient-to-br from-primary-50 to-secondary-50 border-b border-border">
             <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
@@ -1006,6 +959,9 @@
             setDefaultDates();
         });
     </script>
+
+    </main>
+
 <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
     <script src="../js/session.js" data-login-path="../login.html"></script>
 </body>
