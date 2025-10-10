@@ -5,750 +5,866 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>مركز إدارة الموظفين - ContractorPro</title>
     <link rel="stylesheet" href="../css/main.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-
-    <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
-    <script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
 </head>
-<body class="bg-background font-arabic">
-    <!-- Navigation Sidebar -->
-    <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50 transform transition-transform duration-300" id="sidebar">
-        <div class="p-6 border-b border-border">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                    <i class="fas fa-hard-hat text-white text-lg"></i>
-                </div>
+<body class="bg-background text-text-primary font-arabic">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="hidden lg:flex lg:w-72 xl:w-80 border-l border-border bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/80 flex-col sticky top-0 h-screen">
+            <div class="px-6 py-8 border-b border-border flex items-center gap-3">
+                <span class="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white text-2xl"><i class="fas fa-hard-hat"></i></span>
                 <div>
-                    <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
-                    <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
+                    <h1 class="text-xl font-semibold">ContractorPro</h1>
+                    <p class="text-sm text-text-secondary">نظام إدارة المقاولات الذكي</p>
+                </div>
+            </div>
+            <nav class="flex-1 overflow-y-auto px-4 py-6 space-y-1 text-text-secondary">
+                <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-secondary-100 hover:text-text-primary"><i class="fas fa-gauge-high w-5"></i><span>لوحة التحكم</span></a>
+                <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-secondary-100 hover:text-text-primary"><i class="fas fa-diagram-project w-5"></i><span>المشاريع</span></a>
+                <a href="financial_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-secondary-100 hover:text-text-primary"><i class="fas fa-coins w-5"></i><span>المالية</span></a>
+                <div class="pt-4">
+                    <p class="px-4 text-xs font-semibold uppercase tracking-widest text-text-tertiary">الموارد البشرية</p>
+                </div>
+                <a href="employees_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all bg-primary/10 text-primary border border-primary/30"><i class="fas fa-users w-5"></i><span class="font-medium">إدارة الموظفين</span></a>
+                <a href="team_management.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-secondary-100 hover:text-text-primary"><i class="fas fa-people-group w-5"></i><span>إدارة الفرق</span></a>
+                <a href="human_resources_center.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-secondary-100 hover:text-text-primary"><i class="fas fa-user-tie w-5"></i><span>مركز الموارد البشرية</span></a>
+                <div class="pt-6 border-t border-border mt-6">
+                    <a href="system_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-secondary-100 hover:text-text-primary"><i class="fas fa-gear w-5"></i><span>إعدادات النظام</span></a>
+                </div>
+            </nav>
+            <div class="p-6 border-t border-border text-sm text-text-secondary space-y-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-secondary-200 flex items-center justify-center text-secondary-700"><i class="fas fa-user-shield"></i></div>
+                    <div>
+                        <p class="font-medium text-text-primary">وضع الصلاحيات</p>
+                        <p class="text-xs">يتم مراقبة جميع التعديلات وتسجيلها في سجل التدقيق.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Column -->
+        <div class="flex-1 flex flex-col">
+            <!-- Header -->
+            <header class="px-4 sm:px-6 lg:px-10 py-5 border-b border-border bg-surface flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <p class="text-sm text-text-tertiary">لوحة الموارد البشرية</p>
+                    <h2 class="text-2xl font-bold">مركز إدارة الموظفين</h2>
+                    <p class="text-text-secondary mt-1">إدارة بيانات الموظفين، العقود، الحضور، الرواتب، والسلف من مكان واحد.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button id="open-import" class="px-4 py-2 rounded-xl border border-border text-sm text-text-primary hover:bg-secondary-100 transition flex items-center gap-2"><i class="fas fa-file-import"></i><span>استيراد من ملف Excel</span></button>
+                    <button id="open-create" class="px-4 py-2 rounded-xl bg-primary text-white text-sm hover:bg-primary-600 transition flex items-center gap-2"><i class="fas fa-user-plus"></i><span>موظف جديد</span></button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 py-6 space-y-8">
+                <!-- Top Metrics -->
+                <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4" id="overview-cards"></section>
+
+                <!-- Workforce Snapshot -->
+                <section class="grid gap-6 xl:grid-cols-[2fr,1fr] items-start">
+                    <div class="bg-surface border border-border rounded-3xl shadow-sm overflow-hidden">
+                        <div class="px-6 py-5 border-b border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                            <div>
+                                <h3 class="text-lg font-semibold">سجل الموظفين</h3>
+                                <p class="text-sm text-text-secondary">بحث فوري، فلاتر ديناميكية، وعرض تفصيلي لكل موظف.</p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <div class="relative">
+                                    <i class="fas fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary"></i>
+                                    <input id="search-input" type="search" placeholder="ابحث باسم الموظف أو بريده" class="pl-4 pr-10 py-2 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm" />
+                                </div>
+                                <select id="department-filter" class="px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/40">
+                                    <option value="all">كل الإدارات</option>
+                                </select>
+                                <select id="status-filter" class="px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/40">
+                                    <option value="all">كل الحالات</option>
+                                    <option value="active">على رأس العمل</option>
+                                    <option value="leave">إجازة</option>
+                                    <option value="probation">تحت التجربة</option>
+                                    <option value="resigned">منتهٍ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm">
+                                <thead class="bg-secondary-50 text-text-secondary">
+                                    <tr class="text-right">
+                                        <th class="py-3 px-4 font-medium">الموظف</th>
+                                        <th class="py-3 px-4 font-medium">القسم</th>
+                                        <th class="py-3 px-4 font-medium">المشروع</th>
+                                        <th class="py-3 px-4 font-medium">الحالة</th>
+                                        <th class="py-3 px-4 font-medium">المدير المباشر</th>
+                                        <th class="py-3 px-4 font-medium">آخر عملية</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employees-body" class="divide-y divide-border"></tbody>
+                            </table>
+                        </div>
+                        <div class="px-6 py-4 border-t border-border flex flex-col gap-2 text-sm text-text-secondary sm:flex-row sm:items-center sm:justify-between">
+                            <p>إجمالي السجلات: <span id="records-count" class="font-semibold text-text-primary">0</span></p>
+                            <div class="flex items-center gap-2">
+                                <button id="prev-page" class="px-3 py-2 rounded-lg border border-border hover:bg-secondary-100 disabled:opacity-40 disabled:cursor-not-allowed">السابق</button>
+                                <span id="pagination-info"></span>
+                                <button id="next-page" class="px-3 py-2 rounded-lg border border-border hover:bg-secondary-100 disabled:opacity-40 disabled:cursor-not-allowed">التالي</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-surface border border-border rounded-3xl shadow-sm p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-semibold">سير العمل الحالي</h3>
+                                <span class="text-xs px-3 py-1 rounded-full bg-secondary-100 text-text-secondary">اليوم</span>
+                            </div>
+                            <ul class="space-y-3 text-sm text-text-secondary" id="workflow-timeline"></ul>
+                        </div>
+                        <div class="bg-surface border border-border rounded-3xl shadow-sm p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-semibold">مؤشرات الرضا</h3>
+                                <span class="text-xs text-success flex items-center gap-1"><i class="fas fa-arrow-trend-up"></i> +4% هذا الربع</span>
+                            </div>
+                            <div class="space-y-4 text-sm">
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span>رضا الموظفين</span>
+                                        <span class="font-semibold text-text-primary">86%</span>
+                                    </div>
+                                    <div class="w-full bg-secondary-100 rounded-full h-2.5"><div class="h-full bg-primary rounded-full" style="width:86%"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span>التزام الحضور</span>
+                                        <span class="font-semibold text-text-primary">92%</span>
+                                    </div>
+                                    <div class="w-full bg-secondary-100 rounded-full h-2.5"><div class="h-full bg-success rounded-full" style="width:92%"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span>إكمال التقييمات السنوية</span>
+                                        <span class="font-semibold text-text-primary">68%</span>
+                                    </div>
+                                    <div class="w-full bg-secondary-100 rounded-full h-2.5"><div class="h-full bg-warning rounded-full" style="width:68%"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Detail Drawer and Insights -->
+                <section class="grid gap-6 xl:grid-cols-[1.4fr,1fr] items-start">
+                    <div class="bg-surface border border-border rounded-3xl shadow-sm">
+                        <div class="px-6 py-5 border-b border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <h3 class="text-lg font-semibold">ملف الموظف</h3>
+                            <div class="flex items-center gap-2 text-sm text-text-secondary">
+                                <span class="flex items-center gap-1"><i class="fas fa-shield-halved text-primary"></i> RBAC</span>
+                                <span class="flex items-center gap-1"><i class="fas fa-lock text-warning"></i> بيانات العقد مخفية للأدوار المحدودة</span>
+                            </div>
+                        </div>
+                        <div id="employee-details" class="p-6 text-sm text-text-secondary space-y-6">
+                            <p class="text-center text-text-tertiary">اختر موظفًا من القائمة لاستعراض ملفه التفصيلي.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface border border-border rounded-3xl shadow-sm p-6 space-y-5">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold">نظرة سريعة على الرواتب</h3>
+                            <button class="px-3 py-1 text-xs rounded-full bg-primary/10 text-primary">دفعة مارس 2025</button>
+                        </div>
+                        <div class="grid gap-3 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-text-secondary">إجمالي صافي الرواتب</span>
+                                <span class="font-semibold text-lg">٢٣٤٬٥٠٠ ر.س</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-text-secondary">البدلات</span>
+                                <span class="font-semibold">٥٦٬٨٠٠ ر.س</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-text-secondary">اقتطاعات السلف/القروض</span>
+                                <span class="font-semibold text-error">١٢٬٤٠٠ ر.س</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-border pt-4 space-y-3 text-sm">
+                            <h4 class="font-semibold">مراكز التكلفة الأعلى</h4>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-primary block"></span>مشروع الأفق</span>
+                                    <span class="font-medium">٣٢٪</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-success block"></span>مشروع المطار</span>
+                                    <span class="font-medium">٢٧٪</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-warning block"></span>المكتب الرئيسي</span>
+                                    <span class="font-medium">١٩٪</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Attendance & Leaves -->
+                <section class="grid gap-6 lg:grid-cols-2">
+                    <div class="bg-surface border border-border rounded-3xl shadow-sm p-6 space-y-5">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold">الحضور اليومي</h3>
+                            <button class="text-xs px-3 py-1 rounded-full border border-border text-text-secondary hover:bg-secondary-100">تصدير CSV</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="p-4 rounded-2xl bg-secondary-50 border border-border/60">
+                                <p class="text-text-secondary">نسبة الحضور</p>
+                                <p class="text-2xl font-bold mt-1">٩٣٪</p>
+                                <p class="text-success text-xs mt-1 flex items-center gap-1"><i class="fas fa-arrow-up"></i> +٢٪ عن الأسبوع الماضي</p>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-secondary-50 border border-border/60">
+                                <p class="text-text-secondary">التأخيرات المسجلة</p>
+                                <p class="text-2xl font-bold mt-1">١٤</p>
+                                <p class="text-error text-xs mt-1 flex items-center gap-1"><i class="fas fa-arrow-down"></i> يتطلب متابعة</p>
+                            </div>
+                        </div>
+                        <ul class="space-y-3 text-sm" id="attendance-log"></ul>
+                    </div>
+                    <div class="bg-surface border border-border rounded-3xl shadow-sm p-6 space-y-5">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold">طلبات الإجازة</h3>
+                            <button class="text-xs px-3 py-1 rounded-full bg-success text-white hover:bg-success-600">اعتماد جماعي</button>
+                        </div>
+                        <ul class="space-y-3 text-sm" id="leave-requests"></ul>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Create Employee Modal -->
+    <div id="create-modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+        <div class="bg-surface rounded-3xl w-full max-w-3xl border border-border shadow-modal">
+            <div class="px-6 py-4 border-b border-border flex items-center justify-between">
+                <h3 class="text-lg font-semibold">إضافة موظف جديد</h3>
+                <button class="text-text-tertiary hover:text-text-primary" data-close><i class="fas fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 grid gap-6">
+                <div class="grid gap-4 md:grid-cols-2 text-sm">
+                    <label class="space-y-2">
+                        <span class="font-medium text-text-secondary">الاسم الكامل</span>
+                        <input type="text" class="w-full px-4 py-2 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/40" placeholder="مثال: خالد العتيبي" />
+                    </label>
+                    <label class="space-y-2">
+                        <span class="font-medium text-text-secondary">البريد الإلكتروني</span>
+                        <input type="email" class="w-full px-4 py-2 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/40" placeholder="name@company.sa" />
+                    </label>
+                    <label class="space-y-2">
+                        <span class="font-medium text-text-secondary">القسم</span>
+                        <select class="w-full px-4 py-2 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/40">
+                            <option>الهندسة</option>
+                            <option>إدارة المشاريع</option>
+                            <option>المالية</option>
+                            <option>الموارد البشرية</option>
+                        </select>
+                    </label>
+                    <label class="space-y-2">
+                        <span class="font-medium text-text-secondary">المسمى الوظيفي</span>
+                        <input type="text" class="w-full px-4 py-2 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/40" placeholder="مدير مشروع" />
+                    </label>
+                    <label class="space-y-2">
+                        <span class="font-medium text-text-secondary">تاريخ التعيين</span>
+                        <input type="date" class="w-full px-4 py-2 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/40" />
+                    </label>
+                    <label class="space-y-2">
+                        <span class="font-medium text-text-secondary">حالة الموظف</span>
+                        <select class="w-full px-4 py-2 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/40">
+                            <option>على رأس العمل</option>
+                            <option>إجازة</option>
+                            <option>تحت التجربة</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="bg-secondary-50 border border-border rounded-2xl p-4 text-sm text-text-secondary">
+                    <p class="font-medium text-text-primary mb-2">الربط المالي ومراكز التكلفة</p>
+                    <p>سيتم إضافة الموظف إلى مركز التكلفة المحدد تلقائيًا وتطبيق سياسات RBAC حسب الدور.</p>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-border flex items-center justify-between text-sm">
+                <button class="text-text-secondary hover:text-text-primary" data-close>إلغاء</button>
+                <button class="px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-600">حفظ وإرسال بيانات الدخول</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="import-modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+        <div class="bg-surface rounded-3xl w-full max-w-2xl border border-border shadow-modal">
+            <div class="px-6 py-4 border-b border-border flex items-center justify-between">
+                <h3 class="text-lg font-semibold">استيراد موظفين من ملف</h3>
+                <button class="text-text-tertiary hover:text-text-primary" data-close><i class="fas fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-4 text-sm text-text-secondary">
+                <p>حمّل ملف Excel أو CSV يحتوي على الأعمدة: الاسم، البريد، القسم، المسمى، مركز التكلفة، الحالة، تاريخ التعيين. سيتم التحقق من البيانات وتوزيع الصلاحيات تلقائيًا.</p>
+                <div class="border border-dashed border-border rounded-2xl p-6 text-center space-y-2 bg-secondary-50">
+                    <i class="fas fa-cloud-arrow-up text-3xl text-primary"></i>
+                    <p class="font-medium text-text-primary">اسحب الملف هنا أو اختر من الجهاز</p>
+                    <button class="px-4 py-2 text-sm rounded-xl border border-border text-text-secondary hover:bg-secondary-100">استعراض الملفات</button>
+                </div>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>يتم إنشاء مستخدمين جدد مع إرسال بيانات الدخول بالبريد.</li>
+                    <li>تحديث العقود الحالية لا يغير القيم المالية إلا بعد موافقة الأدوار المخوّلة.</li>
+                    <li>يحفظ السجل في <span class="font-semibold">Audit Log</span> مع تفاصيل عملية الاستيراد.</li>
+                </ul>
+            </div>
+            <div class="px-6 py-4 border-t border-border flex items-center justify-between text-sm">
+                <button class="text-text-secondary hover:text-text-primary" data-close>إغلاق</button>
+                <div class="flex items-center gap-2">
+                    <span class="text-text-tertiary">قالب مخصص؟</span>
+                    <button class="px-4 py-2 bg-secondary-200 text-text-primary rounded-xl hover:bg-secondary-300">تحميل القالب المعتمد</button>
                 </div>
             </div>
         </div>
-
-        <nav class="p-4 space-y-2">
-            <!-- Dashboard -->
-            <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-tachometer-alt w-5"></i>
-                <span class="font-medium">لوحة التحكم</span>
-            </a>
-
-            <!-- Projects Section -->
-            <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-building w-5"></i>
-                <span>المشاريع</span>
-            </a>
-
-            <a href="project_phases.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-tasks w-5"></i>
-                <span>مراحل المشاريع</span>
-            </a>
-
-            <a href="project_information.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-info-circle w-5"></i>
-                <span>معلومات المشاريع</span>
-            </a>
-
-            <a href="project_expenses.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-receipt w-5"></i>
-                <span>مصاريف المشاريع</span>
-            </a>
-
-            <!-- Finance Section -->
-            <a href="financial_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-chart-line w-5"></i>
-                <span>المالية</span>
-            </a>
-
-            <a href="financial_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-coins w-5"></i>
-                <span>المركز المالي</span>
-            </a>
-
-            <a href="tax_invoice_generator.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-file-invoice w-5"></i>
-                <span>مولد الفواتير الضريبية</span>
-            </a>
-
-            <a href="payment_tracking.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-credit-card w-5"></i>
-                <span>تتبع المدفوعات</span>
-            </a>
-
-            <!-- Employees Section -->
-            <a href="employees_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
-                <i class="fas fa-users w-5"></i>
-                <span class="font-medium">الموظفين</span>
-            </a>
-
-            <a href="team_management.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-users-cog w-5"></i>
-                <span>إدارة الفريق</span>
-            </a>
-
-            <!-- Contracts -->
-            <a href="subcontractor_contracts.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-handshake w-5"></i>
-                <span>عقود المقاولين الفرعيين</span>
-            </a>
-
-            <!-- Settings -->
-            <a href="system_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-cog w-5"></i>
-                <span>إعدادات النظام</span>
-            </a>
-        </nav>
-    </div>
-
-    <!-- Main Content -->
-    <div class="mr-64 min-h-screen">
-        <!-- Top Header -->
-        <header class="bg-surface shadow-card px-6 py-4 border-b border-border">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold text-text-primary">منصة إدارة الموظفين المتكاملة</h1>
-                    <p class="text-text-secondary">قسم احترافي يربط الموارد البشرية بالمالية والعقود والسلف مع صلاحيات دقيقة لكل مستخدم.</p>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-3">
-                    <button data-scroll-to="architecture" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2">
-                        <i class="fas fa-diagram-project"></i>
-                        <span>المخطط المعماري</span>
-                    </button>
-                    <button data-scroll-to="rbac" class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast flex items-center gap-2">
-                        <i class="fas fa-user-shield"></i>
-                        <span>الأدوار والصلاحيات</span>
-                    </button>
-                    <button data-scroll-to="apis" class="bg-success text-white px-4 py-2 rounded-lg hover:bg-success-600 transition-fast flex items-center gap-2">
-                        <i class="fas fa-plug"></i>
-                        <span>تكاملات API</span>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <main class="p-6 space-y-8">
-            <!-- Hero Overview -->
-            <section class="bg-surface border border-border rounded-2xl shadow-card p-8">
-                <div class="flex flex-col lg:flex-row gap-8">
-                    <div class="flex-1 space-y-6">
-                        <div class="inline-flex items-center gap-2 bg-primary-50 text-primary px-3 py-1 rounded-full text-sm font-medium">
-                            <i class="fas fa-star-of-life"></i>
-                            <span>نظام إدارة الموظفين – مواصفة شاملة متكاملة</span>
-                        </div>
-                        <h2 class="text-3xl font-bold text-text-primary">هدف المنصة</h2>
-                        <p class="text-text-secondary leading-relaxed">
-                            بناء قسم "إدارة الموظفين" احترافي يشبه أنظمة إدارة المشاريع والمحاسبة العالمية، مع ربط كامل بالمالية والعقود والسلف، وإدارة أدوار وصلاحيات دقيقة (RBAC) بحيث يرى كل مستخدم ما يخصه فقط.
-                        </p>
-                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-text-secondary">
-                            <li class="flex items-start gap-2">
-                                <i class="fas fa-check text-success mt-1"></i>
-                                <span>تكامل مباشر بين الموارد البشرية، المالية، العقود، والسلف.</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <i class="fas fa-check text-success mt-1"></i>
-                                <span>واجهات وتجربة مستخدم متسقة مع هوية ContractorPro.</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <i class="fas fa-check text-success mt-1"></i>
-                                <span>سياسات صلاحيات متعددة المستويات مع إمكانية التوسع إلى ABAC.</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <i class="fas fa-check text-success mt-1"></i>
-                                <span>جاهزية للتدقيق، النسخ الاحتياطي، وتوثيق كل حركة حساسة.</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="border border-border rounded-xl p-5 bg-secondary-50">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-bold text-text-primary">3 خدمات محورية</h3>
-                                <i class="fas fa-network-wired text-primary text-xl"></i>
-                            </div>
-                            <p class="text-text-secondary mt-3 text-sm leading-relaxed">HR، Finance، IAM تعمل كوحدة واحدة مع قواعد بيانات مترابطة ومخازن ملفات متوافقة مع S3.</p>
-                        </div>
-                        <div class="border border-border rounded-xl p-5 bg-success-50">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-bold text-text-primary">تكاليف دقيقة</h3>
-                                <i class="fas fa-coins text-success text-xl"></i>
-                            </div>
-                            <p class="text-text-secondary mt-3 text-sm leading-relaxed">مراكز التكلفة، حساب تكلفة الساعة لكل موظف، وترحيل قيود الرواتب تلقائيًا للمالية.</p>
-                        </div>
-                        <div class="border border-border rounded-xl p-5 bg-warning-50">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-bold text-text-primary">مراقبة شاملة</h3>
-                                <i class="fas fa-shield-alt text-warning text-xl"></i>
-                            </div>
-                            <p class="text-text-secondary mt-3 text-sm leading-relaxed">Audit log، soft delete، versioning أساسي، وإخفاء الحقول الحساسة حسب الدور.</p>
-                        </div>
-                        <div class="border border-border rounded-xl p-5 bg-accent-50">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-bold text-text-primary">جاهزية للتوسع</h3>
-                                <i class="fas fa-rocket text-accent text-xl"></i>
-                            </div>
-                            <p class="text-text-secondary mt-3 text-sm leading-relaxed">بنية قابلة للتوسع بخدمات مستقلة، Job Queue لحساب الرواتب، وواجهات برمجة موحدة.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Architecture Overview -->
-            <section id="architecture" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-                    <h2 class="text-2xl font-bold text-text-primary">١) نظرة معمارية متكاملة</h2>
-                    <span class="text-sm text-text-secondary">Architecture Overview</span>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
-                        <h3 class="text-lg font-bold text-text-primary flex items-center gap-2"><i class="fas fa-display text-primary"></i> الواجهة</h3>
-                        <p class="text-text-secondary mt-3">React + TypeScript + TailwindCSS (أو Vue) مع تصميم متجاوب يدعم RTL بالكامل.</p>
-                        <ul class="mt-4 space-y-2 text-sm text-text-secondary">
-                            <li>مكونات تصميم موحدة وDesign System خاص بـ ContractorPro.</li>
-                            <li>إدارة حالة عبر Zustand/Redux لتكامل HR ↔ Finance.</li>
-                            <li>لوحة تحكم، نماذج ذكية، ورسوم بيانية لحظية.</li>
-                        </ul>
-                    </div>
-                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
-                        <h3 class="text-lg font-bold text-text-primary flex items-center gap-2"><i class="fas fa-server text-primary"></i> الخلفية</h3>
-                        <p class="text-text-secondary mt-3">Node.js (Express/Fastify) + TypeScript مع طبقات Services وRepositories واضحة.</p>
-                        <ul class="mt-4 space-y-2 text-sm text-text-secondary">
-                            <li>مصادقة JWT، سياسات RBAC/ABAC، وMiddlewares لإخفاء الحقول.</li>
-                            <li>Job Queue لحساب الرواتب وترحيل القيود المالية.</li>
-                            <li>تجزئة الخدمات إلى HR، Finance، IAM لخفة وسهولة التوسع.</li>
-                        </ul>
-                    </div>
-                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
-                        <h3 class="text-lg font-bold text-text-primary flex items-center gap-2"><i class="fas fa-database text-primary"></i> قاعدة البيانات</h3>
-                        <p class="text-text-secondary mt-3">PostgreSQL مع Prisma ORM، فهارس مخصصة، وViews للعرض حسب الدور.</p>
-                        <ul class="mt-4 space-y-2 text-sm text-text-secondary">
-                            <li>Soft delete + Audit tables لكل كيان حساس.</li>
-                            <li>دعم JSONB للبدلات، المرفقات، وإعدادات السياسات.</li>
-                            <li>Replication محتمل للتقارير الثقيلة وقراءة مهيأة.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="border border-border rounded-xl p-6">
-                        <h4 class="text-lg font-bold text-text-primary mb-3">الهوية والصلاحيات</h4>
-                        <ul class="space-y-2 text-sm text-text-secondary">
-                            <li>JWT + Refresh Tokens وتدوير مفاتيح دوري.</li>
-                            <li>RBAC مرن مع دعم ABAC لاحقًا حسب المشروع أو مركز التكلفة.</li>
-                            <li>سياسات تنزيل المرفقات تعتمد على صلاحية المستخدم.</li>
-                        </ul>
-                    </div>
-                    <div class="border border-border rounded-xl p-6">
-                        <h4 class="text-lg font-bold text-text-primary mb-3">الملفات والمرفقات</h4>
-                        <ul class="space-y-2 text-sm text-text-secondary">
-                            <li>S3-compatible storage أو Cloudinary بإدارة صلاحيات دقيقة.</li>
-                            <li>تشفير الروابط الموقّتة (Signed URLs) للعقود والوثائق.</li>
-                            <li>تحكم بالنسخ والتعديلات عبر Versioning أساسي.</li>
-                        </ul>
-                    </div>
-                    <div class="border border-border rounded-xl p-6">
-                        <h4 class="text-lg font-bold text-text-primary mb-3">الخدمات الفرعية</h4>
-                        <ul class="space-y-2 text-sm text-text-secondary">
-                            <li><strong>HR:</strong> الموظفون، العقود، الرواتب، الحضور، الإجازات، الأداء.</li>
-                            <li><strong>Finance:</strong> الأستاذ العام، القيود، المصاريف/الإيرادات، السلف، المستحقات.</li>
-                            <li><strong>IAM:</strong> المستخدمون، الأدوار، الصلاحيات، سياسات الوصول.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="border border-primary rounded-2xl bg-primary-50 p-6">
-                    <h4 class="text-lg font-bold text-primary mb-4">التكاملات المحورية</h4>
-                    <ul class="list-disc pr-5 space-y-2 text-text-secondary">
-                        <li>تكامل HR ↔ Finance: قيود رواتب، سلف، مستحقات نهاية الخدمة، ومخصصات تلقائية.</li>
-                        <li>تكامل HR ↔ Projects: إسناد الموظفين للمشاريع، تكلفة الساعة، ومراكز التكلفة.</li>
-                        <li>تقارير موحدة تجمع بيانات الموارد البشرية والمالية ضمن لوحة واحدة.</li>
-                    </ul>
-                </div>
-            </section>
-
-            <!-- RBAC -->
-            <section id="rbac" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-                    <h2 class="text-2xl font-bold text-text-primary">٢) نموذج الصلاحيات (RBAC)</h2>
-                    <span class="text-sm text-text-secondary">ثمانية أدوار افتراضية قابلة للتخصيص</span>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary">مدير النظام</h3>
-                        <p class="text-sm text-text-secondary mt-2">صلاحيات كاملة على جميع الوحدات.</p>
-                    </div>
-                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary">المدير التنفيذي</h3>
-                        <p class="text-sm text-text-secondary mt-2">رؤية شاملة للرواتب والتكاليف والعقود.</p>
-                    </div>
-                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary">المدير المالي</h3>
-                        <p class="text-sm text-text-secondary mt-2">الوصول للرواتب، السلف، قيود الترحيل، تقارير التكلفة.</p>
-                    </div>
-                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary">المحاسب</h3>
-                        <p class="text-sm text-text-secondary mt-2">إدخال ومراجعة قيود الرواتب والسلف والتقارير المرتبطة.</p>
-                    </div>
-                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary">مدير الموارد البشرية</h3>
-                        <p class="text-sm text-text-secondary mt-2">إدارة ملفات الموظفين، العقود، الحضور، الإجازات، والتقييمات.</p>
-                    </div>
-                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary">مشرف الموقع</h3>
-                        <p class="text-sm text-text-secondary mt-2">مشاهدة الفريق المعين، الحضور اليومي، وطلبات الإذن.</p>
-                    </div>
-                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary">المهندس</h3>
-                        <p class="text-sm text-text-secondary mt-2">الاطلاع على سجلاته الذاتية للحضور والإجازة والراتب دون قيمة العقد.</p>
-                    </div>
-                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary">الموظف</h3>
-                        <p class="text-sm text-text-secondary mt-2">بوابة ذاتية للخدمات الشخصية (Self-Service).</p>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto border border-border rounded-xl">
-                    <table class="min-w-full divide-y divide-border text-sm">
-                        <thead class="bg-secondary-50 text-text-secondary uppercase text-xs">
-                            <tr>
-                                <th class="px-4 py-3 text-right">الكيان/العملية</th>
-                                <th class="px-4 py-3 text-center">Admin</th>
-                                <th class="px-4 py-3 text-center">CEO</th>
-                                <th class="px-4 py-3 text-center">CFO</th>
-                                <th class="px-4 py-3 text-center">Accountant</th>
-                                <th class="px-4 py-3 text-center">HR Mgr</th>
-                                <th class="px-4 py-3 text-center">Supervisor</th>
-                                <th class="px-4 py-3 text-center">Engineer</th>
-                                <th class="px-4 py-3 text-center">Employee</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-border text-text-secondary">
-                            <tr>
-                                <td class="px-4 py-3 font-medium text-text-primary">الموظفون (قراءة)</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">محدود</td>
-                                <td class="text-center">محدود</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">محدود</td>
-                                <td class="text-center">ذاتي</td>
-                                <td class="text-center">ذاتي</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 font-medium text-text-primary">الموظفون (إضافة/تعديل)</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">—</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 font-medium text-text-primary">العقود (عرض القيمة)</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">محدود</td>
-                                <td class="text-center">✓ (بدون التكلفة الإجمالية)</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">إخفاء القيمة</td>
-                                <td class="text-center">—</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 font-medium text-text-primary">الرواتب (الحساب/الترحيل)</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">اقتراح فقط</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">ذاتي (قسط/سلف)</td>
-                                <td class="text-center">ذاتي</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 font-medium text-text-primary">السلف (إنشاء/اعتماد)</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">طلب فقط</td>
-                                <td class="text-center">طلب فقط</td>
-                                <td class="text-center">طلب ذاتي</td>
-                                <td class="text-center">طلب ذاتي</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 font-medium text-text-primary">الحضور (قراءة/اعتماد)</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓ (فرقته فقط)</td>
-                                <td class="text-center">ذاتي</td>
-                                <td class="text-center">ذاتي</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 font-medium text-text-primary">الأذونات والإجازات</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">توصية</td>
-                                <td class="text-center">ذاتي</td>
-                                <td class="text-center">ذاتي</td>
-                            </tr>
-                            <tr>
-                                <td class="px-4 py-3 font-medium text-text-primary">التقارير الحساسة (تكلفة إجمالية)</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">✓</td>
-                                <td class="text-center">محدود</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">—</td>
-                                <td class="text-center">—</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <p class="text-sm text-text-secondary">"محدود" تعني تقارير مجمعة بدون تفاصيل العقد أو الراتب الفردية، مع قابلية التوسع بسياسات ABAC حسب مركز التكلفة أو المشروع.</p>
-            </section>
-
-            <!-- Database Schema -->
-            <section id="database" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">٣) مخطط قاعدة البيانات (ERD) – نصي</h2>
-                <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>User(id, email, phone, password_hash, status, last_login_at)
-Role(id, key, name_ar, description)
-UserRole(user_id, role_id)
-Permission(id, key, name_ar)
-RolePermission(role_id, permission_id)
-
-Employee(id, user_id, code, full_name, national_id, hire_date,
-         job_title, department_id, project_id, manager_id, status, grade,
-         hourly_rate, monthly_basic, allowances_json, bank_iban,
-         created_at, updated_at)
-Department(id, name_ar, cost_center_code)
-Project(id, code, name_ar, cost_center_code)
-
-Contract(id, employee_id, type, start_date, end_date, probation_end,
-         basic_salary, allowances_json, currency, visibility_scope,
-         signed_file_url, created_at)
-
-Attendance(id, employee_id, day, check_in, check_out,
-          shift_code, overtime_minutes, status)
-Leave(id, employee_id, type, start_date, end_date, status, approved_by, notes)
-
-PayrollBatch(id, month, year, status, posted_journal_id, created_by)
-PayrollItem(id, batch_id, employee_id, earnings_json, deductions_json,
-            gross, net, loan_deduction, advance_deduction, cost_center)
-
-Advance(id, employee_id, request_date, amount, currency, status,
-        approved_by, repayment_months, reason)
-Loan(id, employee_id, principal, remaining, installment, start_month, status)
-
-Expense(id, project_id, employee_id, category, amount, currency, date,
-        cost_center, reference, approved_by)
-
-Journal(id, date, description, status)
-JournalEntry(id, journal_id, account_code, debit, credit, cost_center, ref)
-
-AuditLog(id, actor_user_id, action, entity, entity_id, before_json, after_json, at)</code></pre>
-                <div class="bg-secondary-50 border border-border rounded-xl p-5">
-                    <h3 class="font-bold text-text-primary mb-3">فهارس أساسية</h3>
-                    <ul class="list-disc pr-5 space-y-2 text-text-secondary">
-                        <li>فهرسة <code class="bg-secondary-100 px-1 rounded">employee_id</code>، <code class="bg-secondary-100 px-1 rounded">project_id</code>، <code class="bg-secondary-100 px-1 rounded">cost_center_code</code> لربط سريع بالمالية.</li>
-                        <li>فهارس مركبة على <code class="bg-secondary-100 px-1 rounded">PayrollBatch(month, year)</code> و<code class="bg-secondary-100 px-1 rounded">Attendance.day</code>.</li>
-                        <li>اعتماد Partitioning اختياري لجداول الحضور والرواتب الثقيلة.</li>
-                    </ul>
-                </div>
-            </section>
-
-            <!-- Sensitive data policies -->
-            <section id="data-governance" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">٤) سياسات إخفاء الحقول الحساسة</h2>
-                <p class="text-text-secondary leading-relaxed">في طبقة الخدمات يتم تطبيق مرشح عرض بناءً على الدور لضمان حماية البيانات المالية الحساسة:</p>
-                <ul class="list-disc pr-5 space-y-2 text-text-secondary">
-                    <li>المهندسون، المشرفون، والموظفون لا يرون <code class="bg-secondary-100 px-1 rounded">basic_salary</code> و<code class="bg-secondary-100 px-1 rounded">allowances_json</code> داخل العقود.</li>
-                    <li>المحاسب يرى القيم الإجمالية دون تفاصيل العقد الفردية.</li>
-                    <li>توفير Views مختلفة على مستوى SQL لكل فئة دور عند الحاجة.</li>
-                </ul>
-                <div class="bg-secondary-50 border border-border rounded-xl p-5">
-                    <h3 class="font-bold text-text-primary mb-3">مثال View مختصر (PostgreSQL)</h3>
-                    <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>CREATE VIEW v_employee_public AS
-SELECT e.id, e.full_name, e.job_title, d.name_ar AS department, p.name_ar AS project
-FROM Employee e
-LEFT JOIN Department d ON d.id = e.department_id
-LEFT JOIN Project p ON p.id = e.project_id;</code></pre>
-                </div>
-            </section>
-
-            <!-- Workflows -->
-            <section id="workflows" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">٥) التدفقات الرئيسية (Workflows)</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="border border-border rounded-xl p-6">
-                        <h3 class="text-lg font-bold text-text-primary mb-3">أ) دورة العقد</h3>
-                        <ol class="list-decimal pr-5 space-y-2 text-text-secondary text-sm">
-                            <li>ينشئ HR عقدًا جديدًا ويُرفق ملف PDF مع تحديد تفاصيل الموظف.</li>
-                            <li>يعتمد مدير النظام نطاق الظهور <code class="bg-secondary-100 px-1 rounded">visibility_scope</code>.</li>
-                            <li>عند الاعتماد يتم تسجيل حدث في <code class="bg-secondary-100 px-1 rounded">AuditLog</code> مع قبل/بعد.</li>
-                        </ol>
-                    </div>
-                    <div class="border border-border rounded-xl p-6">
-                        <h3 class="text-lg font-bold text-text-primary mb-3">ب) دورة السلف/القروض</h3>
-                        <ol class="list-decimal pr-5 space-y-2 text-text-secondary text-sm">
-                            <li>يقدم الموظف طلب سلفة عبر البوابة الذاتية.</li>
-                            <li>يستقبل HR/CFO إشعارًا للمراجعة والاعتماد.</li>
-                            <li>بعد الموافقة يُنشأ <code class="bg-secondary-100 px-1 rounded">Advance</code> أو <code class="bg-secondary-100 px-1 rounded">Loan</code> وتحدد خطة السداد.</li>
-                            <li>يتم خصم الأقساط تلقائيًا عند ترحيل الرواتب مع إنشاء قيود يومية مرتبطة بمراكز التكلفة.</li>
-                        </ol>
-                    </div>
-                    <div class="border border-border rounded-xl p-6">
-                        <h3 class="text-lg font-bold text-text-primary mb-3">ج) الحضور والإجازات</h3>
-                        <ol class="list-decimal pr-5 space-y-2 text-text-secondary text-sm">
-                            <li>المشرف يعتمد حضور فريقه فقط.</li>
-                            <li>HR يدير الاستثناءات والتعديلات.</li>
-                            <li>وحدة الرواتب تقرأ الحضور لحساب البدلات والخصومات.</li>
-                        </ol>
-                    </div>
-                    <div class="border border-border rounded-xl p-6">
-                        <h3 class="text-lg font-bold text-text-primary mb-3">د) الرواتب (Payroll)</h3>
-                        <ol class="list-decimal pr-5 space-y-2 text-text-secondary text-sm">
-                            <li>إنشاء <code class="bg-secondary-100 px-1 rounded">PayrollBatch(month, year)</code>.</li>
-                            <li>حساب المستحقات: الأساسي + البدلات − الخصومات − الأقساط + الساعات الإضافية.</li>
-                            <li>ترحيل محاسبي تلقائي عبر <code class="bg-secondary-100 px-1 rounded">Journal</code> و<code class="bg-secondary-100 px-1 rounded">JournalEntry</code>.</li>
-                        </ol>
-                    </div>
-                </div>
-            </section>
-
-            <!-- APIs -->
-            <section id="apis" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">٦) واجهات برمجة التطبيقات (REST)</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="border border-border rounded-xl p-6">
-                        <h3 class="font-bold text-text-primary mb-3">الهوية والصلاحيات</h3>
-                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>POST /api/auth/login
-GET  /api/iam/users
-POST /api/iam/roles
-POST /api/iam/roles/{id}/permissions</code></pre>
-                    </div>
-                    <div class="border border-border rounded-xl p-6">
-                        <h3 class="font-bold text-text-primary mb-3">الموظفون والعقود</h3>
-                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>GET  /api/employees?projectId=&amp;departmentId=&amp;q=
-POST /api/employees
-GET  /api/employees/{id}
-PATCH /api/employees/{id}
-
-POST /api/employees/{id}/contracts
-GET  /api/employees/{id}/contracts</code></pre>
-                    </div>
-                    <div class="border border-border rounded-xl p-6">
-                        <h3 class="font-bold text-text-primary mb-3">الحضور والإجازات</h3>
-                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>POST /api/attendance/bulk
-GET  /api/attendance?employeeId=&amp;from=&amp;to=
-POST /api/leaves
-PATCH /api/leaves/{id}/approve</code></pre>
-                    </div>
-                    <div class="border border-border rounded-xl p-6">
-                        <h3 class="font-bold text-text-primary mb-3">السلف والقروض</h3>
-                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>POST /api/advances
-PATCH /api/advances/{id}/approve
-POST /api/loans
-PATCH /api/loans/{id}/settle</code></pre>
-                    </div>
-                    <div class="border border-border rounded-xl p-6 lg:col-span-2">
-                        <h3 class="font-bold text-text-primary mb-3">الرواتب</h3>
-                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>POST /api/payroll/batches
-POST /api/payroll/batches/{id}/calculate
-POST /api/payroll/batches/{id}/post
-GET  /api/payroll/batches/{id}/journal</code></pre>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Sample Code -->
-            <section id="code" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">٧) نماذج أكواد مهمة</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary mb-3">حماية نقطة نهاية حسب الدور</h3>
-                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>// middleware/requireRole.ts
-export function requireRole(roles: string[]) {
-  return (req, res, next) => {
-    const user = req.user;
-    if (!user || !roles.some(r => user.roles.includes(r))) {
-      return res.status(403).json({ message: 'ليس لديك صلاحية' });
-    }
-    next();
-  };
-}</code></pre>
-                    </div>
-                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary mb-3">فلترة الحقول الحساسة</h3>
-                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>function sanitizeContractForRole(contract: any, roleKeys: string[]): any {
-  const canSeeMoney = roleKeys.some(r => ['admin','ceo','cfo'].includes(r));
-  if (!canSeeMoney) {
-    const { basic_salary, allowances_json, ...rest } = contract;
-    return rest;
-  }
-  return contract;
-}</code></pre>
-                    </div>
-                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary mb-3">حساب قسط السلفة داخل الرواتب</h3>
-                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>function computeNet(pay: PayrollItem, loan?: Loan) {
-  const loanDeduction = loan ? Math.min(loan.installment, loan.remaining) : 0;
-  const gross = pay.gross;
-  const net = gross - loanDeduction;
-  return { ...pay, loan_deduction: loanDeduction, net };
-}</code></pre>
-                    </div>
-                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary mb-3">قيد يومية بسيط للرواتب</h3>
-                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>insertJournal(date, 'ترحيل رواتب شهرية', [
-  { account: '5001', debit: totalSalaries, credit: 0, cost_center: 'HR' },
-  { account: '2103', debit: 0, credit: totalSalaries, cost_center: 'HR' },
-]);</code></pre>
-                    </div>
-                </div>
-            </section>
-
-            <!-- UI Overview -->
-            <section id="ui" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">٨) الواجهة – الصفحات والمكونات</h2>
-                <p class="text-text-secondary leading-relaxed">تصميم واجهة المستخدم يحاكي أنظمة إدارة المشاريع والمحاسبة العالمية مع الالتزام بهوية ContractorPro:</p>
-                <ul class="list-disc pr-5 space-y-2 text-text-secondary">
-                    <li>قائمة الموظفين ببحث وفلاتر (قسم، مشروع، حالة) وأعمدة قابلة للتخصيص.</li>
-                    <li>ملف موظف شامل: بيانات أساسية، عقود، مرفقات، تاريخ وظيفي، أداء، وسجل رواتب.</li>
-                    <li>وحدة العقود مع تحميل الملفات، تحديد نطاق الظهور، وسجل الموافقات.</li>
-                    <li>إدارة الحضور عبر تقويم، إدخال جماعي، واعتمادات المشرفين.</li>
-                    <li>بوابة الإجازات والسلف والقروض بطلبات واعتمادات متعددة المستويات.</li>
-                    <li>دفعات الرواتب الشهرية مع حساب، مراجعة، وترحيل محاسبي متكامل.</li>
-                    <li>التقارير الحساسة لتكلفة الموظف، المركز، والمشروع مع سياسات ظهور محددة.</li>
-                    <li>لوحة إدارة الأدوار والصلاحيات لإنشاء وربط الصلاحيات بالمستخدمين.</li>
-                </ul>
-            </section>
-
-            <!-- Security & Performance -->
-            <section id="security" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">٩) سياسات الأمن والامتثال &amp; ١٠) الأداء وقابلية التوسع</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary mb-3">الأمن والامتثال</h3>
-                        <ul class="list-disc pr-5 space-y-2 text-text-secondary text-sm">
-                            <li>تشفير كلمات المرور باستخدام Argon2 أو BCrypt.</li>
-                            <li>تدوير مفاتيح JWT وإضافة Refresh Tokens.</li>
-                            <li>سجل تدقيق لكل عملية حساسة مع Masking للحقول الحساسة في السجلات.</li>
-                            <li>صلاحيات دقيقة للمرفقات وعمليات التنزيل.</li>
-                        </ul>
-                    </div>
-                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
-                        <h3 class="font-bold text-text-primary mb-3">الأداء وقابلية التوسع</h3>
-                        <ul class="list-disc pr-5 space-y-2 text-text-secondary text-sm">
-                            <li>فهارس مدروسة واستعلامات مجمعة للتقارير.</li>
-                            <li>Job Queue لحساب الرواتب وترحيل القيود.</li>
-                            <li>Cache لتقارير القراءة الثقيلة وتجزئة للخدمات.</li>
-                            <li>مراقبة وتحذيرات زمنية لضمان الاستجابة.</li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Roadmap -->
-            <section id="roadmap" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">١١) خارطة الطريق (Roadmap)</h2>
-                <div class="space-y-4">
-                    <div class="border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">1</span>
-                            <h3 class="font-bold text-text-primary">المرحلة 1</h3>
-                        </div>
-                        <p class="text-text-secondary text-sm">الموظفون + العقود + الحضور/الإجازات + RBAC أساسي.</p>
-                    </div>
-                    <div class="border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 rounded-full bg-success text-white flex items-center justify-center font-bold">2</span>
-                            <h3 class="font-bold text-text-primary">المرحلة 2</h3>
-                        </div>
-                        <p class="text-text-secondary text-sm">الرواتب والسلف + تكامل القيود المحاسبية.</p>
-                    </div>
-                    <div class="border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 rounded-full bg-warning text-white flex items-center justify-center font-bold">3</span>
-                            <h3 class="font-bold text-text-primary">المرحلة 3</h3>
-                        </div>
-                        <p class="text-text-secondary text-sm">الأداء والتقييمات + مسارات موافقات متعددة (Workflow Engine).</p>
-                    </div>
-                    <div class="border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <span class="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-bold">4</span>
-                            <h3 class="font-bold text-text-primary">المرحلة 4</h3>
-                        </div>
-                        <p class="text-text-secondary text-sm">تطبيق جوال للموظف (Self-Service) مع إشعارات فورية.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Finance Integration -->
-            <section id="integration" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">١٢) نقاط تكامل مع قسم المالية</h2>
-                <ul class="list-disc pr-5 space-y-2 text-text-secondary">
-                    <li>عند اعتماد <code class="bg-secondary-100 px-1 rounded">PayrollBatch</code>: إنشاء قيود يومية وربطها بمركز التكلفة لكل موظف/مشروع.</li>
-                    <li>عند إنشاء سلفة أو قرض: قيود تلقائية (سلفة مدينة/رواتب مستحقة) وتحديث الرصيد المتبقي.</li>
-                    <li>تقارير موحدة لتكلفة المشروع = مصروفات مباشرة + رواتب محمّلة على المشروع حسب ساعات العمل.</li>
-                </ul>
-            </section>
-
-            <!-- Prisma sample -->
-            <section id="prisma" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">١٣) عيّنة مخطط Prisma</h2>
-                <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>model Employee {
-  id           String   @id @default(cuid())
-  userId       String?  @unique
-  code         String   @unique
-  fullName     String
-  jobTitle     String?
-  departmentId String?
-  projectId    String?
-  hireDate     DateTime?
-  monthlyBasic Decimal? @db.Decimal(12,2)
-  hourlyRate   Decimal? @db.Decimal(12,2)
-  bankIban     String?
-  status       String   @default("active")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}</code></pre>
-            </section>
-
-            <!-- Additional Notes -->
-            <section id="notes" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
-                <h2 class="text-2xl font-bold text-text-primary">١٤) ملاحظات تطبيقية سريعة</h2>
-                <ul class="list-disc pr-5 space-y-2 text-text-secondary">
-                    <li>إخفاء قيمة العقد للمهندس/المراقب عبر DTO مخصص أو صلاحيات على مستوى الحقول.</li>
-                    <li>استخدام Feature Flags لتفعيل وحدات النظام تدريجيًا.</li>
-                    <li>بناء Seeder لإنشاء الأدوار والصلاحيات الأولية وتسهيل الانطلاق.</li>
-                </ul>
-            </section>
-        </main>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const buttons = document.querySelectorAll('[data-scroll-to]');
-            buttons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const targetId = button.getAttribute('data-scroll-to');
-                    const targetSection = document.getElementById(targetId);
-                    if (targetSection) {
-                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const employees = [
+            {
+                id: "EMP-001",
+                name: "سارة الدوسري",
+                email: "sarah.d@contractorpro.sa",
+                department: "الهندسة",
+                project: "مشروع الأفق",
+                status: "active",
+                manager: "م. ناصر الغامدي",
+                lastAction: "تحديث تقييم الأداء",
+                avatar: "https://i.pravatar.cc/160?img=47",
+                joinDate: "2021-03-12",
+                role: "مهندس أول",
+                costCenter: "ENG-01",
+                contractVisibility: "full",
+                contractSummary: {
+                    type: "دائم",
+                    renewal: "أكتوبر 2024",
+                    allowances: ["بدل سكن 25%", "بدل نقل 10%"],
+                },
+                attendance: {
+                    month: "مارس",
+                    presence: 21,
+                    absence: 1,
+                    overtime: 8,
+                },
+                leaves: [
+                    { type: "سنوية", days: 14, remaining: 8 },
+                    { type: "طارئة", days: 5, remaining: 2 },
+                ],
+                payroll: {
+                    gross: "18٬500",
+                    net: "16٬950",
+                    deductions: "بدل سكن/نقل مدفوعة",
+                },
+            },
+            {
+                id: "EMP-002",
+                name: "محمد الشهري",
+                email: "m.shahri@contractorpro.sa",
+                department: "إدارة المشاريع",
+                project: "مشروع المطار",
+                status: "leave",
+                manager: "م. ليلى الحربي",
+                lastAction: "طلب إجازة طارئة",
+                avatar: "https://i.pravatar.cc/160?img=12",
+                joinDate: "2019-11-01",
+                role: "مدير مشروع",
+                costCenter: "PM-03",
+                contractVisibility: "limited",
+                contractSummary: {
+                    type: "عقد محدد",
+                    renewal: "يناير 2026",
+                    allowances: ["بدل موقع", "بدل مواصلات"],
+                },
+                attendance: {
+                    month: "مارس",
+                    presence: 19,
+                    absence: 3,
+                    overtime: 2,
+                },
+                leaves: [
+                    { type: "سنوية", days: 21, remaining: 12 },
+                ],
+                payroll: {
+                    gross: "22٬700",
+                    net: "20٬120",
+                    deductions: "قسط سلفة ٢٬٠٠٠",
+                },
+            },
+            {
+                id: "EMP-003",
+                name: "ليان المطيري",
+                email: "l.mutairi@contractorpro.sa",
+                department: "الموارد البشرية",
+                project: "المكتب الرئيسي",
+                status: "probation",
+                manager: "هدى السبيعي",
+                lastAction: "رفع ملف العقد",
+                avatar: "https://i.pravatar.cc/160?img=32",
+                joinDate: "2025-01-15",
+                role: "أخصائية توظيف",
+                costCenter: "HR-02",
+                contractVisibility: "hidden",
+                contractSummary: {
+                    type: "تجربة 90 يوم",
+                    renewal: "أبريل 2025",
+                    allowances: ["بدل مواصلات"],
+                },
+                attendance: {
+                    month: "مارس",
+                    presence: 18,
+                    absence: 2,
+                    overtime: 0,
+                },
+                leaves: [
+                    { type: "طارئة", days: 2, remaining: 1 },
+                ],
+                payroll: {
+                    gross: "9٬800",
+                    net: "9٬200",
+                    deductions: "لا يوجد",
+                },
+            },
+            {
+                id: "EMP-004",
+                name: "عبدالله القحطاني",
+                email: "abdullah.q@contractorpro.sa",
+                department: "الهندسة",
+                project: "مشروع الأفق",
+                status: "active",
+                manager: "م. ناصر الغامدي",
+                lastAction: "اعتماد ساعات إضافية",
+                avatar: "https://i.pravatar.cc/160?img=55",
+                joinDate: "2020-06-22",
+                role: "مهندس موقع",
+                costCenter: "ENG-01",
+                contractVisibility: "limited",
+                contractSummary: {
+                    type: "دائم",
+                    renewal: "يونيو 2025",
+                    allowances: ["بدل موقع 15%"],
+                },
+                attendance: {
+                    month: "مارس",
+                    presence: 22,
+                    absence: 0,
+                    overtime: 14,
+                },
+                leaves: [
+                    { type: "سنوية", days: 18, remaining: 10 },
+                ],
+                payroll: {
+                    gross: "15٬200",
+                    net: "14٬350",
+                    deductions: "حسم تأخير ١٥٠",
+                },
+            },
+            {
+                id: "EMP-005",
+                name: "شهد البقمي",
+                email: "shahad.b@contractorpro.sa",
+                department: "المالية",
+                project: "المكتب الرئيسي",
+                status: "active",
+                manager: "طارق الحارثي",
+                lastAction: "إكمال تسوية سلفة",
+                avatar: "https://i.pravatar.cc/160?img=5",
+                joinDate: "2018-08-09",
+                role: "محاسبة أولى",
+                costCenter: "FIN-01",
+                contractVisibility: "full",
+                contractSummary: {
+                    type: "دائم",
+                    renewal: "أغسطس 2025",
+                    allowances: ["بدل شهادات مهنية"],
+                },
+                attendance: {
+                    month: "مارس",
+                    presence: 21,
+                    absence: 1,
+                    overtime: 3,
+                },
+                leaves: [
+                    { type: "سنوية", days: 24, remaining: 14 },
+                    { type: "مرضية", days: 7, remaining: 6 },
+                ],
+                payroll: {
+                    gross: "17٬400",
+                    net: "16٬950",
+                    deductions: "اشتراك هيئة المحاسبين",
+                },
+            },
+        ];
+
+        const overviewMetrics = [
+            {
+                label: "إجمالي الموظفين",
+                key: "total",
+                icon: "fa-users",
+                color: "bg-primary/10 text-primary",
+            },
+            {
+                label: "تعيينات هذا الربع",
+                key: "newHires",
+                icon: "fa-person-circle-plus",
+                color: "bg-success/10 text-success",
+            },
+            {
+                label: "طلبات الإجازة المفتوحة",
+                key: "openLeaves",
+                icon: "fa-plane-departure",
+                color: "bg-warning/10 text-warning",
+            },
+            {
+                label: "السلف النشطة",
+                key: "activeAdvances",
+                icon: "fa-sack-dollar",
+                color: "bg-error/10 text-error",
+            },
+        ];
+
+        const workflowItems = [
+            { time: "09:20", title: "اعتماد عقد جديد", description: "تم اعتماد عقد ليان المطيري من قبل مدير الموارد البشرية" },
+            { time: "10:05", title: "تذكير تقييم أداء", description: "تم إرسال إشعار للمديرين لإكمال تقييمات الربع الأول" },
+            { time: "11:40", title: "طلب سلفة", description: "تم استلام طلب سلفة من خالد السبيعي بقيمة ٥٬٠٠٠ ر.س" },
+            { time: "13:15", title: "تعديل مركز تكلفة", description: "تم نقل موظفين اثنين إلى مشروع الأفق" },
+        ];
+
+        const attendanceLog = [
+            { employee: "عبدالله القحطاني", status: "حضور", note: "ساعات إضافية 4" },
+            { employee: "ليان المطيري", status: "حضور", note: "تدريب على النظام" },
+            { employee: "محمد الشهري", status: "إجازة", note: "طارئة معتمدة" },
+            { employee: "سارة الدوسري", status: "متأخر", note: "15 دقيقة" },
+        ];
+
+        const leaveRequests = [
+            { employee: "سارة الدوسري", type: "سنوية", range: "٢٤-٢٨ مارس", approver: "م. ناصر الغامدي", status: "قيد الموافقة" },
+            { employee: "خالد السبيعي", type: "طارئة", range: "١٥ مارس", approver: "ليلى الحربي", status: "بانتظار التوقيع" },
+            { employee: "مها العبدالله", type: "دراسية", range: "١٠ أبريل - ١٠ مايو", approver: "طارق الحارثي", status: "مستندات مطلوبة" },
+        ];
+
+        const overviewEl = document.getElementById("overview-cards");
+        const departmentFilter = document.getElementById("department-filter");
+        const statusFilter = document.getElementById("status-filter");
+        const searchInput = document.getElementById("search-input");
+        const employeesBody = document.getElementById("employees-body");
+        const recordsCount = document.getElementById("records-count");
+        const paginationInfo = document.getElementById("pagination-info");
+        const prevPageBtn = document.getElementById("prev-page");
+        const nextPageBtn = document.getElementById("next-page");
+        const workflowTimeline = document.getElementById("workflow-timeline");
+        const attendanceLogEl = document.getElementById("attendance-log");
+        const leaveRequestsEl = document.getElementById("leave-requests");
+        const employeeDetails = document.getElementById("employee-details");
+
+        const createModal = document.getElementById("create-modal");
+        const importModal = document.getElementById("import-modal");
+        const openCreate = document.getElementById("open-create");
+        const openImport = document.getElementById("open-import");
+
+        let currentPage = 1;
+        const pageSize = 4;
+
+        function formatStatus(status) {
+            const map = {
+                active: { label: "على رأس العمل", badge: "bg-success/10 text-success" },
+                leave: { label: "إجازة", badge: "bg-warning/10 text-warning" },
+                probation: { label: "تحت التجربة", badge: "bg-accent/10 text-accent" },
+                resigned: { label: "منتهٍ", badge: "bg-error/10 text-error" },
+            };
+            return map[status] || { label: status, badge: "bg-secondary-100 text-text-secondary" };
+        }
+
+        function renderOverview() {
+            const metrics = {
+                total: employees.length,
+                newHires: employees.filter((emp) => new Date(emp.joinDate) >= new Date("2024-12-31")).length,
+                openLeaves: leaveRequests.length,
+                activeAdvances: 6,
+            };
+
+            overviewEl.innerHTML = overviewMetrics
+                .map(
+                    (metric) => `
+                        <div class="bg-surface border border-border rounded-3xl shadow-sm p-5 flex flex-col gap-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-text-secondary">${metric.label}</span>
+                                <span class="w-10 h-10 rounded-2xl flex items-center justify-center ${metric.color}"><i class="fas ${metric.icon}"></i></span>
+                            </div>
+                            <div class="text-3xl font-bold">${metrics[metric.key]}</div>
+                            <p class="text-xs text-text-tertiary">تم التحديث قبل دقيقة بواسطة نظام المراقبة اللحظي.</p>
+                        </div>
+                    `
+                )
+                .join("");
+        }
+
+        function renderWorkflow() {
+            workflowTimeline.innerHTML = workflowItems
+                .map(
+                    (item) => `
+                        <li class="flex gap-3 items-start">
+                            <span class="text-xs font-semibold text-text-tertiary mt-1">${item.time}</span>
+                            <div class="flex-1 space-y-1">
+                                <p class="font-medium text-text-primary">${item.title}</p>
+                                <p>${item.description}</p>
+                            </div>
+                        </li>
+                    `
+                )
+                .join("");
+        }
+
+        function renderAttendanceLog() {
+            attendanceLogEl.innerHTML = attendanceLog
+                .map(
+                    (item) => `
+                        <li class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
+                            <div class="flex items-center justify-between">
+                                <span class="font-medium text-text-primary">${item.employee}</span>
+                                <span class="text-xs px-3 py-1 rounded-full ${item.status === "حضور" ? "bg-success/10 text-success" : item.status === "إجازة" ? "bg-warning/10 text-warning" : "bg-error/10 text-error"}">${item.status}</span>
+                            </div>
+                            <p class="text-xs text-text-secondary mt-2">${item.note}</p>
+                        </li>
+                    `
+                )
+                .join("");
+        }
+
+        function renderLeaves() {
+            leaveRequestsEl.innerHTML = leaveRequests
+                .map(
+                    (item) => `
+                        <li class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="font-medium text-text-primary">${item.employee}</p>
+                                    <p class="text-xs text-text-secondary mt-1">${item.type} • ${item.range}</p>
+                                </div>
+                                <span class="text-xs text-text-tertiary">${item.status}</span>
+                            </div>
+                            <p class="text-xs text-text-secondary mt-3">المعتمد المتوقع: ${item.approver}</p>
+                        </li>
+                    `
+                )
+                .join("");
+        }
+
+        function populateDepartments() {
+            const departments = Array.from(new Set(employees.map((emp) => emp.department)));
+            departments.forEach((dept) => {
+                const option = document.createElement("option");
+                option.value = dept;
+                option.textContent = dept;
+                departmentFilter.append(option);
+            });
+        }
+
+        function applyFilters() {
+            const query = searchInput.value.trim().toLowerCase();
+            const dept = departmentFilter.value;
+            const status = statusFilter.value;
+
+            return employees.filter((emp) => {
+                const matchesQuery = !query || emp.name.toLowerCase().includes(query) || emp.email.toLowerCase().includes(query);
+                const matchesDept = dept === "all" || emp.department === dept;
+                const matchesStatus = status === "all" || emp.status === status;
+                return matchesQuery && matchesDept && matchesStatus;
+            });
+        }
+
+        function paginate(data) {
+            const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
+            if (currentPage > totalPages) currentPage = totalPages;
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const slice = data.slice(start, end);
+
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+            paginationInfo.textContent = `صفحة ${currentPage} من ${totalPages}`;
+            recordsCount.textContent = data.length;
+            return slice;
+        }
+
+        function renderEmployees() {
+            const filtered = applyFilters();
+            const pageData = paginate(filtered);
+            employeesBody.innerHTML = pageData
+                .map((emp) => {
+                    const statusInfo = formatStatus(emp.status);
+                    return `
+                        <tr class="hover:bg-secondary-50 transition cursor-pointer" data-id="${emp.id}">
+                            <td class="py-4 px-4">
+                                <div class="flex items-center gap-3">
+                                    <img src="${emp.avatar}" alt="${emp.name}" class="w-10 h-10 rounded-full object-cover" />
+                                    <div>
+                                        <p class="font-medium text-text-primary">${emp.name}</p>
+                                        <p class="text-xs text-text-secondary">${emp.email}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 px-4 text-text-secondary">${emp.department}</td>
+                            <td class="py-4 px-4 text-text-secondary">${emp.project}</td>
+                            <td class="py-4 px-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium ${statusInfo.badge}">${statusInfo.label}</span>
+                            </td>
+                            <td class="py-4 px-4 text-text-secondary">${emp.manager}</td>
+                            <td class="py-4 px-4 text-text-tertiary">${emp.lastAction}</td>
+                        </tr>
+                    `;
+                })
+                .join("");
+
+            if (!filtered.length) {
+                employeesBody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-text-tertiary">لا توجد نتائج مطابقة للبحث الحالي.</td></tr>`;
+            }
+        }
+
+        function renderEmployeeDetails(emp) {
+            if (!emp) {
+                employeeDetails.innerHTML = `<p class="text-center text-text-tertiary">اختر موظفًا من القائمة لاستعراض ملفه التفصيلي.</p>`;
+                return;
+            }
+
+            const statusInfo = formatStatus(emp.status);
+            employeeDetails.innerHTML = `
+                <div class="flex flex-col gap-5">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <img src="${emp.avatar}" alt="${emp.name}" class="w-16 h-16 rounded-2xl object-cover" />
+                            <div>
+                                <h4 class="text-lg font-semibold text-text-primary">${emp.name}</h4>
+                                <p class="text-sm text-text-secondary">${emp.role} • ${emp.department}</p>
+                                <p class="text-xs text-text-tertiary mt-1">منضم منذ ${new Date(emp.joinDate).toLocaleDateString("ar-SA")}</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 text-xs">
+                            <span class="px-3 py-1 rounded-full border border-border text-text-secondary">${emp.id}</span>
+                            <span class="px-3 py-1 rounded-full ${statusInfo.badge}">${statusInfo.label}</span>
+                            <span class="px-3 py-1 rounded-full bg-secondary-100 text-text-secondary">${emp.project}</span>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <div class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
+                            <h5 class="font-semibold text-text-primary mb-2 flex items-center gap-2"><i class="fas fa-id-card-clip text-primary"></i> بيانات الهوية والارتباط</h5>
+                            <ul class="space-y-1 text-xs text-text-secondary">
+                                <li>البريد: ${emp.email}</li>
+                                <li>المسؤول المباشر: ${emp.manager}</li>
+                                <li>مركز التكلفة: ${emp.costCenter}</li>
+                                <li>انتماء RBAC: ${emp.contractVisibility === "full" ? "وصول كامل" : emp.contractVisibility === "limited" ? "تفاصيل مالية مخفية" : "عرض عام بدون تفاصيل مالية"}</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
+                            <h5 class="font-semibold text-text-primary mb-2 flex items-center gap-2"><i class="fas fa-briefcase text-primary"></i> ملخص العقد</h5>
+                            <p class="text-xs text-text-secondary">نوع العقد: ${emp.contractSummary.type}</p>
+                            <p class="text-xs text-text-secondary mt-1">تجديد متوقع: ${emp.contractSummary.renewal}</p>
+                            <p class="text-xs text-text-secondary mt-2">البدلات المفعلة:</p>
+                            <ul class="list-disc list-inside text-xs text-text-secondary space-y-1">
+                                ${emp.contractSummary.allowances.map((allowance) => `<li>${allowance}</li>`).join("")}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-4 md:grid-cols-3 text-xs text-text-secondary">
+                        <div class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
+                            <p class="text-text-primary font-semibold mb-1">الحضور (${emp.attendance.month})</p>
+                            <p>أيام حضور: <span class="font-medium text-text-primary">${emp.attendance.presence}</span></p>
+                            <p>غياب: <span class="font-medium text-text-primary">${emp.attendance.absence}</span></p>
+                            <p>ساعات إضافية: <span class="font-medium text-text-primary">${emp.attendance.overtime}</span></p>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
+                            <p class="text-text-primary font-semibold mb-1">الإجازات المتاحة</p>
+                            <ul class="space-y-1">
+                                ${emp.leaves.map((leave) => `<li>${leave.type}: ${leave.remaining} أيام متبقية</li>`).join("")}
+                            </ul>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
+                            <p class="text-text-primary font-semibold mb-1">ملخص الرواتب</p>
+                            <p>الإجمالي: ${emp.payroll.gross} ر.س</p>
+                            <p>الصافي: ${emp.payroll.net} ر.س</p>
+                            <p>ملحوظة: ${emp.payroll.deductions}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-3 text-xs">
+                        <button class="px-4 py-2 rounded-xl bg-primary text-white hover:bg-primary-600 flex items-center gap-2"><i class="fas fa-pen"></i> تعديل البيانات</button>
+                        <button class="px-4 py-2 rounded-xl border border-border hover:bg-secondary-100 flex items-center gap-2"><i class="fas fa-file-contract"></i> إدارة العقود</button>
+                        <button class="px-4 py-2 rounded-xl border border-border hover:bg-secondary-100 flex items-center gap-2"><i class="fas fa-wallet"></i> سجل الرواتب</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function attachRowEvents() {
+            employeesBody.addEventListener("click", (event) => {
+                const row = event.target.closest("tr[data-id]");
+                if (!row) return;
+                const id = row.dataset.id;
+                const employee = employees.find((emp) => emp.id === id);
+                renderEmployeeDetails(employee);
+                employeesBody.querySelectorAll("tr").forEach((tr) => tr.classList.remove("bg-primary/5"));
+                row.classList.add("bg-primary/5");
+            });
+        }
+
+        function attachFilters() {
+            [searchInput, departmentFilter, statusFilter].forEach((input) => {
+                input.addEventListener("input", () => {
+                    currentPage = 1;
+                    renderEmployees();
+                });
+            });
+
+            prevPageBtn.addEventListener("click", () => {
+                currentPage = Math.max(1, currentPage - 1);
+                renderEmployees();
+            });
+
+            nextPageBtn.addEventListener("click", () => {
+                currentPage += 1;
+                renderEmployees();
+            });
+        }
+
+        function initModals() {
+            const modals = [createModal, importModal];
+            modals.forEach((modal) => {
+                modal.addEventListener("click", (event) => {
+                    if (event.target === modal || event.target.closest("[data-close]")) {
+                        modal.classList.add("hidden");
+                        modal.classList.remove("flex");
                     }
                 });
             });
-        });
+
+            openCreate.addEventListener("click", () => {
+                createModal.classList.remove("hidden");
+                createModal.classList.add("flex");
+            });
+
+            openImport.addEventListener("click", () => {
+                importModal.classList.remove("hidden");
+                importModal.classList.add("flex");
+            });
+        }
+
+        renderOverview();
+        renderWorkflow();
+        renderAttendanceLog();
+        renderLeaves();
+        populateDepartments();
+        renderEmployees();
+        attachRowEvents();
+        attachFilters();
+        initModals();
     </script>
-    <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
-    <script src="../js/session.js" data-login-path="../login.html"></script>
 </body>
 </html>
