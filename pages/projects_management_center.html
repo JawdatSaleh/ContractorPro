@@ -2939,6 +2939,8 @@ let expenseSearchTerm = '';
 let expenseSortState = { field: 'date', direction: 'desc' };
 let subcontractFilters = { contractorName: '', status: '', startDate: '', endDate: '' };
 let subcontractSortState = { field: 'startDate', direction: 'asc' };
+let pendingReportFiles = [];
+let pendingPhotoFiles = [];
 
 // Daily Reports Store
 class DailyReportsStore {
@@ -3037,16 +3039,30 @@ class DailyReportsStore {
     }
 
     // Attachment management
-    uploadAttachment(reportId, file, type) {
+    uploadAttachment(reportId, file, type, dataUrl = null) {
+        if (!reportId || !file) {
+            return null;
+        }
+
+        const inferredType = type
+            || (file.type?.startsWith('image/') ? 'image'
+                : file.type?.startsWith('video/') ? 'video'
+                    : file.name?.toLowerCase().endsWith('.pdf') ? 'pdf'
+                        : 'file');
+
         const attachment = {
             id: 'attachment-' + Date.now(),
             reportId: reportId,
             fileName: file.name,
             fileSize: file.size,
-            fileType: type, // 'image', 'video', 'pdf'
-            fileUrl: URL.createObjectURL(file), // In real app, this would be uploaded to server
+            fileType: inferredType,
+            fileUrl: dataUrl || URL.createObjectURL(file),
             uploadedAt: new Date().toISOString()
         };
+
+        if (dataUrl) {
+            attachment.dataUrl = dataUrl;
+        }
 
         this.attachments.push(attachment);
         this.saveAttachments();
@@ -3416,6 +3432,14 @@ class ProjectStore {
 
         if (!normalized.code && normalized.id) {
             normalized.code = `#${normalized.id}`;
+        }
+
+        if (normalized.contractDocument) {
+            if (normalized.contractDocument.dataUrl && !normalized.contractDocument.fileUrl) {
+                normalized.contractDocument.fileUrl = normalized.contractDocument.dataUrl;
+            }
+        } else {
+            normalized.contractDocument = null;
         }
 
         normalized.createdAt = normalized.createdAt || new Date().toISOString();
@@ -5286,35 +5310,37 @@ function openAddDailyReportModal() {
     document.getElementById('dailyReportId').value = '';
     document.getElementById('reportDate').value = new Date().toISOString().split('T')[0];
     document.getElementById('reportProgressDisplay').textContent = '0%';
-    
+
     // Set project name
     if (currentProjectData) {
         document.getElementById('reportProjectName').value = currentProjectData.name;
     }
-    
+
     // Clear file preview
-    document.getElementById('filePreview').classList.add('hidden');
-    
+    clearPendingReportFiles();
+
     document.getElementById('modalDailyReportForm').classList.remove('hidden');
 }
 
 function closeDailyReportModal() {
     document.getElementById('modalDailyReportForm').classList.add('hidden');
+    clearPendingReportFiles();
 }
 
 function openUploadTodayPhotosModal() {
     document.getElementById('uploadPhotosForm').reset();
-    document.getElementById('photoPreviewGrid').classList.add('hidden');
+    clearPendingPhotoFiles();
     document.getElementById('modalUploadPhotos').classList.remove('hidden');
 }
 
 function closeUploadPhotosModal() {
     document.getElementById('modalUploadPhotos').classList.add('hidden');
+    clearPendingPhotoFiles();
 }
 
 function editDailyReport(reportId) {
     if (!dailyReportsStore) return;
-    
+
     const report = dailyReportsStore.getDailyReport(reportId);
     if (!report) return;
 
@@ -5334,6 +5360,7 @@ function editDailyReport(reportId) {
         document.getElementById('reportProjectName').value = currentProjectData.name;
     }
 
+    clearPendingReportFiles();
     document.getElementById('modalDailyReportForm').classList.remove('hidden');
 }
 
@@ -5649,12 +5676,40 @@ function closePreviousReportsModal() {
 }
 
 function updateCumulativeProgress() {
-    if (confirm('هل تريد تحديث التقدم التراكمي لجميع المراحل من التقارير اليومية؟')) {
-        alert('تم تحديث التقدم التراكمي بنجاح');
-        if (phasesStore) {
-            loadProjectPhases(currentProjectId);
-        }
+    if (!dailyReportsStore || !phasesStore || !currentProjectId) {
+        showToast('لا يمكن تحديث التقدم قبل اختيار مشروع وتحميل بياناته', false);
+        return;
     }
+
+    const reports = dailyReportsStore.listDailyReports(currentProjectId);
+    if (!reports.length) {
+        showToast('لا توجد تقارير يومية لتحديث التقدم التراكمي', false);
+        return;
+    }
+
+    const progressByPhase = new Map();
+    reports.forEach(report => {
+        if (!report.phaseId) return;
+        const current = progressByPhase.get(report.phaseId) || 0;
+        const progress = Number(report.progressPercent) || 0;
+        if (progress > current) {
+            progressByPhase.set(report.phaseId, progress);
+        }
+    });
+
+    if (progressByPhase.size === 0) {
+        showToast('لا توجد مراحل مرتبطة بالتقارير اليومية الحالية', false);
+        return;
+    }
+
+    progressByPhase.forEach((progress, phaseId) => {
+        phasesStore.updatePhase(phaseId, { progressPercent: progress });
+    });
+
+    loadPhasesMainTab();
+    updatePhasesAnalytics();
+    loadDailyReportsTable();
+    showToast('تم مزامنة التقدم التراكمي مع التقارير اليومية');
 }
 
 // Main functions for project management
@@ -5900,6 +5955,8 @@ function updateProjectInformation() {
     statusBadge.textContent = statusLabel;
     statusBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-${statusColor}-100 text-${statusColor}`;
 
+    renderContractFileSection();
+
     // Load additional contracts
     loadAdditionalContracts();
 
@@ -5940,6 +5997,77 @@ function updateProjectKPIs() {
     if (remainingValueEl) remainingValueEl.textContent = formatCurrency(remainingAmount);
     if (receivedPercentEl) receivedPercentEl.textContent = receivedPercent + '%';
     if (remainingPercentEl) remainingPercentEl.textContent = remainingPercent + '%';
+}
+
+function renderContractFileSection() {
+    const container = document.getElementById('contractFileSection');
+    if (!container) return;
+
+    const doc = currentProjectData?.contractDocument;
+    const hasFile = doc && doc.fileName && (doc.dataUrl || doc.fileUrl);
+
+    if (!hasFile) {
+        container.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-file-upload text-4xl text-text-secondary mb-4"></i>
+                <p class="text-text-secondary mb-4">لم يتم رفع عقد العمل بعد</p>
+                <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast" onclick="uploadContractFile()">
+                    رفع ملف العقد (PDF)
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    const uploadedAt = doc.uploadedAt ? formatDateTimeLocalized(doc.uploadedAt) : '';
+    const sizeLabel = doc.fileSize ? formatFileSize(doc.fileSize) : '';
+    const infoParts = [uploadedAt, sizeLabel].filter(Boolean).join(' • ');
+    const notesHtml = doc.notes ? `<p class=\"text-xs text-text-secondary mt-2\">${escapeHtml(doc.notes)}</p>` : '';
+
+    container.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <p class="text-sm font-semibold text-text-primary">${escapeHtml(doc.fileName)}</p>
+                    <p class="text-xs text-text-secondary">${infoParts || 'تم الرفع بدون تفاصيل إضافية'}</p>
+                    ${notesHtml}
+                </div>
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-success-100 text-success text-sm">
+                    <i class="fas fa-check-circle"></i>
+                    <span>تم الرفع</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2" onclick="downloadMainContract()">
+                    <i class="fas fa-file-download"></i>
+                    <span>تحميل العقد</span>
+                </button>
+                <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast flex items-center gap-2" onclick="openContractUploadModal()">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>استبدال العقد</span>
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function downloadMainContract() {
+    const doc = currentProjectData?.contractDocument;
+    const dataUrl = doc?.dataUrl || doc?.fileUrl;
+
+    if (!doc || !dataUrl) {
+        showToast('لا يوجد عقد متاح للتنزيل', false);
+        return;
+    }
+
+    try {
+        const bytes = dataUrlToUint8Array(dataUrl);
+        triggerFileDownload(doc.fileName || 'contract.pdf', bytes, 'application/pdf');
+        showToast('تم تنزيل ملف العقد بنجاح');
+    } catch (error) {
+        console.error('Failed to download contract document', error);
+        showToast('تعذر تنزيل ملف العقد. حاول مرة أخرى.', false);
+    }
 }
 
 function loadAdditionalContracts() {
@@ -6852,11 +6980,19 @@ function closeEditProjectModal() {
 }
 
 function openContractUploadModal() {
+    if (!currentProjectId) {
+        showToast('يرجى اختيار مشروع لربط العقد به', false);
+        return;
+    }
     document.getElementById('modalContractUpload').classList.remove('hidden');
 }
 
 function closeContractUploadModal() {
     document.getElementById('modalContractUpload').classList.add('hidden');
+    const form = document.getElementById('contractUploadForm');
+    if (form) {
+        form.reset();
+    }
 }
 
 function openAddAdditionalContractModal() {
@@ -7019,7 +7155,15 @@ function confirmDelete() {
 // Utility functions
 function triggerFileDownload(filename, content, mimeType = 'application/json') {
     try {
-        const blob = new Blob([content], { type: mimeType });
+        let blob;
+        if (content instanceof Blob) {
+            blob = content;
+        } else if (content instanceof ArrayBuffer || ArrayBuffer.isView(content)) {
+            blob = new Blob([content], { type: mimeType });
+        } else {
+            blob = new Blob([content], { type: mimeType });
+        }
+
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -7041,6 +7185,82 @@ function downloadJSONFile(filename, data) {
         console.error('Failed to serialise data for download:', error);
         alert('تعذر تجهيز الملف للتنزيل. يرجى المحاولة مرة أخرى.');
     }
+}
+
+async function fileToDataUrl(file) {
+    if (!file) return null;
+    return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+    });
+}
+
+function resolveAttachmentType(file) {
+    if (!file) return 'file';
+    const type = file.type || '';
+    const name = file.name ? file.name.toLowerCase() : '';
+    if (type.startsWith('image/')) return 'image';
+    if (type.startsWith('video/')) return 'video';
+    if (type === 'application/pdf' || name.endsWith('.pdf')) return 'pdf';
+    return 'file';
+}
+
+function sanitizePdfText(text) {
+    if (text === undefined || text === null) return '';
+    return String(text)
+        .replace(/[\r\n]/g, ' ')
+        .replace(/[\\()]/g, '\\$&')
+        .replace(/[\u0080-\uFFFF]/g, '?');
+}
+
+function generateSimplePdf(lines) {
+    const encoder = new TextEncoder();
+    const sanitizedLines = (lines || []).map(line => sanitizePdfText(line));
+    const contentLines = sanitizedLines.map((line, index) => index === 0 ? `(${line}) Tj` : `0 -18 Td\n(${line}) Tj`).join('\n');
+    const contentStream = `BT\n/F1 12 Tf\n50 780 Td\n${contentLines}\nET`;
+    const contentBytes = encoder.encode(contentStream);
+
+    const objects = [
+        '<< /Type /Catalog /Pages 2 0 R >>',
+        '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>',
+        `<< /Length ${contentBytes.length} >>\nstream\n${contentStream}\nendstream`,
+        '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'
+    ];
+
+    let pdf = '%PDF-1.4\n';
+    const offsets = [];
+    let length = encoder.encode(pdf).length;
+
+    objects.forEach((body, index) => {
+        offsets.push(length);
+        const objectString = `${index + 1} 0 obj\n${body}\nendobj\n`;
+        pdf += objectString;
+        length = encoder.encode(pdf).length;
+    });
+
+    const xrefOffset = length;
+    pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+    offsets.forEach(offset => {
+        pdf += `${String(offset).padStart(10, '0')} 00000 n \n`;
+    });
+    pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+    return encoder.encode(pdf);
+}
+
+function dataUrlToUint8Array(dataUrl) {
+    if (!dataUrl) return new Uint8Array();
+    const parts = dataUrl.split(',');
+    const base64 = parts.length > 1 ? parts[1] : parts[0];
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
 }
 
 function formatCurrency(amount) {
@@ -7252,11 +7472,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Daily Report form
     const dailyReportForm = document.getElementById('dailyReportForm');
     if (dailyReportForm) {
-        dailyReportForm.addEventListener('submit', function(e) {
+        dailyReportForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            if (!dailyReportsStore) return;
-            
+
+            if (!dailyReportsStore || !currentProjectId) {
+                showToast('يرجى اختيار مشروع قبل حفظ التقرير اليومي', false);
+                return;
+            }
+
             const formData = new FormData(e.target);
             const reportData = {
                 phaseId: formData.get('phaseId'),
@@ -7268,26 +7491,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 workersCount: formData.get('workersCount'),
                 equipmentUsed: formData.get('equipmentUsed')
             };
-            
-            const reportId = document.getElementById('dailyReportId').value;
-            
-            if (reportId) {
-                dailyReportsStore.updateDailyReport(reportId, reportData);
-            } else {
-                dailyReportsStore.createDailyReport(currentProjectId, reportData);
+
+            if (!reportData.phaseId || !reportData.date || !reportData.workDescription) {
+                showToast('يرجى تعبئة بيانات التقرير الأساسية قبل الحفظ', false);
+                return;
             }
-            
+
+            const reportId = document.getElementById('dailyReportId').value;
+            let report = null;
+
+            if (reportId) {
+                report = dailyReportsStore.updateDailyReport(reportId, reportData);
+            } else {
+                report = dailyReportsStore.createDailyReport(currentProjectId, reportData);
+            }
+
+            if (!report) {
+                showToast('تعذر حفظ التقرير اليومي، يرجى المحاولة مرة أخرى', false);
+                return;
+            }
+
+            if (pendingReportFiles.length) {
+                for (const item of pendingReportFiles) {
+                    try {
+                        const dataUrl = await fileToDataUrl(item.file);
+                        const fileType = resolveAttachmentType(item.file);
+                        dailyReportsStore.uploadAttachment(report.id, item.file, fileType, dataUrl);
+                    } catch (error) {
+                        console.error('Failed to read report attachment', error);
+                    }
+                }
+            }
+
             loadDailyReportsTable();
             updateDailyReportKPIs();
             loadPhotoGallery();
             loadWeeklySummary();
-            
-            // Update phases if linked
+
             if (phasesStore) {
                 loadPhasesMainTab();
                 updatePhasesAnalytics();
             }
-            
+
+            showToast(pendingReportFiles.length ? 'تم حفظ التقرير والمرفقات بنجاح' : 'تم حفظ التقرير بنجاح');
+            clearPendingReportFiles();
             closeDailyReportModal();
         });
 
@@ -7304,25 +7551,136 @@ document.addEventListener('DOMContentLoaded', function() {
     // Upload photos form
     const uploadPhotosForm = document.getElementById('uploadPhotosForm');
     if (uploadPhotosForm) {
-        uploadPhotosForm.addEventListener('submit', function(e) {
+        uploadPhotosForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+
+            if (!dailyReportsStore || !currentProjectId) {
+                showToast('يرجى اختيار مشروع قبل رفع الصور', false);
+                return;
+            }
 
             const formData = new FormData(e.target);
             const phaseId = formData.get('phaseId');
-            const notes = formData.get('notes');
-            const files = document.getElementById('photosInput').files;
-            
-            if (files.length > 0 && phaseId) {
-                // In real app, would upload files to server
-                console.log('Uploading photos for phase:', phaseId, 'Files:', files.length);
-                alert('تم رفع الصور بنجاح!');
-                
-                loadPhotoGallery();
-                updateDailyReportKPIs();
-                closeUploadPhotosModal();
-            } else {
-                alert('يرجى اختيار المرحلة والصور');
+            const notes = formData.get('notes')?.trim();
+
+            if (!phaseId) {
+                showToast('يرجى اختيار المرحلة المرتبطة بالصور', false);
+                return;
             }
+
+            if (!pendingPhotoFiles.length) {
+                showToast('لم يتم اختيار أي صور أو فيديوهات للرفع', false);
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const existingReports = dailyReportsStore.listDailyReports(currentProjectId);
+            let targetReport = existingReports.find(report => report.phaseId === phaseId && report.date === today);
+
+            if (!targetReport) {
+                targetReport = dailyReportsStore.createDailyReport(currentProjectId, {
+                    phaseId,
+                    date: today,
+                    progressPercent: 0,
+                    workDescription: notes ? `صور ميدانية: ${notes}` : 'صور ميدانية مرفوعة عبر المعرض',
+                    issues: '',
+                    weather: '',
+                    workersCount: 0,
+                    equipmentUsed: ''
+                });
+            } else if (notes) {
+                const combinedNotes = targetReport.issues ? `${targetReport.issues}\n${notes}` : notes;
+                dailyReportsStore.updateDailyReport(targetReport.id, { issues: combinedNotes });
+            }
+
+            for (const item of pendingPhotoFiles) {
+                try {
+                    const dataUrl = await fileToDataUrl(item.file);
+                    const fileType = resolveAttachmentType(item.file);
+                    dailyReportsStore.uploadAttachment(targetReport.id, item.file, fileType, dataUrl);
+                } catch (error) {
+                    console.error('Failed to read photo file', error);
+                }
+            }
+
+            loadPhotoGallery();
+            updateDailyReportKPIs();
+            loadDailyReportsTable();
+            loadWeeklySummary();
+
+            showToast('تم رفع الصور وتحديث التقرير اليومي بنجاح');
+            clearPendingPhotoFiles();
+            closeUploadPhotosModal();
+        });
+    }
+
+    const reportFilesInput = document.getElementById('reportFiles');
+    if (reportFilesInput) {
+        reportFilesInput.addEventListener('change', (e) => handleFileSelection(e.target.files));
+    }
+
+    const photosInput = document.getElementById('photosInput');
+    if (photosInput) {
+        photosInput.addEventListener('change', (e) => handlePhotoSelection(e.target.files));
+    }
+
+    const galleryFilter = document.getElementById('galleryFilter');
+    if (galleryFilter) {
+        galleryFilter.addEventListener('change', () => sortGalleryPhotos(true));
+    }
+
+    const phaseCsvInput = document.getElementById('phaseCsvInput');
+    if (phaseCsvInput) {
+        phaseCsvInput.addEventListener('change', handlePhaseCsvImport);
+    }
+
+    const contractUploadForm = document.getElementById('contractUploadForm');
+    if (contractUploadForm) {
+        contractUploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!currentProjectId || !projectStore) {
+                showToast('يرجى اختيار مشروع قبل رفع العقد الرئيسي', false);
+                return;
+            }
+
+            const fileInput = document.getElementById('mainContractFile');
+            const notesInput = document.getElementById('contractNotes');
+            const file = fileInput?.files?.[0];
+
+            if (!file) {
+                showToast('يرجى اختيار ملف العقد بصيغة PDF', false);
+                return;
+            }
+
+            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                showToast('الرجاء رفع ملف PDF صالح للعقد', false);
+                return;
+            }
+
+            let dataUrl;
+            try {
+                dataUrl = await fileToDataUrl(file);
+            } catch (error) {
+                console.error('Failed to read contract file', error);
+                showToast('تعذر قراءة ملف العقد. حاول مرة أخرى.', false);
+                return;
+            }
+            const contractDocument = {
+                id: 'main-contract-' + Date.now(),
+                fileName: file.name,
+                fileSize: file.size,
+                uploadedAt: new Date().toISOString(),
+                notes: notesInput?.value?.trim() || '',
+                dataUrl: dataUrl
+            };
+
+            projectStore.updateProject(currentProjectId, { contractDocument });
+            currentProjectData = projectStore.getProject(currentProjectId);
+            renderContractFileSection();
+            showToast('تم رفع عقد العمل بنجاح');
+            contractUploadForm.reset();
+            closeContractUploadModal();
         });
     }
 
@@ -7424,12 +7782,15 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             const formData = new FormData(e.target);
+            const fileField = formData.get('file');
+            const fileName = (fileField && fileField.name && fileField.size) ? fileField.name : null;
+
             const contractData = {
                 contractNumber: formData.get('contractNumber'),
                 description: formData.get('description'),
                 value: formData.get('value'),
                 signedDate: formData.get('signedDate'),
-                file: formData.get('file')?.name || null
+                file: fileName
             };
             
             const contractId = document.getElementById('additionalContractId').value;
@@ -7498,6 +7859,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             const formData = new FormData(e.target);
+            const attachmentFile = formData.get('attachment');
+            const attachmentName = (attachmentFile && attachmentFile.name && attachmentFile.size)
+                ? attachmentFile.name
+                : null;
+
             const expenseData = {
                 category: formData.get('category'),
                 description: formData.get('description'),
@@ -7506,7 +7872,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 vatPercent: formData.get('vatPercent'),
                 paymentMethod: formData.get('paymentMethod'),
                 notes: formData.get('notes'),
-                attachment: formData.get('attachment')?.name || null
+                attachment: attachmentName
             };
             
             const expenseId = document.getElementById('expenseId').value;
@@ -7556,6 +7922,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             const formData = new FormData(e.target);
+            const contractFileField = formData.get('contractFile');
+            const contractFileName = (contractFileField && contractFileField.name && contractFileField.size)
+                ? contractFileField.name
+                : null;
+
             const contractData = {
                 contractorName: formData.get('contractorName'),
                 contractTitle: formData.get('contractTitle'),
@@ -7564,7 +7935,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 startDate: formData.get('startDate'),
                 endDate: formData.get('endDate'),
                 status: formData.get('status'),
-                contractFile: formData.get('contractFile')?.name || null
+                contractFile: contractFileName
             };
             
             const contractId = document.getElementById('subcontractId').value;
@@ -7594,7 +7965,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const formData = new FormData(paymentForm);
             const attachmentInput = document.getElementById('paymentAttachment');
-            const attachmentName = attachmentInput?.files?.[0]?.name || attachmentInput?.dataset.currentAttachment || null;
+            const uploadedAttachment = attachmentInput?.files?.[0];
+            const attachmentName = (uploadedAttachment && uploadedAttachment.name && uploadedAttachment.size)
+                ? uploadedAttachment.name
+                : (attachmentInput?.dataset.currentAttachment || null);
 
             const paymentData = {
                 type: formData.get('type'),
@@ -7674,72 +8048,146 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // File handling functions
 function handleFileSelection(files) {
-    const filePreview = document.getElementById('filePreview');
-    filePreview.classList.remove('hidden');
-    filePreview.innerHTML = '';
-    
-    Array.from(files).forEach((file, index) => {
-        const fileDiv = document.createElement('div');
-        fileDiv.className = 'relative bg-secondary-100 rounded-lg p-3';
-        
-        let content = '';
-        if (file.type.startsWith('image/')) {
-            const url = URL.createObjectURL(file);
-            content = `<img src="${url}" alt="${file.name}" class="w-full h-20 object-cover rounded mb-2" />`;
-        } else {
-            content = '<div class="w-full h-20 bg-secondary-200 rounded mb-2 flex items-center justify-center"><i class="fas fa-file text-text-secondary text-2xl"></i></div>';
-        }
-        
-        fileDiv.innerHTML = `
-            ${content}
-            <p class="text-xs text-text-secondary truncate">${file.name}</p>
-            <p class="text-xs text-text-secondary">${(file.size / 1024 / 1024).toFixed(1)} MB</p>
-            <button type="button" class="absolute top-1 right-1 bg-error text-white rounded-full w-5 h-5 flex items-center justify-center text-xs" onclick="removeFile(${index})">
-                ×
-            </button>
-        `;
-        
-        filePreview.appendChild(fileDiv);
-    });
+    const newFiles = Array.from(files || []).map(file => ({
+        file,
+        previewUrl: file.type?.startsWith('image/') ? URL.createObjectURL(file) : null
+    }));
+
+    if (!newFiles.length) {
+        return;
+    }
+
+    pendingReportFiles = pendingReportFiles.concat(newFiles);
+    renderReportFilePreview();
+
+    const input = document.getElementById('reportFiles');
+    if (input) {
+        input.value = '';
+    }
 }
 
 function handlePhotoSelection(files) {
+    const accepted = Array.from(files || []).filter(file => file.type?.startsWith('image/') || file.type?.startsWith('video/'));
+    const prepared = accepted.map(file => ({
+        file,
+        previewUrl: URL.createObjectURL(file)
+    }));
+
+    if (!prepared.length) {
+        return;
+    }
+
+    pendingPhotoFiles = pendingPhotoFiles.concat(prepared);
+    renderPhotoPreview();
+
+    const input = document.getElementById('photosInput');
+    if (input) {
+        input.value = '';
+    }
+}
+
+function renderReportFilePreview() {
+    const filePreview = document.getElementById('filePreview');
+    if (!filePreview) return;
+
+    if (pendingReportFiles.length === 0) {
+        filePreview.innerHTML = '';
+        filePreview.classList.add('hidden');
+        return;
+    }
+
+    filePreview.classList.remove('hidden');
+    filePreview.innerHTML = pendingReportFiles.map((item, index) => {
+        const preview = item.previewUrl
+            ? `<img src="${item.previewUrl}" alt="${item.file.name}" class="w-full h-20 object-cover rounded mb-2" />`
+            : '<div class="w-full h-20 bg-secondary-200 rounded mb-2 flex items-center justify-center"><i class="fas fa-file text-text-secondary text-2xl"></i></div>';
+        const sizeLabel = item.file.size ? formatFileSize(item.file.size) : '';
+
+        return `
+            <div class="relative bg-secondary-100 rounded-lg p-3">
+                ${preview}
+                <p class="text-xs text-text-secondary truncate">${item.file.name}</p>
+                <p class="text-xs text-text-secondary">${sizeLabel}</p>
+                <button type="button" class="absolute top-1 right-1 bg-error text-white rounded-full w-5 h-5 flex items-center justify-center text-xs" onclick="removeFile(${index})">
+                    ×
+                </button>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderPhotoPreview() {
     const photoPreview = document.getElementById('photoPreviewGrid');
+    if (!photoPreview) return;
+
+    if (pendingPhotoFiles.length === 0) {
+        photoPreview.innerHTML = '';
+        photoPreview.classList.add('hidden');
+        return;
+    }
+
     photoPreview.classList.remove('hidden');
-    photoPreview.innerHTML = '';
-    
-    Array.from(files).forEach((file, index) => {
-        if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
-            const photoDiv = document.createElement('div');
-            photoDiv.className = 'relative aspect-square bg-secondary-100 rounded-lg overflow-hidden';
-            
-            const url = URL.createObjectURL(file);
-            let content = '';
-            
-            if (file.type.startsWith('image/')) {
-                content = `<img src="${url}" alt="${file.name}" class="w-full h-full object-cover" />`;
-            } else {
-                content = `<video src="${url}" class="w-full h-full object-cover" controls></video>`;
-            }
-            
-            photoDiv.innerHTML = `
+    photoPreview.innerHTML = pendingPhotoFiles.map((item, index) => {
+        const isImage = item.file.type?.startsWith('image/');
+        const content = isImage
+            ? `<img src="${item.previewUrl}" alt="${item.file.name}" class="w-full h-full object-cover" />`
+            : `<video src="${item.previewUrl}" class="w-full h-full object-cover" controls></video>`;
+
+        return `
+            <div class="relative aspect-square bg-secondary-100 rounded-lg overflow-hidden">
                 ${content}
                 <button type="button" class="absolute top-1 right-1 bg-error text-white rounded-full w-6 h-6 flex items-center justify-center text-sm" onclick="removePhoto(${index})">
                     ×
                 </button>
-            `;
-            
-            photoPreview.appendChild(photoDiv);
-        }
-    });
+            </div>
+        `;
+    }).join('');
 }
 
 function removeFile(index) {
-    console.log('Removing file at index:', index);
+    if (index < 0 || index >= pendingReportFiles.length) return;
+    const [removed] = pendingReportFiles.splice(index, 1);
+    if (removed?.previewUrl) {
+        URL.revokeObjectURL(removed.previewUrl);
+    }
+    renderReportFilePreview();
 }
 
 function removePhoto(index) {
-    console.log('Removing photo at index:', index);
+    if (index < 0 || index >= pendingPhotoFiles.length) return;
+    const [removed] = pendingPhotoFiles.splice(index, 1);
+    if (removed?.previewUrl) {
+        URL.revokeObjectURL(removed.previewUrl);
+    }
+    renderPhotoPreview();
+}
+
+function clearPendingReportFiles() {
+    pendingReportFiles.forEach(item => {
+        if (item.previewUrl) {
+            URL.revokeObjectURL(item.previewUrl);
+        }
+    });
+    pendingReportFiles = [];
+    renderReportFilePreview();
+    const input = document.getElementById('reportFiles');
+    if (input) {
+        input.value = '';
+    }
+}
+
+function clearPendingPhotoFiles() {
+    pendingPhotoFiles.forEach(item => {
+        if (item.previewUrl) {
+            URL.revokeObjectURL(item.previewUrl);
+        }
+    });
+    pendingPhotoFiles = [];
+    renderPhotoPreview();
+    const input = document.getElementById('photosInput');
+    if (input) {
+        input.value = '';
+    }
 }
 
 // Placeholder functions for other features
@@ -8907,10 +9355,78 @@ function toggleCostView() {
 }
 
 function downloadFinancialReport(format) {
-    const message = format === 'excel'
-        ? 'سيتم تنزيل تقرير Excel يتضمن تفاصيل الدفعات والمصاريف.'
-        : 'سيتم تنزيل تقرير PDF بملخص المركز المالي.';
-    showToast(message);
+    if (!currentProjectId || !projectStore) {
+        showToast('يرجى اختيار مشروع قبل تنزيل التقرير المالي', false);
+        return;
+    }
+
+    const combinedStats = projectStore.computeCombinedStats(currentProjectId);
+    const projectName = currentProjectData?.name || 'مشروع غير محدد';
+    const rangeSelect = document.getElementById('financialReportRange');
+    const typeSelect = document.getElementById('financialReportType');
+    const rangeLabel = rangeSelect ? rangeSelect.options[rangeSelect.selectedIndex]?.textContent : '';
+    const typeLabel = typeSelect ? typeSelect.options[typeSelect.selectedIndex]?.textContent : '';
+
+    const paymentStats = combinedStats.payments;
+    const expenseStats = combinedStats.expenses;
+    const contractStats = combinedStats.contracts;
+    const safeRevenue = Number(paymentStats.incomingReceived) || 0;
+    const safeOutgoingPayments = Number(paymentStats.outgoingPaid) || 0;
+    const safeExpenses = Number(expenseStats.totalWithVAT) || 0;
+    const outstandingReceivables = (Number(paymentStats.incomingPending) || 0) + (Number(paymentStats.incomingOverdue) || 0);
+    const safeContractValue = Number(contractStats.totalValue) || 0;
+    const ratioValue = Number.isFinite(combinedStats.contractsToExpensesRatio)
+        ? combinedStats.contractsToExpensesRatio
+        : 0;
+    const netCashFlow = safeRevenue - (safeExpenses + safeOutgoingPayments);
+
+    if (format === 'excel') {
+        const rows = [
+            ['Project Name', projectName],
+            ['Report Range', rangeLabel || 'Not specified'],
+            ['Report Type', typeLabel || 'Overview'],
+            ['Generated At', new Date().toLocaleString('en-US')],
+            [],
+            ['Metric', 'Value'],
+            ['Incoming collected', `${safeRevenue.toFixed(2)} SAR`],
+            ['Outgoing payments', `${safeOutgoingPayments.toFixed(2)} SAR`],
+            ['Expenses (with VAT)', `${safeExpenses.toFixed(2)} SAR`],
+            ['Outstanding receivables', `${outstandingReceivables.toFixed(2)} SAR`],
+            ['Contracts total value', `${safeContractValue.toFixed(2)} SAR`],
+            ['Net cash flow', `${netCashFlow.toFixed(2)} SAR`],
+            ['Contracts to expense ratio', ratioValue.toFixed(2) + '%']
+        ];
+
+        const csvContent = '\ufeff' + rows.map(row => row.map(cell => {
+            const value = typeof cell === 'number' ? cell : String(cell);
+            return '"' + value.replace(/"/g, '""') + '"';
+        }).join(',')).join('\n');
+
+        const filename = `financial-report-${currentProjectId}-${new Date().toISOString().slice(0, 10)}.csv`;
+        triggerFileDownload(filename, csvContent, 'text/csv;charset=utf-8;');
+        showToast('تم تنزيل تقرير Excel بنجاح');
+        return;
+    }
+
+    const lines = [
+        `Financial report for project: ${projectName}`,
+        `Generated at: ${new Date().toLocaleString('en-US')}`,
+        `Range: ${rangeLabel || 'Not specified'}`,
+        `Type: ${typeLabel || 'Overview'}`,
+        '',
+        `Incoming collected payments: ${safeRevenue.toFixed(2)} SAR`,
+        `Outgoing subcontract payments: ${safeOutgoingPayments.toFixed(2)} SAR`,
+        `Project expenses (with VAT): ${safeExpenses.toFixed(2)} SAR`,
+        `Outstanding receivables: ${outstandingReceivables.toFixed(2)} SAR`,
+        `Total subcontract value: ${safeContractValue.toFixed(2)} SAR`,
+        `Net cash flow: ${netCashFlow.toFixed(2)} SAR`,
+        `Contracts to expense ratio: ${ratioValue.toFixed(2)}%`
+    ];
+
+    const pdfBytes = generateSimplePdf(lines);
+    const filename = `financial-report-${currentProjectId}-${new Date().toISOString().slice(0, 10)}.pdf`;
+    triggerFileDownload(filename, pdfBytes, 'application/pdf');
+    showToast('تم تنزيل تقرير PDF بنجاح');
 }
 
 function openFinancialCustomization() {
