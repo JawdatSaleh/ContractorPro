@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  direction: rtl;
+  font-family: 'Tajawal', system-ui, sans-serif;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900;
+}
+
+.rtl {
+  direction: rtl;
+}
+
+.ltr {
+  direction: ltr;
+}
