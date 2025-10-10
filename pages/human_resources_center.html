@@ -248,6 +248,7 @@
                                 </button>
                             </div>
                         </div>
+                    </div>
                     <!-- Teams Management Tab -->
                     <div id="teams-tab" class="tab-content hidden">
                         <div class="flex items-center justify-between mb-6">
@@ -337,15 +338,148 @@
                                 <thead class="bg-secondary-50 border-b border-border">
                                     <tr>
                                         <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">الموظف</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">وقت الحضور</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">وقت الانصراف</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">ساعات العمل</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">الحالة</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">ملاحظات</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">الراتب الأساسي</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">البدلات</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">الخصومات</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">صافي الراتب</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">حالة الدفع</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">إجراءات</th>
                                     </tr>
                                 </thead>
-                                <tbody id="attendanceTableBody" class="bg-white divide-y divide-border"></tbody>
+                                <tbody id="payrollTableBody" class="bg-white divide-y divide-border"></tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    <!-- Permissions Tab -->
+                    <div id="permissions-tab" class="tab-content hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-text-primary">الصلاحيات والأدوار</h3>
+                            <button onclick="openCreateRoleModal()" class="px-4 py-2 bg-primary text-white text-sm rounded-lg hover:bg-primary-600 transition-fast">
+                                <i class="fas fa-plus ml-2"></i>
+                                إنشاء دور جديد
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                            <div class="bg-white border border-border rounded-lg p-6 shadow-sm">
+                                <p class="text-sm text-text-secondary">عدد الأدوار المعرفة</p>
+                                <p id="totalRolesCount" class="text-2xl font-bold text-text-primary mt-2">0</p>
+                                <p class="text-xs text-text-tertiary mt-2">يشمل الأدوار القيادية والتشغيلية</p>
+                            </div>
+                            <div class="bg-white border border-border rounded-lg p-6 shadow-sm">
+                                <p class="text-sm text-text-secondary">أعضاء الفرق المصرح لهم</p>
+                                <p id="totalRoleMembers" class="text-2xl font-bold text-text-primary mt-2">0</p>
+                                <p class="text-xs text-text-tertiary mt-2">إجمالي المستخدمين المرتبطين بالأدوار</p>
+                            </div>
+                            <div class="bg-white border border-border rounded-lg p-6 shadow-sm">
+                                <p class="text-sm text-text-secondary">آخر تحديث للصلاحيات</p>
+                                <p id="rolesLastUpdateText" class="text-2xl font-bold text-text-primary mt-2">-</p>
+                                <p class="text-xs text-text-tertiary mt-2">أقرب مراجعة من قبل الموارد البشرية</p>
+                            </div>
+                            <div class="bg-white border border-border rounded-lg p-6 shadow-sm">
+                                <p class="text-sm text-text-secondary">أقرب تدقيق للامتثال</p>
+                                <p id="rolesAuditDate" class="text-2xl font-bold text-text-primary mt-2">-</p>
+                                <p class="text-xs text-text-tertiary mt-2">يوصي بالتدقيق ربع السنوي</p>
+                            </div>
+                        </div>
+
+                        <div id="rolesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6"></div>
+
+                        <div class="bg-white border border-border rounded-xl overflow-hidden mb-6">
+                            <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+                                <div>
+                                    <h4 class="font-semibold text-text-primary">مصفوفة الصلاحيات حسب الوحدات</h4>
+                                    <p class="text-sm text-text-secondary mt-1">توضح الوصول إلى الوحدات الأساسية في النظام لكل دور وظيفي</p>
+                                </div>
+                                <button type="button" class="px-4 py-2 text-sm border border-border rounded-lg hover:bg-secondary-50 transition-fast" onclick="showToast('تم تنزيل تقرير الصلاحيات', 'success')">
+                                    <i class="fas fa-file-export ml-2"></i>
+                                    تنزيل التقرير
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-sm">
+                                    <thead id="permissionsMatrixHead" class="bg-secondary-50 text-text-secondary uppercase text-xs"></thead>
+                                    <tbody id="permissionsMatrixBody" class="divide-y divide-border"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-border rounded-xl">
+                            <div class="px-6 py-4 border-b border-border">
+                                <h4 class="font-semibold text-text-primary">سياسات الصلاحيات والضوابط الداخلية</h4>
+                            </div>
+                            <ul id="rolePoliciesList" class="divide-y divide-border text-sm">
+                                <!-- Filled dynamically -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Tab -->
+                    <div id="attendance-tab" class="tab-content hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-text-primary">الحضور والانصراف</h3>
+                            <div class="flex items-center gap-3">
+                                <button onclick="exportAttendance()" class="px-4 py-2 text-sm border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                                    <i class="fas fa-download ml-2"></i>
+                                    تصدير السجل
+                                </button>
+                                <button onclick="openAttendanceModal()" class="px-4 py-2 bg-warning text-white text-sm rounded-lg hover:bg-warning-600 transition-fast">
+                                    <i class="fas fa-clipboard-check ml-2"></i>
+                                    تسجيل حضور
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                            <div class="bg-white border border-border rounded-lg p-6 shadow-sm">
+                                <p class="text-sm text-text-secondary">الحاضرون اليوم</p>
+                                <p id="attendancePresentCount" class="text-2xl font-bold text-text-primary mt-2">0</p>
+                                <p class="text-xs text-text-tertiary mt-2">يشمل جميع مواقع المشاريع</p>
+                            </div>
+                            <div class="bg-white border border-border rounded-lg p-6 shadow-sm">
+                                <p class="text-sm text-text-secondary">متأخرون</p>
+                                <p id="attendanceLateCount" class="text-2xl font-bold text-warning mt-2">0</p>
+                                <p class="text-xs text-text-tertiary mt-2">يتم إخطار قادة الفرق تلقائياً</p>
+                            </div>
+                            <div class="bg-white border border-border rounded-lg p-6 shadow-sm">
+                                <p class="text-sm text-text-secondary">غياب</p>
+                                <p id="attendanceAbsentCount" class="text-2xl font-bold text-error mt-2">0</p>
+                                <p class="text-xs text-text-tertiary mt-2">يتم إرسال تقارير للموارد البشرية</p>
+                            </div>
+                            <div class="bg-white border border-border rounded-lg p-6 shadow-sm">
+                                <p class="text-sm text-text-secondary">معدل الالتزام</p>
+                                <p id="attendanceRateCard" class="text-2xl font-bold text-success mt-2">0%</p>
+                                <p class="text-xs text-text-tertiary mt-2">مقارنة بأهداف الربع الحالي</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-border rounded-xl overflow-hidden">
+                            <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+                                <div>
+                                    <h4 class="font-semibold text-text-primary">سجل الحضور اليومي</h4>
+                                    <p class="text-sm text-text-secondary mt-1">آخر تحديث يتم مزامنته مع النظام في الوقت الفعلي</p>
+                                </div>
+                                <button type="button" class="px-4 py-2 text-sm border border-border rounded-lg hover:bg-secondary-50 transition-fast" onclick="markAttendance()">
+                                    <i class="fas fa-user-check ml-2"></i>
+                                    تسجيل سريع
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full">
+                                    <thead class="bg-secondary-50 text-xs font-medium text-text-secondary uppercase">
+                                        <tr>
+                                            <th class="px-6 py-3 text-right">الموظف</th>
+                                            <th class="px-6 py-3 text-right">وقت الحضور</th>
+                                            <th class="px-6 py-3 text-right">وقت الانصراف</th>
+                                            <th class="px-6 py-3 text-right">ساعات العمل</th>
+                                            <th class="px-6 py-3 text-right">الحالة</th>
+                                            <th class="px-6 py-3 text-right">ملاحظات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="attendanceTableBody" class="divide-y divide-border bg-white text-sm text-text-secondary"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
@@ -1103,6 +1237,124 @@
             ]
         };
 
+        const rolesCatalog = [
+            {
+                id: 'role-hr-manager',
+                name: 'مدير الموارد البشرية',
+                description: 'إدارة السياسات الشاملة واعتماد التغييرات الحساسة في بيانات الموظفين.',
+                members: 4,
+                updatedAt: '2025-01-02',
+                permissions: ['إدارة الموظفين', 'اعتماد الرواتب', 'إدارة الحضور', 'تقارير الامتثال']
+            },
+            {
+                id: 'role-hr-specialist',
+                name: 'أخصائي الموارد البشرية',
+                description: 'مسؤول عن تحديث بيانات الموظفين اليومية ودعم قادة الفرق.',
+                members: 7,
+                updatedAt: '2024-12-19',
+                permissions: ['تحديث السجلات', 'إدارة الفرق', 'متابعة الحضور']
+            },
+            {
+                id: 'role-team-lead',
+                name: 'قائد الفريق الميداني',
+                description: 'متابعة أداء أفراد الفريق الميداني واعتماد طلبات الإجازات.',
+                members: 12,
+                updatedAt: '2024-12-27',
+                permissions: ['عرض الموظفين', 'اعتماد الإجازات', 'متابعة السلامة']
+            },
+            {
+                id: 'role-finance-controller',
+                name: 'مسؤول الرواتب والمالية',
+                description: 'المراجعة النهائية لسجلات الرواتب والتنسيق مع قسم المالية.',
+                members: 3,
+                updatedAt: '2024-12-30',
+                permissions: ['عرض الرواتب', 'اعتماد المدفوعات', 'تقارير التكلفة']
+            }
+        ];
+
+        const permissionMatrix = [
+            {
+                module: 'دليل الموظفين',
+                access: {
+                    'role-hr-manager': 'full',
+                    'role-hr-specialist': 'manage',
+                    'role-team-lead': 'view',
+                    'role-finance-controller': 'view'
+                }
+            },
+            {
+                module: 'إدارة الفرق',
+                access: {
+                    'role-hr-manager': 'full',
+                    'role-hr-specialist': 'manage',
+                    'role-team-lead': 'manage',
+                    'role-finance-controller': 'none'
+                }
+            },
+            {
+                module: 'الرواتب والمدفوعات',
+                access: {
+                    'role-hr-manager': 'full',
+                    'role-hr-specialist': 'limited',
+                    'role-team-lead': 'none',
+                    'role-finance-controller': 'full'
+                }
+            },
+            {
+                module: 'الصلاحيات والأدوار',
+                access: {
+                    'role-hr-manager': 'full',
+                    'role-hr-specialist': 'view',
+                    'role-team-lead': 'none',
+                    'role-finance-controller': 'limited'
+                }
+            },
+            {
+                module: 'الحضور والانصراف',
+                access: {
+                    'role-hr-manager': 'full',
+                    'role-hr-specialist': 'manage',
+                    'role-team-lead': 'manage',
+                    'role-finance-controller': 'view'
+                }
+            },
+            {
+                module: 'تقييم الأداء',
+                access: {
+                    'role-hr-manager': 'full',
+                    'role-hr-specialist': 'manage',
+                    'role-team-lead': 'limited',
+                    'role-finance-controller': 'view'
+                }
+            }
+        ];
+
+        const rolePolicies = [
+            {
+                title: 'موافقة ثنائية على تغييرات الرواتب',
+                description: 'أي تعديل على بيانات الرواتب يجب أن يعتمد من مدير الموارد البشرية ومسؤول المالية خلال 24 ساعة.',
+                owner: 'قسم الموارد البشرية',
+                updatedAt: '2024-12-28'
+            },
+            {
+                title: 'ضوابط الوصول للفرق الميدانية',
+                description: 'يُمنح قادة الفرق صلاحية الاطلاع فقط على بيانات أعضاء فرقهم، مع تتبع كل عملية عرض في سجل التدقيق.',
+                owner: 'فريق الأمن السيبراني',
+                updatedAt: '2024-11-30'
+            },
+            {
+                title: 'سياسة مراجعة الصلاحيات الفصلية',
+                description: 'يتم جدولة مراجعة دورية كل 90 يوماً للتحقق من الصلاحيات وضمان مغادرة الموظفين السابقين للنظام.',
+                owner: 'قسم التدقيق الداخلي',
+                updatedAt: '2024-10-15'
+            }
+        ];
+
+        const rolesAuditMeta = {
+            lastUpdate: '2025-01-02',
+            nextAudit: '2025-02-15'
+        };
+
         let employeesData = [];
         let teamsData = [];
         let currentView = 'grid';
@@ -1120,6 +1372,7 @@
             setupFilters();
             renderEmployees();
             renderTeams();
+            renderPermissions();
             renderPayrollTable();
             renderAttendanceTable();
             populateAttendanceFormEmployees();
@@ -1404,6 +1657,103 @@
 
             emptyState.classList.add('hidden');
             container.innerHTML = teamsData.map(team => createTeamCard(team)).join('');
+        }
+
+        function renderPermissions() {
+            const container = document.getElementById('rolesContainer');
+            if (container) {
+                container.innerHTML = rolesCatalog.map(role => createRoleCard(role)).join('');
+            }
+
+            const totalMembers = rolesCatalog.reduce((sum, role) => sum + (Number(role.members) || 0), 0);
+            setText('totalRolesCount', rolesCatalog.length.toString());
+            setText('totalRoleMembers', totalMembers.toString());
+            setText('rolesLastUpdateText', formatPolicyDate(rolesAuditMeta.lastUpdate));
+            setText('rolesAuditDate', formatPolicyDate(rolesAuditMeta.nextAudit));
+
+            const head = document.getElementById('permissionsMatrixHead');
+            if (head) {
+                head.innerHTML = `
+                    <tr>
+                        <th class="px-6 py-3 text-right">الوحدة</th>
+                        ${rolesCatalog.map(role => `<th class="px-6 py-3 text-right">${role.name}</th>`).join('')}
+                    </tr>
+                `;
+            }
+
+            const body = document.getElementById('permissionsMatrixBody');
+            if (body) {
+                body.innerHTML = permissionMatrix.map(row => `
+                    <tr class="bg-white">
+                        <td class="px-6 py-4 font-medium text-text-primary">${row.module}</td>
+                        ${rolesCatalog.map(role => `<td class="px-6 py-4">${getPermissionBadge(row.access[role.id])}</td>`).join('')}
+                    </tr>
+                `).join('');
+            }
+
+            const policiesList = document.getElementById('rolePoliciesList');
+            if (policiesList) {
+                policiesList.innerHTML = rolePolicies.map(policy => `
+                    <li class="px-6 py-4 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium text-text-primary">${policy.title}</span>
+                            <span class="text-xs text-text-tertiary">${formatPolicyDate(policy.updatedAt)}</span>
+                        </div>
+                        <p class="text-sm text-text-secondary leading-6">${policy.description}</p>
+                        <div class="text-xs text-text-tertiary">مسؤول التطبيق: ${policy.owner}</div>
+                    </li>
+                `).join('');
+            }
+        }
+
+        function createRoleCard(role) {
+            return `
+                <article class="bg-white border border-border rounded-xl p-6 shadow-sm flex flex-col gap-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <h4 class="text-lg font-semibold text-text-primary">${role.name}</h4>
+                            <p class="text-sm text-text-secondary mt-1 leading-6">${role.description}</p>
+                        </div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary-100 text-text-secondary">
+                            ${role.members} أعضاء
+                        </span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        ${role.permissions.map(item => `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary-200 text-text-secondary">${item}</span>`).join('')}
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-text-tertiary border-t border-border pt-3">
+                        <span>آخر تحديث: ${formatPolicyDate(role.updatedAt)}</span>
+                        <button type="button" class="text-primary hover:text-primary-600 text-sm" onclick="showToast('تم إرسال طلب تحديث صلاحيات ${role.name}', 'info')">
+                            طلب تحديث
+                        </button>
+                    </div>
+                </article>
+            `;
+        }
+
+        function getPermissionBadge(level = 'none') {
+            const base = 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium';
+            switch (level) {
+                case 'full':
+                    return `<span class="${base} bg-success-100 text-success"><i class="fas fa-check"></i>كامل</span>`;
+                case 'manage':
+                    return `<span class="${base} bg-primary-100 text-primary"><i class="fas fa-gear"></i>إدارة</span>`;
+                case 'limited':
+                    return `<span class="${base} bg-warning-100 text-warning"><i class="fas fa-minus"></i>محدود</span>`;
+                case 'view':
+                    return `<span class="${base} bg-secondary-100 text-text-secondary"><i class="fas fa-eye"></i>عرض</span>`;
+                default:
+                    return `<span class="${base} bg-surface text-text-tertiary border border-dashed border-border"><i class="fas fa-ban"></i>مغلق</span>`;
+            }
+        }
+
+        function formatPolicyDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            if (Number.isNaN(date.getTime())) {
+                return dateString;
+            }
+            return date.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
         }
 
         function createTeamCard(team) {
