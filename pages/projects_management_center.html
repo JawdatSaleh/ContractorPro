@@ -771,6 +771,7 @@
                                         <i class="fas fa-upload"></i>
                                         <span>استيراد CSV</span>
                                     </button>
+                                    <input type="file" id="phaseCsvInput" accept=".csv" class="hidden" />
                                 </div>
                             </div>
                             
@@ -2011,7 +2012,7 @@
                                 <!-- Dynamic photo gallery will be loaded here -->
                             </div>
                             <div class="mt-4 text-center">
-                                <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast" onclick="loadMorePhotos()">
+                                <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast" onclick="loadMorePhotos()" id="btnLoadMorePhotos">
                                     <i class="fas fa-download"></i> عرض المزيد
                                 </button>
                             </div>
@@ -2817,6 +2818,100 @@
         </div>
     </div>
 
+    <!-- Daily Report Details Modal -->
+    <div id="modalDailyReportDetails" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-modal max-w-3xl w-full mx-4">
+            <div class="flex items-center justify-between border-b border-border px-6 py-4">
+                <div>
+                    <h3 class="text-xl font-bold text-text-primary">تفاصيل التقرير اليومي</h3>
+                    <p class="text-sm text-text-secondary" id="detailsReportMeta"></p>
+                </div>
+                <button onclick="closeDailyReportDetails()" class="text-text-secondary hover:text-text-primary">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 bg-secondary-50 rounded-lg">
+                        <p class="text-xs text-text-secondary mb-1">تاريخ التقرير</p>
+                        <p class="text-lg font-semibold text-text-primary" id="detailsReportDate"></p>
+                    </div>
+                    <div class="p-4 bg-secondary-50 rounded-lg">
+                        <p class="text-xs text-text-secondary mb-1">المرحلة</p>
+                        <p class="text-lg font-semibold text-text-primary" id="detailsReportPhase"></p>
+                    </div>
+                    <div class="p-4 bg-secondary-50 rounded-lg">
+                        <p class="text-xs text-text-secondary mb-1">نسبة الإنجاز</p>
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 h-2 bg-secondary-200 rounded-full overflow-hidden">
+                                <div id="detailsReportProgressBar" class="h-2 bg-primary rounded-full" style="width: 0%"></div>
+                            </div>
+                            <span class="text-lg font-semibold text-text-primary" id="detailsReportProgress"></span>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-secondary-50 rounded-lg">
+                        <p class="text-xs text-text-secondary mb-1">الحالة</p>
+                        <span id="detailsReportStatus" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-secondary-200 text-text-primary"></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <h4 class="text-sm font-semibold text-text-primary mb-2">تفاصيل الأعمال المنفذة</h4>
+                        <p class="text-sm leading-6 text-text-secondary whitespace-pre-line" id="detailsReportWork"></p>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="text-sm font-semibold text-text-primary mb-2">التحديات والملاحظات</h4>
+                            <p class="text-sm leading-6 text-text-secondary whitespace-pre-line" id="detailsReportIssues"></p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="p-3 bg-secondary-50 rounded-lg">
+                                <p class="text-xs text-text-secondary">حالة الطقس</p>
+                                <p class="text-sm font-medium text-text-primary" id="detailsReportWeather"></p>
+                            </div>
+                            <div class="p-3 bg-secondary-50 rounded-lg">
+                                <p class="text-xs text-text-secondary">عدد العمال</p>
+                                <p class="text-sm font-medium text-text-primary" id="detailsReportWorkers"></p>
+                            </div>
+                            <div class="md:col-span-2 p-3 bg-secondary-50 rounded-lg">
+                                <p class="text-xs text-text-secondary">المعدات المستخدمة</p>
+                                <p class="text-sm font-medium text-text-primary" id="detailsReportEquipment"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-sm font-semibold text-text-primary">المرفقات</h4>
+                        <span class="text-xs text-text-secondary" id="detailsReportAttachmentCount"></span>
+                    </div>
+                    <div id="dailyReportDetailsAttachments" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- Attachments will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Previous Reports Modal -->
+    <div id="modalPreviousReports" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-modal max-w-4xl w-full mx-4">
+            <div class="flex items-center justify-between border-b border-border px-6 py-4">
+                <h3 class="text-xl font-bold text-text-primary">سجل التقارير السابقة</h3>
+                <button onclick="closePreviousReportsModal()" class="text-text-secondary hover:text-text-primary">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="px-6 py-5">
+                <div id="previousReportsList" class="space-y-4 max-h-[70vh] overflow-y-auto">
+                    <!-- Previous reports will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
 // Global variables
 let currentProjectId = null;
@@ -2828,12 +2923,24 @@ let paymentFilters = { type: '', status: '', period: '' };
 let paymentSortState = { field: 'dueDate', direction: 'asc' };
 let paymentsTimelineView = 'monthly';
 let monthlyPaymentsChart = null;
+let dailyReportFilters = { phaseId: '', status: '', dateFrom: '', dateTo: '' };
+let dailyReportSortState = { field: 'date', direction: 'desc' };
+let photoGalleryState = { allPhotos: [], sortedPhotos: [], displayedCount: 0, filter: 'date', currentIndex: 0 };
+let activeReportDetailsId = null;
+let ganttZoomLevel = 1;
 let paymentStatusChart = null;
 let financialPerformanceChart = null;
 let costBreakdownChart = null;
 let collectionProgressChart = null;
 let cachedProjectPayments = [];
 let costBreakdownMode = 'category';
+let expenseFilters = { category: '', paymentMethod: '', dateFrom: '', dateTo: '' };
+let expenseSearchTerm = '';
+let expenseSortState = { field: 'date', direction: 'desc' };
+let subcontractFilters = { contractorName: '', status: '', startDate: '', endDate: '' };
+let subcontractSortState = { field: 'startDate', direction: 'asc' };
+let pendingReportFiles = [];
+let pendingPhotoFiles = [];
 
 // Daily Reports Store
 class DailyReportsStore {
@@ -2932,16 +3039,30 @@ class DailyReportsStore {
     }
 
     // Attachment management
-    uploadAttachment(reportId, file, type) {
+    uploadAttachment(reportId, file, type, dataUrl = null) {
+        if (!reportId || !file) {
+            return null;
+        }
+
+        const inferredType = type
+            || (file.type?.startsWith('image/') ? 'image'
+                : file.type?.startsWith('video/') ? 'video'
+                    : file.name?.toLowerCase().endsWith('.pdf') ? 'pdf'
+                        : 'file');
+
         const attachment = {
             id: 'attachment-' + Date.now(),
             reportId: reportId,
             fileName: file.name,
             fileSize: file.size,
-            fileType: type, // 'image', 'video', 'pdf'
-            fileUrl: URL.createObjectURL(file), // In real app, this would be uploaded to server
+            fileType: inferredType,
+            fileUrl: dataUrl || URL.createObjectURL(file),
             uploadedAt: new Date().toISOString()
         };
+
+        if (dataUrl) {
+            attachment.dataUrl = dataUrl;
+        }
 
         this.attachments.push(attachment);
         this.saveAttachments();
@@ -3311,6 +3432,14 @@ class ProjectStore {
 
         if (!normalized.code && normalized.id) {
             normalized.code = `#${normalized.id}`;
+        }
+
+        if (normalized.contractDocument) {
+            if (normalized.contractDocument.dataUrl && !normalized.contractDocument.fileUrl) {
+                normalized.contractDocument.fileUrl = normalized.contractDocument.dataUrl;
+            }
+        } else {
+            normalized.contractDocument = null;
         }
 
         normalized.createdAt = normalized.createdAt || new Date().toISOString();
@@ -4793,19 +4922,69 @@ function loadDailyReportsTable() {
         return;
     }
 
-    const reports = dailyReportsStore.listDailyReports(currentProjectId);
     const tbody = document.getElementById('dailyReportsTableBody');
-    
+    if (!tbody) return;
+
+    const filters = { ...dailyReportFilters };
+    const reports = dailyReportsStore.listDailyReports(currentProjectId, filters);
+
     if (reports.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" class="text-center p-8 text-text-secondary">لا توجد تقارير يومية مسجلة</td></tr>';
         return;
     }
 
-    tbody.innerHTML = reports.map(report => {
-        const phase = phasesStore ? phasesStore.listPhases(currentProjectId).find(p => p.id === report.phaseId) : null;
-        const phaseName = phase ? phase.name : 'مرحلة محذوفة';
-        const attachmentCount = dailyReportsStore.listAttachments(report.id).length;
-        
+    const phasesById = phasesStore ? Object.fromEntries(phasesStore.listPhases(currentProjectId).map(phase => [phase.id, phase])) : {};
+
+    const enrichedReports = reports.map(report => {
+        const phase = phasesById[report.phaseId];
+        const attachments = dailyReportsStore.listAttachments(report.id);
+
+        return {
+            report,
+            phaseName: phase ? phase.name : 'مرحلة محذوفة',
+            attachmentCount: attachments.length
+        };
+    });
+
+    const { field, direction } = dailyReportSortState;
+    const multiplier = direction === 'asc' ? 1 : -1;
+
+    enrichedReports.sort((a, b) => {
+        const valueFor = (item) => {
+            switch (field) {
+                case 'phase':
+                    return item.phaseName || '';
+                case 'progressPercent':
+                    return item.report.progressPercent || 0;
+                case 'workDone':
+                    return item.report.workDescription || '';
+                case 'photoCount':
+                    return item.attachmentCount || 0;
+                case 'status':
+                    return getReportStatusText(item.report.status || '');
+                case 'date':
+                default:
+                    return new Date(item.report.date).getTime();
+            }
+        };
+
+        const aValue = valueFor(a);
+        const bValue = valueFor(b);
+
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+            return (aValue - bValue) * multiplier;
+        }
+
+        if (field === 'date') {
+            return (aValue - bValue) * multiplier;
+        }
+
+        return String(aValue).localeCompare(String(bValue), 'ar', { sensitivity: 'base' }) * multiplier;
+    });
+
+    tbody.innerHTML = enrichedReports.map(({ report, phaseName, attachmentCount }) => {
+        const workDescription = report.workDescription || '';
+
         return `
         <tr class="hover:bg-secondary-50 transition-fast cursor-pointer" onclick="viewDailyReportDetails('${report.id}')">
             <td class="p-4 border-b border-border">
@@ -4824,7 +5003,7 @@ function loadDailyReportsTable() {
             </td>
             <td class="p-4 border-b border-border">
                 <div class="text-sm text-text-primary">
-                    ${report.workDescription.length > 50 ? report.workDescription.substring(0, 50) + '...' : report.workDescription}
+                    ${workDescription.length > 50 ? workDescription.substring(0, 50) + '...' : workDescription}
                 </div>
             </td>
             <td class="p-4 border-b border-border text-center">
@@ -4852,7 +5031,8 @@ function loadDailyReportsTable() {
                 </div>
             </td>
         </tr>
-    `}).join('');
+    `;
+    }).join('');
 }
 
 function updateDailyReportKPIs() {
@@ -4870,36 +5050,83 @@ function loadPhotoGallery() {
     if (!dailyReportsStore || !currentProjectId) return;
 
     const reports = dailyReportsStore.listDailyReports(currentProjectId);
-    const gallery = document.getElementById('photoGallery');
-    let photos = [];
+    const phasesMap = phasesStore ? Object.fromEntries(phasesStore.listPhases(currentProjectId).map(phase => [phase.id, phase.name])) : {};
 
-    // Collect all photos from all reports
+    const photos = [];
     reports.forEach(report => {
-        const attachments = dailyReportsStore.listAttachments(report.id)
-            .filter(att => att.fileType === 'image');
-        
+        const attachments = dailyReportsStore.listAttachments(report.id).filter(att => att.fileType === 'image');
         attachments.forEach(att => {
             photos.push({
                 ...att,
                 reportDate: report.date,
-                phaseId: report.phaseId
+                phaseId: report.phaseId,
+                phaseName: phasesMap[report.phaseId] || 'مرحلة غير معروفة'
             });
         });
     });
 
+    photoGalleryState.allPhotos = photos;
+
     if (photos.length === 0) {
-        gallery.innerHTML = '<div class="col-span-full text-center p-8 text-text-secondary">لا توجد صور مرفوعة بعد</div>';
+        photoGalleryState.sortedPhotos = [];
+        photoGalleryState.displayedCount = 0;
+        renderPhotoGallery();
+        renderFullScreenGallery();
         return;
     }
 
-    // Sort photos by date (newest first)
-    photos.sort((a, b) => new Date(b.reportDate) - new Date(a.reportDate));
+    sortGalleryPhotos(true);
+}
 
-    // Show only first 8 photos initially
-    const displayPhotos = photos.slice(0, 8);
-    
+function sortGalleryPhotos(resetDisplay = false) {
+    const filterSelect = document.getElementById('galleryFilter');
+    const filterValue = filterSelect ? filterSelect.value : 'date';
+    photoGalleryState.filter = filterValue;
+
+    let sorted = [...photoGalleryState.allPhotos];
+    if (filterValue === 'phase') {
+        sorted.sort((a, b) => {
+            const byPhase = String(a.phaseName || '').localeCompare(String(b.phaseName || ''), 'ar', { sensitivity: 'base' });
+            if (byPhase !== 0) return byPhase;
+            return new Date(b.reportDate) - new Date(a.reportDate);
+        });
+    } else {
+        sorted.sort((a, b) => new Date(b.reportDate) - new Date(a.reportDate));
+    }
+
+    photoGalleryState.sortedPhotos = sorted;
+
+    if (sorted.length === 0) {
+        photoGalleryState.currentIndex = 0;
+    } else if (resetDisplay) {
+        photoGalleryState.currentIndex = 0;
+    } else {
+        photoGalleryState.currentIndex = Math.min(photoGalleryState.currentIndex, sorted.length - 1);
+    }
+
+    if (resetDisplay || photoGalleryState.displayedCount === 0) {
+        photoGalleryState.displayedCount = Math.min(sorted.length, 8);
+    } else {
+        photoGalleryState.displayedCount = Math.min(photoGalleryState.displayedCount, sorted.length);
+    }
+
+    renderPhotoGallery();
+    renderFullScreenGallery();
+}
+
+function renderPhotoGallery() {
+    const gallery = document.getElementById('photoGallery');
+    if (!gallery) return;
+
+    if (photoGalleryState.sortedPhotos.length === 0) {
+        gallery.innerHTML = '<div class="col-span-full text-center p-8 text-text-secondary">لا توجد صور مرفوعة بعد</div>';
+        updateLoadMoreButton(true);
+        return;
+    }
+
+    const displayPhotos = photoGalleryState.sortedPhotos.slice(0, photoGalleryState.displayedCount);
     gallery.innerHTML = displayPhotos.map((photo, index) => `
-        <div class="aspect-square bg-secondary-100 rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-all" onclick="openPhotoLightbox(${index}, '${photo.id}')">
+        <div class="aspect-square bg-secondary-100 rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-all" onclick="openPhotoLightbox(${index})">
             <img src="${photo.fileUrl}" alt="${photo.fileName}" class="w-full h-full object-cover" />
             <div class="p-2">
                 <p class="text-xs text-text-secondary truncate">${photo.fileName}</p>
@@ -4907,6 +5134,82 @@ function loadPhotoGallery() {
             </div>
         </div>
     `).join('');
+
+    updateLoadMoreButton(photoGalleryState.displayedCount >= photoGalleryState.sortedPhotos.length);
+}
+
+function renderFullScreenGallery() {
+    const grid = document.getElementById('fullScreenGalleryGrid');
+    if (!grid) return;
+
+    if (photoGalleryState.sortedPhotos.length === 0) {
+        grid.innerHTML = '<div class="col-span-full text-center p-8 text-white/80">لا توجد صور للعرض</div>';
+        return;
+    }
+
+    grid.innerHTML = photoGalleryState.sortedPhotos.map((photo, index) => `
+        <div class="bg-white/10 rounded-lg overflow-hidden cursor-pointer hover:bg-white/20 transition-all" onclick="openPhotoLightbox(${index})">
+            <img src="${photo.fileUrl}" alt="${photo.fileName}" class="w-full h-48 object-cover" />
+            <div class="p-3 text-white">
+                <p class="text-sm font-medium truncate">${photo.fileName}</p>
+                <p class="text-xs text-white/70">${formatDate(photo.reportDate)} • ${photo.phaseName}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateLoadMoreButton(disabled = false) {
+    const btn = document.getElementById('btnLoadMorePhotos');
+    if (!btn) return;
+
+    if (photoGalleryState.sortedPhotos.length === 0) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        return;
+    }
+
+    if (disabled) {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+}
+
+function getPhotoIndexById(photoId) {
+    return photoGalleryState.sortedPhotos.findIndex(photo => photo.id === photoId);
+}
+
+function openPhotoLightboxById(photoId) {
+    const index = getPhotoIndexById(photoId);
+    if (index !== -1) {
+        openPhotoLightbox(index);
+    }
+}
+
+function renderLightboxPhoto() {
+    const photo = photoGalleryState.sortedPhotos[photoGalleryState.currentIndex];
+    if (!photo) return;
+
+    const lightboxContent = document.getElementById('lightboxContent');
+    const photoInfo = document.getElementById('photoInfo');
+
+    if (lightboxContent) {
+        lightboxContent.innerHTML = `<img src="${photo.fileUrl}" alt="${photo.fileName}" class="max-h-[80vh] object-contain rounded-lg shadow-2xl" />`;
+    }
+
+    if (photoInfo) {
+        const phaseLabel = photo.phaseName ? ` • ${photo.phaseName}` : '';
+        photoInfo.textContent = `${photo.fileName}${phaseLabel} • ${formatDate(photo.reportDate)}`;
+    }
+}
+
+function formatFileSize(bytes) {
+    if (!bytes || isNaN(bytes)) return '';
+    if (bytes < 1024) return `${bytes} بايت`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} كيلوبايت`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} ميجابايت`;
 }
 
 function loadWeeklySummary() {
@@ -5007,35 +5310,37 @@ function openAddDailyReportModal() {
     document.getElementById('dailyReportId').value = '';
     document.getElementById('reportDate').value = new Date().toISOString().split('T')[0];
     document.getElementById('reportProgressDisplay').textContent = '0%';
-    
+
     // Set project name
     if (currentProjectData) {
         document.getElementById('reportProjectName').value = currentProjectData.name;
     }
-    
+
     // Clear file preview
-    document.getElementById('filePreview').classList.add('hidden');
-    
+    clearPendingReportFiles();
+
     document.getElementById('modalDailyReportForm').classList.remove('hidden');
 }
 
 function closeDailyReportModal() {
     document.getElementById('modalDailyReportForm').classList.add('hidden');
+    clearPendingReportFiles();
 }
 
 function openUploadTodayPhotosModal() {
     document.getElementById('uploadPhotosForm').reset();
-    document.getElementById('photoPreviewGrid').classList.add('hidden');
+    clearPendingPhotoFiles();
     document.getElementById('modalUploadPhotos').classList.remove('hidden');
 }
 
 function closeUploadPhotosModal() {
     document.getElementById('modalUploadPhotos').classList.add('hidden');
+    clearPendingPhotoFiles();
 }
 
 function editDailyReport(reportId) {
     if (!dailyReportsStore) return;
-    
+
     const report = dailyReportsStore.getDailyReport(reportId);
     if (!report) return;
 
@@ -5055,6 +5360,7 @@ function editDailyReport(reportId) {
         document.getElementById('reportProjectName').value = currentProjectData.name;
     }
 
+    clearPendingReportFiles();
     document.getElementById('modalDailyReportForm').classList.remove('hidden');
 }
 
@@ -5071,6 +5377,9 @@ function deleteDailyReport(reportId) {
         updateDailyReportKPIs();
         loadPhotoGallery();
         loadWeeklySummary();
+        if (activeReportDetailsId === reportId) {
+            closeDailyReportDetails();
+        }
     };
     
     document.getElementById('deleteConfirmText').textContent = `هل أنت متأكد من حذف التقرير اليومي بتاريخ "${formatDate(report.date)}"؟`;
@@ -5079,16 +5388,100 @@ function deleteDailyReport(reportId) {
 }
 
 function viewDailyReportDetails(reportId) {
-    // Open detailed view modal (would be implemented as separate modal)
-    console.log('Viewing daily report details for:', reportId);
-    alert('عرض تفاصيل التقرير - قيد التطوير');
+    if (!dailyReportsStore || !currentProjectId) return;
+
+    const report = dailyReportsStore.getDailyReport(reportId);
+    if (!report) return;
+
+    const phase = phasesStore ? phasesStore.listPhases(currentProjectId).find(p => p.id === report.phaseId) : null;
+    const attachments = dailyReportsStore.listAttachments(reportId);
+
+    activeReportDetailsId = reportId;
+
+    const metaElement = document.getElementById('detailsReportMeta');
+    if (metaElement) {
+        const createdBy = report.createdBy || 'غير معروف';
+        const createdAt = report.createdAt ? formatDateTime(report.createdAt) : '';
+        metaElement.textContent = createdAt ? `تم الإنشاء بواسطة ${createdBy} في ${createdAt}` : `تم الإنشاء بواسطة ${createdBy}`;
+    }
+
+    document.getElementById('detailsReportDate').textContent = formatDate(report.date);
+    document.getElementById('detailsReportPhase').textContent = phase ? phase.name : 'مرحلة محذوفة';
+    document.getElementById('detailsReportProgress').textContent = `${report.progressPercent}%`;
+    document.getElementById('detailsReportProgressBar').style.width = `${report.progressPercent}%`;
+
+    const statusElement = document.getElementById('detailsReportStatus');
+    if (statusElement) {
+        const statusColor = getReportStatusColor(report.status);
+        statusElement.className = `inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-${statusColor}-100 text-${statusColor}`;
+        statusElement.textContent = getReportStatusText(report.status);
+    }
+
+    document.getElementById('detailsReportWork').textContent = report.workDescription || 'لم يتم تسجيل تفاصيل الأعمال المنفذة';
+    document.getElementById('detailsReportIssues').textContent = report.issues || 'لا توجد ملاحظات أو تحديات';
+    document.getElementById('detailsReportWeather').textContent = report.weather || 'غير محدد';
+    document.getElementById('detailsReportWorkers').textContent = report.workersCount ? `${report.workersCount} عامل` : 'غير محدد';
+    document.getElementById('detailsReportEquipment').textContent = report.equipmentUsed || 'لم يتم تسجيل معدات مستخدمة';
+
+    const attachmentsCount = document.getElementById('detailsReportAttachmentCount');
+    if (attachmentsCount) {
+        attachmentsCount.textContent = attachments.length ? `عدد المرفقات: ${attachments.length}` : 'لا توجد مرفقات';
+    }
+
+    const attachmentsContainer = document.getElementById('dailyReportDetailsAttachments');
+    if (attachmentsContainer) {
+        if (attachments.length === 0) {
+            attachmentsContainer.innerHTML = '<div class="col-span-full text-sm text-text-secondary">لا توجد مرفقات مرتبطة بهذا التقرير</div>';
+        } else {
+            attachmentsContainer.innerHTML = attachments.map(attachment => {
+                const sizeLabel = attachment.fileSize ? formatFileSize(attachment.fileSize) : '';
+                const uploadedAt = attachment.uploadedAt ? formatDateTime(attachment.uploadedAt) : '';
+
+                if (attachment.fileType === 'image') {
+                    return `
+                        <div class="p-4 border border-border rounded-lg bg-secondary-50">
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <p class="text-sm font-semibold text-text-primary">${attachment.fileName}</p>
+                                    <p class="text-xs text-text-secondary">${sizeLabel} ${uploadedAt ? '• ' + uploadedAt : ''}</p>
+                                </div>
+                                <button class="bg-primary text-white px-3 py-1 rounded text-xs hover:bg-primary-600 transition-fast" onclick="openPhotoLightboxById('${attachment.id}')">
+                                    عرض الصورة
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="p-4 border border-border rounded-lg bg-secondary-50">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-sm font-semibold text-text-primary">${attachment.fileName}</p>
+                                <p class="text-xs text-text-secondary">${sizeLabel} ${uploadedAt ? '• ' + uploadedAt : ''}</p>
+                            </div>
+                            <a href="${attachment.fileUrl}" download class="bg-secondary-200 text-text-primary px-3 py-1 rounded text-xs hover:bg-secondary-300 transition-fast">
+                                تحميل
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    document.getElementById('modalDailyReportDetails').classList.remove('hidden');
+}
+
+function closeDailyReportDetails() {
+    document.getElementById('modalDailyReportDetails').classList.add('hidden');
+    activeReportDetailsId = null;
 }
 
 // Photo Gallery Functions
 function openFullScreenGallery() {
     document.getElementById('modalFullScreenGallery').classList.remove('hidden');
-    // Load full gallery
-    loadFullScreenGallery();
+    renderFullScreenGallery();
 }
 
 function closeFullScreenGallery() {
@@ -5096,16 +5489,27 @@ function closeFullScreenGallery() {
 }
 
 function loadFullScreenGallery() {
-    const gallery = document.getElementById('fullScreenGalleryGrid');
-    // Load all photos in full screen mode
-    gallery.innerHTML = '<div class="col-span-full text-center p-8 text-white">معرض الصور الكامل - قيد التطوير</div>';
+    renderFullScreenGallery();
 }
 
-function openPhotoLightbox(index, photoId) {
+function openPhotoLightbox(index = 0, photoId = null) {
+    if (typeof photoId === 'string') {
+        const byId = getPhotoIndexById(photoId);
+        if (byId !== -1) {
+            index = byId;
+        }
+    }
+
+    if (photoGalleryState.sortedPhotos.length === 0) return;
+
+    if (index < 0 || index >= photoGalleryState.sortedPhotos.length) {
+        index = 0;
+    }
+
+    photoGalleryState.currentIndex = index;
+
     document.getElementById('modalPhotoLightbox').classList.remove('hidden');
-    // Load photo in lightbox
-    const lightboxContent = document.getElementById('lightboxContent');
-    lightboxContent.innerHTML = '<div class="text-white text-center">عرض الصورة - قيد التطوير</div>';
+    renderLightboxPhoto();
 }
 
 function closePhotoLightbox() {
@@ -5113,27 +5517,40 @@ function closePhotoLightbox() {
 }
 
 function previousPhoto() {
-    console.log('Previous photo');
+    if (photoGalleryState.sortedPhotos.length === 0) return;
+
+    photoGalleryState.currentIndex = (photoGalleryState.currentIndex - 1 + photoGalleryState.sortedPhotos.length) % photoGalleryState.sortedPhotos.length;
+    renderLightboxPhoto();
 }
 
 function nextPhoto() {
-    console.log('Next photo');
+    if (photoGalleryState.sortedPhotos.length === 0) return;
+
+    photoGalleryState.currentIndex = (photoGalleryState.currentIndex + 1) % photoGalleryState.sortedPhotos.length;
+    renderLightboxPhoto();
 }
 
 function downloadPhoto() {
-    console.log('Download photo');
+    const photo = photoGalleryState.sortedPhotos[photoGalleryState.currentIndex];
+    if (!photo) return;
+
+    const link = document.createElement('a');
+    link.href = photo.fileUrl;
+    link.download = photo.fileName || 'photo.jpg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 // Filter and Search Functions
 function applyDailyReportFilters() {
-    const filters = {
+    dailyReportFilters = {
         phaseId: document.getElementById('filterReportPhase').value,
         status: document.getElementById('filterReportStatus').value,
         dateFrom: document.getElementById('filterReportDateFrom').value,
         dateTo: document.getElementById('filterReportDateTo').value
     };
-    
-    console.log('Applying daily report filters:', filters);
+
     loadDailyReportsTable();
 }
 
@@ -5142,12 +5559,20 @@ function clearDailyReportFilters() {
     document.getElementById('filterReportStatus').value = '';
     document.getElementById('filterReportDateFrom').value = '';
     document.getElementById('filterReportDateTo').value = '';
-    
+
+    dailyReportFilters = { phaseId: '', status: '', dateFrom: '', dateTo: '' };
     loadDailyReportsTable();
 }
 
 function sortDailyReportTable(field) {
-    console.log('Sorting daily reports by:', field);
+    if (dailyReportSortState.field === field) {
+        dailyReportSortState.direction = dailyReportSortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        dailyReportSortState.field = field;
+        dailyReportSortState.direction = field === 'date' ? 'desc' : 'asc';
+    }
+
+    loadDailyReportsTable();
 }
 
 // Chart and Analytics Functions
@@ -5157,7 +5582,19 @@ function refreshProgressChart() {
 }
 
 function loadMorePhotos() {
-    console.log('Loading more photos');
+    if (photoGalleryState.sortedPhotos.length === 0) return;
+
+    if (photoGalleryState.displayedCount >= photoGalleryState.sortedPhotos.length) {
+        updateLoadMoreButton(true);
+        return;
+    }
+
+    photoGalleryState.displayedCount = Math.min(
+        photoGalleryState.displayedCount + 8,
+        photoGalleryState.sortedPhotos.length
+    );
+
+    renderPhotoGallery();
 }
 
 // Utility Functions for Daily Reports
@@ -5193,16 +5630,86 @@ function getPerformanceText(progressPercent) {
 
 // Placeholder functions for other features
 function viewPreviousReports() {
-    alert('عرض التقارير السابقة - قيد التطوير');
+    if (!dailyReportsStore || !currentProjectId) return;
+
+    const listContainer = document.getElementById('previousReportsList');
+    if (!listContainer) return;
+
+    const reports = dailyReportsStore.listDailyReports(currentProjectId);
+    const phasesById = phasesStore ? Object.fromEntries(phasesStore.listPhases(currentProjectId).map(phase => [phase.id, phase])) : {};
+
+    if (reports.length === 0) {
+        listContainer.innerHTML = '<div class="text-center py-8 text-text-secondary">لا توجد تقارير مسجلة حتى الآن</div>';
+    } else {
+        listContainer.innerHTML = reports.slice(0, 20).map(report => {
+            const phase = phasesById[report.phaseId];
+            const attachments = dailyReportsStore.listAttachments(report.id);
+            const statusColor = getReportStatusColor(report.status);
+
+            return `
+                <div class="border border-border rounded-lg p-4 bg-secondary-50 hover:bg-secondary-100 transition-fast">
+                    <div class="flex items-center justify-between gap-3 mb-3">
+                        <div>
+                            <p class="text-sm font-semibold text-text-primary">${formatDate(report.date)}</p>
+                            <p class="text-xs text-text-secondary">${phase ? phase.name : 'مرحلة محذوفة'}</p>
+                        </div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-${statusColor}-100 text-${statusColor}">
+                            ${getReportStatusText(report.status)}
+                        </span>
+                    </div>
+                    <p class="text-sm text-text-secondary leading-6 mb-3">${(report.workDescription || '').substring(0, 160) || 'لا توجد تفاصيل مسجلة'}${(report.workDescription || '').length > 160 ? '...' : ''}</p>
+                    <div class="flex items-center justify-between text-xs text-text-secondary">
+                        <span>نسبة الإنجاز: <strong class="text-text-primary">${report.progressPercent}%</strong></span>
+                        <span>عدد المرفقات: <strong class="text-text-primary">${attachments.length}</strong></span>
+                        <button class="text-primary hover:underline" onclick="viewDailyReportDetails('${report.id}')">عرض التفاصيل</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    document.getElementById('modalPreviousReports').classList.remove('hidden');
+}
+
+function closePreviousReportsModal() {
+    document.getElementById('modalPreviousReports').classList.add('hidden');
 }
 
 function updateCumulativeProgress() {
-    if (confirm('هل تريد تحديث التقدم التراكمي لجميع المراحل من التقارير اليومية؟')) {
-        alert('تم تحديث التقدم التراكمي بنجاح');
-        if (phasesStore) {
-            loadProjectPhases(currentProjectId);
-        }
+    if (!dailyReportsStore || !phasesStore || !currentProjectId) {
+        showToast('لا يمكن تحديث التقدم قبل اختيار مشروع وتحميل بياناته', false);
+        return;
     }
+
+    const reports = dailyReportsStore.listDailyReports(currentProjectId);
+    if (!reports.length) {
+        showToast('لا توجد تقارير يومية لتحديث التقدم التراكمي', false);
+        return;
+    }
+
+    const progressByPhase = new Map();
+    reports.forEach(report => {
+        if (!report.phaseId) return;
+        const current = progressByPhase.get(report.phaseId) || 0;
+        const progress = Number(report.progressPercent) || 0;
+        if (progress > current) {
+            progressByPhase.set(report.phaseId, progress);
+        }
+    });
+
+    if (progressByPhase.size === 0) {
+        showToast('لا توجد مراحل مرتبطة بالتقارير اليومية الحالية', false);
+        return;
+    }
+
+    progressByPhase.forEach((progress, phaseId) => {
+        phasesStore.updatePhase(phaseId, { progressPercent: progress });
+    });
+
+    loadPhasesMainTab();
+    updatePhasesAnalytics();
+    loadDailyReportsTable();
+    showToast('تم مزامنة التقدم التراكمي مع التقارير اليومية');
 }
 
 // Main functions for project management
@@ -5235,8 +5742,44 @@ function openProjectDetails(projectId, projectName) {
         document.getElementById('currentProjectCode').textContent = currentProjectData.code || '#PRJ-001';
         document.getElementById('projectProgress').textContent = currentProjectData.progress + '%';
 
+        // Reset unified filters to default state
+        expenseFilters = { category: '', paymentMethod: '', dateFrom: '', dateTo: '' };
+        expenseSearchTerm = '';
+        expenseSortState = { field: 'date', direction: 'desc' };
+        subcontractFilters = { contractorName: '', status: '', startDate: '', endDate: '' };
+        subcontractSortState = { field: 'startDate', direction: 'asc' };
+        dailyReportFilters = { phaseId: '', status: '', dateFrom: '', dateTo: '' };
+        dailyReportSortState = { field: 'date', direction: 'desc' };
+        photoGalleryState = { allPhotos: [], sortedPhotos: [], displayedCount: 0, filter: 'date', currentIndex: 0 };
+
+        ['filterExpenseCategory', 'filterPaymentMethod', 'filterDateFrom', 'filterDateTo', 'filterContractor', 'filterContractStatus', 'filterContractStartDate', 'filterContractEndDate'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = '';
+            }
+        });
+        ['filterReportPhase', 'filterReportStatus', 'filterReportDateFrom', 'filterReportDateTo'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = '';
+            }
+        });
+        const galleryFilter = document.getElementById('galleryFilter');
+        if (galleryFilter) {
+            galleryFilter.value = 'date';
+        }
+        const searchInput = document.getElementById('searchExpenses');
+        if (searchInput) {
+            searchInput.value = '';
+        }
+
         // Load project information tab by default
         switchProjectTab('project-information');
+
+        // Prepare unified tables with default filters
+        loadExpensesSubTab();
+        loadSubcontractsSubTab();
+        updateUnifiedKPIs();
         
         // Update project details
         updateProjectInformation();
@@ -5412,6 +5955,8 @@ function updateProjectInformation() {
     statusBadge.textContent = statusLabel;
     statusBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-${statusColor}-100 text-${statusColor}`;
 
+    renderContractFileSection();
+
     // Load additional contracts
     loadAdditionalContracts();
 
@@ -5452,6 +5997,77 @@ function updateProjectKPIs() {
     if (remainingValueEl) remainingValueEl.textContent = formatCurrency(remainingAmount);
     if (receivedPercentEl) receivedPercentEl.textContent = receivedPercent + '%';
     if (remainingPercentEl) remainingPercentEl.textContent = remainingPercent + '%';
+}
+
+function renderContractFileSection() {
+    const container = document.getElementById('contractFileSection');
+    if (!container) return;
+
+    const doc = currentProjectData?.contractDocument;
+    const hasFile = doc && doc.fileName && (doc.dataUrl || doc.fileUrl);
+
+    if (!hasFile) {
+        container.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-file-upload text-4xl text-text-secondary mb-4"></i>
+                <p class="text-text-secondary mb-4">لم يتم رفع عقد العمل بعد</p>
+                <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast" onclick="uploadContractFile()">
+                    رفع ملف العقد (PDF)
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    const uploadedAt = doc.uploadedAt ? formatDateTimeLocalized(doc.uploadedAt) : '';
+    const sizeLabel = doc.fileSize ? formatFileSize(doc.fileSize) : '';
+    const infoParts = [uploadedAt, sizeLabel].filter(Boolean).join(' • ');
+    const notesHtml = doc.notes ? `<p class=\"text-xs text-text-secondary mt-2\">${escapeHtml(doc.notes)}</p>` : '';
+
+    container.innerHTML = `
+        <div class="space-y-4">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <p class="text-sm font-semibold text-text-primary">${escapeHtml(doc.fileName)}</p>
+                    <p class="text-xs text-text-secondary">${infoParts || 'تم الرفع بدون تفاصيل إضافية'}</p>
+                    ${notesHtml}
+                </div>
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-success-100 text-success text-sm">
+                    <i class="fas fa-check-circle"></i>
+                    <span>تم الرفع</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2" onclick="downloadMainContract()">
+                    <i class="fas fa-file-download"></i>
+                    <span>تحميل العقد</span>
+                </button>
+                <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast flex items-center gap-2" onclick="openContractUploadModal()">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>استبدال العقد</span>
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function downloadMainContract() {
+    const doc = currentProjectData?.contractDocument;
+    const dataUrl = doc?.dataUrl || doc?.fileUrl;
+
+    if (!doc || !dataUrl) {
+        showToast('لا يوجد عقد متاح للتنزيل', false);
+        return;
+    }
+
+    try {
+        const bytes = dataUrlToUint8Array(dataUrl);
+        triggerFileDownload(doc.fileName || 'contract.pdf', bytes, 'application/pdf');
+        showToast('تم تنزيل ملف العقد بنجاح');
+    } catch (error) {
+        console.error('Failed to download contract document', error);
+        showToast('تعذر تنزيل ملف العقد. حاول مرة أخرى.', false);
+    }
 }
 
 function loadAdditionalContracts() {
@@ -5645,9 +6261,11 @@ function loadPhasesLogs() {
 
 function renderGanttChart(phases) {
     const container = document.getElementById('ganttContainer');
-    
+
     if (phases.length === 0) {
         container.innerHTML = '<div class="text-center py-8 text-text-secondary">لا توجد مراحل لعرضها في مخطط جانت</div>';
+        container.style.transform = `scale(${ganttZoomLevel})`;
+        container.style.transformOrigin = 'top right';
         return;
     }
 
@@ -5676,9 +6294,12 @@ function renderGanttChart(phases) {
             </div>
         `;
     });
-    
+
     ganttHTML += '</div>';
     container.innerHTML = ganttHTML;
+    container.style.transform = `scale(${ganttZoomLevel})`;
+    container.style.transformOrigin = 'top right';
+    container.style.transition = 'transform 0.2s ease-in-out';
 }
 
 function switchPhaseSubTab(tabName) {
@@ -5929,11 +6550,19 @@ function formatDateTime(isoString) {
 
 // Gantt chart functions
 function zoomGanttIn() {
-    console.log('Zooming Gantt chart in');
+    ganttZoomLevel = Math.min(ganttZoomLevel + 0.25, 2);
+    if (phasesStore) {
+        const phases = phasesStore.listPhases(currentProjectId);
+        renderGanttChart(phases);
+    }
 }
 
 function zoomGanttOut() {
-    console.log('Zooming Gantt chart out');
+    ganttZoomLevel = Math.max(ganttZoomLevel - 0.25, 0.5);
+    if (phasesStore) {
+        const phases = phasesStore.listPhases(currentProjectId);
+        renderGanttChart(phases);
+    }
 }
 
 function refreshGantt() {
@@ -6014,11 +6643,17 @@ function updateUnifiedKPIs() {
 }
 
 function loadExpensesSubTab() {
-    const expenses = projectStore.listExpenses(currentProjectId);
+    if (!projectStore || !currentProjectId) return;
+
+    const expenses = getFilteredExpenses();
     const tbody = document.getElementById('expensesTableBody');
-    
+
     if (expenses.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="text-center p-8 text-text-secondary">لا توجد مصاريف مسجلة</td></tr>';
+        const hasFilters = hasExpenseFiltersApplied();
+        const emptyMessage = hasFilters
+            ? 'لا توجد مصاريف مطابقة لخيارات البحث الحالية'
+            : 'لا توجد مصاريف مسجلة';
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center p-8 text-text-secondary">${emptyMessage}</td></tr>`;
         return;
     }
 
@@ -6064,12 +6699,22 @@ function loadExpensesSubTab() {
     `).join('');
 }
 
+
 function loadSubcontractsSubTab() {
-    const subcontracts = projectStore.listSubcontracts(currentProjectId);
+    if (!projectStore || !currentProjectId) return;
+
+    const allSubcontracts = projectStore.listSubcontracts(currentProjectId);
+    updateContractorFilterOptions(allSubcontracts);
+
+    const subcontracts = getFilteredSubcontracts();
     const tbody = document.getElementById('subcontractsTableBody');
-    
+
     if (subcontracts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="text-center p-8 text-text-secondary">لا توجد عقود باطن مسجلة</td></tr>';
+        const hasFilters = hasSubcontractFiltersApplied();
+        const emptyMessage = hasFilters
+            ? 'لا توجد عقود مطابقة لخيارات التصفية الحالية'
+            : 'لا توجد عقود باطن مسجلة';
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center p-8 text-text-secondary">${emptyMessage}</td></tr>`;
         return;
     }
 
@@ -6115,6 +6760,192 @@ function loadSubcontractsSubTab() {
     `).join('');
 }
 
+
+function hasExpenseFiltersApplied() {
+    return Boolean(
+        expenseFilters.category ||
+        expenseFilters.paymentMethod ||
+        expenseFilters.dateFrom ||
+        expenseFilters.dateTo ||
+        expenseSearchTerm
+    );
+}
+
+function getFilteredExpenses() {
+    if (!projectStore || !currentProjectId) return [];
+    let expenses = projectStore.listExpenses(currentProjectId, expenseFilters);
+
+    if (expenseSearchTerm) {
+        const term = expenseSearchTerm.toLowerCase();
+        expenses = expenses.filter(expense => {
+            const fields = [
+                expense.description,
+                expense.category,
+                expense.notes,
+                expense.paymentMethod
+            ];
+            return fields.some(field => (field || '').toString().toLowerCase().includes(term));
+        });
+    }
+
+    return sortExpenses(expenses);
+}
+
+function sortExpenses(expenses) {
+    const { field, direction } = expenseSortState;
+    const multiplier = direction === 'asc' ? 1 : -1;
+    const config = {
+        category: { type: 'string', accessor: expense => expense.category },
+        description: { type: 'string', accessor: expense => expense.description },
+        date: { type: 'date', accessor: expense => expense.date },
+        amount: { type: 'number', accessor: expense => expense.amount },
+        vatPercent: { type: 'number', accessor: expense => expense.vatPercent },
+        total: { type: 'number', accessor: expense => expense.total },
+        paymentMethod: { type: 'string', accessor: expense => expense.paymentMethod }
+    };
+
+    const { type, accessor } = config[field] || { type: 'string', accessor: expense => expense[field] };
+
+    return expenses.slice().sort((a, b) => {
+        const valueA = accessor ? accessor(a) : a[field];
+        const valueB = accessor ? accessor(b) : b[field];
+        let comparison = 0;
+
+        switch (type) {
+            case 'number': {
+                const numberA = parseFloat(valueA) || 0;
+                const numberB = parseFloat(valueB) || 0;
+                comparison = numberA - numberB;
+                break;
+            }
+            case 'date': {
+                const timeA = new Date(valueA).getTime();
+                const timeB = new Date(valueB).getTime();
+                comparison = (Number.isNaN(timeA) ? 0 : timeA) - (Number.isNaN(timeB) ? 0 : timeB);
+                break;
+            }
+            default: {
+                const stringA = (valueA ?? '').toString();
+                const stringB = (valueB ?? '').toString();
+                comparison = stringA.localeCompare(stringB, 'ar');
+                break;
+            }
+        }
+
+        if (comparison === 0) {
+            comparison = (a.id || '').toString().localeCompare((b.id || '').toString(), 'ar');
+        }
+
+        return comparison * multiplier;
+    });
+}
+
+function hasSubcontractFiltersApplied() {
+    return Boolean(
+        subcontractFilters.contractorName ||
+        subcontractFilters.status ||
+        subcontractFilters.startDate ||
+        subcontractFilters.endDate
+    );
+}
+
+function getFilteredSubcontracts() {
+    if (!projectStore || !currentProjectId) return [];
+    const subcontracts = projectStore.listSubcontracts(currentProjectId, subcontractFilters);
+    return sortSubcontracts(subcontracts);
+}
+
+function sortSubcontracts(subcontracts) {
+    const { field, direction } = subcontractSortState;
+    const multiplier = direction === 'asc' ? 1 : -1;
+
+    const config = {
+        contractorName: { type: 'string', accessor: contract => contract.contractorName },
+        contractTitle: { type: 'string', accessor: contract => contract.contractTitle },
+        value: { type: 'number', accessor: contract => contract.value },
+        startDate: { type: 'date', accessor: contract => contract.startDate },
+        endDate: { type: 'date', accessor: contract => contract.endDate },
+        paidAmount: { type: 'number', accessor: contract => contract.paidAmount },
+        remainingAmount: { type: 'number', accessor: contract => contract.remainingAmount },
+        status: { type: 'status', accessor: contract => contract.status }
+    };
+
+    const { type, accessor } = config[field] || { type: 'string', accessor: contract => contract[field] };
+    const statusOrder = { active: 0, in_progress: 1, pending: 2, completed: 3 };
+
+    return subcontracts.slice().sort((a, b) => {
+        const valueA = accessor ? accessor(a) : a[field];
+        const valueB = accessor ? accessor(b) : b[field];
+        let comparison = 0;
+
+        switch (type) {
+            case 'number': {
+                const numberA = parseFloat(valueA) || 0;
+                const numberB = parseFloat(valueB) || 0;
+                comparison = numberA - numberB;
+                break;
+            }
+            case 'date': {
+                const timeA = new Date(valueA).getTime();
+                const timeB = new Date(valueB).getTime();
+                comparison = (Number.isNaN(timeA) ? 0 : timeA) - (Number.isNaN(timeB) ? 0 : timeB);
+                break;
+            }
+            case 'status': {
+                const rankA = statusOrder[valueA] ?? 99;
+                const rankB = statusOrder[valueB] ?? 99;
+                comparison = rankA - rankB;
+                break;
+            }
+            default: {
+                const stringA = (valueA ?? '').toString();
+                const stringB = (valueB ?? '').toString();
+                comparison = stringA.localeCompare(stringB, 'ar');
+                break;
+            }
+        }
+
+        if (comparison === 0) {
+            comparison = (a.id || '').toString().localeCompare((b.id || '').toString(), 'ar');
+        }
+
+        return comparison * multiplier;
+    });
+}
+
+function updateContractorFilterOptions(allSubcontracts) {
+    const select = document.getElementById('filterContractor');
+    if (!select) return;
+
+    const previousValue = subcontractFilters.contractorName || select.value || '';
+    select.querySelectorAll('option[data-dynamic="true"]').forEach(option => option.remove());
+
+    const uniqueNames = Array.from(new Set(
+        allSubcontracts
+            .map(contract => contract.contractorName)
+            .filter(Boolean)
+    ));
+
+    uniqueNames.sort((a, b) => a.localeCompare(b, 'ar'));
+
+    uniqueNames.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        option.dataset.dynamic = 'true';
+        select.appendChild(option);
+    });
+
+    if (previousValue && uniqueNames.includes(previousValue)) {
+        select.value = previousValue;
+    } else {
+        select.value = '';
+    }
+
+    subcontractFilters.contractorName = select.value || '';
+}
+
+
 function loadCombinedAnalytics() {
     console.log('Loading combined analytics...');
     updateUnifiedKPIs();
@@ -6149,11 +6980,19 @@ function closeEditProjectModal() {
 }
 
 function openContractUploadModal() {
+    if (!currentProjectId) {
+        showToast('يرجى اختيار مشروع لربط العقد به', false);
+        return;
+    }
     document.getElementById('modalContractUpload').classList.remove('hidden');
 }
 
 function closeContractUploadModal() {
     document.getElementById('modalContractUpload').classList.add('hidden');
+    const form = document.getElementById('contractUploadForm');
+    if (form) {
+        form.reset();
+    }
 }
 
 function openAddAdditionalContractModal() {
@@ -6314,6 +7153,116 @@ function confirmDelete() {
 }
 
 // Utility functions
+function triggerFileDownload(filename, content, mimeType = 'application/json') {
+    try {
+        let blob;
+        if (content instanceof Blob) {
+            blob = content;
+        } else if (content instanceof ArrayBuffer || ArrayBuffer.isView(content)) {
+            blob = new Blob([content], { type: mimeType });
+        } else {
+            blob = new Blob([content], { type: mimeType });
+        }
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Failed to trigger file download:', error);
+    }
+}
+
+function downloadJSONFile(filename, data) {
+    try {
+        const serialized = JSON.stringify(data, null, 2);
+        triggerFileDownload(filename, serialized, 'application/json');
+    } catch (error) {
+        console.error('Failed to serialise data for download:', error);
+        alert('تعذر تجهيز الملف للتنزيل. يرجى المحاولة مرة أخرى.');
+    }
+}
+
+async function fileToDataUrl(file) {
+    if (!file) return null;
+    return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+    });
+}
+
+function resolveAttachmentType(file) {
+    if (!file) return 'file';
+    const type = file.type || '';
+    const name = file.name ? file.name.toLowerCase() : '';
+    if (type.startsWith('image/')) return 'image';
+    if (type.startsWith('video/')) return 'video';
+    if (type === 'application/pdf' || name.endsWith('.pdf')) return 'pdf';
+    return 'file';
+}
+
+function sanitizePdfText(text) {
+    if (text === undefined || text === null) return '';
+    return String(text)
+        .replace(/[\r\n]/g, ' ')
+        .replace(/[\\()]/g, '\\$&')
+        .replace(/[\u0080-\uFFFF]/g, '?');
+}
+
+function generateSimplePdf(lines) {
+    const encoder = new TextEncoder();
+    const sanitizedLines = (lines || []).map(line => sanitizePdfText(line));
+    const contentLines = sanitizedLines.map((line, index) => index === 0 ? `(${line}) Tj` : `0 -18 Td\n(${line}) Tj`).join('\n');
+    const contentStream = `BT\n/F1 12 Tf\n50 780 Td\n${contentLines}\nET`;
+    const contentBytes = encoder.encode(contentStream);
+
+    const objects = [
+        '<< /Type /Catalog /Pages 2 0 R >>',
+        '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>',
+        `<< /Length ${contentBytes.length} >>\nstream\n${contentStream}\nendstream`,
+        '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'
+    ];
+
+    let pdf = '%PDF-1.4\n';
+    const offsets = [];
+    let length = encoder.encode(pdf).length;
+
+    objects.forEach((body, index) => {
+        offsets.push(length);
+        const objectString = `${index + 1} 0 obj\n${body}\nendobj\n`;
+        pdf += objectString;
+        length = encoder.encode(pdf).length;
+    });
+
+    const xrefOffset = length;
+    pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+    offsets.forEach(offset => {
+        pdf += `${String(offset).padStart(10, '0')} 00000 n \n`;
+    });
+    pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+    return encoder.encode(pdf);
+}
+
+function dataUrlToUint8Array(dataUrl) {
+    if (!dataUrl) return new Uint8Array();
+    const parts = dataUrl.split(',');
+    const base64 = parts.length > 1 ? parts[1] : parts[0];
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+}
+
 function formatCurrency(amount) {
     return new Intl.NumberFormat('ar-SA', {
         style: 'decimal',
@@ -6523,11 +7472,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Daily Report form
     const dailyReportForm = document.getElementById('dailyReportForm');
     if (dailyReportForm) {
-        dailyReportForm.addEventListener('submit', function(e) {
+        dailyReportForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            if (!dailyReportsStore) return;
-            
+
+            if (!dailyReportsStore || !currentProjectId) {
+                showToast('يرجى اختيار مشروع قبل حفظ التقرير اليومي', false);
+                return;
+            }
+
             const formData = new FormData(e.target);
             const reportData = {
                 phaseId: formData.get('phaseId'),
@@ -6539,26 +7491,50 @@ document.addEventListener('DOMContentLoaded', function() {
                 workersCount: formData.get('workersCount'),
                 equipmentUsed: formData.get('equipmentUsed')
             };
-            
-            const reportId = document.getElementById('dailyReportId').value;
-            
-            if (reportId) {
-                dailyReportsStore.updateDailyReport(reportId, reportData);
-            } else {
-                dailyReportsStore.createDailyReport(currentProjectId, reportData);
+
+            if (!reportData.phaseId || !reportData.date || !reportData.workDescription) {
+                showToast('يرجى تعبئة بيانات التقرير الأساسية قبل الحفظ', false);
+                return;
             }
-            
+
+            const reportId = document.getElementById('dailyReportId').value;
+            let report = null;
+
+            if (reportId) {
+                report = dailyReportsStore.updateDailyReport(reportId, reportData);
+            } else {
+                report = dailyReportsStore.createDailyReport(currentProjectId, reportData);
+            }
+
+            if (!report) {
+                showToast('تعذر حفظ التقرير اليومي، يرجى المحاولة مرة أخرى', false);
+                return;
+            }
+
+            if (pendingReportFiles.length) {
+                for (const item of pendingReportFiles) {
+                    try {
+                        const dataUrl = await fileToDataUrl(item.file);
+                        const fileType = resolveAttachmentType(item.file);
+                        dailyReportsStore.uploadAttachment(report.id, item.file, fileType, dataUrl);
+                    } catch (error) {
+                        console.error('Failed to read report attachment', error);
+                    }
+                }
+            }
+
             loadDailyReportsTable();
             updateDailyReportKPIs();
             loadPhotoGallery();
             loadWeeklySummary();
-            
-            // Update phases if linked
+
             if (phasesStore) {
                 loadPhasesMainTab();
                 updatePhasesAnalytics();
             }
-            
+
+            showToast(pendingReportFiles.length ? 'تم حفظ التقرير والمرفقات بنجاح' : 'تم حفظ التقرير بنجاح');
+            clearPendingReportFiles();
             closeDailyReportModal();
         });
 
@@ -6575,25 +7551,136 @@ document.addEventListener('DOMContentLoaded', function() {
     // Upload photos form
     const uploadPhotosForm = document.getElementById('uploadPhotosForm');
     if (uploadPhotosForm) {
-        uploadPhotosForm.addEventListener('submit', function(e) {
+        uploadPhotosForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
+            if (!dailyReportsStore || !currentProjectId) {
+                showToast('يرجى اختيار مشروع قبل رفع الصور', false);
+                return;
+            }
+
             const formData = new FormData(e.target);
             const phaseId = formData.get('phaseId');
-            const notes = formData.get('notes');
-            const files = document.getElementById('photosInput').files;
-            
-            if (files.length > 0 && phaseId) {
-                // In real app, would upload files to server
-                console.log('Uploading photos for phase:', phaseId, 'Files:', files.length);
-                alert('تم رفع الصور بنجاح!');
-                
-                loadPhotoGallery();
-                updateDailyReportKPIs();
-                closeUploadPhotosModal();
-            } else {
-                alert('يرجى اختيار المرحلة والصور');
+            const notes = formData.get('notes')?.trim();
+
+            if (!phaseId) {
+                showToast('يرجى اختيار المرحلة المرتبطة بالصور', false);
+                return;
             }
+
+            if (!pendingPhotoFiles.length) {
+                showToast('لم يتم اختيار أي صور أو فيديوهات للرفع', false);
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const existingReports = dailyReportsStore.listDailyReports(currentProjectId);
+            let targetReport = existingReports.find(report => report.phaseId === phaseId && report.date === today);
+
+            if (!targetReport) {
+                targetReport = dailyReportsStore.createDailyReport(currentProjectId, {
+                    phaseId,
+                    date: today,
+                    progressPercent: 0,
+                    workDescription: notes ? `صور ميدانية: ${notes}` : 'صور ميدانية مرفوعة عبر المعرض',
+                    issues: '',
+                    weather: '',
+                    workersCount: 0,
+                    equipmentUsed: ''
+                });
+            } else if (notes) {
+                const combinedNotes = targetReport.issues ? `${targetReport.issues}\n${notes}` : notes;
+                dailyReportsStore.updateDailyReport(targetReport.id, { issues: combinedNotes });
+            }
+
+            for (const item of pendingPhotoFiles) {
+                try {
+                    const dataUrl = await fileToDataUrl(item.file);
+                    const fileType = resolveAttachmentType(item.file);
+                    dailyReportsStore.uploadAttachment(targetReport.id, item.file, fileType, dataUrl);
+                } catch (error) {
+                    console.error('Failed to read photo file', error);
+                }
+            }
+
+            loadPhotoGallery();
+            updateDailyReportKPIs();
+            loadDailyReportsTable();
+            loadWeeklySummary();
+
+            showToast('تم رفع الصور وتحديث التقرير اليومي بنجاح');
+            clearPendingPhotoFiles();
+            closeUploadPhotosModal();
+        });
+    }
+
+    const reportFilesInput = document.getElementById('reportFiles');
+    if (reportFilesInput) {
+        reportFilesInput.addEventListener('change', (e) => handleFileSelection(e.target.files));
+    }
+
+    const photosInput = document.getElementById('photosInput');
+    if (photosInput) {
+        photosInput.addEventListener('change', (e) => handlePhotoSelection(e.target.files));
+    }
+
+    const galleryFilter = document.getElementById('galleryFilter');
+    if (galleryFilter) {
+        galleryFilter.addEventListener('change', () => sortGalleryPhotos(true));
+    }
+
+    const phaseCsvInput = document.getElementById('phaseCsvInput');
+    if (phaseCsvInput) {
+        phaseCsvInput.addEventListener('change', handlePhaseCsvImport);
+    }
+
+    const contractUploadForm = document.getElementById('contractUploadForm');
+    if (contractUploadForm) {
+        contractUploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!currentProjectId || !projectStore) {
+                showToast('يرجى اختيار مشروع قبل رفع العقد الرئيسي', false);
+                return;
+            }
+
+            const fileInput = document.getElementById('mainContractFile');
+            const notesInput = document.getElementById('contractNotes');
+            const file = fileInput?.files?.[0];
+
+            if (!file) {
+                showToast('يرجى اختيار ملف العقد بصيغة PDF', false);
+                return;
+            }
+
+            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                showToast('الرجاء رفع ملف PDF صالح للعقد', false);
+                return;
+            }
+
+            let dataUrl;
+            try {
+                dataUrl = await fileToDataUrl(file);
+            } catch (error) {
+                console.error('Failed to read contract file', error);
+                showToast('تعذر قراءة ملف العقد. حاول مرة أخرى.', false);
+                return;
+            }
+            const contractDocument = {
+                id: 'main-contract-' + Date.now(),
+                fileName: file.name,
+                fileSize: file.size,
+                uploadedAt: new Date().toISOString(),
+                notes: notesInput?.value?.trim() || '',
+                dataUrl: dataUrl
+            };
+
+            projectStore.updateProject(currentProjectId, { contractDocument });
+            currentProjectData = projectStore.getProject(currentProjectId);
+            renderContractFileSection();
+            showToast('تم رفع عقد العمل بنجاح');
+            contractUploadForm.reset();
+            closeContractUploadModal();
         });
     }
 
@@ -6685,12 +7772,15 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             const formData = new FormData(e.target);
+            const fileField = formData.get('file');
+            const fileName = (fileField && fileField.name && fileField.size) ? fileField.name : null;
+
             const contractData = {
                 contractNumber: formData.get('contractNumber'),
                 description: formData.get('description'),
                 value: formData.get('value'),
                 signedDate: formData.get('signedDate'),
-                file: formData.get('file')?.name || null
+                file: fileName
             };
             
             const contractId = document.getElementById('additionalContractId').value;
@@ -6759,6 +7849,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             const formData = new FormData(e.target);
+            const attachmentFile = formData.get('attachment');
+            const attachmentName = (attachmentFile && attachmentFile.name && attachmentFile.size)
+                ? attachmentFile.name
+                : null;
+
             const expenseData = {
                 category: formData.get('category'),
                 description: formData.get('description'),
@@ -6767,7 +7862,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 vatPercent: formData.get('vatPercent'),
                 paymentMethod: formData.get('paymentMethod'),
                 notes: formData.get('notes'),
-                attachment: formData.get('attachment')?.name || null
+                attachment: attachmentName
             };
             
             const expenseId = document.getElementById('expenseId').value;
@@ -6800,6 +7895,14 @@ document.addEventListener('DOMContentLoaded', function() {
             amountInput.addEventListener('input', updateTotal);
             vatInput.addEventListener('input', updateTotal);
         }
+    const searchExpensesInput = document.getElementById('searchExpenses');
+    if (searchExpensesInput) {
+        searchExpensesInput.addEventListener('input', function() {
+            expenseSearchTerm = this.value.trim();
+            loadExpensesSubTab();
+        });
+    }
+
     }
 
     // Subcontract form
@@ -6809,6 +7912,11 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             
             const formData = new FormData(e.target);
+            const contractFileField = formData.get('contractFile');
+            const contractFileName = (contractFileField && contractFileField.name && contractFileField.size)
+                ? contractFileField.name
+                : null;
+
             const contractData = {
                 contractorName: formData.get('contractorName'),
                 contractTitle: formData.get('contractTitle'),
@@ -6817,7 +7925,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 startDate: formData.get('startDate'),
                 endDate: formData.get('endDate'),
                 status: formData.get('status'),
-                contractFile: formData.get('contractFile')?.name || null
+                contractFile: contractFileName
             };
             
             const contractId = document.getElementById('subcontractId').value;
@@ -6847,7 +7955,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const formData = new FormData(paymentForm);
             const attachmentInput = document.getElementById('paymentAttachment');
-            const attachmentName = attachmentInput?.files?.[0]?.name || attachmentInput?.dataset.currentAttachment || null;
+            const uploadedAttachment = attachmentInput?.files?.[0];
+            const attachmentName = (uploadedAttachment && uploadedAttachment.name && uploadedAttachment.size)
+                ? uploadedAttachment.name
+                : (attachmentInput?.dataset.currentAttachment || null);
 
             const paymentData = {
                 type: formData.get('type'),
@@ -6927,79 +8038,169 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // File handling functions
 function handleFileSelection(files) {
-    const filePreview = document.getElementById('filePreview');
-    filePreview.classList.remove('hidden');
-    filePreview.innerHTML = '';
-    
-    Array.from(files).forEach((file, index) => {
-        const fileDiv = document.createElement('div');
-        fileDiv.className = 'relative bg-secondary-100 rounded-lg p-3';
-        
-        let content = '';
-        if (file.type.startsWith('image/')) {
-            const url = URL.createObjectURL(file);
-            content = `<img src="${url}" alt="${file.name}" class="w-full h-20 object-cover rounded mb-2" />`;
-        } else {
-            content = '<div class="w-full h-20 bg-secondary-200 rounded mb-2 flex items-center justify-center"><i class="fas fa-file text-text-secondary text-2xl"></i></div>';
-        }
-        
-        fileDiv.innerHTML = `
-            ${content}
-            <p class="text-xs text-text-secondary truncate">${file.name}</p>
-            <p class="text-xs text-text-secondary">${(file.size / 1024 / 1024).toFixed(1)} MB</p>
-            <button type="button" class="absolute top-1 right-1 bg-error text-white rounded-full w-5 h-5 flex items-center justify-center text-xs" onclick="removeFile(${index})">
-                ×
-            </button>
-        `;
-        
-        filePreview.appendChild(fileDiv);
-    });
+    const newFiles = Array.from(files || []).map(file => ({
+        file,
+        previewUrl: file.type?.startsWith('image/') ? URL.createObjectURL(file) : null
+    }));
+
+    if (!newFiles.length) {
+        return;
+    }
+
+    pendingReportFiles = pendingReportFiles.concat(newFiles);
+    renderReportFilePreview();
+
+    const input = document.getElementById('reportFiles');
+    if (input) {
+        input.value = '';
+    }
 }
 
 function handlePhotoSelection(files) {
+    const accepted = Array.from(files || []).filter(file => file.type?.startsWith('image/') || file.type?.startsWith('video/'));
+    const prepared = accepted.map(file => ({
+        file,
+        previewUrl: URL.createObjectURL(file)
+    }));
+
+    if (!prepared.length) {
+        return;
+    }
+
+    pendingPhotoFiles = pendingPhotoFiles.concat(prepared);
+    renderPhotoPreview();
+
+    const input = document.getElementById('photosInput');
+    if (input) {
+        input.value = '';
+    }
+}
+
+function renderReportFilePreview() {
+    const filePreview = document.getElementById('filePreview');
+    if (!filePreview) return;
+
+    if (pendingReportFiles.length === 0) {
+        filePreview.innerHTML = '';
+        filePreview.classList.add('hidden');
+        return;
+    }
+
+    filePreview.classList.remove('hidden');
+    filePreview.innerHTML = pendingReportFiles.map((item, index) => {
+        const preview = item.previewUrl
+            ? `<img src="${item.previewUrl}" alt="${item.file.name}" class="w-full h-20 object-cover rounded mb-2" />`
+            : '<div class="w-full h-20 bg-secondary-200 rounded mb-2 flex items-center justify-center"><i class="fas fa-file text-text-secondary text-2xl"></i></div>';
+        const sizeLabel = item.file.size ? formatFileSize(item.file.size) : '';
+
+        return `
+            <div class="relative bg-secondary-100 rounded-lg p-3">
+                ${preview}
+                <p class="text-xs text-text-secondary truncate">${item.file.name}</p>
+                <p class="text-xs text-text-secondary">${sizeLabel}</p>
+                <button type="button" class="absolute top-1 right-1 bg-error text-white rounded-full w-5 h-5 flex items-center justify-center text-xs" onclick="removeFile(${index})">
+                    ×
+                </button>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderPhotoPreview() {
     const photoPreview = document.getElementById('photoPreviewGrid');
+    if (!photoPreview) return;
+
+    if (pendingPhotoFiles.length === 0) {
+        photoPreview.innerHTML = '';
+        photoPreview.classList.add('hidden');
+        return;
+    }
+
     photoPreview.classList.remove('hidden');
-    photoPreview.innerHTML = '';
-    
-    Array.from(files).forEach((file, index) => {
-        if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
-            const photoDiv = document.createElement('div');
-            photoDiv.className = 'relative aspect-square bg-secondary-100 rounded-lg overflow-hidden';
-            
-            const url = URL.createObjectURL(file);
-            let content = '';
-            
-            if (file.type.startsWith('image/')) {
-                content = `<img src="${url}" alt="${file.name}" class="w-full h-full object-cover" />`;
-            } else {
-                content = `<video src="${url}" class="w-full h-full object-cover" controls></video>`;
-            }
-            
-            photoDiv.innerHTML = `
+    photoPreview.innerHTML = pendingPhotoFiles.map((item, index) => {
+        const isImage = item.file.type?.startsWith('image/');
+        const content = isImage
+            ? `<img src="${item.previewUrl}" alt="${item.file.name}" class="w-full h-full object-cover" />`
+            : `<video src="${item.previewUrl}" class="w-full h-full object-cover" controls></video>`;
+
+        return `
+            <div class="relative aspect-square bg-secondary-100 rounded-lg overflow-hidden">
                 ${content}
                 <button type="button" class="absolute top-1 right-1 bg-error text-white rounded-full w-6 h-6 flex items-center justify-center text-sm" onclick="removePhoto(${index})">
                     ×
                 </button>
-            `;
-            
-            photoPreview.appendChild(photoDiv);
-        }
-    });
+            </div>
+        `;
+    }).join('');
 }
 
 function removeFile(index) {
-    console.log('Removing file at index:', index);
+    if (index < 0 || index >= pendingReportFiles.length) return;
+    const [removed] = pendingReportFiles.splice(index, 1);
+    if (removed?.previewUrl) {
+        URL.revokeObjectURL(removed.previewUrl);
+    }
+    renderReportFilePreview();
 }
 
 function removePhoto(index) {
-    console.log('Removing photo at index:', index);
+    if (index < 0 || index >= pendingPhotoFiles.length) return;
+    const [removed] = pendingPhotoFiles.splice(index, 1);
+    if (removed?.previewUrl) {
+        URL.revokeObjectURL(removed.previewUrl);
+    }
+    renderPhotoPreview();
+}
+
+function clearPendingReportFiles() {
+    pendingReportFiles.forEach(item => {
+        if (item.previewUrl) {
+            URL.revokeObjectURL(item.previewUrl);
+        }
+    });
+    pendingReportFiles = [];
+    renderReportFilePreview();
+    const input = document.getElementById('reportFiles');
+    if (input) {
+        input.value = '';
+    }
+}
+
+function clearPendingPhotoFiles() {
+    pendingPhotoFiles.forEach(item => {
+        if (item.previewUrl) {
+            URL.revokeObjectURL(item.previewUrl);
+        }
+    });
+    pendingPhotoFiles = [];
+    renderPhotoPreview();
+    const input = document.getElementById('photosInput');
+    if (input) {
+        input.value = '';
+    }
 }
 
 // Placeholder functions for other features
 function openNewProjectModal(){ window.location.href = 'project_creation_wizard.html'; }
 
 function exportProjectsData() {
-    alert('تصدير البيانات - قيد التطوير');
+    if (!projectStore) {
+        alert('لا توجد بيانات مشاريع متاحة للتصدير حالياً.');
+        return;
+    }
+
+    const projects = projectStore.normalizeProjects(projectStore.projects || []);
+    const exportPayload = {
+        generatedAt: new Date().toISOString(),
+        totalProjects: projects.length,
+        projects
+    };
+
+    const fileName = `contractorpro-projects-${new Date().toISOString().slice(0, 10)}.json`;
+    downloadJSONFile(fileName, exportPayload);
+    if (typeof showToast === 'function') {
+        showToast('تم تصدير بيانات المشاريع بنجاح');
+    }
 }
 
 function editProjectValue() {
@@ -7097,57 +8298,110 @@ function loadFinancialAnalysis(projectId) {
 
 // Filter functions
 function applyExpenseFilters() {
-    const filters = {
+    expenseFilters = {
         category: document.getElementById('filterExpenseCategory').value,
         paymentMethod: document.getElementById('filterPaymentMethod').value,
         dateFrom: document.getElementById('filterDateFrom').value,
         dateTo: document.getElementById('filterDateTo').value
     };
-    
-    console.log('Applying expense filters:', filters);
+
+    const searchInput = document.getElementById('searchExpenses');
+    expenseSearchTerm = searchInput ? searchInput.value.trim() : '';
+
     loadExpensesSubTab();
 }
 
 function clearExpenseFilters() {
-    document.getElementById('filterExpenseCategory').value = '';
-    document.getElementById('filterPaymentMethod').value = '';
-    document.getElementById('filterDateFrom').value = '';
-    document.getElementById('filterDateTo').value = '';
-    
+    expenseFilters = { category: '', paymentMethod: '', dateFrom: '', dateTo: '' };
+    expenseSearchTerm = '';
+
+    const categorySelect = document.getElementById('filterExpenseCategory');
+    const methodSelect = document.getElementById('filterPaymentMethod');
+    const dateFrom = document.getElementById('filterDateFrom');
+    const dateTo = document.getElementById('filterDateTo');
+    const searchInput = document.getElementById('searchExpenses');
+
+    if (categorySelect) categorySelect.value = '';
+    if (methodSelect) methodSelect.value = '';
+    if (dateFrom) dateFrom.value = '';
+    if (dateTo) dateTo.value = '';
+    if (searchInput) searchInput.value = '';
+
     loadExpensesSubTab();
 }
 
 function applySubcontractFilters() {
-    const filters = {
+    subcontractFilters = {
         contractorName: document.getElementById('filterContractor').value,
         status: document.getElementById('filterContractStatus').value,
         startDate: document.getElementById('filterContractStartDate').value,
         endDate: document.getElementById('filterContractEndDate').value
     };
-    
-    console.log('Applying subcontract filters:', filters);
+
     loadSubcontractsSubTab();
 }
 
 function clearSubcontractFilters() {
-    document.getElementById('filterContractor').value = '';
-    document.getElementById('filterContractStatus').value = '';
-    document.getElementById('filterContractStartDate').value = '';
-    document.getElementById('filterContractEndDate').value = '';
-    
+    subcontractFilters = { contractorName: '', status: '', startDate: '', endDate: '' };
+
+    const contractorSelect = document.getElementById('filterContractor');
+    const statusSelect = document.getElementById('filterContractStatus');
+    const startDateInput = document.getElementById('filterContractStartDate');
+    const endDateInput = document.getElementById('filterContractEndDate');
+
+    if (contractorSelect) contractorSelect.value = '';
+    if (statusSelect) statusSelect.value = '';
+    if (startDateInput) startDateInput.value = '';
+    if (endDateInput) endDateInput.value = '';
+
     loadSubcontractsSubTab();
 }
 
 function sortExpenseTable(field) {
-    console.log('Sorting expenses by:', field);
+    if (expenseSortState.field === field) {
+        expenseSortState.direction = expenseSortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        expenseSortState.field = field;
+        expenseSortState.direction = ['amount', 'total', 'vatPercent', 'date'].includes(field) ? 'desc' : 'asc';
+    }
+
+    loadExpensesSubTab();
 }
 
 function sortSubcontractTable(field) {
-    console.log('Sorting subcontracts by:', field);
+    if (subcontractSortState.field === field) {
+        subcontractSortState.direction = subcontractSortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        subcontractSortState.field = field;
+        subcontractSortState.direction = ['value', 'paidAmount', 'remainingAmount', 'startDate', 'endDate'].includes(field) ? 'desc' : 'asc';
+    }
+
+    loadSubcontractsSubTab();
 }
 
 function exportUnifiedData() {
-    alert('تصدير بيانات المصاريف والعقود - قيد التطوير');
+    if (!currentProjectId || !projectStore) {
+        alert('يرجى اختيار مشروع لتصدير بياناته.');
+        return;
+    }
+
+    const exportPayload = {
+        projectId: currentProjectId,
+        projectName: currentProjectData?.name || '',
+        generatedAt: new Date().toISOString(),
+        filters: {
+            expenses: Object.assign({}, expenseFilters, { searchTerm: expenseSearchTerm }),
+            subcontracts: Object.assign({}, subcontractFilters)
+        },
+        expenses: getFilteredExpenses(),
+        subcontracts: getFilteredSubcontracts()
+    };
+
+    const fileName = `project-${currentProjectId}-expenses-contracts-${new Date().toISOString().slice(0, 10)}.json`;
+    downloadJSONFile(fileName, exportPayload);
+    if (typeof showToast === 'function') {
+        showToast('تم تنزيل ملف المصاريف والعقود بنجاح');
+    }
 }
 
 function exportFinancialReport() {
@@ -7164,11 +8418,152 @@ function switchTimelineView(viewType) {
 
 // Phase management placeholder functions for CSV import
 function importPhasesCSV() {
-    alert('استيراد مراحل من CSV - قيد التطوير');
+    const input = document.getElementById('phaseCsvInput');
+    if (!input) return;
+
+    input.value = '';
+    input.click();
+}
+
+function handlePhaseCsvImport(event) {
+    if (!phasesStore || !currentProjectId) return;
+
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const content = e.target.result;
+            const rows = content.split(/\r?\n/).map(row => row.trim()).filter(row => row.length > 0);
+
+            if (rows.length <= 1) {
+                alert('ملف CSV لا يحتوي على بيانات صالحة للاستيراد.');
+                return;
+            }
+
+            const headers = splitCsvLine(rows[0]).map(header => header.toLowerCase());
+            const headerIndex = (name) => headers.indexOf(name.toLowerCase());
+
+            const nameIndex = headerIndex('name');
+            const startIndex = headerIndex('startdate');
+            const endIndex = headerIndex('enddate');
+
+            if (nameIndex === -1 || startIndex === -1 || endIndex === -1) {
+                alert('يجب أن يحتوي الملف على الأعمدة name, startDate, endDate على الأقل.');
+                return;
+            }
+
+            let importedCount = 0;
+
+            for (let i = 1; i < rows.length; i++) {
+                const columns = splitCsvLine(rows[i]);
+                const name = columns[nameIndex];
+                const startDate = columns[startIndex];
+                const endDate = columns[endIndex];
+
+                if (!name || !startDate || !endDate) {
+                    continue;
+                }
+
+                const phaseData = {
+                    name,
+                    description: headerIndex('description') !== -1 ? columns[headerIndex('description')] : '',
+                    startDate,
+                    endDate,
+                    progressPercent: headerIndex('progresspercent') !== -1 ? parseFloat(columns[headerIndex('progresspercent')] || 0) : 0,
+                    status: headerIndex('status') !== -1 ? columns[headerIndex('status')] || 'planned' : 'planned',
+                    assignee: headerIndex('assignee') !== -1 ? columns[headerIndex('assignee')] : ''
+                };
+
+                phasesStore.createPhase(currentProjectId, phaseData);
+                importedCount++;
+            }
+
+            if (importedCount > 0) {
+                loadProjectPhases(currentProjectId);
+                updatePhasesAnalytics();
+                loadPhasesLogs();
+                if (typeof showToast === 'function') {
+                    showToast(`تم استيراد ${importedCount} مرحلة بنجاح ✅`, true);
+                } else {
+                    alert(`تم استيراد ${importedCount} مرحلة بنجاح`);
+                }
+            } else {
+                alert('لم يتم العثور على مراحل صالحة للاستيراد في الملف.');
+            }
+        } catch (error) {
+            console.error('Error importing phases CSV:', error);
+            alert('حدث خطأ أثناء استيراد الملف. يرجى التحقق من التنسيق والمحاولة مرة أخرى.');
+        }
+    };
+
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+function splitCsvLine(line) {
+    const result = [];
+    let current = '';
+    let insideQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+            if (insideQuotes && line[i + 1] === '"') {
+                current += '"';
+                i++;
+            } else {
+                insideQuotes = !insideQuotes;
+            }
+        } else if (char === ',' && !insideQuotes) {
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+
+    result.push(current.trim());
+    return result.map(value => value.replace(/^"|"$/g, '').trim());
 }
 
 function exportLogs() {
-    alert('تصدير السجل - قيد التطوير');
+    if (!phasesStore) {
+        alert('لا توجد بيانات مراحل لتصدير السجل.');
+        return;
+    }
+
+    const phases = currentProjectId ? phasesStore.listPhases(currentProjectId) : [];
+    const phaseIds = new Set(phases.map(phase => phase.id));
+
+    const logs = phasesStore.logs.filter(log => phaseIds.size === 0 || phaseIds.has(log.phaseId));
+
+    if (logs.length === 0) {
+        alert('لا توجد سجلات للتصدير حالياً.');
+        return;
+    }
+
+    const exportData = logs.map(log => ({
+        ...log,
+        projectId: currentProjectId,
+        exportedAt: new Date().toISOString()
+    }));
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `phase-logs-${currentProjectId || 'all'}-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    if (typeof showToast === 'function') {
+        showToast('تم تنزيل سجل المراحل بنجاح ✅', true);
+    }
 }
 
 function clearLogs() {
@@ -7950,10 +9345,78 @@ function toggleCostView() {
 }
 
 function downloadFinancialReport(format) {
-    const message = format === 'excel'
-        ? 'سيتم تنزيل تقرير Excel يتضمن تفاصيل الدفعات والمصاريف.'
-        : 'سيتم تنزيل تقرير PDF بملخص المركز المالي.';
-    showToast(message);
+    if (!currentProjectId || !projectStore) {
+        showToast('يرجى اختيار مشروع قبل تنزيل التقرير المالي', false);
+        return;
+    }
+
+    const combinedStats = projectStore.computeCombinedStats(currentProjectId);
+    const projectName = currentProjectData?.name || 'مشروع غير محدد';
+    const rangeSelect = document.getElementById('financialReportRange');
+    const typeSelect = document.getElementById('financialReportType');
+    const rangeLabel = rangeSelect ? rangeSelect.options[rangeSelect.selectedIndex]?.textContent : '';
+    const typeLabel = typeSelect ? typeSelect.options[typeSelect.selectedIndex]?.textContent : '';
+
+    const paymentStats = combinedStats.payments;
+    const expenseStats = combinedStats.expenses;
+    const contractStats = combinedStats.contracts;
+    const safeRevenue = Number(paymentStats.incomingReceived) || 0;
+    const safeOutgoingPayments = Number(paymentStats.outgoingPaid) || 0;
+    const safeExpenses = Number(expenseStats.totalWithVAT) || 0;
+    const outstandingReceivables = (Number(paymentStats.incomingPending) || 0) + (Number(paymentStats.incomingOverdue) || 0);
+    const safeContractValue = Number(contractStats.totalValue) || 0;
+    const ratioValue = Number.isFinite(combinedStats.contractsToExpensesRatio)
+        ? combinedStats.contractsToExpensesRatio
+        : 0;
+    const netCashFlow = safeRevenue - (safeExpenses + safeOutgoingPayments);
+
+    if (format === 'excel') {
+        const rows = [
+            ['Project Name', projectName],
+            ['Report Range', rangeLabel || 'Not specified'],
+            ['Report Type', typeLabel || 'Overview'],
+            ['Generated At', new Date().toLocaleString('en-US')],
+            [],
+            ['Metric', 'Value'],
+            ['Incoming collected', `${safeRevenue.toFixed(2)} SAR`],
+            ['Outgoing payments', `${safeOutgoingPayments.toFixed(2)} SAR`],
+            ['Expenses (with VAT)', `${safeExpenses.toFixed(2)} SAR`],
+            ['Outstanding receivables', `${outstandingReceivables.toFixed(2)} SAR`],
+            ['Contracts total value', `${safeContractValue.toFixed(2)} SAR`],
+            ['Net cash flow', `${netCashFlow.toFixed(2)} SAR`],
+            ['Contracts to expense ratio', ratioValue.toFixed(2) + '%']
+        ];
+
+        const csvContent = '\ufeff' + rows.map(row => row.map(cell => {
+            const value = typeof cell === 'number' ? cell : String(cell);
+            return '"' + value.replace(/"/g, '""') + '"';
+        }).join(',')).join('\n');
+
+        const filename = `financial-report-${currentProjectId}-${new Date().toISOString().slice(0, 10)}.csv`;
+        triggerFileDownload(filename, csvContent, 'text/csv;charset=utf-8;');
+        showToast('تم تنزيل تقرير Excel بنجاح');
+        return;
+    }
+
+    const lines = [
+        `Financial report for project: ${projectName}`,
+        `Generated at: ${new Date().toLocaleString('en-US')}`,
+        `Range: ${rangeLabel || 'Not specified'}`,
+        `Type: ${typeLabel || 'Overview'}`,
+        '',
+        `Incoming collected payments: ${safeRevenue.toFixed(2)} SAR`,
+        `Outgoing subcontract payments: ${safeOutgoingPayments.toFixed(2)} SAR`,
+        `Project expenses (with VAT): ${safeExpenses.toFixed(2)} SAR`,
+        `Outstanding receivables: ${outstandingReceivables.toFixed(2)} SAR`,
+        `Total subcontract value: ${safeContractValue.toFixed(2)} SAR`,
+        `Net cash flow: ${netCashFlow.toFixed(2)} SAR`,
+        `Contracts to expense ratio: ${ratioValue.toFixed(2)}%`
+    ];
+
+    const pdfBytes = generateSimplePdf(lines);
+    const filename = `financial-report-${currentProjectId}-${new Date().toISOString().slice(0, 10)}.pdf`;
+    triggerFileDownload(filename, pdfBytes, 'application/pdf');
+    showToast('تم تنزيل تقرير PDF بنجاح');
 }
 
 function openFinancialCustomization() {
@@ -8207,6 +9670,7 @@ function openFinancialCustomization() {
     document.body.appendChild(t);
     setTimeout(()=> t.remove(), 3000);
   }
+  window.showToast = showToast;
 
   document.addEventListener('DOMContentLoaded', () => {
     const url = new URL(window.location.href);
