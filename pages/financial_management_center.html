@@ -12,30 +12,30 @@
 </head>
 <body class="bg-background text-text-primary font-arabic" data-active-link="finance">
     <!-- Sidebar -->
-    <aside class="fixed inset-y-0 right-0 w-64 bg-surface shadow-modal border-l border-border z-40">
+    <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50" id="sidebar">
         <div class="p-6 border-b border-border">
             <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-xl bg-primary flex items-center justify-center text-white text-xl shadow-lg">
-                    <i class="fas fa-hard-hat"></i>
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fas fa-hard-hat text-white text-lg"></i>
                 </div>
                 <div>
-                    <p class="text-lg font-bold">ContractorPro</p>
-                    <p class="text-sm text-text-secondary">منصة إدارة مشاريع المقاولات</p>
+                    <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
+                    <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
                 </div>
             </div>
         </div>
         <nav class="p-4 space-y-2">
             <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                 <i class="fas fa-tachometer-alt w-5"></i>
-                <span>لوحة التحكم</span>
+                <span class="font-medium">الصفحة الرئيسية</span>
             </a>
             <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-diagram-project w-5"></i>
+                <i class="fas fa-building w-5"></i>
                 <span>المشاريع</span>
                 <i class="fas fa-chevron-left mr-auto text-xs"></i>
             </a>
             <a href="financial_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
-                <i class="fas fa-coins w-5"></i>
+                <i class="fas fa-chart-line w-5"></i>
                 <span>المالية</span>
                 <i class="fas fa-chevron-left mr-auto text-xs"></i>
             </a>
@@ -45,11 +45,11 @@
                 <i class="fas fa-chevron-left mr-auto text-xs"></i>
             </a>
             <a href="settings.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
-                <i class="fas fa-sliders-h w-5"></i>
-                <span>الإعدادات العامة</span>
+                <i class="fas fa-cog w-5"></i>
+                <span>الإعدادات</span>
             </a>
         </nav>
-    </aside>
+    </div>
 
     <!-- Main content -->
     <div class="mr-64 min-h-screen">
