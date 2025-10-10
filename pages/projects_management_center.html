@@ -12,6 +12,87 @@
     <meta property="og:type" content="website" />
     <link rel="stylesheet" href="../css/main.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        .project-tabs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .project-nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: 1.25rem;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease-in-out;
+            text-align: right;
+        }
+
+        .project-nav-btn .project-nav-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .project-nav-btn .project-nav-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            background-color: #EFF6FF;
+            color: #2563EB;
+            flex-shrink: 0;
+        }
+
+        .project-nav-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .project-nav-btn .project-nav-arrow {
+            font-size: 0.85rem;
+            color: currentColor;
+            opacity: 0.7;
+        }
+
+        .project-nav-btn.active {
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .project-nav-btn.active .project-nav-icon {
+            background-color: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+        }
+
+        .project-nav-btn.active .project-nav-title {
+            color: #ffffff;
+        }
+
+        .project-nav-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @media (max-width: 640px) {
+            .project-nav-btn {
+                padding: 0.9rem 1rem;
+            }
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
@@ -255,27 +336,51 @@
 
 <!-- Tabs Navigation -->
                 <div class="bg-surface border-b border-border rounded-t-xl">
-                    <div class="px-6">
-                        <nav class="flex space-x-8 rtl:space-x-reverse" role="tablist">
-                            <button class="tab-button active py-4 px-2 border-b-2 border-primary text-primary font-medium" onclick="switchProjectTab('project-information')" data-tab="project-information">
-                                🧾 المعلومات
+                    <div class="px-6 py-4">
+                        <div class="project-tabs-grid" role="tablist">
+                            <button class="tab-button project-nav-btn active" onclick="switchProjectTab('project-information')" data-tab="project-information">
+                                <span class="project-nav-label">
+                                    <span class="project-nav-icon" aria-hidden="true">🧾</span>
+                                    <span class="project-nav-title">المعلومات</span>
+                                </span>
+                                <i class="fas fa-arrow-left project-nav-arrow"></i>
                             </button>
-                            <button class="tab-button py-4 px-2 border-b-2 border-transparent text-text-secondary hover:text-text-primary font-medium" onclick="switchProjectTab('project-phases')" data-tab="project-phases">
-                                🧱 مراحل المشروع
+                            <button class="tab-button project-nav-btn" onclick="switchProjectTab('project-phases')" data-tab="project-phases">
+                                <span class="project-nav-label">
+                                    <span class="project-nav-icon" aria-hidden="true">🧱</span>
+                                    <span class="project-nav-title">مراحل المشروع</span>
+                                </span>
+                                <i class="fas fa-arrow-left project-nav-arrow"></i>
                             </button>
-                            <button class="tab-button py-4 px-2 border-b-2 border-transparent text-text-secondary hover:text-text-primary font-medium" onclick="switchProjectTab('expenses-and-contracts')" data-tab="expenses-and-contracts">
-                                💰 المصاريف والعقود
+                            <button class="tab-button project-nav-btn" onclick="switchProjectTab('expenses-and-contracts')" data-tab="expenses-and-contracts">
+                                <span class="project-nav-label">
+                                    <span class="project-nav-icon" aria-hidden="true">💰</span>
+                                    <span class="project-nav-title">المصاريف والعقود</span>
+                                </span>
+                                <i class="fas fa-arrow-left project-nav-arrow"></i>
                             </button>
-                            <button class="tab-button py-4 px-2 border-b-2 border-transparent text-text-secondary hover:text-text-primary font-medium" onclick="switchProjectTab('project-payments')" data-tab="project-payments">
-                                💳 دفعات المشروع
+                            <button class="tab-button project-nav-btn" onclick="switchProjectTab('project-payments')" data-tab="project-payments">
+                                <span class="project-nav-label">
+                                    <span class="project-nav-icon" aria-hidden="true">💳</span>
+                                    <span class="project-nav-title">دفعات المشروع</span>
+                                </span>
+                                <i class="fas fa-arrow-left project-nav-arrow"></i>
                             </button>
-                            <button class="tab-button py-4 px-2 border-b-2 border-transparent text-text-secondary hover:text-text-primary font-medium" onclick="switchProjectTab('daily-reports')" data-tab="daily-reports">
-                                📅 التقارير اليومية
+                            <button class="tab-button project-nav-btn" onclick="switchProjectTab('daily-reports')" data-tab="daily-reports">
+                                <span class="project-nav-label">
+                                    <span class="project-nav-icon" aria-hidden="true">📅</span>
+                                    <span class="project-nav-title">التقارير اليومية</span>
+                                </span>
+                                <i class="fas fa-arrow-left project-nav-arrow"></i>
                             </button>
-                            <button class="tab-button py-4 px-2 border-b-2 border-transparent text-text-secondary hover:text-text-primary font-medium" onclick="switchProjectTab('financial-analysis')" data-tab="financial-analysis">
-                                📊 التحليل المالي
+                            <button class="tab-button project-nav-btn" onclick="switchProjectTab('financial-analysis')" data-tab="financial-analysis">
+                                <span class="project-nav-label">
+                                    <span class="project-nav-icon" aria-hidden="true">📊</span>
+                                    <span class="project-nav-title">التحليل المالي</span>
+                                </span>
+                                <i class="fas fa-arrow-left project-nav-arrow"></i>
                             </button>
-                        </nav>
+                        </div>
                     </div>
                 </div>
 
@@ -5158,8 +5263,7 @@ function switchProjectTab(tabName) {
     
     // Remove active class from all tab buttons
     document.querySelectorAll('.tab-button').forEach(button => {
-        button.classList.remove('active', 'border-primary', 'text-primary');
-        button.classList.add('border-transparent', 'text-text-secondary');
+        button.classList.remove('active', 'border-primary', 'text-primary', 'border-transparent', 'text-text-secondary');
     });
 
     // Hide all tab contents
@@ -5170,8 +5274,7 @@ function switchProjectTab(tabName) {
     // Activate selected tab
     const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
     if (activeButton) {
-        activeButton.classList.add('active', 'border-primary', 'text-primary');
-        activeButton.classList.remove('border-transparent', 'text-text-secondary');
+        activeButton.classList.add('active');
     }
 
     // Show selected tab content
