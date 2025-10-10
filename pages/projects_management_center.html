@@ -3285,6 +3285,7 @@ function resolveCityLabel(value, fallback = '') {
 
 const PROJECTS_STORAGE_KEY = 'contractorPro.projects';
 const PROJECTS_LEGACY_KEY = 'projects';
+const PROJECTS_USER_CLEARED_KEY = 'contractorPro.projects.userCleared';
 
 // Project Data Store
 class ProjectStore {
@@ -3781,7 +3782,13 @@ class ProjectStore {
         const serialized = JSON.stringify(this.projects);
         localStorage.setItem(PROJECTS_STORAGE_KEY, serialized);
         localStorage.setItem(PROJECTS_LEGACY_KEY, serialized);
-        localStorage.setItem('contractorPro.projects.hasUserData', this.projects.length > 0 ? 'true' : 'false');
+        const hasEntries = this.projects.length > 0;
+        localStorage.setItem('contractorPro.projects.hasUserData', hasEntries ? 'true' : 'false');
+        if (hasEntries) {
+            localStorage.removeItem(PROJECTS_USER_CLEARED_KEY);
+        } else {
+            localStorage.setItem(PROJECTS_USER_CLEARED_KEY, 'true');
+        }
     }
 
     loadProjects() {
@@ -3790,6 +3797,7 @@ class ProjectStore {
         const storedPrimary = localStorage.getItem(PROJECTS_STORAGE_KEY);
         const storedLegacy = localStorage.getItem(PROJECTS_LEGACY_KEY);
         const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
+        const userClearedFlag = localStorage.getItem(PROJECTS_USER_CLEARED_KEY);
 
         try {
             if (storedPrimary) {
@@ -3815,7 +3823,8 @@ class ProjectStore {
         let sourceProjects = Array.isArray(parsed) && parsed.length ? parsed : null;
 
         if (!sourceProjects) {
-            if (hasUserDataFlag === 'false') {
+            const shouldRespectEmptyState = hasUserDataFlag === 'false' && userClearedFlag === 'true';
+            if (shouldRespectEmptyState) {
                 sourceProjects = [];
             } else {
                 sourceProjects = this.getDefaultProjects();
@@ -3827,7 +3836,13 @@ class ProjectStore {
         const serialized = JSON.stringify(normalized);
         localStorage.setItem(PROJECTS_STORAGE_KEY, serialized);
         localStorage.setItem(PROJECTS_LEGACY_KEY, serialized);
-        localStorage.setItem('contractorPro.projects.hasUserData', normalized.length > 0 ? 'true' : 'false');
+        const hasEntries = normalized.length > 0;
+        localStorage.setItem('contractorPro.projects.hasUserData', hasEntries ? 'true' : 'false');
+        if (hasEntries) {
+            localStorage.removeItem(PROJECTS_USER_CLEARED_KEY);
+        } else {
+            localStorage.setItem(PROJECTS_USER_CLEARED_KEY, 'true');
+        }
         return normalized;
     }
 
@@ -7700,6 +7715,76 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const reportFilesInput = document.getElementById('reportFiles');
+    if (reportFilesInput) {
+        reportFilesInput.addEventListener('change', (e) => handleFileSelection(e.target.files));
+    }
+
+    const photosInput = document.getElementById('photosInput');
+    if (photosInput) {
+        photosInput.addEventListener('change', (e) => handlePhotoSelection(e.target.files));
+    }
+
+    const galleryFilter = document.getElementById('galleryFilter');
+    if (galleryFilter) {
+        galleryFilter.addEventListener('change', () => sortGalleryPhotos(true));
+    }
+
+    const phaseCsvInput = document.getElementById('phaseCsvInput');
+    if (phaseCsvInput) {
+        phaseCsvInput.addEventListener('change', handlePhaseCsvImport);
+    }
+
+    const contractUploadForm = document.getElementById('contractUploadForm');
+    if (contractUploadForm) {
+        contractUploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!currentProjectId || !projectStore) {
+                showToast('يرجى اختيار مشروع قبل رفع العقد الرئيسي', false);
+                return;
+            }
+
+            const fileInput = document.getElementById('mainContractFile');
+            const notesInput = document.getElementById('contractNotes');
+            const file = fileInput?.files?.[0];
+
+            if (!file) {
+                showToast('يرجى اختيار ملف العقد بصيغة PDF', false);
+                return;
+            }
+
+            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+                showToast('الرجاء رفع ملف PDF صالح للعقد', false);
+                return;
+            }
+
+            let dataUrl;
+            try {
+                dataUrl = await fileToDataUrl(file);
+            } catch (error) {
+                console.error('Failed to read contract file', error);
+                showToast('تعذر قراءة ملف العقد. حاول مرة أخرى.', false);
+                return;
+            }
+            const contractDocument = {
+                id: 'main-contract-' + Date.now(),
+                fileName: file.name,
+                fileSize: file.size,
+                uploadedAt: new Date().toISOString(),
+                notes: notesInput?.value?.trim() || '',
+                dataUrl: dataUrl
+            };
+
+            projectStore.updateProject(currentProjectId, { contractDocument });
+            currentProjectData = projectStore.getProject(currentProjectId);
+            renderContractFileSection();
+            showToast('تم رفع عقد العمل بنجاح');
+            contractUploadForm.reset();
+            closeContractUploadModal();
+        });
+    }
+
     const galleryFilter = document.getElementById('galleryFilter');
     if (galleryFilter) {
         galleryFilter.addEventListener('change', () => sortGalleryPhotos(true));
@@ -9454,9 +9539,11 @@ function openFinancialCustomization() {
 <script>
 (() => {
   const STORAGE_KEY = 'contractorPro.projects';
+  const USER_CLEARED_KEY = 'contractorPro.projects.userCleared';
 
   function getProjects(){
     const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
+    const userClearedFlag = localStorage.getItem(USER_CLEARED_KEY);
     try {
       const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       if (Array.isArray(stored) && stored.length) {
@@ -9475,13 +9562,13 @@ function openFinancialCustomization() {
       if (window.projectStore.projects.length) {
         return window.projectStore.projects;
       }
-      if (hasUserDataFlag !== 'false' && typeof window.projectStore.getDefaultProjects === 'function') {
+      if ((hasUserDataFlag !== 'false' || userClearedFlag !== 'true') && typeof window.projectStore.getDefaultProjects === 'function') {
         return window.projectStore.getDefaultProjects();
       }
       return window.projectStore.projects;
     }
 
-    if (hasUserDataFlag !== 'false' && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
+    if ((hasUserDataFlag !== 'false' || userClearedFlag !== 'true') && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
       return window.projectStore.getDefaultProjects();
     }
 
@@ -9491,7 +9578,13 @@ function openFinancialCustomization() {
     const serialized = JSON.stringify(arr);
     localStorage.setItem(STORAGE_KEY, serialized);
     localStorage.setItem('projects', serialized);
-    localStorage.setItem('contractorPro.projects.hasUserData', Array.isArray(arr) && arr.length ? 'true' : 'false');
+    const hasEntries = Array.isArray(arr) && arr.length > 0;
+    localStorage.setItem('contractorPro.projects.hasUserData', hasEntries ? 'true' : 'false');
+    if (hasEntries) {
+      localStorage.removeItem(USER_CLEARED_KEY);
+    } else {
+      localStorage.setItem(USER_CLEARED_KEY, 'true');
+    }
   }
 
   function statusArabic(s){
@@ -9575,13 +9668,15 @@ function openFinancialCustomization() {
     }
 
     const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
+    const userClearedFlag = localStorage.getItem(USER_CLEARED_KEY);
     const storedProjects = getProjects() || [];
     let sourceProjects = Array.isArray(storedProjects) ? storedProjects.slice() : [];
 
     if (!sourceProjects.length) {
-      if (hasUserDataFlag !== 'false' && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
+      const allowDefaults = hasUserDataFlag !== 'false' || userClearedFlag !== 'true';
+      if (allowDefaults && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
         sourceProjects = window.projectStore.getDefaultProjects().map(project => ({ ...project }));
-      } else if (hasUserDataFlag !== 'false' && Array.isArray(window.projectStore?.projects) && window.projectStore.projects.length) {
+      } else if (allowDefaults && Array.isArray(window.projectStore?.projects) && window.projectStore.projects.length) {
         sourceProjects = window.projectStore.projects.map(project => ({ ...project }));
       }
     }
