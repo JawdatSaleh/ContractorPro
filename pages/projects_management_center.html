@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>مركز إدارة المشاريع - ContractorPro</title>
+    <meta name="description" content="مركز إدارة المشاريع في ContractorPro يوفر نظرة شاملة على المشاريع، المراحل، العقود، والبيانات المالية في منصة واحدة." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://contractorpro.local/projects_management_center.html" />
+    <meta property="og:title" content="مركز إدارة المشاريع - ContractorPro" />
+    <meta property="og:description" content="تابع جميع المشاريع، المراحل، الدفعات، والتقارير اليومية مع تحليلات مالية متقدمة." />
+    <meta property="og:type" content="website" />
     <link rel="stylesheet" href="../css/main.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -8081,6 +8087,8 @@ function openFinancialCustomization() {
     if (activeCounter) {
       activeCounter.textContent = String(projects.length);
     }
+
+    return projects;
   }
 
   // Repurpose the existing "مشروع جديد" button handler to navigate to the wizard page.
@@ -8105,10 +8113,27 @@ function openFinancialCustomization() {
       showToast('تم إنشاء المشروع بنجاح ✅', true);
     }
 
-    renderStoredProjects(createdId);
+    const renderedProjects = renderStoredProjects(createdId) || [];
 
-    if (createdId) {
-      url.searchParams.delete('created');
+    const directProjectId = url.searchParams.get('project');
+    const autoOpenId = directProjectId || createdId;
+
+    if (autoOpenId) {
+      const targetProject = renderedProjects.find(p => p.id === autoOpenId);
+      if (targetProject && typeof openProjectDetails === 'function') {
+        setTimeout(() => {
+          openProjectDetails(targetProject.id, targetProject.name || 'مشروع');
+        }, 120);
+      }
+    }
+
+    if (createdId || directProjectId) {
+      if (createdId) {
+        url.searchParams.delete('created');
+      }
+      if (directProjectId) {
+        url.searchParams.delete('project');
+      }
       const newSearch = url.searchParams.toString();
       history.replaceState({}, '', newSearch ? `${url.pathname}?${newSearch}` : url.pathname);
     }
