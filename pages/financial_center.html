@@ -170,10 +170,10 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-text-secondary text-sm font-medium">الامتثال الضريبي</p>
-                            <p class="text-3xl font-bold text-text-primary mt-2">98%</p>
+                            <p class="text-3xl font-bold text-text-primary mt-2" id="taxComplianceRate">98%</p>
                             <div class="flex items-center gap-1 mt-2">
                                 <i class="fas fa-shield-alt text-success text-sm"></i>
-                                <span class="text-success text-sm font-medium">متوافق مع الزكاة</span>
+                                <span class="text-success text-sm font-medium" id="taxComplianceNote">متوافق مع الزكاة</span>
                             </div>
                         </div>
                         <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
@@ -229,6 +229,23 @@
                         </div>
                         <span class="text-sm font-medium text-text-primary text-center">إعدادات الضرائب</span>
                     </button>
+                </div>
+            </div>
+
+            <!-- Generated Report Summary -->
+            <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-text-primary">ملخص التقارير الأخيرة</h3>
+                        <p class="text-sm text-text-secondary">أحدث النتائج الناتجة عن الإجراءات السريعة</p>
+                    </div>
+                    <button id="clearReportHistory" type="button" class="text-sm text-text-secondary hover:text-text-primary hidden">
+                        <i class="fas fa-undo ml-2"></i>
+                        إعادة التعيين
+                    </button>
+                </div>
+                <div class="space-y-3" id="reportResultsList">
+                    <p class="text-sm text-text-secondary">لم يتم إنشاء تقارير بعد. استخدم زر "تقرير مالي" لعرض ملخص فوري.</p>
                 </div>
             </div>
 
@@ -297,7 +314,7 @@
                         <button class="text-primary hover:text-primary-700 text-sm font-medium">عرض الكل</button>
                     </div>
                     
-                    <div class="space-y-4">
+                    <div class="space-y-4" id="recentFinancialActivity">
                         <!-- Activity 1 -->
                         <div class="flex items-start gap-3 p-3 border border-border rounded-lg">
                             <div class="w-8 h-8 bg-success-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -695,18 +712,170 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
+    <div id="actionToast" class="fixed bottom-6 left-6 z-50 w-full max-w-sm bg-surface border border-border shadow-modal rounded-xl p-4 hidden" role="status" aria-live="polite">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-primary-100 text-primary" id="actionToastIconWrapper">
+                <i class="fas fa-info text-lg" id="actionToastIcon"></i>
+            </div>
+            <div class="flex-1 space-y-1">
+                <p class="text-sm font-bold text-text-primary" id="actionToastTitle">تم تنفيذ الإجراء</p>
+                <p class="text-sm text-text-secondary" id="actionToastMessage">سيتم تحديث التفاصيل فوراً.</p>
+            </div>
+            <button type="button" class="text-text-secondary hover:text-text-primary" aria-label="إغلاق التنبيه" onclick="hideActionToast()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tax Settings Modal -->
+    <div id="taxSettingsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-surface rounded-xl p-6 w-full max-w-xl max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-text-primary">إعدادات الضرائب والامتثال</h3>
+                    <button type="button" onclick="closeTaxSettingsModal()" class="p-2 hover:bg-secondary-100 rounded-lg transition-fast" aria-label="إغلاق النافذة">
+                        <i class="fas fa-times text-text-secondary"></i>
+                    </button>
+                </div>
+
+                <form id="taxSettingsForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="vatRate" class="block text-sm font-medium text-text-primary mb-2">نسبة ضريبة القيمة المضافة (%)</label>
+                            <input type="number" id="vatRate" name="vatRate" min="0" max="100" step="0.5" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="15" />
+                        </div>
+                        <div>
+                            <label for="withholdingRate" class="block text-sm font-medium text-text-primary mb-2">نسبة الاستقطاع الضريبي (%)</label>
+                            <input type="number" id="withholdingRate" name="withholdingRate" min="0" max="100" step="0.5" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="5" />
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="complianceScore" class="block text-sm font-medium text-text-primary mb-2">مؤشر الامتثال (%)</label>
+                            <input type="number" id="complianceScore" name="complianceScore" min="0" max="100" step="1" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="98" />
+                        </div>
+                        <div>
+                            <label for="taxPeriod" class="block text-sm font-medium text-text-primary mb-2">دورية الإقرار الضريبي</label>
+                            <select id="taxPeriod" name="taxPeriod" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none">
+                                <option value="monthly">شهري</option>
+                                <option value="quarterly">ربع سنوي</option>
+                                <option value="yearly">سنوي</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="zakatStatus" class="block text-sm font-medium text-text-primary mb-2">حالة الالتزام بالزكاة</label>
+                        <select id="zakatStatus" name="zakatStatus" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none">
+                            <option value="compliant">متوافق بالكامل</option>
+                            <option value="review">قيد المراجعة</option>
+                            <option value="attention">يحتاج إلى متابعة</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="taxNotes" class="block text-sm font-medium text-text-primary mb-2">ملاحظات إضافية</label>
+                        <textarea id="taxNotes" name="taxNotes" rows="3" class="w-full px-3 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" placeholder="أدخل أي ملاحظات حول الالتزام أو المتطلبات الخاصة."></textarea>
+                    </div>
+
+                    <label class="inline-flex items-center gap-2 text-sm text-text-secondary">
+                        <input type="checkbox" id="autoReminder" name="autoReminder" class="rounded border-border text-primary focus:ring-primary">
+                        إرسال تذكير تلقائي قبل موعد الإقرار
+                    </label>
+
+                    <div class="bg-secondary-50 border border-border rounded-lg p-4" id="taxSettingsPreview">
+                        <h4 class="text-sm font-medium text-text-primary mb-2">نظرة سريعة على الإعدادات</h4>
+                        <ul class="space-y-1 text-sm text-text-secondary" id="taxSettingsSummary">
+                            <li>نسبة ضريبة القيمة المضافة: <span class="font-medium text-text-primary">15%</span></li>
+                            <li>دورية الإقرار: <span class="font-medium text-text-primary">شهري</span></li>
+                            <li>التذكير التلقائي: <span class="font-medium text-text-primary">مفعل</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 pt-4">
+                        <p class="text-xs text-text-secondary" id="taxSettingsUpdatedAt">آخر تحديث محفوظ: —</p>
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="closeTaxSettingsModal()" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">إلغاء</button>
+                            <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-fast">حفظ الإعدادات</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Modal Functions
+        const REPORT_PRESETS = {
+            monthly: {
+                title: 'التقرير المالي الشهري',
+                period: 'أبريل 2025',
+                revenue: 2450000,
+                expenses: 1785000,
+                tax: 268000,
+                netProfit: 396000,
+                trend: '+6.4%'
+            },
+            quarterly: {
+                title: 'التقرير المالي الربعي',
+                period: 'الربع الأول 2025',
+                revenue: 7120000,
+                expenses: 5335000,
+                tax: 795000,
+                netProfit: 990000,
+                trend: '+4.1%'
+            },
+            tax: {
+                title: 'تقرير الالتزام الضريبي',
+                period: 'السنة المالية 2024',
+                revenue: 9580000,
+                expenses: 7030000,
+                tax: 1280000,
+                netProfit: 1270000,
+                trend: '+2.8%'
+            }
+        };
+
+        const FINANCIAL_EXPORT_DATA = [
+            { project: 'فيلا الرياض الحديثة', revenue: 1250000, expenses: 820000, tax: 187500 },
+            { project: 'برج جدة التجاري', revenue: 1840000, expenses: 1325000, tax: 276000 },
+            { project: 'مستودعات الدمام اللوجستية', revenue: 980000, expenses: 640000, tax: 147000 },
+            { project: 'مجمع المدينة الطبي', revenue: 2120000, expenses: 1650000, tax: 318000 }
+        ];
+
+        const DEFAULT_TAX_SETTINGS = {
+            vatRate: 15,
+            withholdingRate: 5,
+            complianceScore: 98,
+            taxPeriod: 'monthly',
+            zakatStatus: 'compliant',
+            autoReminder: true,
+            notes: '',
+            updatedAt: null
+        };
+
+        const TAX_SETTINGS_STORAGE_KEY = 'contractorPro.taxSettings';
+        let taxSettingsCache = null;
+        let toastHideTimeout = null;
+
         function openQuotationModal() {
-            document.getElementById('quotationModal').classList.remove('hidden');
+            const modal = document.getElementById('quotationModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
         }
 
         function closeQuotationModal() {
-            document.getElementById('quotationModal').classList.add('hidden');
+            const modal = document.getElementById('quotationModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
         }
 
         function addLineItem() {
             const lineItems = document.getElementById('lineItems');
+            if (!lineItems) return;
             const newItem = document.createElement('div');
             newItem.className = 'flex items-center gap-2';
             newItem.innerHTML = `
@@ -721,22 +890,428 @@
         }
 
         function removeLineItem(button) {
-            button.parentElement.remove();
+            if (button && button.parentElement) {
+                button.parentElement.remove();
+            }
         }
 
-        function generateReport() {
-            alert('سيتم إنشاء التقرير المالي قريباً...');
+        function formatCurrency(value) {
+            const formatter = new Intl.NumberFormat('ar-SA', { minimumFractionDigits: 0 });
+            return `${formatter.format(Math.round(Number(value) || 0))} ريال`;
+        }
+
+        function formatCompactCurrency(value) {
+            const formatter = new Intl.NumberFormat('ar-SA', { notation: 'compact', maximumFractionDigits: 1 });
+            const numericValue = Number(value) || 0;
+            const sign = numericValue >= 0 ? '+' : '-';
+            return `${sign}${formatter.format(Math.abs(numericValue))}`;
+        }
+
+        function formatDateTime(value) {
+            if (!value) {
+                return '—';
+            }
+            try {
+                return new Date(value).toLocaleString('ar-SA', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                });
+            } catch (error) {
+                return value;
+            }
+        }
+
+        function getNowTimestamp() {
+            return `الساعة ${new Date().toLocaleString('ar-SA', {
+                hour: '2-digit',
+                minute: '2-digit'
+            })}`;
+        }
+
+        function showActionFeedback(message, type = 'info', title = 'تم تنفيذ الإجراء') {
+            const toast = document.getElementById('actionToast');
+            if (!toast) return;
+
+            const iconWrapper = document.getElementById('actionToastIconWrapper');
+            const icon = document.getElementById('actionToastIcon');
+            const titleEl = document.getElementById('actionToastTitle');
+            const messageEl = document.getElementById('actionToastMessage');
+
+            const typeConfig = {
+                success: { wrapper: 'bg-success-100 text-success', icon: 'fa-check-circle' },
+                warning: { wrapper: 'bg-warning-100 text-warning', icon: 'fa-exclamation-triangle' },
+                error: { wrapper: 'bg-error-100 text-error', icon: 'fa-times-circle' },
+                info: { wrapper: 'bg-primary-100 text-primary', icon: 'fa-info-circle' }
+            };
+
+            const config = typeConfig[type] || typeConfig.info;
+
+            if (iconWrapper) {
+                iconWrapper.className = `w-10 h-10 rounded-lg flex items-center justify-center ${config.wrapper}`;
+            }
+            if (icon) {
+                icon.className = `fas ${config.icon} text-lg`;
+            }
+            if (titleEl) {
+                titleEl.textContent = title;
+            }
+            if (messageEl) {
+                messageEl.textContent = message;
+            }
+
+            toast.classList.remove('hidden');
+
+            if (toastHideTimeout) {
+                clearTimeout(toastHideTimeout);
+            }
+
+            toastHideTimeout = window.setTimeout(() => {
+                hideActionToast();
+            }, 4000);
+        }
+
+        function hideActionToast() {
+            const toast = document.getElementById('actionToast');
+            if (!toast) return;
+            toast.classList.add('hidden');
+            if (toastHideTimeout) {
+                clearTimeout(toastHideTimeout);
+                toastHideTimeout = null;
+            }
+        }
+
+        function addRecentActivity({ title, subtitle, amount, amountClass, badgeClass, icon, timestamp }) {
+            const container = document.getElementById('recentFinancialActivity');
+            if (!container) return;
+
+            const item = document.createElement('div');
+            item.className = 'flex items-start gap-3 p-3 border border-border rounded-lg';
+
+            const iconWrapper = document.createElement('div');
+            iconWrapper.className = `w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${badgeClass || 'bg-primary-100 text-primary'}`;
+            const iconElement = document.createElement('i');
+            iconElement.className = `fas ${icon || 'fa-info-circle'} text-sm`;
+            iconWrapper.appendChild(iconElement);
+            item.appendChild(iconWrapper);
+
+            const body = document.createElement('div');
+            body.className = 'flex-1';
+            const titleEl = document.createElement('p');
+            titleEl.className = 'text-sm font-medium text-text-primary';
+            titleEl.textContent = title;
+            body.appendChild(titleEl);
+
+            if (subtitle) {
+                const subtitleEl = document.createElement('p');
+                subtitleEl.className = 'text-xs text-text-secondary';
+                subtitleEl.textContent = subtitle;
+                body.appendChild(subtitleEl);
+            }
+
+            if (timestamp) {
+                const timeEl = document.createElement('p');
+                timeEl.className = 'text-xs text-text-secondary mt-1';
+                timeEl.textContent = timestamp;
+                body.appendChild(timeEl);
+            }
+
+            item.appendChild(body);
+
+            if (amount) {
+                const amountEl = document.createElement('span');
+                amountEl.className = `${amountClass || 'text-text-primary'} font-bold text-sm`;
+                amountEl.textContent = amount;
+                item.appendChild(amountEl);
+            }
+
+            container.prepend(item);
+
+            while (container.children.length > 6) {
+                container.removeChild(container.lastElementChild);
+            }
+        }
+
+        function updateReportResults(report) {
+            const list = document.getElementById('reportResultsList');
+            if (!list) return;
+
+            if (!list.dataset.initialized) {
+                list.innerHTML = '';
+                list.dataset.initialized = 'true';
+                const clearButton = document.getElementById('clearReportHistory');
+                if (clearButton) {
+                    clearButton.classList.remove('hidden');
+                }
+            }
+
+            const card = document.createElement('div');
+            card.className = 'p-4 border border-border rounded-lg bg-secondary-50 space-y-3';
+
+            const netPositive = Number(report.netProfit) >= 0;
+            const trendBadgeClass = netPositive ? 'bg-success-100 text-success' : 'bg-error-100 text-error';
+            const trendIcon = netPositive ? 'fa-arrow-up' : 'fa-arrow-down';
+
+            card.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs text-text-secondary">${report.period || 'البيانات الحالية'}</p>
+                        <h4 class="text-lg font-bold text-text-primary">${report.title}</h4>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${trendBadgeClass}">
+                        <i class="fas ${trendIcon} ml-1"></i>
+                        ${report.trend || '0%'}
+                    </span>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">الإيرادات</span>
+                        <span class="font-medium text-text-primary">${formatCurrency(report.revenue)}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">المصروفات</span>
+                        <span class="font-medium text-text-primary">${formatCurrency(report.expenses)}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">الضريبة المستحقة</span>
+                        <span class="font-medium text-text-primary">${formatCurrency(report.tax)}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-text-secondary">صافي الربح</span>
+                        <span class="font-bold ${netPositive ? 'text-success' : 'text-error'}">${formatCurrency(report.netProfit)}</span>
+                    </div>
+                </div>
+                <p class="text-xs text-text-secondary">تم التحديث في ${formatDateTime(report.generatedAt)}</p>
+            `;
+
+            list.prepend(card);
+
+            while (list.children.length > 3) {
+                list.removeChild(list.lastElementChild);
+            }
+        }
+
+        function clearReportHistory() {
+            const list = document.getElementById('reportResultsList');
+            const clearButton = document.getElementById('clearReportHistory');
+            if (!list) return;
+            list.dataset.initialized = '';
+            list.innerHTML = '<p class="text-sm text-text-secondary">لم يتم إنشاء تقارير بعد. استخدم زر "تقرير مالي" لعرض ملخص فوري.</p>';
+            if (clearButton) {
+                clearButton.classList.add('hidden');
+            }
+        }
+
+        function createCustomReportSummary() {
+            const totals = FINANCIAL_EXPORT_DATA.reduce((acc, item) => {
+                acc.revenue += Number(item.revenue) || 0;
+                acc.expenses += Number(item.expenses) || 0;
+                acc.tax += Number(item.tax) || 0;
+                return acc;
+            }, { revenue: 0, expenses: 0, tax: 0 });
+
+            const netProfit = totals.revenue - (totals.expenses + totals.tax);
+
+            return {
+                title: 'التقرير المالي المخصص',
+                period: 'بيانات المشاريع الحالية',
+                revenue: totals.revenue,
+                expenses: totals.expenses,
+                tax: totals.tax,
+                netProfit,
+                trend: netProfit >= 0 ? '+2.1%' : '-2.1%'
+            };
+        }
+
+        function generateReport(type = 'custom') {
+            const preset = REPORT_PRESETS[type] || createCustomReportSummary();
+            const report = {
+                ...preset,
+                generatedAt: new Date().toISOString()
+            };
+
+            updateReportResults(report);
+
+            addRecentActivity({
+                title: report.title,
+                subtitle: `الفترة: ${report.period || 'البيانات الحالية'}`,
+                amount: `${formatCompactCurrency(report.netProfit)} ريال`,
+                amountClass: report.netProfit >= 0 ? 'text-success' : 'text-error',
+                badgeClass: 'bg-primary-100 text-primary',
+                icon: 'fa-chart-line',
+                timestamp: getNowTimestamp()
+            });
+
+            showActionFeedback(`تم إنشاء ${report.title} بنجاح.`, 'success', report.title);
         }
 
         function exportData() {
-            alert('سيتم تصدير البيانات المالية قريباً...');
+            const rows = [
+                ['المشروع', 'الإيرادات', 'المصروفات', 'الضريبة المستحقة', 'صافي الربح']
+            ];
+
+            FINANCIAL_EXPORT_DATA.forEach((item) => {
+                const net = (Number(item.revenue) || 0) - ((Number(item.expenses) || 0) + (Number(item.tax) || 0));
+                rows.push([
+                    item.project,
+                    Number(item.revenue) || 0,
+                    Number(item.expenses) || 0,
+                    Number(item.tax) || 0,
+                    net
+                ]);
+            });
+
+            const csvContent = rows.map((row) => row.join(',')).join('\n');
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `financial-summary-${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            addRecentActivity({
+                title: 'تصدير البيانات المالية',
+                subtitle: 'تم إنشاء ملف CSV يحتوي على ملخص المشاريع النشطة',
+                amount: '',
+                amountClass: 'text-text-secondary',
+                badgeClass: 'bg-secondary-200 text-secondary',
+                icon: 'fa-download',
+                timestamp: getNowTimestamp()
+            });
+
+            showActionFeedback('تم تصدير البيانات المالية بصيغة CSV بنجاح.', 'success', 'تصدير البيانات');
         }
 
         function openTaxSettings() {
-            alert('سيتم فتح إعدادات الضرائب قريباً...');
+            const modal = document.getElementById('taxSettingsModal');
+            if (!modal) return;
+            loadTaxSettingsForm();
+            modal.classList.remove('hidden');
+
+            window.setTimeout(() => {
+                const vatInput = document.getElementById('vatRate');
+                if (vatInput) {
+                    vatInput.focus();
+                }
+            }, 100);
         }
 
-        // Real-time updates
+        function closeTaxSettingsModal() {
+            const modal = document.getElementById('taxSettingsModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function loadTaxSettingsForm() {
+            const stored = localStorage.getItem(TAX_SETTINGS_STORAGE_KEY);
+            let settings = { ...DEFAULT_TAX_SETTINGS };
+
+            if (stored) {
+                try {
+                    settings = { ...settings, ...JSON.parse(stored) };
+                } catch (error) {
+                    console.warn('تعذر قراءة إعدادات الضرائب المخزنة.', error);
+                }
+            }
+
+            taxSettingsCache = settings;
+
+            const form = document.getElementById('taxSettingsForm');
+            if (form) {
+                form.vatRate.value = settings.vatRate;
+                form.withholdingRate.value = settings.withholdingRate;
+                form.complianceScore.value = settings.complianceScore;
+                form.taxPeriod.value = settings.taxPeriod;
+                form.zakatStatus.value = settings.zakatStatus;
+                form.taxNotes.value = settings.notes || '';
+                form.autoReminder.checked = Boolean(settings.autoReminder);
+            }
+
+            updateTaxSettingsSummary(settings);
+            applyTaxSettingsToUi(settings);
+        }
+
+        function updateTaxSettingsSummary(settings) {
+            const summary = document.getElementById('taxSettingsSummary');
+            const updatedAt = document.getElementById('taxSettingsUpdatedAt');
+
+            if (summary) {
+                summary.innerHTML = `
+                    <li>نسبة ضريبة القيمة المضافة: <span class="font-medium text-text-primary">${settings.vatRate}%</span></li>
+                    <li>نسبة الاستقطاع: <span class="font-medium text-text-primary">${settings.withholdingRate}%</span></li>
+                    <li>دورية الإقرار: <span class="font-medium text-text-primary">${settings.taxPeriod === 'monthly' ? 'شهري' : settings.taxPeriod === 'quarterly' ? 'ربع سنوي' : 'سنوي'}</span></li>
+                    <li>التذكير التلقائي: <span class="font-medium text-text-primary">${settings.autoReminder ? 'مفعل' : 'غير مفعل'}</span></li>
+                `;
+            }
+
+            if (updatedAt) {
+                updatedAt.textContent = `آخر تحديث محفوظ: ${settings.updatedAt ? formatDateTime(settings.updatedAt) : '—'}`;
+            }
+        }
+
+        function applyTaxSettingsToUi(settings) {
+            const complianceRate = document.getElementById('taxComplianceRate');
+            const complianceNote = document.getElementById('taxComplianceNote');
+
+            if (complianceRate) {
+                complianceRate.textContent = `${settings.complianceScore}%`;
+            }
+
+            if (complianceNote) {
+                complianceNote.classList.remove('text-success', 'text-warning', 'text-error');
+
+                if (settings.zakatStatus === 'compliant') {
+                    complianceNote.textContent = 'متوافق مع الزكاة';
+                    complianceNote.classList.add('text-success');
+                } else if (settings.zakatStatus === 'review') {
+                    complianceNote.textContent = 'قيد المراجعة';
+                    complianceNote.classList.add('text-warning');
+                } else {
+                    complianceNote.textContent = 'يتطلب متابعة عاجلة';
+                    complianceNote.classList.add('text-error');
+                }
+            }
+        }
+
+        function saveTaxSettings(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const settings = {
+                vatRate: Number(form.vatRate.value) || 0,
+                withholdingRate: Number(form.withholdingRate.value) || 0,
+                complianceScore: Math.min(100, Math.max(0, Number(form.complianceScore.value) || 0)),
+                taxPeriod: form.taxPeriod.value,
+                zakatStatus: form.zakatStatus.value,
+                notes: form.taxNotes.value.trim(),
+                autoReminder: form.autoReminder.checked,
+                updatedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem(TAX_SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+            taxSettingsCache = settings;
+
+            updateTaxSettingsSummary(settings);
+            applyTaxSettingsToUi(settings);
+
+            addRecentActivity({
+                title: 'تحديث إعدادات الضرائب',
+                subtitle: settings.notes ? `ملاحظة: ${settings.notes}` : 'تم تحديث تفضيلات الامتثال الضريبي.',
+                amount: '',
+                amountClass: 'text-text-secondary',
+                badgeClass: 'bg-error-100 text-error',
+                icon: 'fa-shield-alt',
+                timestamp: getNowTimestamp()
+            });
+
+            showActionFeedback('تم حفظ إعدادات الضرائب بنجاح.', 'success', 'حفظ الإعدادات');
+            closeTaxSettingsModal();
+        }
+
         function updateTime() {
             const now = new Date();
             const timeString = now.toLocaleString('ar-SA', {
@@ -746,38 +1321,59 @@
                 hour: '2-digit',
                 minute: '2-digit'
             });
-            
+
             const footerTime = document.querySelector('footer p:last-child');
             if (footerTime) {
                 footerTime.textContent = `آخر تحديث: ${timeString}`;
             }
         }
 
-        // Update time every minute
         setInterval(updateTime, 60000);
 
-        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            // Add hover effects to cards
             const cards = document.querySelectorAll('.shadow-card');
             cards.forEach(card => {
                 card.addEventListener('mouseenter', function() {
                     this.style.transform = 'translateY(-2px)';
                     this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)';
                 });
-                
+
                 card.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateY(0)';
                     this.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
                 });
             });
 
-            // Close modal when clicking outside
-            document.getElementById('quotationModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeQuotationModal();
-                }
-            });
+            const quotationModal = document.getElementById('quotationModal');
+            if (quotationModal) {
+                quotationModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeQuotationModal();
+                    }
+                });
+            }
+
+            const taxModal = document.getElementById('taxSettingsModal');
+            if (taxModal) {
+                taxModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeTaxSettingsModal();
+                    }
+                });
+            }
+
+            const taxForm = document.getElementById('taxSettingsForm');
+            if (taxForm) {
+                taxForm.addEventListener('submit', saveTaxSettings);
+            }
+
+            const clearButton = document.getElementById('clearReportHistory');
+            if (clearButton) {
+                clearButton.addEventListener('click', clearReportHistory);
+            }
+
+            loadTaxSettingsForm();
+            updateTime();
         });
     </script>
 <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
