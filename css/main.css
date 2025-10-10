@@ -4596,7 +4596,7 @@ body {
     pointer-events: none !important;
   }
 
-  [data-sidebar]:not(.translate-x-full):not([aria-hidden="true"]) {
+  [data-sidebar][aria-hidden="false"] {
     transform: translateX(0) !important;
     opacity: 1 !important;
     visibility: visible !important;
