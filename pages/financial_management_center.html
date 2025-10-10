@@ -60,14 +60,24 @@
                     <p class="text-text-secondary">إدارة كاملة لدورة الإيرادات والمصروفات والالتزامات مع ربط فوري بالمشاريع والتقارير.</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <button class="btn-primary" type="button" data-action="new-invoice">
-                        <i class="fas fa-file-invoice-dollar ml-2"></i>
-                        إنشاء فاتورة ضريبية
-                    </button>
-                    <button class="btn-secondary" type="button" data-action="new-quote">
-                        <i class="fas fa-magic ml-2"></i>
-                        إطلاق العرض الذكي
-                    </button>
+                    <a class="btn-primary flex items-center gap-3" href="advanced_invoice_creation_portal.html">
+                        <span class="w-9 h-9 rounded-lg bg-white bg-opacity-20 text-white flex items-center justify-center">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </span>
+                        <span class="text-right">
+                            <span class="block text-sm font-semibold">بوابة الفاتورة الضريبية</span>
+                            <span class="block text-xs text-primary-100">إنشاء فاتورة متوافقة مع ZATCA</span>
+                        </span>
+                    </a>
+                    <a class="btn-secondary flex items-center gap-3" href="advanced_quotation_invoice_designer.html">
+                        <span class="w-9 h-9 rounded-lg bg-primary-50 text-primary flex items-center justify-center">
+                            <i class="fas fa-magic"></i>
+                        </span>
+                        <span class="text-right">
+                            <span class="block text-sm font-semibold">منشئ العروض الذكي</span>
+                            <span class="block text-xs text-text-secondary">إنشاء عروض وأسعار احترافية</span>
+                        </span>
+                    </a>
                     <button class="btn-ghost" type="button" data-action="export-snapshot">
                         <i class="fas fa-download ml-2"></i>
                         تنزيل تقرير لحظي
