@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="../css/main.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 
-<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
-<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+    <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+    <script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
 </head>
 <body class="bg-background font-arabic">
     <!-- Navigation Sidebar -->
@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-        
+
         <nav class="p-4 space-y-2">
             <!-- Dashboard -->
             <a href="main_dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
@@ -37,17 +37,17 @@
                 <i class="fas fa-building w-5"></i>
                 <span>المشاريع</span>
             </a>
-            
+
             <a href="project_phases.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                 <i class="fas fa-tasks w-5"></i>
                 <span>مراحل المشاريع</span>
             </a>
-            
+
             <a href="project_information.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                 <i class="fas fa-info-circle w-5"></i>
                 <span>معلومات المشاريع</span>
             </a>
-            
+
             <a href="project_expenses.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                 <i class="fas fa-receipt w-5"></i>
                 <span>مصاريف المشاريع</span>
@@ -58,17 +58,17 @@
                 <i class="fas fa-chart-line w-5"></i>
                 <span>المالية</span>
             </a>
-            
+
             <a href="financial_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                 <i class="fas fa-coins w-5"></i>
                 <span>المركز المالي</span>
             </a>
-            
+
             <a href="tax_invoice_generator.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                 <i class="fas fa-file-invoice w-5"></i>
                 <span>مولد الفواتير الضريبية</span>
             </a>
-            
+
             <a href="payment_tracking.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                 <i class="fas fa-credit-card w-5"></i>
                 <span>تتبع المدفوعات</span>
@@ -79,7 +79,7 @@
                 <i class="fas fa-users w-5"></i>
                 <span class="font-medium">الموظفين</span>
             </a>
-            
+
             <a href="team_management.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                 <i class="fas fa-users-cog w-5"></i>
                 <span>إدارة الفريق</span>
@@ -103,1365 +103,652 @@
     <div class="mr-64 min-h-screen">
         <!-- Top Header -->
         <header class="bg-surface shadow-card px-6 py-4 border-b border-border">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-text-primary">مركز إدارة الموظفين</h1>
-                    <p class="text-text-secondary">إدارة الفريق والموظفين والصلاحيات والرواتب</p>
+                    <h1 class="text-2xl font-bold text-text-primary">منصة إدارة الموظفين المتكاملة</h1>
+                    <p class="text-text-secondary">قسم احترافي يربط الموارد البشرية بالمالية والعقود والسلف مع صلاحيات دقيقة لكل مستخدم.</p>
                 </div>
-                
-                <div class="flex items-center gap-4">
-                    <!-- Search Field -->
-                    <div class="relative">
-                        <input type="text" id="globalEmployeeSearch" placeholder="البحث في الموظفين..." class="w-80 px-4 py-2 pr-10 border border-border rounded-lg focus:border-primary focus:outline-none" />
-                        <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
-                    </div>
-                    
-                    <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2" onclick="openAddEmployeeModal()">
-                        <i class="fas fa-user-plus"></i>
-                        <span>موظف جديد</span>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <button data-scroll-to="architecture" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2">
+                        <i class="fas fa-diagram-project"></i>
+                        <span>المخطط المعماري</span>
                     </button>
-                    <button class="bg-success text-white px-4 py-2 rounded-lg hover:bg-success-600 transition-fast flex items-center gap-2" onclick="generatePayrollReport()">
-                        <i class="fas fa-file-alt"></i>
-                        <span>تقرير الرواتب</span>
+                    <button data-scroll-to="rbac" class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast flex items-center gap-2">
+                        <i class="fas fa-user-shield"></i>
+                        <span>الأدوار والصلاحيات</span>
+                    </button>
+                    <button data-scroll-to="apis" class="bg-success text-white px-4 py-2 rounded-lg hover:bg-success-600 transition-fast flex items-center gap-2">
+                        <i class="fas fa-plug"></i>
+                        <span>تكاملات API</span>
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- Tabs Navigation -->
-        <div class="bg-surface border-b border-border">
-            <div class="px-6">
-                <nav class="flex space-x-8 rtl:space-x-reverse" role="tablist">
-                    <button class="tab-button active py-4 px-2 border-b-2 border-primary text-primary font-medium" onclick="switchTab('team-management')" data-tab="team-management">
-                        👥 إدارة الفريق
-                    </button>
-                    <button class="tab-button py-4 px-2 border-b-2 border-transparent text-text-secondary hover:text-text-primary font-medium" onclick="switchTab('employee-directory')" data-tab="employee-directory">
-                        📋 دليل الموظفين
-                    </button>
-                    <button class="tab-button py-4 px-2 border-b-2 border-transparent text-text-secondary hover:text-text-primary font-medium" onclick="switchTab('hr-overview')" data-tab="hr-overview">
-                        📊 نظرة عامة للموارد البشرية
-                    </button>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Tab Content -->
-        <main class="p-6">
-            <!-- Team Management Tab -->
-            <div id="team-management" class="tab-content">
-                <!-- Team Overview Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">إجمالي أعضاء الفريق</p>
-                                <p class="text-2xl font-bold text-text-primary mt-2">32</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-arrow-up text-success text-sm"></i>
-                                    <span class="text-success text-sm font-medium">+3 هذا الشهر</span>
-                                </div>
-                            </div>
-                            <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-users text-primary text-xl"></i>
-                            </div>
+        <main class="p-6 space-y-8">
+            <!-- Hero Overview -->
+            <section class="bg-surface border border-border rounded-2xl shadow-card p-8">
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <div class="flex-1 space-y-6">
+                        <div class="inline-flex items-center gap-2 bg-primary-50 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-star-of-life"></i>
+                            <span>نظام إدارة الموظفين – مواصفة شاملة متكاملة</span>
                         </div>
+                        <h2 class="text-3xl font-bold text-text-primary">هدف المنصة</h2>
+                        <p class="text-text-secondary leading-relaxed">
+                            بناء قسم "إدارة الموظفين" احترافي يشبه أنظمة إدارة المشاريع والمحاسبة العالمية، مع ربط كامل بالمالية والعقود والسلف، وإدارة أدوار وصلاحيات دقيقة (RBAC) بحيث يرى كل مستخدم ما يخصه فقط.
+                        </p>
+                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-text-secondary">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-success mt-1"></i>
+                                <span>تكامل مباشر بين الموارد البشرية، المالية، العقود، والسلف.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-success mt-1"></i>
+                                <span>واجهات وتجربة مستخدم متسقة مع هوية ContractorPro.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-success mt-1"></i>
+                                <span>سياسات صلاحيات متعددة المستويات مع إمكانية التوسع إلى ABAC.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-success mt-1"></i>
+                                <span>جاهزية للتدقيق، النسخ الاحتياطي، وتوثيق كل حركة حساسة.</span>
+                            </li>
+                        </ul>
                     </div>
-
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">المهندسين</p>
-                                <p class="text-2xl font-bold text-text-primary mt-2">8</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-hard-hat text-accent text-sm"></i>
-                                    <span class="text-accent text-sm font-medium">متخصصين</span>
-                                </div>
+                    <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="border border-border rounded-xl p-5 bg-secondary-50">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-bold text-text-primary">3 خدمات محورية</h3>
+                                <i class="fas fa-network-wired text-primary text-xl"></i>
                             </div>
-                            <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-drafting-compass text-accent text-xl"></i>
-                            </div>
+                            <p class="text-text-secondary mt-3 text-sm leading-relaxed">HR، Finance، IAM تعمل كوحدة واحدة مع قواعد بيانات مترابطة ومخازن ملفات متوافقة مع S3.</p>
                         </div>
-                    </div>
-
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">العمالة</p>
-                                <p class="text-2xl font-bold text-text-primary mt-2">20</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-hammer text-warning text-sm"></i>
-                                    <span class="text-warning text-sm font-medium">تقنيين</span>
-                                </div>
+                        <div class="border border-border rounded-xl p-5 bg-success-50">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-bold text-text-primary">تكاليف دقيقة</h3>
+                                <i class="fas fa-coins text-success text-xl"></i>
                             </div>
-                            <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-tools text-warning text-xl"></i>
-                            </div>
+                            <p class="text-text-secondary mt-3 text-sm leading-relaxed">مراكز التكلفة، حساب تكلفة الساعة لكل موظف، وترحيل قيود الرواتب تلقائيًا للمالية.</p>
                         </div>
-                    </div>
-
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">الإداريين</p>
-                                <p class="text-2xl font-bold text-text-primary mt-2">4</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-briefcase text-success text-sm"></i>
-                                    <span class="text-success text-sm font-medium">مكتبي</span>
-                                </div>
+                        <div class="border border-border rounded-xl p-5 bg-warning-50">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-bold text-text-primary">مراقبة شاملة</h3>
+                                <i class="fas fa-shield-alt text-warning text-xl"></i>
                             </div>
-                            <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-user-tie text-success text-xl"></i>
+                            <p class="text-text-secondary mt-3 text-sm leading-relaxed">Audit log، soft delete، versioning أساسي، وإخفاء الحقول الحساسة حسب الدور.</p>
+                        </div>
+                        <div class="border border-border rounded-xl p-5 bg-accent-50">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-bold text-text-primary">جاهزية للتوسع</h3>
+                                <i class="fas fa-rocket text-accent text-xl"></i>
                             </div>
+                            <p class="text-text-secondary mt-3 text-sm leading-relaxed">بنية قابلة للتوسع بخدمات مستقلة، Job Queue لحساب الرواتب، وواجهات برمجة موحدة.</p>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Team Structure -->
-                <div class="bg-surface rounded-xl p-6 shadow-card border border-border mb-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold text-text-primary">هيكل الفريق</h2>
-                        <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2" onclick="openTeamStructureModal()">
-                            <i class="fas fa-sitemap"></i>
-                            <span>تحديث الهيكل</span>
-                        </button>
+            <!-- Architecture Overview -->
+            <section id="architecture" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                    <h2 class="text-2xl font-bold text-text-primary">١) نظرة معمارية متكاملة</h2>
+                    <span class="text-sm text-text-secondary">Architecture Overview</span>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
+                        <h3 class="text-lg font-bold text-text-primary flex items-center gap-2"><i class="fas fa-display text-primary"></i> الواجهة</h3>
+                        <p class="text-text-secondary mt-3">React + TypeScript + TailwindCSS (أو Vue) مع تصميم متجاوب يدعم RTL بالكامل.</p>
+                        <ul class="mt-4 space-y-2 text-sm text-text-secondary">
+                            <li>مكونات تصميم موحدة وDesign System خاص بـ ContractorPro.</li>
+                            <li>إدارة حالة عبر Zustand/Redux لتكامل HR ↔ Finance.</li>
+                            <li>لوحة تحكم، نماذج ذكية، ورسوم بيانية لحظية.</li>
+                        </ul>
                     </div>
-
-                    <!-- Organizational Chart -->
-                    <div class="space-y-6">
-                        <!-- Management Level -->
-                        <div class="text-center">
-                            <div class="inline-flex items-center gap-4 bg-primary-50 border-2 border-primary rounded-xl p-4">
-                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=150&auto=format&fit=crop" alt="أحمد المالك" class="w-16 h-16 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                <div class="text-right">
-                                    <h3 class="font-bold text-primary">أحمد المالك</h3>
-                                    <p class="text-sm text-primary">مدير عام</p>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <button class="text-xs bg-primary text-white px-2 py-1 rounded" onclick="viewEmployeeProfile('emp-001')">الملف الشخصي</button>
-                                        <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded" onclick="managePermissions('emp-001')">الصلاحيات</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Department Level -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <!-- Engineering Department -->
-                            <div class="bg-accent-50 border border-accent-200 rounded-xl p-4">
-                                <h3 class="font-bold text-accent mb-4 text-center">قسم الهندسة</h3>
-                                <div class="space-y-3">
-                                    <div class="flex items-center gap-3 bg-surface rounded-lg p-3">
-                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop" alt="سعد المطيري" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                        <div class="flex-1">
-                                            <h4 class="font-medium text-text-primary">سعد المطيري</h4>
-                                            <p class="text-xs text-text-secondary">مهندس مدني أول</p>
-                                        </div>
-                                        <div class="flex items-center gap-1">
-                                            <button class="text-xs bg-accent text-white px-2 py-1 rounded" onclick="viewEmployeeProfile('emp-002')">عرض</button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded" onclick="editEmployee('emp-002')">تعديل</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-center gap-3 bg-surface rounded-lg p-3">
-                                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=150&auto=format&fit=crop" alt="محمد الأحمد" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                        <div class="flex-1">
-                                            <h4 class="font-medium text-text-primary">محمد الأحمد</h4>
-                                            <p class="text-xs text-text-secondary">مهندس معماري</p>
-                                        </div>
-                                        <div class="flex items-center gap-1">
-                                            <button class="text-xs bg-accent text-white px-2 py-1 rounded" onclick="viewEmployeeProfile('emp-003')">عرض</button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded" onclick="editEmployee('emp-003')">تعديل</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-center mt-3">
-                                    <button class="text-xs text-accent hover:underline" onclick="viewDepartmentTeam('engineering')">عرض الكل (8)</button>
-                                </div>
-                            </div>
-
-                            <!-- Operations Department -->
-                            <div class="bg-warning-50 border border-warning-200 rounded-xl p-4">
-                                <h3 class="font-bold text-warning mb-4 text-center">قسم العمليات</h3>
-                                <div class="space-y-3">
-                                    <div class="flex items-center gap-3 bg-surface rounded-lg p-3">
-                                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop" alt="خالد السعد" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                        <div class="flex-1">
-                                            <h4 class="font-medium text-text-primary">خالد السعد</h4>
-                                            <p class="text-xs text-text-secondary">مشرف عام</p>
-                                        </div>
-                                        <div class="flex items-center gap-1">
-                                            <button class="text-xs bg-warning text-white px-2 py-1 rounded" onclick="viewEmployeeProfile('emp-004')">عرض</button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded" onclick="editEmployee('emp-004')">تعديل</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-center gap-3 bg-surface rounded-lg p-3">
-                                        <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671d66?q=80&w=150&auto=format&fit=crop" alt="عبدالله الراشد" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                        <div class="flex-1">
-                                            <h4 class="font-medium text-text-primary">عبدالله الراشد</h4>
-                                            <p class="text-xs text-text-secondary">فني كهرباء</p>
-                                        </div>
-                                        <div class="flex items-center gap-1">
-                                            <button class="text-xs bg-warning text-white px-2 py-1 rounded" onclick="viewEmployeeProfile('emp-005')">عرض</button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded" onclick="editEmployee('emp-005')">تعديل</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-center mt-3">
-                                    <button class="text-xs text-warning hover:underline" onclick="viewDepartmentTeam('operations')">عرض الكل (20)</button>
-                                </div>
-                            </div>
-
-                            <!-- Administration Department -->
-                            <div class="bg-success-50 border border-success-200 rounded-xl p-4">
-                                <h3 class="font-bold text-success mb-4 text-center">قسم الإدارة</h3>
-                                <div class="space-y-3">
-                                    <div class="flex items-center gap-3 bg-surface rounded-lg p-3">
-                                        <img src="https://images.unsplash.com/photo-1494790108755-2616c39a2a43?q=80&w=150&auto=format&fit=crop" alt="فاطمة الزهراني" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                        <div class="flex-1">
-                                            <h4 class="font-medium text-text-primary">فاطمة الزهراني</h4>
-                                            <p class="text-xs text-text-secondary">محاسبة</p>
-                                        </div>
-                                        <div class="flex items-center gap-1">
-                                            <button class="text-xs bg-success text-white px-2 py-1 rounded" onclick="viewEmployeeProfile('emp-006')">عرض</button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded" onclick="editEmployee('emp-006')">تعديل</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-center gap-3 bg-surface rounded-lg p-3">
-                                        <img src="https://images.unsplash.com/photo-1507591064344-4c6ce005b128?q=80&w=150&auto=format&fit=crop" alt="نورا السالم" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                        <div class="flex-1">
-                                            <h4 class="font-medium text-text-primary">نورا السالم</h4>
-                                            <p class="text-xs text-text-secondary">موارد بشرية</p>
-                                        </div>
-                                        <div class="flex items-center gap-1">
-                                            <button class="text-xs bg-success text-white px-2 py-1 rounded" onclick="viewEmployeeProfile('emp-007')">عرض</button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded" onclick="editEmployee('emp-007')">تعديل</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="text-center mt-3">
-                                    <button class="text-xs text-success hover:underline" onclick="viewDepartmentTeam('administration')">عرض الكل (4)</button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
+                        <h3 class="text-lg font-bold text-text-primary flex items-center gap-2"><i class="fas fa-server text-primary"></i> الخلفية</h3>
+                        <p class="text-text-secondary mt-3">Node.js (Express/Fastify) + TypeScript مع طبقات Services وRepositories واضحة.</p>
+                        <ul class="mt-4 space-y-2 text-sm text-text-secondary">
+                            <li>مصادقة JWT، سياسات RBAC/ABAC، وMiddlewares لإخفاء الحقول.</li>
+                            <li>Job Queue لحساب الرواتب وترحيل القيود المالية.</li>
+                            <li>تجزئة الخدمات إلى HR، Finance، IAM لخفة وسهولة التوسع.</li>
+                        </ul>
+                    </div>
+                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
+                        <h3 class="text-lg font-bold text-text-primary flex items-center gap-2"><i class="fas fa-database text-primary"></i> قاعدة البيانات</h3>
+                        <p class="text-text-secondary mt-3">PostgreSQL مع Prisma ORM، فهارس مخصصة، وViews للعرض حسب الدور.</p>
+                        <ul class="mt-4 space-y-2 text-sm text-text-secondary">
+                            <li>Soft delete + Audit tables لكل كيان حساس.</li>
+                            <li>دعم JSONB للبدلات، المرفقات، وإعدادات السياسات.</li>
+                            <li>Replication محتمل للتقارير الثقيلة وقراءة مهيأة.</li>
+                        </ul>
                     </div>
                 </div>
 
-                <!-- Role Management -->
-                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold text-text-primary">إدارة الأدوار والصلاحيات</h2>
-                        <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2" onclick="openRoleManagementModal()">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>إضافة دور</span>
-                        </button>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="border border-border rounded-xl p-6">
+                        <h4 class="text-lg font-bold text-text-primary mb-3">الهوية والصلاحيات</h4>
+                        <ul class="space-y-2 text-sm text-text-secondary">
+                            <li>JWT + Refresh Tokens وتدوير مفاتيح دوري.</li>
+                            <li>RBAC مرن مع دعم ABAC لاحقًا حسب المشروع أو مركز التكلفة.</li>
+                            <li>سياسات تنزيل المرفقات تعتمد على صلاحية المستخدم.</li>
+                        </ul>
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Admin Role -->
-                        <div class="border border-border rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-error-100 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-crown text-error"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-bold text-text-primary">مدير النظام</h3>
-                                        <p class="text-sm text-text-secondary">صلاحيات كاملة</p>
-                                    </div>
-                                </div>
-                                <span class="text-xs bg-error-100 text-error px-2 py-1 rounded">1 عضو</span>
-                            </div>
-                            <div class="space-y-2 mb-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-check text-success text-sm"></i>
-                                    <span class="text-sm text-text-secondary">إدارة المشاريع</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-check text-success text-sm"></i>
-                                    <span class="text-sm text-text-secondary">إدارة المالية</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-check text-success text-sm"></i>
-                                    <span class="text-sm text-text-secondary">إدارة الموظفين</span>
-                                </div>
-                            </div>
-                            <button class="w-full bg-secondary-200 text-text-primary py-2 rounded text-sm hover:bg-secondary-300 transition-fast" onclick="editRole('admin')">
-                                تعديل الصلاحيات
-                            </button>
-                        </div>
-
-                        <!-- Manager Role -->
-                        <div class="border border-border rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-user-tie text-primary"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-bold text-text-primary">مدير</h3>
-                                        <p class="text-sm text-text-secondary">صلاحيات محدودة</p>
-                                    </div>
-                                </div>
-                                <span class="text-xs bg-primary-100 text-primary px-2 py-1 rounded">8 أعضاء</span>
-                            </div>
-                            <div class="space-y-2 mb-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-check text-success text-sm"></i>
-                                    <span class="text-sm text-text-secondary">عرض المشاريع</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-check text-success text-sm"></i>
-                                    <span class="text-sm text-text-secondary">إدارة المهام</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-times text-error text-sm"></i>
-                                    <span class="text-sm text-text-secondary">إدارة الرواتب</span>
-                                </div>
-                            </div>
-                            <button class="w-full bg-secondary-200 text-text-primary py-2 rounded text-sm hover:bg-secondary-300 transition-fast" onclick="editRole('manager')">
-                                تعديل الصلاحيات
-                            </button>
-                        </div>
-
-                        <!-- Employee Role -->
-                        <div class="border border-border rounded-lg p-4">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-success-100 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-user text-success"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-bold text-text-primary">موظف</h3>
-                                        <p class="text-sm text-text-secondary">صلاحيات أساسية</p>
-                                    </div>
-                                </div>
-                                <span class="text-xs bg-success-100 text-success px-2 py-1 rounded">23 عضو</span>
-                            </div>
-                            <div class="space-y-2 mb-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-check text-success text-sm"></i>
-                                    <span class="text-sm text-text-secondary">عرض المهام</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-check text-success text-sm"></i>
-                                    <span class="text-sm text-text-secondary">تحديث التقدم</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-times text-error text-sm"></i>
-                                    <span class="text-sm text-text-secondary">إدارة المشاريع</span>
-                                </div>
-                            </div>
-                            <button class="w-full bg-secondary-200 text-text-primary py-2 rounded text-sm hover:bg-secondary-300 transition-fast" onclick="editRole('employee')">
-                                تعديل الصلاحيات
-                            </button>
-                        </div>
+                    <div class="border border-border rounded-xl p-6">
+                        <h4 class="text-lg font-bold text-text-primary mb-3">الملفات والمرفقات</h4>
+                        <ul class="space-y-2 text-sm text-text-secondary">
+                            <li>S3-compatible storage أو Cloudinary بإدارة صلاحيات دقيقة.</li>
+                            <li>تشفير الروابط الموقّتة (Signed URLs) للعقود والوثائق.</li>
+                            <li>تحكم بالنسخ والتعديلات عبر Versioning أساسي.</li>
+                        </ul>
                     </div>
-                </div>
-            </div>
-
-            <!-- Employee Directory Tab -->
-            <div id="employee-directory" class="tab-content hidden">
-                <!-- Employee Statistics -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">إجمالي الموظفين</p>
-                                <p class="text-2xl font-bold text-text-primary mt-2">48</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-arrow-up text-success text-sm"></i>
-                                    <span class="text-success text-sm font-medium">+5 هذا الشهر</span>
-                                </div>
-                            </div>
-                            <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-users text-primary text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">الموظفين النشطين</p>
-                                <p class="text-2xl font-bold text-success mt-2">45</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-check text-success text-sm"></i>
-                                    <span class="text-success text-sm font-medium">متصلين</span>
-                                </div>
-                            </div>
-                            <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-user-check text-success text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">في إجازة</p>
-                                <p class="text-2xl font-bold text-warning mt-2">3</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-calendar text-warning text-sm"></i>
-                                    <span class="text-warning text-sm font-medium">مؤقت</span>
-                                </div>
-                            </div>
-                            <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-calendar-alt text-warning text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">إجمالي الرواتب</p>
-                                <p class="text-2xl font-bold text-error mt-2">240K ريال</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-money-bill-wave text-error text-sm"></i>
-                                    <span class="text-error text-sm font-medium">شهرياً</span>
-                                </div>
-                            </div>
-                            <div class="w-12 h-12 bg-error-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-coins text-error text-xl"></i>
-                            </div>
-                        </div>
+                    <div class="border border-border rounded-xl p-6">
+                        <h4 class="text-lg font-bold text-text-primary mb-3">الخدمات الفرعية</h4>
+                        <ul class="space-y-2 text-sm text-text-secondary">
+                            <li><strong>HR:</strong> الموظفون، العقود، الرواتب، الحضور، الإجازات، الأداء.</li>
+                            <li><strong>Finance:</strong> الأستاذ العام، القيود، المصاريف/الإيرادات، السلف، المستحقات.</li>
+                            <li><strong>IAM:</strong> المستخدمون، الأدوار، الصلاحيات، سياسات الوصول.</li>
+                        </ul>
                     </div>
                 </div>
 
-                <!-- Filters and Actions Bar -->
-                <div class="bg-surface rounded-xl p-4 shadow-card border border-border mb-6">
-                    <div class="flex items-center justify-between flex-wrap gap-4">
-                        <div class="flex items-center gap-4">
-                            <!-- Department Filter -->
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-filter text-text-secondary"></i>
-                                <select id="departmentFilter" class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
-                                    <option value>جميع الأقسام</option>
-                                    <option value="قسم الهندسة">قسم الهندسة</option>
-                                    <option value="قسم العمليات">قسم العمليات</option>
-                                    <option value="قسم الإدارة">قسم الإدارة</option>
-                                    <option value="المالية">المالية</option>
-                                    <option value="الموارد البشرية">الموارد البشرية</option>
-                                </select>
-                            </div>
+                <div class="border border-primary rounded-2xl bg-primary-50 p-6">
+                    <h4 class="text-lg font-bold text-primary mb-4">التكاملات المحورية</h4>
+                    <ul class="list-disc pr-5 space-y-2 text-text-secondary">
+                        <li>تكامل HR ↔ Finance: قيود رواتب، سلف، مستحقات نهاية الخدمة، ومخصصات تلقائية.</li>
+                        <li>تكامل HR ↔ Projects: إسناد الموظفين للمشاريع، تكلفة الساعة، ومراكز التكلفة.</li>
+                        <li>تقارير موحدة تجمع بيانات الموارد البشرية والمالية ضمن لوحة واحدة.</li>
+                    </ul>
+                </div>
+            </section>
 
-                            <!-- Role Filter -->
-                            <select id="positionFilter" class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
-                                <option value>جميع المناصب</option>
-                                <option value="مدير">مدير</option>
-                                <option value="مهندس">مهندس</option>
-                                <option value="مشرف">مشرف</option>
-                                <option value="فني">فني</option>
-                                <option value="إداري">إداري</option>
-                                <option value="محاسب">محاسب</option>
-                            </select>
+            <!-- RBAC -->
+            <section id="rbac" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                    <h2 class="text-2xl font-bold text-text-primary">٢) نموذج الصلاحيات (RBAC)</h2>
+                    <span class="text-sm text-text-secondary">ثمانية أدوار افتراضية قابلة للتخصيص</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary">مدير النظام</h3>
+                        <p class="text-sm text-text-secondary mt-2">صلاحيات كاملة على جميع الوحدات.</p>
+                    </div>
+                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary">المدير التنفيذي</h3>
+                        <p class="text-sm text-text-secondary mt-2">رؤية شاملة للرواتب والتكاليف والعقود.</p>
+                    </div>
+                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary">المدير المالي</h3>
+                        <p class="text-sm text-text-secondary mt-2">الوصول للرواتب، السلف، قيود الترحيل، تقارير التكلفة.</p>
+                    </div>
+                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary">المحاسب</h3>
+                        <p class="text-sm text-text-secondary mt-2">إدخال ومراجعة قيود الرواتب والسلف والتقارير المرتبطة.</p>
+                    </div>
+                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary">مدير الموارد البشرية</h3>
+                        <p class="text-sm text-text-secondary mt-2">إدارة ملفات الموظفين، العقود، الحضور، الإجازات، والتقييمات.</p>
+                    </div>
+                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary">مشرف الموقع</h3>
+                        <p class="text-sm text-text-secondary mt-2">مشاهدة الفريق المعين، الحضور اليومي، وطلبات الإذن.</p>
+                    </div>
+                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary">المهندس</h3>
+                        <p class="text-sm text-text-secondary mt-2">الاطلاع على سجلاته الذاتية للحضور والإجازة والراتب دون قيمة العقد.</p>
+                    </div>
+                    <div class="border border-border rounded-xl p-4 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary">الموظف</h3>
+                        <p class="text-sm text-text-secondary mt-2">بوابة ذاتية للخدمات الشخصية (Self-Service).</p>
+                    </div>
+                </div>
 
-                            <!-- Status Filter -->
-                            <select id="statusFilter" class="px-3 py-2 border border-border rounded-lg text-sm focus:border-primary focus:outline-none">
-                                <option value>جميع الحالات</option>
-                                <option value="نشط">نشط</option>
-                                <option value="في إجازة">في إجازة</option>
-                                <option value="غير نشط">غير نشط</option>
-                            </select>
+                <div class="overflow-x-auto border border-border rounded-xl">
+                    <table class="min-w-full divide-y divide-border text-sm">
+                        <thead class="bg-secondary-50 text-text-secondary uppercase text-xs">
+                            <tr>
+                                <th class="px-4 py-3 text-right">الكيان/العملية</th>
+                                <th class="px-4 py-3 text-center">Admin</th>
+                                <th class="px-4 py-3 text-center">CEO</th>
+                                <th class="px-4 py-3 text-center">CFO</th>
+                                <th class="px-4 py-3 text-center">Accountant</th>
+                                <th class="px-4 py-3 text-center">HR Mgr</th>
+                                <th class="px-4 py-3 text-center">Supervisor</th>
+                                <th class="px-4 py-3 text-center">Engineer</th>
+                                <th class="px-4 py-3 text-center">Employee</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border text-text-secondary">
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-text-primary">الموظفون (قراءة)</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">محدود</td>
+                                <td class="text-center">محدود</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">محدود</td>
+                                <td class="text-center">ذاتي</td>
+                                <td class="text-center">ذاتي</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-text-primary">الموظفون (إضافة/تعديل)</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">—</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-text-primary">العقود (عرض القيمة)</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">محدود</td>
+                                <td class="text-center">✓ (بدون التكلفة الإجمالية)</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">إخفاء القيمة</td>
+                                <td class="text-center">—</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-text-primary">الرواتب (الحساب/الترحيل)</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">اقتراح فقط</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">ذاتي (قسط/سلف)</td>
+                                <td class="text-center">ذاتي</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-text-primary">السلف (إنشاء/اعتماد)</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">طلب فقط</td>
+                                <td class="text-center">طلب فقط</td>
+                                <td class="text-center">طلب ذاتي</td>
+                                <td class="text-center">طلب ذاتي</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-text-primary">الحضور (قراءة/اعتماد)</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓ (فرقته فقط)</td>
+                                <td class="text-center">ذاتي</td>
+                                <td class="text-center">ذاتي</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-text-primary">الأذونات والإجازات</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">توصية</td>
+                                <td class="text-center">ذاتي</td>
+                                <td class="text-center">ذاتي</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 font-medium text-text-primary">التقارير الحساسة (تكلفة إجمالية)</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">✓</td>
+                                <td class="text-center">محدود</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">—</td>
+                                <td class="text-center">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-sm text-text-secondary">"محدود" تعني تقارير مجمعة بدون تفاصيل العقد أو الراتب الفردية، مع قابلية التوسع بسياسات ABAC حسب مركز التكلفة أو المشروع.</p>
+            </section>
 
-                            <button id="resetFiltersBtn" class="text-primary hover:text-primary-700 text-sm font-medium flex items-center gap-1">
-                                <i class="fas fa-redo text-xs"></i>
-                                <span>إعادة تعيين</span>
-                            </button>
-                        </div>
+            <!-- Database Schema -->
+            <section id="database" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">٣) مخطط قاعدة البيانات (ERD) – نصي</h2>
+                <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>User(id, email, phone, password_hash, status, last_login_at)
+Role(id, key, name_ar, description)
+UserRole(user_id, role_id)
+Permission(id, key, name_ar)
+RolePermission(role_id, permission_id)
 
+Employee(id, user_id, code, full_name, national_id, hire_date,
+         job_title, department_id, project_id, manager_id, status, grade,
+         hourly_rate, monthly_basic, allowances_json, bank_iban,
+         created_at, updated_at)
+Department(id, name_ar, cost_center_code)
+Project(id, code, name_ar, cost_center_code)
+
+Contract(id, employee_id, type, start_date, end_date, probation_end,
+         basic_salary, allowances_json, currency, visibility_scope,
+         signed_file_url, created_at)
+
+Attendance(id, employee_id, day, check_in, check_out,
+          shift_code, overtime_minutes, status)
+Leave(id, employee_id, type, start_date, end_date, status, approved_by, notes)
+
+PayrollBatch(id, month, year, status, posted_journal_id, created_by)
+PayrollItem(id, batch_id, employee_id, earnings_json, deductions_json,
+            gross, net, loan_deduction, advance_deduction, cost_center)
+
+Advance(id, employee_id, request_date, amount, currency, status,
+        approved_by, repayment_months, reason)
+Loan(id, employee_id, principal, remaining, installment, start_month, status)
+
+Expense(id, project_id, employee_id, category, amount, currency, date,
+        cost_center, reference, approved_by)
+
+Journal(id, date, description, status)
+JournalEntry(id, journal_id, account_code, debit, credit, cost_center, ref)
+
+AuditLog(id, actor_user_id, action, entity, entity_id, before_json, after_json, at)</code></pre>
+                <div class="bg-secondary-50 border border-border rounded-xl p-5">
+                    <h3 class="font-bold text-text-primary mb-3">فهارس أساسية</h3>
+                    <ul class="list-disc pr-5 space-y-2 text-text-secondary">
+                        <li>فهرسة <code class="bg-secondary-100 px-1 rounded">employee_id</code>، <code class="bg-secondary-100 px-1 rounded">project_id</code>، <code class="bg-secondary-100 px-1 rounded">cost_center_code</code> لربط سريع بالمالية.</li>
+                        <li>فهارس مركبة على <code class="bg-secondary-100 px-1 rounded">PayrollBatch(month, year)</code> و<code class="bg-secondary-100 px-1 rounded">Attendance.day</code>.</li>
+                        <li>اعتماد Partitioning اختياري لجداول الحضور والرواتب الثقيلة.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Sensitive data policies -->
+            <section id="data-governance" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">٤) سياسات إخفاء الحقول الحساسة</h2>
+                <p class="text-text-secondary leading-relaxed">في طبقة الخدمات يتم تطبيق مرشح عرض بناءً على الدور لضمان حماية البيانات المالية الحساسة:</p>
+                <ul class="list-disc pr-5 space-y-2 text-text-secondary">
+                    <li>المهندسون، المشرفون، والموظفون لا يرون <code class="bg-secondary-100 px-1 rounded">basic_salary</code> و<code class="bg-secondary-100 px-1 rounded">allowances_json</code> داخل العقود.</li>
+                    <li>المحاسب يرى القيم الإجمالية دون تفاصيل العقد الفردية.</li>
+                    <li>توفير Views مختلفة على مستوى SQL لكل فئة دور عند الحاجة.</li>
+                </ul>
+                <div class="bg-secondary-50 border border-border rounded-xl p-5">
+                    <h3 class="font-bold text-text-primary mb-3">مثال View مختصر (PostgreSQL)</h3>
+                    <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>CREATE VIEW v_employee_public AS
+SELECT e.id, e.full_name, e.job_title, d.name_ar AS department, p.name_ar AS project
+FROM Employee e
+LEFT JOIN Department d ON d.id = e.department_id
+LEFT JOIN Project p ON p.id = e.project_id;</code></pre>
+                </div>
+            </section>
+
+            <!-- Workflows -->
+            <section id="workflows" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">٥) التدفقات الرئيسية (Workflows)</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="border border-border rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-text-primary mb-3">أ) دورة العقد</h3>
+                        <ol class="list-decimal pr-5 space-y-2 text-text-secondary text-sm">
+                            <li>ينشئ HR عقدًا جديدًا ويُرفق ملف PDF مع تحديد تفاصيل الموظف.</li>
+                            <li>يعتمد مدير النظام نطاق الظهور <code class="bg-secondary-100 px-1 rounded">visibility_scope</code>.</li>
+                            <li>عند الاعتماد يتم تسجيل حدث في <code class="bg-secondary-100 px-1 rounded">AuditLog</code> مع قبل/بعد.</li>
+                        </ol>
+                    </div>
+                    <div class="border border-border rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-text-primary mb-3">ب) دورة السلف/القروض</h3>
+                        <ol class="list-decimal pr-5 space-y-2 text-text-secondary text-sm">
+                            <li>يقدم الموظف طلب سلفة عبر البوابة الذاتية.</li>
+                            <li>يستقبل HR/CFO إشعارًا للمراجعة والاعتماد.</li>
+                            <li>بعد الموافقة يُنشأ <code class="bg-secondary-100 px-1 rounded">Advance</code> أو <code class="bg-secondary-100 px-1 rounded">Loan</code> وتحدد خطة السداد.</li>
+                            <li>يتم خصم الأقساط تلقائيًا عند ترحيل الرواتب مع إنشاء قيود يومية مرتبطة بمراكز التكلفة.</li>
+                        </ol>
+                    </div>
+                    <div class="border border-border rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-text-primary mb-3">ج) الحضور والإجازات</h3>
+                        <ol class="list-decimal pr-5 space-y-2 text-text-secondary text-sm">
+                            <li>المشرف يعتمد حضور فريقه فقط.</li>
+                            <li>HR يدير الاستثناءات والتعديلات.</li>
+                            <li>وحدة الرواتب تقرأ الحضور لحساب البدلات والخصومات.</li>
+                        </ol>
+                    </div>
+                    <div class="border border-border rounded-xl p-6">
+                        <h3 class="text-lg font-bold text-text-primary mb-3">د) الرواتب (Payroll)</h3>
+                        <ol class="list-decimal pr-5 space-y-2 text-text-secondary text-sm">
+                            <li>إنشاء <code class="bg-secondary-100 px-1 rounded">PayrollBatch(month, year)</code>.</li>
+                            <li>حساب المستحقات: الأساسي + البدلات − الخصومات − الأقساط + الساعات الإضافية.</li>
+                            <li>ترحيل محاسبي تلقائي عبر <code class="bg-secondary-100 px-1 rounded">Journal</code> و<code class="bg-secondary-100 px-1 rounded">JournalEntry</code>.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- APIs -->
+            <section id="apis" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">٦) واجهات برمجة التطبيقات (REST)</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="border border-border rounded-xl p-6">
+                        <h3 class="font-bold text-text-primary mb-3">الهوية والصلاحيات</h3>
+                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>POST /api/auth/login
+GET  /api/iam/users
+POST /api/iam/roles
+POST /api/iam/roles/{id}/permissions</code></pre>
+                    </div>
+                    <div class="border border-border rounded-xl p-6">
+                        <h3 class="font-bold text-text-primary mb-3">الموظفون والعقود</h3>
+                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>GET  /api/employees?projectId=&amp;departmentId=&amp;q=
+POST /api/employees
+GET  /api/employees/{id}
+PATCH /api/employees/{id}
+
+POST /api/employees/{id}/contracts
+GET  /api/employees/{id}/contracts</code></pre>
+                    </div>
+                    <div class="border border-border rounded-xl p-6">
+                        <h3 class="font-bold text-text-primary mb-3">الحضور والإجازات</h3>
+                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>POST /api/attendance/bulk
+GET  /api/attendance?employeeId=&amp;from=&amp;to=
+POST /api/leaves
+PATCH /api/leaves/{id}/approve</code></pre>
+                    </div>
+                    <div class="border border-border rounded-xl p-6">
+                        <h3 class="font-bold text-text-primary mb-3">السلف والقروض</h3>
+                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>POST /api/advances
+PATCH /api/advances/{id}/approve
+POST /api/loans
+PATCH /api/loans/{id}/settle</code></pre>
+                    </div>
+                    <div class="border border-border rounded-xl p-6 lg:col-span-2">
+                        <h3 class="font-bold text-text-primary mb-3">الرواتب</h3>
+                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>POST /api/payroll/batches
+POST /api/payroll/batches/{id}/calculate
+POST /api/payroll/batches/{id}/post
+GET  /api/payroll/batches/{id}/journal</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sample Code -->
+            <section id="code" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">٧) نماذج أكواد مهمة</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary mb-3">حماية نقطة نهاية حسب الدور</h3>
+                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>// middleware/requireRole.ts
+export function requireRole(roles: string[]) {
+  return (req, res, next) => {
+    const user = req.user;
+    if (!user || !roles.some(r => user.roles.includes(r))) {
+      return res.status(403).json({ message: 'ليس لديك صلاحية' });
+    }
+    next();
+  };
+}</code></pre>
+                    </div>
+                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary mb-3">فلترة الحقول الحساسة</h3>
+                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>function sanitizeContractForRole(contract: any, roleKeys: string[]): any {
+  const canSeeMoney = roleKeys.some(r => ['admin','ceo','cfo'].includes(r));
+  if (!canSeeMoney) {
+    const { basic_salary, allowances_json, ...rest } = contract;
+    return rest;
+  }
+  return contract;
+}</code></pre>
+                    </div>
+                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary mb-3">حساب قسط السلفة داخل الرواتب</h3>
+                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>function computeNet(pay: PayrollItem, loan?: Loan) {
+  const loanDeduction = loan ? Math.min(loan.installment, loan.remaining) : 0;
+  const gross = pay.gross;
+  const net = gross - loanDeduction;
+  return { ...pay, loan_deduction: loanDeduction, net };
+}</code></pre>
+                    </div>
+                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary mb-3">قيد يومية بسيط للرواتب</h3>
+                        <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>insertJournal(date, 'ترحيل رواتب شهرية', [
+  { account: '5001', debit: totalSalaries, credit: 0, cost_center: 'HR' },
+  { account: '2103', debit: 0, credit: totalSalaries, cost_center: 'HR' },
+]);</code></pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- UI Overview -->
+            <section id="ui" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">٨) الواجهة – الصفحات والمكونات</h2>
+                <p class="text-text-secondary leading-relaxed">تصميم واجهة المستخدم يحاكي أنظمة إدارة المشاريع والمحاسبة العالمية مع الالتزام بهوية ContractorPro:</p>
+                <ul class="list-disc pr-5 space-y-2 text-text-secondary">
+                    <li>قائمة الموظفين ببحث وفلاتر (قسم، مشروع، حالة) وأعمدة قابلة للتخصيص.</li>
+                    <li>ملف موظف شامل: بيانات أساسية، عقود، مرفقات، تاريخ وظيفي، أداء، وسجل رواتب.</li>
+                    <li>وحدة العقود مع تحميل الملفات، تحديد نطاق الظهور، وسجل الموافقات.</li>
+                    <li>إدارة الحضور عبر تقويم، إدخال جماعي، واعتمادات المشرفين.</li>
+                    <li>بوابة الإجازات والسلف والقروض بطلبات واعتمادات متعددة المستويات.</li>
+                    <li>دفعات الرواتب الشهرية مع حساب، مراجعة، وترحيل محاسبي متكامل.</li>
+                    <li>التقارير الحساسة لتكلفة الموظف، المركز، والمشروع مع سياسات ظهور محددة.</li>
+                    <li>لوحة إدارة الأدوار والصلاحيات لإنشاء وربط الصلاحيات بالمستخدمين.</li>
+                </ul>
+            </section>
+
+            <!-- Security & Performance -->
+            <section id="security" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">٩) سياسات الأمن والامتثال &amp; ١٠) الأداء وقابلية التوسع</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary mb-3">الأمن والامتثال</h3>
+                        <ul class="list-disc pr-5 space-y-2 text-text-secondary text-sm">
+                            <li>تشفير كلمات المرور باستخدام Argon2 أو BCrypt.</li>
+                            <li>تدوير مفاتيح JWT وإضافة Refresh Tokens.</li>
+                            <li>سجل تدقيق لكل عملية حساسة مع Masking للحقول الحساسة في السجلات.</li>
+                            <li>صلاحيات دقيقة للمرفقات وعمليات التنزيل.</li>
+                        </ul>
+                    </div>
+                    <div class="border border-border rounded-xl p-6 bg-secondary-50">
+                        <h3 class="font-bold text-text-primary mb-3">الأداء وقابلية التوسع</h3>
+                        <ul class="list-disc pr-5 space-y-2 text-text-secondary text-sm">
+                            <li>فهارس مدروسة واستعلامات مجمعة للتقارير.</li>
+                            <li>Job Queue لحساب الرواتب وترحيل القيود.</li>
+                            <li>Cache لتقارير القراءة الثقيلة وتجزئة للخدمات.</li>
+                            <li>مراقبة وتحذيرات زمنية لضمان الاستجابة.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Roadmap -->
+            <section id="roadmap" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">١١) خارطة الطريق (Roadmap)</h2>
+                <div class="space-y-4">
+                    <div class="border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div class="flex items-center gap-3">
-                            <button class="text-text-secondary hover:text-text-primary transition-fast">
-                                <i class="fas fa-download"></i>
-                            </button>
-                            <button class="text-text-secondary hover:text-text-primary transition-fast">
-                                <i class="fas fa-print"></i>
-                            </button>
+                            <span class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">1</span>
+                            <h3 class="font-bold text-text-primary">المرحلة 1</h3>
                         </div>
+                        <p class="text-text-secondary text-sm">الموظفون + العقود + الحضور/الإجازات + RBAC أساسي.</p>
+                    </div>
+                    <div class="border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-full bg-success text-white flex items-center justify-center font-bold">2</span>
+                            <h3 class="font-bold text-text-primary">المرحلة 2</h3>
+                        </div>
+                        <p class="text-text-secondary text-sm">الرواتب والسلف + تكامل القيود المحاسبية.</p>
+                    </div>
+                    <div class="border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-full bg-warning text-white flex items-center justify-center font-bold">3</span>
+                            <h3 class="font-bold text-text-primary">المرحلة 3</h3>
+                        </div>
+                        <p class="text-text-secondary text-sm">الأداء والتقييمات + مسارات موافقات متعددة (Workflow Engine).</p>
+                    </div>
+                    <div class="border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-bold">4</span>
+                            <h3 class="font-bold text-text-primary">المرحلة 4</h3>
+                        </div>
+                        <p class="text-text-secondary text-sm">تطبيق جوال للموظف (Self-Service) مع إشعارات فورية.</p>
                     </div>
                 </div>
+            </section>
 
-                <!-- Employee Directory Table -->
-                <div class="bg-surface rounded-xl p-6 shadow-card border border-border mb-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold text-text-primary">دليل الموظفين</h2>
-                        <div class="flex items-center gap-4">
-                            <input type="text" id="employeeSearchInput" placeholder="البحث عن موظف..." class="px-4 py-2 border border-border rounded-lg focus:border-primary focus:outline-none" />
-                        </div>
-                    </div>
+            <!-- Finance Integration -->
+            <section id="integration" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">١٢) نقاط تكامل مع قسم المالية</h2>
+                <ul class="list-disc pr-5 space-y-2 text-text-secondary">
+                    <li>عند اعتماد <code class="bg-secondary-100 px-1 rounded">PayrollBatch</code>: إنشاء قيود يومية وربطها بمركز التكلفة لكل موظف/مشروع.</li>
+                    <li>عند إنشاء سلفة أو قرض: قيود تلقائية (سلفة مدينة/رواتب مستحقة) وتحديث الرصيد المتبقي.</li>
+                    <li>تقارير موحدة لتكلفة المشروع = مصروفات مباشرة + رواتب محمّلة على المشروع حسب ساعات العمل.</li>
+                </ul>
+            </section>
 
-                    <!-- Employee Table -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full" id="employeesTable">
-                            <thead>
-                                <tr class="border-b border-border">
-                                    <th class="text-right py-3 px-4 font-medium text-text-secondary">الموظف</th>
-                                    <th class="text-right py-3 px-4 font-medium text-text-secondary">الوظيفة</th>
-                                    <th class="text-right py-3 px-4 font-medium text-text-secondary">القسم</th>
-                                    <th class="text-right py-3 px-4 font-medium text-text-secondary">الراتب</th>
-                                    <th class="text-right py-3 px-4 font-medium text-text-secondary">تاريخ التوظيف</th>
-                                    <th class="text-right py-3 px-4 font-medium text-text-secondary">الحالة</th>
-                                    <th class="text-center py-3 px-4 font-medium text-text-secondary">الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="employeesTableBody">
-                                <tr class="border-b border-border hover:bg-secondary-50" data-department="قسم الهندسة" data-position="مهندس مدني أول" data-status="نشط">
-                                    <td class="py-3 px-4">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150&auto=format&fit=crop" alt="سعد المطيري" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                            <div>
-                                                <p class="font-medium text-text-primary">سعد المطيري</p>
-                                                <p class="text-sm text-text-secondary">s.almutairi@company.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-4 text-text-primary">مهندس مدني أول</td>
-                                    <td class="py-3 px-4 text-text-primary">قسم الهندسة</td>
-                                    <td class="py-3 px-4 font-bold text-success">12,000 ريال</td>
-                                    <td class="py-3 px-4 text-text-secondary">15 مارس 2020</td>
-                                    <td class="py-3 px-4">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                            نشط
-                                        </span>
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="text-xs bg-primary text-white px-2 py-1 rounded hover:bg-primary-600 transition-fast" onclick="viewEmployeeDetails('emp-002')">
-                                                عرض
-                                            </button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded hover:bg-secondary-300 transition-fast" onclick="editEmployeeDetails('emp-002')">
-                                                تعديل
-                                            </button>
-                                            <button class="text-xs bg-warning text-white px-2 py-1 rounded hover:bg-warning-600 transition-fast" onclick="manageEmployeePayroll('emp-002')">
-                                                الراتب
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+            <!-- Prisma sample -->
+            <section id="prisma" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">١٣) عيّنة مخطط Prisma</h2>
+                <pre class="bg-gray-900 text-gray-100 text-xs rounded-lg p-4 overflow-auto"><code>model Employee {
+  id           String   @id @default(cuid())
+  userId       String?  @unique
+  code         String   @unique
+  fullName     String
+  jobTitle     String?
+  departmentId String?
+  projectId    String?
+  hireDate     DateTime?
+  monthlyBasic Decimal? @db.Decimal(12,2)
+  hourlyRate   Decimal? @db.Decimal(12,2)
+  bankIban     String?
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}</code></pre>
+            </section>
 
-                                <tr class="border-b border-border hover:bg-secondary-50" data-department="قسم الإدارة" data-position="محاسبة" data-status="نشط">
-                                    <td class="py-3 px-4">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://images.unsplash.com/photo-1494790108755-2616c39a2a43?q=80&w=150&auto=format&fit=crop" alt="فاطمة الزهراني" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                            <div>
-                                                <p class="font-medium text-text-primary">فاطمة الزهراني</p>
-                                                <p class="text-sm text-text-secondary">f.alzahrani@company.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-4 text-text-primary">محاسبة</td>
-                                    <td class="py-3 px-4 text-text-primary">قسم الإدارة</td>
-                                    <td class="py-3 px-4 font-bold text-success">8,000 ريال</td>
-                                    <td class="py-3 px-4 text-text-secondary">10 يناير 2022</td>
-                                    <td class="py-3 px-4">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                            نشط
-                                        </span>
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="text-xs bg-primary text-white px-2 py-1 rounded hover:bg-primary-600 transition-fast" onclick="viewEmployeeDetails('emp-006')">
-                                                عرض
-                                            </button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded hover:bg-secondary-300 transition-fast" onclick="editEmployeeDetails('emp-006')">
-                                                تعديل
-                                            </button>
-                                            <button class="text-xs bg-warning text-white px-2 py-1 rounded hover:bg-warning-600 transition-fast" onclick="manageEmployeePayroll('emp-006')">
-                                                الراتب
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b border-border hover:bg-secondary-50" data-department="قسم العمليات" data-position="مشرف عام" data-status="في إجازة">
-                                    <td class="py-3 px-4">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=150&auto=format&fit=crop" alt="خالد السعد" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                            <div>
-                                                <p class="font-medium text-text-primary">خالد السعد</p>
-                                                <p class="text-sm text-text-secondary">k.alsaad@company.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-4 text-text-primary">مشرف عام</td>
-                                    <td class="py-3 px-4 text-text-primary">قسم العمليات</td>
-                                    <td class="py-3 px-4 font-bold text-success">10,000 ريال</td>
-                                    <td class="py-3 px-4 text-text-secondary">5 سبتمبر 2019</td>
-                                    <td class="py-3 px-4">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">
-                                            في إجازة
-                                        </span>
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="text-xs bg-primary text-white px-2 py-1 rounded hover:bg-primary-600 transition-fast" onclick="viewEmployeeDetails('emp-004')">
-                                                عرض
-                                            </button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded hover:bg-secondary-300 transition-fast" onclick="editEmployeeDetails('emp-004')">
-                                                تعديل
-                                            </button>
-                                            <button class="text-xs bg-warning text-white px-2 py-1 rounded hover:bg-warning-600 transition-fast" onclick="manageEmployeePayroll('emp-004')">
-                                                الراتب
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b border-border hover:bg-secondary-50" data-department="قسم الهندسة" data-position="مهندس معماري" data-status="نشط">
-                                    <td class="py-3 px-4">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=150&auto=format&fit=crop" alt="محمد الأحمد" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                            <div>
-                                                <p class="font-medium text-text-primary">محمد الأحمد</p>
-                                                <p class="text-sm text-text-secondary">m.alahmed@company.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-4 text-text-primary">مهندس معماري</td>
-                                    <td class="py-3 px-4 text-text-primary">قسم الهندسة</td>
-                                    <td class="py-3 px-4 font-bold text-success">11,500 ريال</td>
-                                    <td class="py-3 px-4 text-text-secondary">20 أبريل 2021</td>
-                                    <td class="py-3 px-4">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                            نشط
-                                        </span>
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="text-xs bg-primary text-white px-2 py-1 rounded hover:bg-primary-600 transition-fast" onclick="viewEmployeeDetails('emp-003')">
-                                                عرض
-                                            </button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded hover:bg-secondary-300 transition-fast" onclick="editEmployeeDetails('emp-003')">
-                                                تعديل
-                                            </button>
-                                            <button class="text-xs bg-warning text-white px-2 py-1 rounded hover:bg-warning-600 transition-fast" onclick="manageEmployeePayroll('emp-003')">
-                                                الراتب
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <tr class="border-b border-border hover:bg-secondary-50" data-department="الموارد البشرية" data-position="موارد بشرية" data-status="نشط">
-                                    <td class="py-3 px-4">
-                                        <div class="flex items-center gap-3">
-                                            <img src="https://images.unsplash.com/photo-1507591064344-4c6ce005b128?q=80&w=150&auto=format&fit=crop" alt="نورا السالم" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=150&auto=format&fit=crop'" />
-                                            <div>
-                                                <p class="font-medium text-text-primary">نورا السالم</p>
-                                                <p class="text-sm text-text-secondary">n.alsalem@company.com</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-3 px-4 text-text-primary">موارد بشرية</td>
-                                    <td class="py-3 px-4 text-text-primary">الموارد البشرية</td>
-                                    <td class="py-3 px-4 font-bold text-success">9,000 ريال</td>
-                                    <td class="py-3 px-4 text-text-secondary">8 يوليو 2022</td>
-                                    <td class="py-3 px-4">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                            نشط
-                                        </span>
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button class="text-xs bg-primary text-white px-2 py-1 rounded hover:bg-primary-600 transition-fast" onclick="viewEmployeeDetails('emp-007')">
-                                                عرض
-                                            </button>
-                                            <button class="text-xs bg-secondary-200 text-text-primary px-2 py-1 rounded hover:bg-secondary-300 transition-fast" onclick="editEmployeeDetails('emp-007')">
-                                                تعديل
-                                            </button>
-                                            <button class="text-xs bg-warning text-white px-2 py-1 rounded hover:bg-warning-600 transition-fast" onclick="manageEmployeePayroll('emp-007')">
-                                                الراتب
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Pagination -->
-                <div class="flex items-center justify-between bg-surface rounded-xl p-4 shadow-card border border-border">
-                    <div class="flex items-center gap-2 text-sm text-text-secondary" id="employeeCount">
-                        <span>عرض</span>
-                        <select id="itemsPerPage" class="px-2 py-1 border border-border rounded text-sm">
-                            <option value="5">5</option>
-                            <option value="10" selected>10</option>
-                            <option value="25">25</option>
-                        </select>
-                        <span>من أصل <span id="totalEmployees">48</span> موظف</span>
-                        <span>(<span id="filteredEmployees">48</span> معروض)</span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2" id="paginationControls">
-                        <button id="prevPage" class="px-3 py-2 border border-border rounded-lg text-sm hover:bg-secondary-50 transition-fast disabled:opacity-50" disabled onclick="changePage(-1)">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                        <span id="pageNumbers" class="flex items-center gap-2">
-                            <button class="px-3 py-2 bg-primary text-white rounded-lg text-sm">1</button>
-                        </span>
-                        <button id="nextPage" class="px-3 py-2 border border-border rounded-lg text-sm hover:bg-secondary-50 transition-fast" onclick="changePage(1)">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- HR Overview Tab -->
-            <div id="hr-overview" class="tab-content hidden">
-                <!-- HR Statistics -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                    <!-- Total Employees -->
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">إجمالي الموظفين</p>
-                                <p class="text-3xl font-bold text-text-primary mt-2">48</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-arrow-up text-success text-sm"></i>
-                                    <span class="text-success text-sm font-medium">+5 هذا الشهر</span>
-                                </div>
-                            </div>
-                            <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-users text-primary text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Active Projects Staff -->
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">موظفو المشاريع النشطة</p>
-                                <p class="text-3xl font-bold text-text-primary mt-2">36</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-hard-hat text-accent text-sm"></i>
-                                    <span class="text-accent text-sm font-medium">75% معدل التشغيل</span>
-                                </div>
-                            </div>
-                            <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-hard-hat text-accent text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Pending Leave Requests -->
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">طلبات الإجازة المعلقة</p>
-                                <p class="text-3xl font-bold text-text-primary mt-2">7</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-clock text-warning text-sm"></i>
-                                    <span class="text-warning text-sm font-medium">تحتاج موافقة</span>
-                                </div>
-                            </div>
-                            <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-calendar-alt text-warning text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Performance Reviews Due -->
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-text-secondary text-sm font-medium">تقييمات الأداء المستحقة</p>
-                                <p class="text-3xl font-bold text-text-primary mt-2">12</p>
-                                <div class="flex items-center gap-1 mt-2">
-                                    <i class="fas fa-star text-success text-sm"></i>
-                                    <span class="text-success text-sm font-medium">هذا الربع</span>
-                                </div>
-                            </div>
-                            <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-chart-bar text-success text-xl"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Employee Grid from employee_management.html -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
-                    <!-- Employee Card 1 -->
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border hover:shadow-modal transition-fast">
-                        <div class="flex items-center gap-4 mb-4">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2940&auto=format&fit=crop" alt="محمد العتيبي" class="w-16 h-16 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'" />
-                            <div class="flex-1">
-                                <h3 class="font-bold text-text-primary">محمد العتيبي</h3>
-                                <p class="text-sm text-text-secondary">مهندس مدني أول</p>
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success mt-1">
-                                    نشط
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-2 text-sm">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-building text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">قسم الهندسة</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-phone text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">0501234567</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-calendar text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">انضم في يناير 2023</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between mt-4 pt-4 border-t border-border">
-                            <div class="flex items-center gap-1">
-                                <div class="flex text-warning">
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                </div>
-                                <span class="text-xs text-text-secondary mr-1">4.8</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="text-primary hover:text-primary-700 transition-fast">
-                                    <i class="fas fa-edit text-sm"></i>
-                                </button>
-                                <button class="text-text-secondary hover:text-text-primary transition-fast">
-                                    <i class="fas fa-eye text-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Employee Card 2 -->
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border hover:shadow-modal transition-fast">
-                        <div class="flex items-center gap-4 mb-4">
-                            <img src="https://images.unsplash.com/photo-1494790108755-2616c9c9b8c2?q=80&w=2940&auto=format&fit=crop" alt="فاطمة الزهراني" class="w-16 h-16 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'" />
-                            <div class="flex-1">
-                                <h3 class="font-bold text-text-primary">فاطمة الزهراني</h3>
-                                <p class="text-sm text-text-secondary">مديرة الموارد البشرية</p>
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success mt-1">
-                                    نشط
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-2 text-sm">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-building text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">الموارد البشرية</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-phone text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">0507654321</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-calendar text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">انضمت في مارس 2022</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between mt-4 pt-4 border-t border-border">
-                            <div class="flex items-center gap-1">
-                                <div class="flex text-warning">
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                </div>
-                                <span class="text-xs text-text-secondary mr-1">4.9</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="text-primary hover:text-primary-700 transition-fast">
-                                    <i class="fas fa-edit text-sm"></i>
-                                </button>
-                                <button class="text-text-secondary hover:text-text-primary transition-fast">
-                                    <i class="fas fa-eye text-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Employee Card 3 -->
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border hover:shadow-modal transition-fast">
-                        <div class="flex items-center gap-4 mb-4">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2940&auto=format&fit=crop" alt="أحمد المالك" class="w-16 h-16 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'" />
-                            <div class="flex-1">
-                                <h3 class="font-bold text-text-primary">أحمد المالك</h3>
-                                <p class="text-sm text-text-secondary">مدير عام</p>
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success mt-1">
-                                    نشط
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-2 text-sm">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-building text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">الإدارة العليا</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-phone text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">0501111111</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-calendar text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">مؤسس الشركة</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between mt-4 pt-4 border-t border-border">
-                            <div class="flex items-center gap-1">
-                                <div class="flex text-warning">
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                </div>
-                                <span class="text-xs text-text-secondary mr-1">5.0</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="text-primary hover:text-primary-700 transition-fast">
-                                    <i class="fas fa-edit text-sm"></i>
-                                </button>
-                                <button class="text-text-secondary hover:text-text-primary transition-fast">
-                                    <i class="fas fa-eye text-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Employee Card 4 -->
-                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border hover:shadow-modal transition-fast">
-                        <div class="flex items-center gap-4 mb-4">
-                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=2940&auto=format&fit=crop" alt="سعد المطيري" class="w-16 h-16 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop'" />
-                            <div class="flex-1">
-                                <h3 class="font-bold text-text-primary">سعد المطيري</h3>
-                                <p class="text-sm text-text-secondary">مشرف موقع</p>
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning mt-1">
-                                    في إجازة
-                                </span>
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-2 text-sm">
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-building text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">البناء والتشييد</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-phone text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">0509876543</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i class="fas fa-calendar text-text-secondary w-4"></i>
-                                <span class="text-text-secondary">انضم في أكتوبر 2023</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between mt-4 pt-4 border-t border-border">
-                            <div class="flex items-center gap-1">
-                                <div class="flex text-warning">
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="fas fa-star text-xs"></i>
-                                    <i class="far fa-star text-xs"></i>
-                                </div>
-                                <span class="text-xs text-text-secondary mr-1">4.2</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="text-primary hover:text-primary-700 transition-fast">
-                                    <i class="fas fa-edit text-sm"></i>
-                                </button>
-                                <button class="text-text-secondary hover:text-text-primary transition-fast">
-                                    <i class="fas fa-eye text-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- HR Quick Actions -->
-                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                    <h3 class="text-lg font-bold text-text-primary mb-6">الإجراءات السريعة للموارد البشرية</h3>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        <button class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group" onclick="openAddEmployeeModal()">
-                            <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center group-hover:bg-primary-200 transition-fast">
-                                <i class="fas fa-user-plus text-primary text-lg"></i>
-                            </div>
-                            <span class="text-sm font-medium text-text-primary text-center">إضافة موظف</span>
-                        </button>
-
-                        <button class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group" onclick="approveLeaveRequests()">
-                            <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center group-hover:bg-success-200 transition-fast">
-                                <i class="fas fa-calendar-check text-success text-lg"></i>
-                            </div>
-                            <span class="text-sm font-medium text-text-primary text-center">موافقة الإجازات</span>
-                        </button>
-
-                        <button class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group" onclick="conductPerformanceReview()">
-                            <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center group-hover:bg-accent-200 transition-fast">
-                                <i class="fas fa-chart-bar text-accent text-lg"></i>
-                            </div>
-                            <span class="text-sm font-medium text-text-primary text-center">تقييم الأداء</span>
-                        </button>
-
-                        <button class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group" onclick="manageTrainingPrograms()">
-                            <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center group-hover:bg-warning-200 transition-fast">
-                                <i class="fas fa-graduation-cap text-warning text-lg"></i>
-                            </div>
-                            <span class="text-sm font-medium text-text-primary text-center">برامج التدريب</span>
-                        </button>
-
-                        <button class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group" onclick="manageContracts()">
-                            <div class="w-12 h-12 bg-secondary-200 rounded-lg flex items-center justify-center group-hover:bg-secondary-300 transition-fast">
-                                <i class="fas fa-file-contract text-secondary text-lg"></i>
-                            </div>
-                            <span class="text-sm font-medium text-text-primary text-center">إدارة العقود</span>
-                        </button>
-
-                        <button class="flex flex-col items-center gap-3 p-4 rounded-lg hover:bg-secondary-50 transition-fast group" onclick="generateReports()">
-                            <div class="w-12 h-12 bg-error-100 rounded-lg flex items-center justify-center group-hover:bg-error-200 transition-fast">
-                                <i class="fas fa-file-alt text-error text-lg"></i>
-                            </div>
-                            <span class="text-sm font-medium text-text-primary text-center">التقارير</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <!-- Additional Notes -->
+            <section id="notes" class="bg-surface border border-border rounded-2xl shadow-card p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-text-primary">١٤) ملاحظات تطبيقية سريعة</h2>
+                <ul class="list-disc pr-5 space-y-2 text-text-secondary">
+                    <li>إخفاء قيمة العقد للمهندس/المراقب عبر DTO مخصص أو صلاحيات على مستوى الحقول.</li>
+                    <li>استخدام Feature Flags لتفعيل وحدات النظام تدريجيًا.</li>
+                    <li>بناء Seeder لإنشاء الأدوار والصلاحيات الأولية وتسهيل الانطلاق.</li>
+                </ul>
+            </section>
         </main>
     </div>
 
     <script>
-        // Global variables for employee directory
-        let allEmployees = [];
-        let filteredEmployees = [];
-        let currentPage = 1;
-        let itemsPerPage = 10;
-
-        // Tab switching functionality
-        function switchTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.add('hidden');
-            });
-            
-            // Remove active class from all tab buttons
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.classList.remove('active', 'border-primary', 'text-primary');
-                button.classList.add('border-transparent', 'text-text-secondary');
-            });
-            
-            // Show selected tab
-            document.getElementById(tabName).classList.remove('hidden');
-            
-            // Add active class to selected tab button
-            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
-            if (activeButton) {
-                activeButton.classList.add('active', 'border-primary', 'text-primary');
-                activeButton.classList.remove('border-transparent', 'text-text-secondary');
-            }
-
-            // Initialize employee directory if switching to it
-            if (tabName === 'employee-directory') {
-                initializeEmployeeDirectory();
-            }
-        }
-
-        // Initialize Employee Directory
-        function initializeEmployeeDirectory() {
-            // Get all employees from table rows
-            const tableRows = document.querySelectorAll('#employeesTableBody tr');
-            allEmployees = Array.from(tableRows);
-            filteredEmployees = [...allEmployees];
-            
-            // Set up event listeners
-            setupEmployeeDirectoryFilters();
-            renderEmployeeTable();
-            updateEmployeeCount();
-        }
-
-        // Setup filters and search
-        function setupEmployeeDirectoryFilters() {
-            const searchInput = document.getElementById('employeeSearchInput');
-            const globalSearch = document.getElementById('globalEmployeeSearch');
-            const departmentFilter = document.getElementById('departmentFilter');
-            const positionFilter = document.getElementById('positionFilter');
-            const statusFilter = document.getElementById('statusFilter');
-            const resetBtn = document.getElementById('resetFiltersBtn');
-            const itemsSelect = document.getElementById('itemsPerPage');
-
-            // Search functionality
-            if (searchInput) {
-                searchInput.addEventListener('input', applyEmployeeDirectoryFilters);
-            }
-            
-            if (globalSearch) {
-                globalSearch.addEventListener('input', applyEmployeeDirectoryFilters);
-            }
-
-            // Filter functionality
-            if (departmentFilter) {
-                departmentFilter.addEventListener('change', applyEmployeeDirectoryFilters);
-            }
-            
-            if (positionFilter) {
-                positionFilter.addEventListener('change', applyEmployeeDirectoryFilters);
-            }
-            
-            if (statusFilter) {
-                statusFilter.addEventListener('change', applyEmployeeDirectoryFilters);
-            }
-
-            // Reset filters
-            if (resetBtn) {
-                resetBtn.addEventListener('click', resetEmployeeDirectoryFilters);
-            }
-
-            // Items per page
-            if (itemsSelect) {
-                itemsSelect.addEventListener('change', function() {
-                    itemsPerPage = parseInt(this.value);
-                    currentPage = 1;
-                    renderEmployeeTable();
-                    updateEmployeeCount();
+        document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('[data-scroll-to]');
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.getAttribute('data-scroll-to');
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 });
-            }
-        }
-
-        // Apply filters
-        function applyEmployeeDirectoryFilters() {
-            const searchInput = document.getElementById('employeeSearchInput');
-            const globalSearch = document.getElementById('globalEmployeeSearch');
-            const departmentFilter = document.getElementById('departmentFilter');
-            const positionFilter = document.getElementById('positionFilter');
-            const statusFilter = document.getElementById('statusFilter');
-
-            const searchTerm = ((searchInput?.value || '') + ' ' + (globalSearch?.value || '')).toLowerCase().trim();
-            const departmentValue = departmentFilter?.value || '';
-            const positionValue = positionFilter?.value || '';
-            const statusValue = statusFilter?.value || '';
-
-            filteredEmployees = allEmployees.filter(row => {
-                const name = row.querySelector('.font-medium')?.textContent.toLowerCase() || '';
-                const email = row.querySelector('.text-sm')?.textContent.toLowerCase() || '';
-                const department = row.getAttribute('data-department') || '';
-                const position = row.getAttribute('data-position') || '';
-                const status = row.getAttribute('data-status') || '';
-
-                const matchesSearch = !searchTerm || 
-                    name.includes(searchTerm) || 
-                    email.includes(searchTerm) ||
-                    department.toLowerCase().includes(searchTerm) ||
-                    position.toLowerCase().includes(searchTerm);
-
-                const matchesDepartment = !departmentValue || department === departmentValue;
-                const matchesPosition = !positionValue || position.includes(positionValue);
-                const matchesStatus = !statusValue || status === statusValue;
-
-                return matchesSearch && matchesDepartment && matchesPosition && matchesStatus;
             });
-
-            currentPage = 1;
-            renderEmployeeTable();
-            updateEmployeeCount();
-        }
-
-        // Reset filters
-        function resetEmployeeDirectoryFilters() {
-            const searchInput = document.getElementById('employeeSearchInput');
-            const globalSearch = document.getElementById('globalEmployeeSearch');
-            const departmentFilter = document.getElementById('departmentFilter');
-            const positionFilter = document.getElementById('positionFilter');
-            const statusFilter = document.getElementById('statusFilter');
-
-            if (searchInput) searchInput.value = '';
-            if (globalSearch) globalSearch.value = '';
-            if (departmentFilter) departmentFilter.value = '';
-            if (positionFilter) positionFilter.value = '';
-            if (statusFilter) statusFilter.value = '';
-
-            filteredEmployees = [...allEmployees];
-            currentPage = 1;
-            renderEmployeeTable();
-            updateEmployeeCount();
-        }
-
-        // Render table with pagination
-        function renderEmployeeTable() {
-            const tbody = document.getElementById('employeesTableBody');
-            if (!tbody) return;
-
-            // Clear current rows
-            tbody.innerHTML = '';
-
-            // Calculate pagination
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const pageItems = filteredEmployees.slice(startIndex, endIndex);
-
-            // Add rows
-            pageItems.forEach(row => {
-                tbody.appendChild(row.cloneNode(true));
-            });
-
-            // Update pagination controls
-            renderPagination();
-        }
-
-        // Render pagination
-        function renderPagination() {
-            const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
-            const pageNumbers = document.getElementById('pageNumbers');
-            const prevBtn = document.getElementById('prevPage');
-            const nextBtn = document.getElementById('nextPage');
-
-            if (!pageNumbers || !prevBtn || !nextBtn) return;
-
-            // Clear page numbers
-            pageNumbers.innerHTML = '';
-
-            // Previous button
-            prevBtn.disabled = currentPage === 1;
-
-            // Page numbers
-            const maxVisiblePages = 5;
-            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-            if (endPage - startPage < maxVisiblePages - 1) {
-                startPage = Math.max(1, endPage - maxVisiblePages + 1);
-            }
-
-            for (let i = startPage; i <= endPage; i++) {
-                const pageBtn = document.createElement('button');
-                pageBtn.className = i === currentPage ? 
-                    'px-3 py-2 bg-primary text-white rounded-lg text-sm' : 
-                    'px-3 py-2 border border-border rounded-lg text-sm hover:bg-secondary-50 transition-fast';
-                pageBtn.textContent = i;
-                pageBtn.onclick = () => goToPage(i);
-                pageNumbers.appendChild(pageBtn);
-            }
-
-            // Next button
-            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
-        }
-
-        // Go to specific page
-        function goToPage(page) {
-            const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
-            if (page >= 1 && page <= totalPages) {
-                currentPage = page;
-                renderEmployeeTable();
-            }
-        }
-
-        // Change page
-        function changePage(direction) {
-            const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
-            const newPage = currentPage + direction;
-            
-            if (newPage >= 1 && newPage <= totalPages) {
-                goToPage(newPage);
-            }
-        }
-
-        // Update employee count
-        function updateEmployeeCount() {
-            const totalEmployeesSpan = document.getElementById('totalEmployees');
-            const filteredEmployeesSpan = document.getElementById('filteredEmployees');
-
-            if (totalEmployeesSpan) {
-                totalEmployeesSpan.textContent = allEmployees.length;
-            }
-            
-            if (filteredEmployeesSpan) {
-                filteredEmployeesSpan.textContent = filteredEmployees.length;
-            }
-        }
-
-        // Header action functions
-        function openAddEmployeeModal() {
-            alert('فتح نافذة إضافة موظف جديد');
-        }
-
-        function generatePayrollReport() {
-            alert('تم إنشاء تقرير الرواتب');
-        }
-
-        // Team management functions
-        function openTeamStructureModal() {
-            alert('فتح نافذة تحديث هيكل الفريق');
-        }
-
-        function viewEmployeeProfile(employeeId) {
-            alert(`عرض الملف الشخصي للموظف: ${employeeId}`);
-        }
-
-        function managePermissions(employeeId) {
-            alert(`إدارة صلاحيات الموظف: ${employeeId}`);
-        }
-
-        function editEmployee(employeeId) {
-            alert(`تعديل بيانات الموظف: ${employeeId}`);
-        }
-
-        function viewDepartmentTeam(department) {
-            alert(`عرض فريق قسم: ${department}`);
-        }
-
-        function openRoleManagementModal() {
-            alert('فتح نافذة إدارة الأدوار');
-        }
-
-        function editRole(roleId) {
-            alert(`تعديل صلاحيات الدور: ${roleId}`);
-        }
-
-        // Employee management functions
-        function viewEmployeeDetails(employeeId) {
-            alert(`عرض تفاصيل الموظف: ${employeeId}`);
-        }
-
-        function editEmployeeDetails(employeeId) {
-            alert(`تعديل تفاصيل الموظف: ${employeeId}`);
-        }
-
-        function manageEmployeePayroll(employeeId) {
-            alert(`إدارة راتب الموظف: ${employeeId}`);
-        }
-
-        // HR Quick Actions Functions
-        function approveLeaveRequests() {
-            alert('فتح نافذة موافقة طلبات الإجازات');
-        }
-
-        function conductPerformanceReview() {
-            alert('فتح نافذة تقييم الأداء');
-        }
-
-        function manageTrainingPrograms() {
-            alert('فتح نافذة إدارة برامج التدريب');
-        }
-
-        function manageContracts() {
-            alert('فتح نافذة إدارة العقود');
-        }
-
-        function generateReports() {
-            alert('فتح نافذة إنشاء التقارير');
-        }
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set default active tab
-            switchTab('team-management');
         });
     </script>
-<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+    <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
     <script src="../js/session.js" data-login-path="../login.html"></script>
 </body>
 </html>
