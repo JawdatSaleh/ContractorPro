@@ -1,0 +1,19 @@
+openapi: 3.0.1
+info:
+  title: ContractorPro API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/auth/login:
+    post:
+      summary: Login
+      responses:
+        '200':
+          description: JWT token response
+  /api/employees:
+    get:
+      summary: List employees
+      responses:
+        '200':
+          description: Employees list

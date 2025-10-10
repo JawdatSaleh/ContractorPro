@@ -1,0 +1,280 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  phone        String?     @unique
+  passwordHash String
+  status       String      @default("active")
+  lastLoginAt  DateTime?
+  roles        UserRole[]
+  employee     Employee?
+  auditLogs    AuditLog[]  @relation("AuditActor")
+  advances     Advance[]   @relation("AdvanceApprover")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  key         String           @unique
+  nameAr      String
+  description String?
+  users       UserRole[]
+  permissions RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Permission {
+  id        String           @id @default(cuid())
+  key       String           @unique
+  nameAr    String
+  roles     RolePermission[]
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User   @relation(fields: [userId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}
+
+model Department {
+  id              String     @id @default(cuid())
+  nameAr          String
+  costCenterCode  String     @unique
+  employees       Employee[]
+}
+
+model Project {
+  id             String     @id @default(cuid())
+  code           String     @unique
+  nameAr         String
+  costCenterCode String
+  employees      Employee[]
+  expenses       Expense[]
+
+  @@index([costCenterCode])
+}
+
+model Employee {
+  id             String       @id @default(cuid())
+  userId         String?      @unique
+  code           String       @unique
+  fullName       String
+  nationalId     String?
+  hireDate       DateTime?
+  jobTitle       String?
+  departmentId   String?
+  projectId      String?
+  managerId      String?
+  status         String       @default("active")
+  grade          String?
+  hourlyRate     Decimal?     @db.Decimal(12, 2)
+  monthlyBasic   Decimal?     @db.Decimal(12, 2)
+  allowancesJson Json?        @default(jsonb('{}'))
+  bankIban       String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  department     Department?  @relation(fields: [departmentId], references: [id])
+  project        Project?     @relation(fields: [projectId], references: [id])
+  manager        Employee?    @relation("EmployeeManager", fields: [managerId], references: [id])
+  subordinates   Employee[]   @relation("EmployeeManager")
+  contracts      Contract[]
+  attendance     Attendance[]
+  leaves         Leave[]
+  payrollItems   PayrollItem[]
+  advances       Advance[]    @relation("AdvanceEmployee")
+  loans          Loan[]
+  expenses       Expense[]
+
+  @@index([departmentId])
+  @@index([projectId])
+}
+
+model Contract {
+  id              String    @id @default(cuid())
+  employeeId      String
+  type            String
+  startDate       DateTime
+  endDate         DateTime?
+  probationEnd    DateTime?
+  basicSalary     Decimal   @db.Decimal(12, 2)
+  allowancesJson  Json      @default(jsonb('{}'))
+  currency        String
+  visibilityScope String    @default("restricted")
+  signedFileUrl   String?
+  createdAt       DateTime  @default(now())
+  employee        Employee  @relation(fields: [employeeId], references: [id])
+}
+
+model Attendance {
+  id              String    @id @default(cuid())
+  employeeId      String
+  day             DateTime
+  checkIn         DateTime?
+  checkOut        DateTime?
+  shiftCode       String?
+  overtimeMinutes Int       @default(0)
+  status          String    @default("present")
+  employee        Employee  @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId])
+  @@index([day])
+}
+
+model Leave {
+  id         String    @id @default(cuid())
+  employeeId String
+  type       String
+  startDate  DateTime
+  endDate    DateTime
+  status     String    @default("pending")
+  approvedBy String?
+  notes      String?
+  employee   Employee  @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId])
+}
+
+model PayrollBatch {
+  id              String        @id @default(cuid())
+  month           Int
+  year            Int
+  status          String        @default("draft")
+  postedJournalId String?
+  createdBy       String?
+  createdAt       DateTime      @default(now())
+  items           PayrollItem[]
+  journal         Journal?      @relation(fields: [postedJournalId], references: [id])
+
+  @@index([month, year])
+}
+
+model PayrollItem {
+  id               String    @id @default(cuid())
+  batchId          String
+  employeeId       String
+  earningsJson     Json      @default(jsonb('{}'))
+  deductionsJson   Json      @default(jsonb('{}'))
+  gross            Decimal   @db.Decimal(12, 2)
+  net              Decimal   @db.Decimal(12, 2)
+  loanDeduction    Decimal   @db.Decimal(12, 2) @default(0)
+  advanceDeduction Decimal   @db.Decimal(12, 2) @default(0)
+  costCenter       String
+  batch            PayrollBatch @relation(fields: [batchId], references: [id])
+  employee         Employee     @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId])
+  @@index([costCenter])
+}
+
+model Advance {
+  id               String    @id @default(cuid())
+  employeeId       String
+  requestDate      DateTime
+  amount           Decimal   @db.Decimal(12, 2)
+  currency         String
+  status           String    @default("pending")
+  approvedBy       String?
+  repaymentMonths  Int?
+  reason           String?
+  employee         Employee  @relation("AdvanceEmployee", fields: [employeeId], references: [id])
+  approver         User?     @relation("AdvanceApprover", fields: [approvedBy], references: [id])
+
+  @@index([employeeId])
+}
+
+model Loan {
+  id          String    @id @default(cuid())
+  employeeId  String
+  principal   Decimal   @db.Decimal(12, 2)
+  remaining   Decimal   @db.Decimal(12, 2)
+  installment Decimal   @db.Decimal(12, 2)
+  startMonth  String
+  status      String    @default("active")
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId])
+}
+
+model Expense {
+  id          String    @id @default(cuid())
+  projectId   String?
+  employeeId  String?
+  category    String
+  amount      Decimal   @db.Decimal(12, 2)
+  currency    String
+  date        DateTime
+  costCenter  String
+  reference   String?
+  approvedBy  String?
+  project     Project?  @relation(fields: [projectId], references: [id])
+  employee    Employee? @relation(fields: [employeeId], references: [id])
+
+  @@index([projectId])
+  @@index([employeeId])
+  @@index([costCenter])
+}
+
+model Journal {
+  id          String         @id @default(cuid())
+  date        DateTime
+  description String
+  status      String
+  entries     JournalEntry[]
+  payrollBatch PayrollBatch[]
+}
+
+model JournalEntry {
+  id          String   @id @default(cuid())
+  journalId   String
+  accountCode String
+  debit       Decimal  @db.Decimal(12, 2)
+  credit      Decimal  @db.Decimal(12, 2)
+  costCenter  String
+  ref         String?
+  journal     Journal  @relation(fields: [journalId], references: [id])
+
+  @@index([accountCode])
+  @@index([costCenter])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  action      String
+  entity      String
+  entityId    String
+  beforeJson  Json?
+  afterJson   Json?
+  at          DateTime @default(now())
+  actor       User?    @relation("AuditActor", fields: [actorUserId], references: [id])
+}
+
+view v_employee_public {
+  id        String
+  fullName  String
+  jobTitle  String?
+  department String?
+  project   String?
+}
