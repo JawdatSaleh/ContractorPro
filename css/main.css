@@ -4460,6 +4460,33 @@ body {
 }
 
 /* Responsive layout enhancements */
+@media (min-width: 1024px) {
+  #sidebar {
+    position: fixed !important;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 16rem;
+    transform: translateX(0) !important;
+  }
+
+  #sidebar nav {
+    display: block;
+    padding: 1rem !important;
+    gap: 0;
+  }
+
+  #sidebar nav a {
+    flex: none;
+    width: 100%;
+  }
+
+  #sidebar + div,
+  .mr-64 {
+    margin-right: 16rem !important;
+  }
+}
+
 @media (max-width: 1023.98px) {
   #sidebar {
     position: relative !important;
