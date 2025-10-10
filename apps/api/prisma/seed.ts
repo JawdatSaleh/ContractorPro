@@ -11,7 +11,10 @@ const permissionsSeed = [
   { key: permissionKeys.VIEW_CONTRACT_VALUES, nameAr: 'عرض قيمة العقد' },
   { key: permissionKeys.MANAGE_PAYROLL, nameAr: 'إدارة الرواتب' },
   { key: permissionKeys.APPROVE_ADVANCES, nameAr: 'اعتماد السلف' },
-  { key: permissionKeys.VIEW_FINANCE_REPORTS, nameAr: 'عرض تقارير المالية' }
+  { key: permissionKeys.VIEW_FINANCE_REPORTS, nameAr: 'عرض تقارير المالية' },
+  { key: permissionKeys.VIEW_ACTIVITY_LOGS, nameAr: 'عرض سجل الأنشطة' },
+  { key: permissionKeys.MANAGE_ACTIVITY_RETENTION, nameAr: 'إدارة الاحتفاظ بالأنشطة' },
+  { key: permissionKeys.VIEW_ACTIVITY_ANALYTICS, nameAr: 'عرض تحليلات النشاط' }
 ];
 
 const rolesSeed: { key: string; nameAr: string; permissions: string[] }[] = [
@@ -23,17 +26,30 @@ const rolesSeed: { key: string; nameAr: string; permissions: string[] }[] = [
   {
     key: roleKeys.CEO,
     nameAr: 'المدير التنفيذي',
-    permissions: [permissionKeys.VIEW_EMPLOYEES, permissionKeys.VIEW_CONTRACT_VALUES, permissionKeys.MANAGE_PAYROLL, permissionKeys.VIEW_FINANCE_REPORTS]
+    permissions: [
+      permissionKeys.VIEW_EMPLOYEES,
+      permissionKeys.VIEW_CONTRACT_VALUES,
+      permissionKeys.MANAGE_PAYROLL,
+      permissionKeys.VIEW_FINANCE_REPORTS,
+      permissionKeys.VIEW_ACTIVITY_LOGS,
+      permissionKeys.VIEW_ACTIVITY_ANALYTICS
+    ]
   },
   {
     key: roleKeys.CFO,
     nameAr: 'المدير المالي',
-    permissions: [permissionKeys.MANAGE_PAYROLL, permissionKeys.APPROVE_ADVANCES, permissionKeys.VIEW_FINANCE_REPORTS]
+    permissions: [
+      permissionKeys.MANAGE_PAYROLL,
+      permissionKeys.APPROVE_ADVANCES,
+      permissionKeys.VIEW_FINANCE_REPORTS,
+      permissionKeys.VIEW_ACTIVITY_LOGS,
+      permissionKeys.VIEW_ACTIVITY_ANALYTICS
+    ]
   },
   {
     key: roleKeys.ACCOUNTANT,
     nameAr: 'محاسب',
-    permissions: [permissionKeys.MANAGE_PAYROLL, permissionKeys.APPROVE_ADVANCES]
+    permissions: [permissionKeys.MANAGE_PAYROLL, permissionKeys.APPROVE_ADVANCES, permissionKeys.VIEW_ACTIVITY_LOGS]
   },
   {
     key: roleKeys.HR_MANAGER,

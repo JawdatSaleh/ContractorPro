@@ -5,6 +5,7 @@ import { ValidationError } from '../common/errors.js';
 import { roleKeys } from '../auth/roles.js';
 import { requireRole } from '../auth/rbac.js';
 import { z } from 'zod';
+import { recordActivity } from '../activity/service.js';
 
 function sanitizeContractForRole(contract: any, roleKeysList: string[]) {
   const privileged = ['system_admin', 'ceo', 'cfo', 'hr_manager'];
@@ -111,6 +112,20 @@ export function hrRoutes(app: FastifyInstance) {
         visibilityScope: parsed.data.visibilityScope
       }
     });
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'contract.create',
+      entityType: 'contract',
+      entityId: created.id,
+      description: 'إنشاء عقد جديد للموظف',
+      metadata: {
+        employeeId: created.employeeId,
+        type: created.type,
+        startDate: created.startDate.toISOString(),
+        endDate: created.endDate ? created.endDate.toISOString() : null
+      },
+      request
+    });
     return sanitizeContractForRole(created, request.user?.roles ?? []);
   });
 
@@ -130,7 +145,7 @@ export function hrRoutes(app: FastifyInstance) {
     });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) throw new ValidationError(parsed.error.flatten());
-    await prisma.attendance.createMany({
+    const created = await prisma.attendance.createMany({
       data: parsed.data.records.map((record) => ({
         employeeId: record.employeeId,
         day: new Date(record.day),
@@ -141,7 +156,15 @@ export function hrRoutes(app: FastifyInstance) {
         status: record.status
       }))
     });
-    return { success: true };
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'attendance.bulk_import',
+      entityType: 'attendance_batch',
+      description: 'استيراد سجل حضور جماعي',
+      metadata: { count: parsed.data.records.length },
+      request
+    });
+    return { success: true, inserted: created.count };
   });
 
   app.get('/api/attendance', { preHandler: requireRole([roleKeys.ADMIN, roleKeys.HR_MANAGER, roleKeys.SUPERVISOR, roleKeys.ENGINEER, roleKeys.EMPLOYEE]) }, async (request, reply) => {
@@ -187,6 +210,20 @@ export function hrRoutes(app: FastifyInstance) {
         notes: parsed.data.notes
       }
     });
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'leave.request',
+      entityType: 'leave',
+      entityId: created.id,
+      description: 'تقديم طلب إجازة جديد',
+      metadata: {
+        employeeId: created.employeeId,
+        type: created.type,
+        startDate: created.startDate.toISOString(),
+        endDate: created.endDate.toISOString()
+      },
+      request
+    });
     return created;
   });
 
@@ -194,6 +231,7 @@ export function hrRoutes(app: FastifyInstance) {
     const schema = z.object({ status: z.enum(['approved', 'rejected']), notes: z.string().optional() });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) throw new ValidationError(parsed.error.flatten());
+    const before = await prisma.leave.findUnique({ where: { id: String(request.params['id']) } });
     const updated = await prisma.leave.update({
       where: { id: String(request.params['id']) },
       data: {
@@ -201,6 +239,18 @@ export function hrRoutes(app: FastifyInstance) {
         notes: parsed.data.notes,
         approvedBy: request.user?.sub ?? null
       }
+    });
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'leave.status.update',
+      entityType: 'leave',
+      entityId: updated.id,
+      description: `تحديث حالة طلب الإجازة إلى ${parsed.data.status}`,
+      metadata: {
+        before: serializeEntity(before),
+        after: serializeEntity(updated)
+      },
+      request
     });
     return updated;
   });
@@ -229,4 +279,9 @@ export function hrRoutes(app: FastifyInstance) {
     const leaves = await prisma.leave.findMany({ where, orderBy: { startDate: 'desc' } });
     return leaves;
   });
+}
+
+function serializeEntity<T>(value: T | null | undefined) {
+  if (!value) return null;
+  return JSON.parse(JSON.stringify(value));
 }

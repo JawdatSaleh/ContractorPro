@@ -5,6 +5,7 @@ import { ValidationError } from '../common/errors.js';
 import { permissionKeys, roleKeys } from '../auth/roles.js';
 import { requirePermission, requireRole } from '../auth/rbac.js';
 import { z } from 'zod';
+import { recordActivity } from '../activity/service.js';
 
 export function financeRoutes(app: FastifyInstance) {
   app.post('/api/payroll/batches', { preHandler: requirePermission([permissionKeys.MANAGE_PAYROLL]) }, async (request) => {
@@ -17,6 +18,18 @@ export function financeRoutes(app: FastifyInstance) {
         status: 'draft',
         createdBy: request.user?.sub ?? null
       }
+    });
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'payroll.batch.create',
+      entityType: 'payroll_batch',
+      entityId: batch.id,
+      description: `إنشاء دفعة رواتب ${batch.month}/${batch.year}`,
+      metadata: {
+        month: batch.month,
+        year: batch.year
+      },
+      request
     });
     return batch;
   });
@@ -46,6 +59,17 @@ export function financeRoutes(app: FastifyInstance) {
       await prisma.payrollItem.createMany({ data: items });
     }
     await prisma.payrollBatch.update({ where: { id: batchId }, data: { status: 'calculated' } });
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'payroll.batch.calculate',
+      entityType: 'payroll_batch',
+      entityId: batchId,
+      description: 'حساب عناصر دفعة الرواتب',
+      metadata: {
+        items: items.length
+      },
+      request
+    });
     return { success: true, count: items.length };
   });
 
@@ -88,6 +112,19 @@ export function financeRoutes(app: FastifyInstance) {
 
     await prisma.payrollBatch.update({ where: { id: batchId }, data: { status: 'posted', postedJournalId: journal.id } });
 
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'payroll.batch.post',
+      entityType: 'payroll_batch',
+      entityId: batchId,
+      description: 'ترحيل دفعة الرواتب إلى القيود المحاسبية',
+      metadata: {
+        journalId: journal.id,
+        totalsByCostCenter
+      },
+      request
+    });
+
     return journal;
   });
 
@@ -124,6 +161,19 @@ export function financeRoutes(app: FastifyInstance) {
         reason: parsed.data.reason
       }
     });
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'advance.create',
+      entityType: 'advance',
+      entityId: advance.id,
+      description: 'إنشاء طلب سلفة جديدة',
+      metadata: {
+        employeeId: advance.employeeId,
+        amount: Number(advance.amount),
+        currency: advance.currency
+      },
+      request
+    });
     return advance;
   });
 
@@ -131,6 +181,7 @@ export function financeRoutes(app: FastifyInstance) {
     const schema = z.object({ status: z.enum(['approved', 'rejected']), repaymentMonths: z.number().int().positive().optional() });
     const parsed = schema.safeParse(request.body);
     if (!parsed.success) throw new ValidationError(parsed.error.flatten());
+    const before = await prisma.advance.findUnique({ where: { id: String(request.params['id']) } });
     const updated = await prisma.advance.update({
       where: { id: String(request.params['id']) },
       data: {
@@ -138,6 +189,18 @@ export function financeRoutes(app: FastifyInstance) {
         repaymentMonths: parsed.data.repaymentMonths,
         approvedBy: request.user?.sub ?? null
       }
+    });
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'advance.status.update',
+      entityType: 'advance',
+      entityId: updated.id,
+      description: `تحديث حالة السلفة إلى ${parsed.data.status}`,
+      metadata: {
+        before: serializeEntity(before),
+        after: serializeEntity(updated)
+      },
+      request
     });
     return updated;
   });
@@ -161,10 +224,24 @@ export function financeRoutes(app: FastifyInstance) {
         status: 'active'
       }
     });
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'loan.create',
+      entityType: 'loan',
+      entityId: loan.id,
+      description: 'إضافة قرض جديد للموظف',
+      metadata: {
+        employeeId: loan.employeeId,
+        principal: Number(loan.principal),
+        installment: Number(loan.installment)
+      },
+      request
+    });
     return loan;
   });
 
   app.patch('/api/loans/:id/settle', { preHandler: requireRole([roleKeys.ADMIN, roleKeys.CFO, roleKeys.ACCOUNTANT]) }, async (request) => {
+    const before = await prisma.loan.findUnique({ where: { id: String(request.params['id']) } });
     const loan = await prisma.loan.update({
       where: { id: String(request.params['id']) },
       data: {
@@ -172,9 +249,20 @@ export function financeRoutes(app: FastifyInstance) {
         remaining: 0
       }
     });
+    await recordActivity({
+      userId: request.user?.sub,
+      actionType: 'loan.settle',
+      entityType: 'loan',
+      entityId: loan.id,
+      description: 'تسوية القرض بالكامل',
+      metadata: {
+        before: serializeEntity(before),
+        after: serializeEntity(loan)
+      },
+      request
+    });
     return loan;
   });
-}
 
   app.get('/api/advances', { preHandler: requireRole([roleKeys.ADMIN, roleKeys.CFO, roleKeys.ACCOUNTANT, roleKeys.HR_MANAGER, roleKeys.SUPERVISOR, roleKeys.ENGINEER, roleKeys.EMPLOYEE]) }, async (request) => {
     const where: any = {};
@@ -203,3 +291,9 @@ export function financeRoutes(app: FastifyInstance) {
     });
     return items.map((row) => ({ costCenter: row.costCenter, totalNet: Number(row._sum.net ?? 0) }));
   });
+}
+
+function serializeEntity<T>(value: T | null | undefined) {
+  if (!value) return null;
+  return JSON.parse(JSON.stringify(value));
+}

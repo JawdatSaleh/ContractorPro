@@ -10,6 +10,7 @@ const navItems = [
   { to: '/leaves', label: 'الإجازات', permissions: ['leaves:view'] },
   { to: '/payroll', label: 'الرواتب', permissions: ['payroll:view'] },
   { to: '/reports', label: 'التقارير', permissions: ['reports:view'] },
+  { to: '/activity', label: 'سجل النشاطات', permissions: ['view_activity_logs'] },
   { to: '/rbac', label: 'إدارة الصلاحيات', permissions: ['roles:manage'] }
 ];
 
