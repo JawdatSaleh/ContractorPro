@@ -6,6 +6,67 @@
     <title>مركز الموارد البشرية - ContractorPro</title>
     <link rel="stylesheet" href="../css/main.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        .hr-nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            text-align: right;
+            padding: 1.25rem 1.5rem;
+            border-radius: 1.25rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .hr-nav-btn .hr-nav-label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .hr-nav-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1E293B;
+        }
+
+        .hr-nav-subtitle {
+            font-size: 0.75rem;
+            color: #64748B;
+            opacity: 0.85;
+        }
+
+        .hr-nav-btn .hr-nav-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .hr-nav-btn.active .hr-nav-title,
+        .hr-nav-btn.active .hr-nav-subtitle {
+            color: #ffffff;
+        }
+
+        .hr-nav-btn.active .hr-nav-subtitle {
+            opacity: 0.85;
+        }
+
+        .hr-nav-btn:hover {
+            transform: translateY(-4px);
+        }
+
+        @media (max-width: 640px) {
+            .hr-nav-btn {
+                flex-direction: row-reverse;
+                align-items: center;
+            }
+        }
+    </style>
 </head>
 <body class="bg-background font-arabic">
     <!-- Navigation Sidebar -->
@@ -109,6 +170,88 @@
         </header>
 
         <main class="p-6 space-y-6">
+            <!-- HR Quick Navigation -->
+            <section class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                <div class="flex flex-col gap-2">
+                    <h2 class="text-xl font-bold text-text-primary">الوحدات الرئيسية لقسم الموارد البشرية</h2>
+                    <p class="text-sm text-text-secondary">اختر وجهتك مباشرة من بداية الصفحة عبر أزرار حديثة ومسطحة لكل وحدة.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <button data-tab-target="employees" class="tab-btn hr-nav-btn active bg-primary text-white border border-primary shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-100">
+                        <div class="flex items-center gap-3">
+                            <span class="hr-nav-icon bg-white bg-opacity-20 text-white">
+                                <i class="fas fa-users"></i>
+                            </span>
+                            <div class="hr-nav-label">
+                                <span class="hr-nav-title">دليل الموظفين</span>
+                                <span class="hr-nav-subtitle">كل بيانات الموظفين في مكان واحد</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-arrow-left text-sm opacity-80"></i>
+                    </button>
+                    <button data-tab-target="teams" class="tab-btn hr-nav-btn bg-surface text-text-secondary border border-border shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-100">
+                        <div class="flex items-center gap-3">
+                            <span class="hr-nav-icon bg-primary-50 text-primary">
+                                <i class="fas fa-user-friends"></i>
+                            </span>
+                            <div class="hr-nav-label">
+                                <span class="hr-nav-title">إدارة الفرق</span>
+                                <span class="hr-nav-subtitle">تنظيم الهياكل والمهام اليومية</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-arrow-left text-sm text-text-secondary"></i>
+                    </button>
+                    <button data-tab-target="payroll" class="tab-btn hr-nav-btn bg-surface text-text-secondary border border-border shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-100">
+                        <div class="flex items-center gap-3">
+                            <span class="hr-nav-icon bg-primary-50 text-primary">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </span>
+                            <div class="hr-nav-label">
+                                <span class="hr-nav-title">الرواتب والمدفوعات</span>
+                                <span class="hr-nav-subtitle">متابعة التعويضات والالتزامات المالية</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-arrow-left text-sm text-text-secondary"></i>
+                    </button>
+                    <button data-tab-target="permissions" class="tab-btn hr-nav-btn bg-surface text-text-secondary border border-border shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-100">
+                        <div class="flex items-center gap-3">
+                            <span class="hr-nav-icon bg-primary-50 text-primary">
+                                <i class="fas fa-shield-alt"></i>
+                            </span>
+                            <div class="hr-nav-label">
+                                <span class="hr-nav-title">الصلاحيات والأدوار</span>
+                                <span class="hr-nav-subtitle">ضبط مستويات الوصول وسياسات الاعتماد</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-arrow-left text-sm text-text-secondary"></i>
+                    </button>
+                    <button data-tab-target="attendance" class="tab-btn hr-nav-btn bg-surface text-text-secondary border border-border shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-100">
+                        <div class="flex items-center gap-3">
+                            <span class="hr-nav-icon bg-primary-50 text-primary">
+                                <i class="fas fa-clock"></i>
+                            </span>
+                            <div class="hr-nav-label">
+                                <span class="hr-nav-title">الحضور والانصراف</span>
+                                <span class="hr-nav-subtitle">راقب الالتزام اليومي والتقارير اللحظية</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-arrow-left text-sm text-text-secondary"></i>
+                    </button>
+                    <button data-tab-target="performance" class="tab-btn hr-nav-btn bg-surface text-text-secondary border border-border shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-100">
+                        <div class="flex items-center gap-3">
+                            <span class="hr-nav-icon bg-primary-50 text-primary">
+                                <i class="fas fa-chart-bar"></i>
+                            </span>
+                            <div class="hr-nav-label">
+                                <span class="hr-nav-title">تقييم الأداء</span>
+                                <span class="hr-nav-subtitle">تتبع الأداء الفردي والخطط التطويرية</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-arrow-left text-sm text-text-secondary"></i>
+                    </button>
+                </div>
+            </section>
+
             <!-- HR Dashboard Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Total Employees -->
@@ -181,36 +324,6 @@
 
             <!-- Main Content Tabs -->
             <div class="bg-surface rounded-xl shadow-card border border-border">
-                <!-- Tab Navigation -->
-                <div class="border-b border-border">
-                    <nav class="flex justify-end flex-wrap items-center gap-4 px-6">
-                        <button data-tab-target="employees" class="tab-btn active border-b-2 border-primary text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
-                            <i class="fas fa-users"></i>
-                            دليل الموظفين
-                        </button>
-                        <button data-tab-target="teams" class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
-                            <i class="fas fa-user-friends"></i>
-                            إدارة الفرق
-                        </button>
-                        <button data-tab-target="payroll" class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
-                            <i class="fas fa-money-bill-wave"></i>
-                            الرواتب والمدفوعات
-                        </button>
-                        <button data-tab-target="permissions" class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
-                            <i class="fas fa-shield-alt"></i>
-                            الصلاحيات والأدوار
-                        </button>
-                        <button data-tab-target="attendance" class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
-                            <i class="fas fa-clock"></i>
-                            الحضور والانصراف
-                        </button>
-                        <button data-tab-target="performance" class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
-                            <i class="fas fa-chart-bar"></i>
-                            تقييم الأداء
-                        </button>
-                    </nav>
-                </div>
-
                 <!-- Tab Content -->
                 <div class="p-6">
                     <!-- Employees Tab -->
@@ -1416,20 +1529,38 @@
         }
 
         function setupTabNavigation() {
-            document.querySelectorAll('.tab-btn').forEach(button => {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const activeButtonClasses = ['active', 'bg-primary', 'text-white', 'border-primary', 'shadow-lg'];
+            const inactiveButtonClasses = ['bg-surface', 'text-text-secondary', 'border-border', 'shadow-sm'];
+            const activeIconClasses = ['bg-white', 'bg-opacity-20', 'text-white'];
+            const inactiveIconClasses = ['bg-primary-50', 'text-primary'];
+
+            tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const target = button.dataset.tabTarget;
                     if (!target) return;
 
                     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-                    document.querySelectorAll('.tab-btn').forEach(btn => {
-                        btn.classList.remove('active', 'border-primary', 'text-primary');
-                        btn.classList.add('border-transparent', 'text-text-secondary');
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove(...activeButtonClasses);
+                        btn.classList.add(...inactiveButtonClasses);
+
+                        const icon = btn.querySelector('.hr-nav-icon');
+                        if (icon) {
+                            icon.classList.remove(...activeIconClasses);
+                            icon.classList.add(...inactiveIconClasses);
+                        }
                     });
 
                     document.getElementById(`${target}-tab`)?.classList.remove('hidden');
-                    button.classList.add('active', 'border-primary', 'text-primary');
-                    button.classList.remove('border-transparent', 'text-text-secondary');
+                    button.classList.add(...activeButtonClasses);
+                    button.classList.remove(...inactiveButtonClasses);
+
+                    const activeIcon = button.querySelector('.hr-nav-icon');
+                    if (activeIcon) {
+                        activeIcon.classList.add(...activeIconClasses);
+                        activeIcon.classList.remove(...inactiveIconClasses);
+                    }
                 });
             });
         }
