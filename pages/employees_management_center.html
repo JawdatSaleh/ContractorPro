@@ -8,6 +8,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    <script
+        type="module"
+        src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"
+    ></script>
+    <script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
 </head>
 <body class="bg-background text-text-primary font-arabic">
     <div class="min-h-screen flex">
@@ -31,7 +36,7 @@
                 <a href="team_management.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-secondary-100 hover:text-text-primary"><i class="fas fa-people-group w-5"></i><span>إدارة الفرق</span></a>
                 <a href="human_resources_center.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-secondary-100 hover:text-text-primary"><i class="fas fa-user-tie w-5"></i><span>مركز الموارد البشرية</span></a>
                 <div class="pt-6 border-t border-border mt-6">
-                    <a href="system_settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-secondary-100 hover:text-text-primary"><i class="fas fa-gear w-5"></i><span>إعدادات النظام</span></a>
+                    <a href="settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-secondary-100 hover:text-text-primary"><i class="fas fa-gear w-5"></i><span>إعدادات النظام</span></a>
                 </div>
             </nav>
             <div class="p-6 border-t border-border text-sm text-text-secondary space-y-2">
@@ -866,5 +871,7 @@
         attachFilters();
         initModals();
     </script>
+    <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+    <script src="../js/session.js" data-login-path="../login.html"></script>
 </body>
 </html>
