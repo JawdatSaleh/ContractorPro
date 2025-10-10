@@ -49,8 +49,8 @@
             align-items: center;
             justify-content: center;
             font-size: 1.35rem;
-            background-color: var(--primary-50);
-            color: var(--primary);
+            background-color: #EFF6FF;
+            color: #2563EB;
             flex-shrink: 0;
         }
 
@@ -67,7 +67,7 @@
         }
 
         .project-nav-btn.active {
-            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
             color: #ffffff;
             border-color: transparent;
             box-shadow: var(--shadow-lg);
@@ -7700,6 +7700,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const galleryFilter = document.getElementById('galleryFilter');
+    if (galleryFilter) {
+        galleryFilter.addEventListener('change', () => sortGalleryPhotos(true));
+    }
+
+    const phaseCsvInput = document.getElementById('phaseCsvInput');
+    if (phaseCsvInput) {
+        phaseCsvInput.addEventListener('change', handlePhaseCsvImport);
+    }
+
     // File drop zone handlers
     const fileDropZone = document.getElementById('fileDropZone');
     const photoDropZone = document.getElementById('photoDropZone');
@@ -9582,8 +9592,10 @@ function openFinancialCustomization() {
 
     if (window.projectStore) {
       window.projectStore.projects = normalizedProjects.slice();
-      window.projectStore.saveProjects();
-    } else {
+      if (normalizedProjects.length) {
+        window.projectStore.saveProjects();
+      }
+    } else if (normalizedProjects.length) {
       saveProjects(normalizedProjects);
     }
 
