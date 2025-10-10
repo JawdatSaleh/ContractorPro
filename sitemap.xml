@@ -25,9 +25,6 @@
     <loc>https://contractorpro.sa/pages/contact.html</loc>
   </url>
   <url>
-    <loc>https://contractorpro.sa/pages/employees_management_center.html</loc>
-  </url>
-  <url>
     <loc>https://contractorpro.sa/pages/faq.html</loc>
   </url>
   <url>
@@ -44,6 +41,12 @@
   </url>
   <url>
     <loc>https://contractorpro.sa/pages/human_resources_center.html</loc>
+  </url>
+  <url>
+    <loc>https://contractorpro.sa/pages/add_employee.html</loc>
+  </url>
+  <url>
+    <loc>https://contractorpro.sa/pages/employee_profile.html</loc>
   </url>
   <url>
     <loc>https://contractorpro.sa/pages/main_dashboard.html</loc>
@@ -70,7 +73,7 @@
     <loc>https://contractorpro.sa/pages/settings.html</loc>
   </url>
   <url>
-    <loc>https://contractorpro.sa/pages/team_management.html</loc>
+    <loc>https://contractorpro.sa/pages/human_resources_center.html</loc>
   </url>
   <url>
     <loc>https://contractorpro.sa/pages/user_profile.html</loc>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إدارة بيانات الموظف - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+</head>
+<body class="bg-background font-arabic">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-surface border-b border-border shadow-card">
+            <div class="max-w-6xl mx-auto px-6 py-5 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <p class="text-sm text-text-tertiary">مسار الموارد البشرية</p>
+                    <h1 id="pageTitle" class="text-2xl font-bold text-text-primary">إضافة موظف جديد</h1>
+                    <p class="text-sm text-text-secondary">أدخل بيانات الموظف بدقة ليتم مزامنتها مع مركز الموارد البشرية.</p>
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="human_resources_center.html" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                        <i class="fas fa-arrow-right ml-2"></i>
+                        العودة إلى مركز الموارد البشرية
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1">
+            <form id="employeeForm" class="max-w-6xl mx-auto px-6 py-8 space-y-8">
+                <section class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-6">
+                    <div class="flex items-center justify-between flex-wrap gap-4">
+                        <div>
+                            <h2 class="text-lg font-semibold text-text-primary">البيانات الأساسية</h2>
+                            <p class="text-sm text-text-secondary">تستخدم هذه البيانات في التعريف الرسمي للموظف.</p>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-text-tertiary">
+                            <i class="fas fa-shield-check text-primary"></i>
+                            يتم حفظ البيانات في التخزين المحلي للمتصفح فقط.
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">الاسم الكامل</span>
+                            <input type="text" name="fullName" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: خالد العتيبي" required />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">المسمى الوظيفي</span>
+                            <input type="text" name="jobTitle" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: مدير مشروع" required />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">البريد الإلكتروني</span>
+                            <input type="email" name="email" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="name@company.sa" required />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">رقم الجوال</span>
+                            <input type="tel" name="phone" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: +966 50 123 4567" required />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">القسم</span>
+                            <select name="department" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" required>
+                                <option value="engineering">الهندسة</option>
+                                <option value="construction">البناء</option>
+                                <option value="finance">المالية</option>
+                                <option value="management">الإدارة</option>
+                                <option value="hr">الموارد البشرية</option>
+                                <option value="it">تقنية المعلومات</option>
+                            </select>
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">حالة الموظف</span>
+                            <select name="status" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" required>
+                                <option value="active">على رأس العمل</option>
+                                <option value="onsite">في الموقع</option>
+                                <option value="remote">عمل عن بعد</option>
+                                <option value="leave">إجازة</option>
+                            </select>
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">تاريخ التعيين</span>
+                            <input type="date" name="joinDate" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" required />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">رابط الصورة التعريفية</span>
+                            <input type="url" name="photo" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="https://" />
+                        </label>
+                    </div>
+                </section>
+
+                <section class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-6">
+                    <div>
+                        <h2 class="text-lg font-semibold text-text-primary">تفاصيل العمل والتنظيم</h2>
+                        <p class="text-sm text-text-secondary">تساعد هذه البيانات في إدارة التسلسل الوظيفي ومتابعة الخطط التطويرية.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">المدير المباشر</span>
+                            <input type="text" name="manager" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: مها الدوسري" />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">المستوى الوظيفي / الدرجة</span>
+                            <input type="text" name="grade" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: G6" />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">موقع العمل</span>
+                            <input type="text" name="location" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: الرياض - المقر الرئيسي" />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">نوع الدوام</span>
+                            <select name="employmentType" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary">
+                                <option value="دوام كامل">دوام كامل</option>
+                                <option value="دوام جزئي">دوام جزئي</option>
+                                <option value="متعاقد">متعاقد</option>
+                            </select>
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">نوع العقد</span>
+                            <select name="contractType" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary">
+                                <option value="عقد دائم">عقد دائم</option>
+                                <option value="عقد محدد المدة">عقد محدد المدة</option>
+                                <option value="استشاري">استشاري</option>
+                            </select>
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">جدول صرف الرواتب</span>
+                            <select name="paySchedule" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary">
+                                <option value="شهري">شهري</option>
+                                <option value="أسبوعي">أسبوعي</option>
+                                <option value="نصف شهري">نصف شهري</option>
+                            </select>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-6">
+                    <div>
+                        <h2 class="text-lg font-semibold text-text-primary">الرواتب والبدلات</h2>
+                        <p class="text-sm text-text-secondary">تُستخدم هذه البيانات في الحسابات المالية والتقارير الدورية.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-sm">
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">الراتب الأساسي (بالريال)</span>
+                            <input type="number" name="salary" min="0" step="100" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: 12000" required />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">بدل السكن</span>
+                            <input type="number" name="allowanceHousing" min="0" step="100" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: 3000" />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">بدل النقل</span>
+                            <input type="number" name="allowanceTransport" min="0" step="100" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: 1000" />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">بدلات إضافية</span>
+                            <input type="number" name="allowanceOther" min="0" step="100" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: 750" />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">الاستقطاعات الدائمة</span>
+                            <input type="number" name="deductionSocial" min="0" step="50" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="تأمينات اجتماعية" />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">سلف أو خصومات أخرى</span>
+                            <input type="number" name="deductionLoans" min="0" step="50" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: 300" />
+                        </label>
+                    </div>
+                </section>
+
+                <section class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-6">
+                    <div>
+                        <h2 class="text-lg font-semibold text-text-primary">بيانات إضافية</h2>
+                        <p class="text-sm text-text-secondary">تساعد هذه البيانات على إظهار ملف متكامل للموظف.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">رقم الهوية / الإقامة</span>
+                            <input type="text" name="nationalId" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: 1029384756" />
+                        </label>
+                        <label class="space-y-2">
+                            <span class="text-text-secondary">البنك</span>
+                            <input type="text" name="bankName" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: بنك الراجحي" />
+                        </label>
+                        <label class="space-y-2 md:col-span-2">
+                            <span class="text-text-secondary">رقم الآيبان</span>
+                            <input type="text" name="iban" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: SA0380000001234567891234" />
+                        </label>
+                        <label class="space-y-2 md:col-span-2">
+                            <span class="text-text-secondary">مهارات أو ملاحظات إضافية</span>
+                            <textarea name="skills" rows="3" class="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: إدارة المشاريع، تحليل البيانات"></textarea>
+                        </label>
+                    </div>
+                </section>
+
+                <div class="flex items-center justify-between bg-surface border border-border rounded-2xl shadow-card p-6">
+                    <button type="button" onclick="window.location.href='human_resources_center.html'" class="px-4 py-2 border border-border rounded-lg text-text-secondary hover:bg-secondary-50 transition-fast">إلغاء</button>
+                    <div class="flex items-center gap-3">
+                        <button type="reset" class="px-4 py-2 border border-border rounded-lg text-text-secondary hover:bg-secondary-50 transition-fast">إعادة تعيين</button>
+                        <button type="submit" class="px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast">حفظ البيانات</button>
+                    </div>
+                </div>
+            </form>
+        </main>
+
+        <footer class="mt-auto bg-surface border-t border-border py-4">
+            <div class="max-w-6xl mx-auto px-6 text-sm text-text-secondary flex items-center justify-between">
+                <span>© 2025 ContractorPro</span>
+                <span id="formStatus">جاهز للحفظ</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'contractorProEmployees';
+        const LAST_EMPLOYEE_KEY = 'contractorProLastEmployee';
+        const params = new URLSearchParams(window.location.search);
+        const editingId = params.get('employeeId');
+
+        const departmentLabels = {
+            engineering: 'قسم الهندسة',
+            construction: 'قسم البناء',
+            finance: 'قسم المالية',
+            management: 'الإدارة العامة',
+            hr: 'قسم الموارد البشرية',
+            it: 'تقنية المعلومات'
+        };
+
+        const statusLabels = {
+            active: 'نشط',
+            onsite: 'في الموقع',
+            remote: 'عمل عن بعد',
+            leave: 'إجازة'
+        };
+
+        const form = document.getElementById('employeeForm');
+        const pageTitle = document.getElementById('pageTitle');
+        const formStatus = document.getElementById('formStatus');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeForm();
+        });
+
+        function initializeForm() {
+            if (editingId) {
+                const employees = loadEmployees();
+                const employee = employees.find(emp => emp.id === editingId);
+                if (employee) {
+                    pageTitle.textContent = `تحديث بيانات ${employee.fullName}`;
+                    populateForm(employee);
+                    formStatus.textContent = 'وضع التعديل';
+                }
+            } else {
+                const today = new Date().toISOString().split('T')[0];
+                form.elements['joinDate'].value = today;
+            }
+        }
+
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const employees = loadEmployees();
+
+            const id = editingId || generateEmployeeId(employees);
+            const department = formData.get('department');
+            const status = formData.get('status');
+
+            const allowanceHousing = Number(formData.get('allowanceHousing') || 0);
+            const allowanceTransport = Number(formData.get('allowanceTransport') || 0);
+            const allowanceOther = Number(formData.get('allowanceOther') || 0);
+            const deductionSocial = Number(formData.get('deductionSocial') || 0);
+            const deductionLoans = Number(formData.get('deductionLoans') || 0);
+
+            const employeeRecord = {
+                id,
+                employeeCode: id,
+                fullName: formData.get('fullName'),
+                jobTitle: formData.get('jobTitle'),
+                department,
+                departmentName: departmentLabels[department] || department,
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                joinDate: formData.get('joinDate'),
+                status,
+                statusLabel: statusLabels[status] || 'نشط',
+                salary: Number(formData.get('salary') || 0),
+                currency: 'ر.س',
+                location: formData.get('location') || 'غير محدد',
+                manager: formData.get('manager') || '',
+                grade: formData.get('grade') || '',
+                nationalId: formData.get('nationalId') || '',
+                bankName: formData.get('bankName') || '',
+                iban: formData.get('iban') || '',
+                employmentType: formData.get('employmentType') || 'دوام كامل',
+                contractType: formData.get('contractType') || 'عقد دائم',
+                paySchedule: formData.get('paySchedule') || 'شهري',
+                photo: formData.get('photo') || getFallbackPhoto(formData.get('fullName')),
+                allowances: buildAllowances(allowanceHousing, allowanceTransport, allowanceOther),
+                deductions: buildDeductions(deductionSocial, deductionLoans),
+                payrollHistory: buildPayrollHistory(formData.get('salary'), allowanceHousing + allowanceTransport + allowanceOther, deductionSocial + deductionLoans),
+                leaves: [{ type: 'سنوية', total: 21, used: 0 }],
+                skills: parseSkills(formData.get('skills')),
+                tags: [],
+                upcomingPayments: [],
+                documents: [],
+                timeline: buildTimeline(editingId)
+            };
+
+            const existingIndex = employees.findIndex(emp => emp.id === id);
+            if (existingIndex >= 0) {
+                employees[existingIndex] = { ...employees[existingIndex], ...employeeRecord };
+            } else {
+                employees.push(employeeRecord);
+            }
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(employees));
+            localStorage.setItem(LAST_EMPLOYEE_KEY, id);
+            formStatus.textContent = 'تم الحفظ بنجاح';
+            window.location.href = 'human_resources_center.html';
+        });
+
+        function populateForm(employee) {
+            const entries = {
+                fullName: employee.fullName,
+                jobTitle: employee.jobTitle,
+                email: employee.email,
+                phone: employee.phone,
+                department: employee.department,
+                status: employee.status,
+                joinDate: employee.joinDate,
+                photo: employee.photo,
+                manager: employee.manager,
+                grade: employee.grade,
+                location: employee.location,
+                employmentType: employee.employmentType,
+                contractType: employee.contractType,
+                paySchedule: employee.paySchedule,
+                salary: employee.salary,
+                allowanceHousing: employee.allowances?.find(item => item.title.includes('سكن'))?.amount || '',
+                allowanceTransport: employee.allowances?.find(item => item.title.includes('نقل'))?.amount || '',
+                allowanceOther: employee.allowances?.find(item => item.title.includes('إضافية'))?.amount || '',
+                deductionSocial: employee.deductions?.find(item => item.title.includes('تأمينات'))?.amount || '',
+                deductionLoans: employee.deductions?.find(item => item.title.includes('سلف'))?.amount || '',
+                nationalId: employee.nationalId,
+                bankName: employee.bankName,
+                iban: employee.iban,
+                skills: employee.skills?.join(', ')
+            };
+
+            Object.entries(entries).forEach(([key, value]) => {
+                if (form.elements[key] !== undefined && value !== undefined && value !== null) {
+                    form.elements[key].value = value;
+                }
+            });
+        }
+
+        function loadEmployees() {
+            try {
+                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                return Array.isArray(stored) ? stored : [];
+            } catch (error) {
+                console.error('تعذر قراءة بيانات الموظفين', error);
+                return [];
+            }
+        }
+
+        function generateEmployeeId(employees) {
+            const prefix = 'EMP-';
+            const existingNumbers = employees
+                .map(emp => emp.id)
+                .filter(id => id && id.startsWith(prefix))
+                .map(id => Number(id.split('-')[1]))
+                .filter(num => !Number.isNaN(num));
+            const nextNumber = existingNumbers.length ? Math.max(...existingNumbers) + 1 : 5;
+            return `${prefix}${String(nextNumber).padStart(3, '0')}`;
+        }
+
+        function buildAllowances(housing, transport, other) {
+            const allowances = [];
+            if (housing) allowances.push({ title: 'بدل سكن', amount: housing });
+            if (transport) allowances.push({ title: 'بدل نقل', amount: transport });
+            if (other) allowances.push({ title: 'بدلات إضافية', amount: other });
+            return allowances;
+        }
+
+        function buildDeductions(social, loans) {
+            const deductions = [];
+            if (social) deductions.push({ title: 'تأمينات اجتماعية', amount: social });
+            if (loans) deductions.push({ title: 'سلف / خصومات أخرى', amount: loans });
+            return deductions;
+        }
+
+        function buildPayrollHistory(salaryValue, allowanceTotal, deductionTotal) {
+            const salary = Number(salaryValue || 0);
+            const allowances = Number(allowanceTotal || 0);
+            const deductions = Number(deductionTotal || 0);
+            const net = salary + allowances - deductions;
+            const monthName = new Date().toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' });
+            return [
+                {
+                    month: monthName,
+                    gross: salary + allowances,
+                    net,
+                    deductions,
+                    status: 'مدفوع'
+                }
+            ];
+        }
+
+        function buildTimeline(isEditing) {
+            const date = new Date();
+            const formatted = date.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+            return [
+                {
+                    date: formatted,
+                    title: isEditing ? 'تحديث بيانات الموظف' : 'إضافة موظف جديد',
+                    description: 'تم حفظ البيانات من خلال بوابة الموارد البشرية.'
+                }
+            ];
+        }
+
+        function parseSkills(value) {
+            if (!value) return [];
+            return value.split(',').map(skill => skill.trim()).filter(Boolean);
+        }
+
+        function getFallbackPhoto(name) {
+            if (!name) {
+                return 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=160&auto=format&fit=crop';
+            }
+            const encoded = encodeURIComponent(name.trim());
+            return `https://api.dicebear.com/6.x/initials/svg?seed=${encoded}&backgroundColor=1C64F2,2563eb&fontFamily=Arial`;
+        }
+    </script>
+    <script src="../js/session.js" data-login-path="../login.html"></script>
+</body>
+</html>

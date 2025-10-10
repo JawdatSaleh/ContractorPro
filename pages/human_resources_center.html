@@ -6,9 +6,6 @@
     <title>مركز الموارد البشرية - ContractorPro</title>
     <link rel="stylesheet" href="../css/main.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-
-<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
-<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
 </head>
 <body class="bg-background font-arabic">
     <!-- Navigation Sidebar -->
@@ -52,7 +49,7 @@
         <div class="p-4 border-t border-border">
             <h4 class="text-sm font-medium text-text-primary mb-3">إجراءات سريعة</h4>
             <div class="space-y-2">
-                <button onclick="openAddEmployeeModal()" class="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-primary-50 text-primary hover:bg-primary-100 transition-fast">
+                <button onclick="openAddEmployeeForm()" class="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg bg-primary-50 text-primary hover:bg-primary-100 transition-fast">
                     <i class="fas fa-user-plus text-xs"></i>
                     <span>إضافة موظف</span>
                 </button>
@@ -119,10 +116,10 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-text-secondary text-sm font-medium">إجمالي الموظفين</p>
-                            <p class="text-3xl font-bold text-text-primary mt-2">48</p>
+                            <p id="totalEmployeesCount" class="text-3xl font-bold text-text-primary mt-2">0</p>
                             <div class="flex items-center gap-1 mt-2">
                                 <i class="fas fa-arrow-up text-success text-sm"></i>
-                                <span class="text-success text-sm font-medium">+5 هذا الشهر</span>
+                                <span id="monthlyGrowthText" class="text-success text-sm font-medium">+0 هذا الشهر</span>
                             </div>
                         </div>
                         <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
@@ -136,10 +133,10 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-text-secondary text-sm font-medium">الفرق النشطة</p>
-                            <p class="text-3xl font-bold text-text-primary mt-2">8</p>
+                            <p id="activeTeamsCount" class="text-3xl font-bold text-text-primary mt-2">0</p>
                             <div class="flex items-center gap-1 mt-2">
                                 <i class="fas fa-arrow-up text-success text-sm"></i>
-                                <span class="text-success text-sm font-medium">فريق جديد</span>
+                                <span id="teamsChangeText" class="text-success text-sm font-medium">فريق جديد</span>
                             </div>
                         </div>
                         <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
@@ -153,9 +150,9 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-text-secondary text-sm font-medium">مجموع الرواتب</p>
-                            <p class="text-3xl font-bold text-text-primary mt-2">185K</p>
+                            <p id="monthlyPayrollValue" class="text-3xl font-bold text-text-primary mt-2">0</p>
                             <div class="flex items-center gap-1 mt-2">
-                                <span class="text-text-secondary text-sm">ريال شهرياً</span>
+                                <span id="monthlyPayrollHint" class="text-text-secondary text-sm">ريال شهرياً</span>
                             </div>
                         </div>
                         <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
@@ -169,10 +166,10 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-text-secondary text-sm font-medium">معدل الحضور</p>
-                            <p class="text-3xl font-bold text-text-primary mt-2">94%</p>
+                            <p id="attendanceRateValue" class="text-3xl font-bold text-text-primary mt-2">0%</p>
                             <div class="flex items-center gap-1 mt-2">
                                 <i class="fas fa-arrow-up text-success text-sm"></i>
-                                <span class="text-success text-sm font-medium">ممتاز</span>
+                                <span id="attendanceStatusText" class="text-success text-sm font-medium">ممتاز</span>
                             </div>
                         </div>
                         <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
@@ -186,29 +183,29 @@
             <div class="bg-surface rounded-xl shadow-card border border-border">
                 <!-- Tab Navigation -->
                 <div class="border-b border-border">
-                    <nav class="flex space-x-8 px-6" dir="ltr">
-                        <button class="tab-btn active border-b-2 border-primary text-primary py-4 px-1 text-sm font-medium whitespace-nowrap" onclick="switchTab('employees')">
-                            <i class="fas fa-users ml-2"></i>
+                    <nav class="flex justify-end flex-wrap items-center gap-4 px-6">
+                        <button data-tab-target="employees" class="tab-btn active border-b-2 border-primary text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                            <i class="fas fa-users"></i>
                             دليل الموظفين
                         </button>
-                        <button class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap" onclick="switchTab('teams')">
-                            <i class="fas fa-user-friends ml-2"></i>
+                        <button data-tab-target="teams" class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                            <i class="fas fa-user-friends"></i>
                             إدارة الفرق
                         </button>
-                        <button class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap" onclick="switchTab('payroll')">
-                            <i class="fas fa-money-bill-wave ml-2"></i>
+                        <button data-tab-target="payroll" class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                            <i class="fas fa-money-bill-wave"></i>
                             الرواتب والمدفوعات
                         </button>
-                        <button class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap" onclick="switchTab('permissions')">
-                            <i class="fas fa-shield-alt ml-2"></i>
+                        <button data-tab-target="permissions" class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                            <i class="fas fa-shield-alt"></i>
                             الصلاحيات والأدوار
                         </button>
-                        <button class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap" onclick="switchTab('attendance')">
-                            <i class="fas fa-clock ml-2"></i>
+                        <button data-tab-target="attendance" class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                            <i class="fas fa-clock"></i>
                             الحضور والانصراف
                         </button>
-                        <button class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap" onclick="switchTab('performance')">
-                            <i class="fas fa-chart-bar ml-2"></i>
+                        <button data-tab-target="performance" class="tab-btn border-b-2 border-transparent text-text-secondary hover:text-text-primary py-4 px-1 text-sm font-medium whitespace-nowrap flex items-center gap-2">
+                            <i class="fas fa-chart-bar"></i>
                             تقييم الأداء
                         </button>
                     </nav>
@@ -219,13 +216,13 @@
                     <!-- Employees Tab -->
                     <div id="employees-tab" class="tab-content">
                         <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-lg font-bold text-text-primary">دليل الموظفين</h3>
+                            <h3 id="employee-directory" class="text-lg font-bold text-text-primary">دليل الموظفين</h3>
                             <div class="flex items-center gap-3">
                                 <button onclick="exportEmployees()" class="px-4 py-2 text-sm border border-border rounded-lg hover:bg-secondary-50 transition-fast">
                                     <i class="fas fa-download ml-2"></i>
                                     تصدير البيانات
                                 </button>
-                                <button onclick="openAddEmployeeModal()" class="px-4 py-2 bg-primary text-white text-sm rounded-lg hover:bg-primary-600 transition-fast">
+                                <button onclick="openAddEmployeeForm()" class="px-4 py-2 bg-primary text-white text-sm rounded-lg hover:bg-primary-600 transition-fast">
                                     <i class="fas fa-plus ml-2"></i>
                                     إضافة موظف جديد
                                 </button>
@@ -233,159 +230,24 @@
                         </div>
 
                         <!-- Employee Grid -->
-                        <div id="employeesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <!-- Employee Card 1 -->
-                            <div class="employee-card bg-white border border-border rounded-lg p-6 hover:shadow-lg transition-fast" data-department="engineering">
-                                <div class="flex items-center gap-4 mb-4">
-                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=100&auto=format&fit=crop" alt="أحمد المهندس" class="w-16 h-16 rounded-full object-cover" />
-                                    <div class="flex-1">
-                                        <h4 class="font-bold text-text-primary">أحمد المهندس</h4>
-                                        <p class="text-text-secondary text-sm">مهندس مدني أول</p>
-                                        <div class="flex items-center gap-1 mt-1">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                                نشط
-                                            </span>
-                                        </div>
-                                    </div>
+                        <div id="employeesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                        <div id="employeesEmptyState" class="hidden bg-secondary-50 border border-dashed border-border rounded-xl p-10 text-center text-text-secondary">
+                            <div class="max-w-lg mx-auto space-y-4">
+                                <div class="w-16 h-16 mx-auto bg-secondary-200 text-secondary-600 rounded-full flex items-center justify-center text-2xl">
+                                    <i class="fas fa-users-slash"></i>
                                 </div>
-                                
-                                <div class="space-y-2 text-sm text-text-secondary mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-envelope w-4"></i>
-                                        <span>ahmed.eng@contractorpro.sa</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-phone w-4"></i>
-                                        <span>+966 50 123 4567</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-building w-4"></i>
-                                        <span>قسم الهندسة</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-calendar w-4"></i>
-                                        <span>انضم في: يناير 2023</span>
-                                    </div>
+                                <div class="space-y-2">
+                                    <h4 class="text-xl font-semibold text-text-primary">لا يوجد موظفون مطابقون للبحث</h4>
+                                    <p class="text-sm leading-6">
+                                        قم بتعديل البحث أو تغيير المرشحات، أو أضف موظفًا جديدًا باستخدام الزر أعلى الصفحة.
+                                    </p>
                                 </div>
-
-                                <div class="flex items-center justify-between pt-4 border-t border-border">
-                                    <div class="text-sm">
-                                        <span class="text-text-secondary">الراتب: </span>
-                                        <span class="font-bold text-text-primary">12,000 ريال</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <button onclick="editEmployee('ahmed')" class="p-2 text-primary hover:bg-primary-50 rounded-lg transition-fast">
-                                            <i class="fas fa-edit text-sm"></i>
-                                        </button>
-                                        <button onclick="viewEmployeeDetails('ahmed')" class="p-2 text-accent hover:bg-accent-50 rounded-lg transition-fast">
-                                            <i class="fas fa-eye text-sm"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Employee Card 2 -->
-                            <div class="employee-card bg-white border border-border rounded-lg p-6 hover:shadow-lg transition-fast" data-department="construction">
-                                <div class="flex items-center gap-4 mb-4">
-                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop" alt="محمد البناء" class="w-16 h-16 rounded-full object-cover" />
-                                    <div class="flex-1">
-                                        <h4 class="font-bold text-text-primary">محمد البناء</h4>
-                                        <p class="text-text-secondary text-sm">مشرف موقع</p>
-                                        <div class="flex items-center gap-1 mt-1">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">
-                                                في الموقع
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="space-y-2 text-sm text-text-secondary mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-envelope w-4"></i>
-                                        <span>mohamed.site@contractorpro.sa</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-phone w-4"></i>
-                                        <span>+966 55 987 6543</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-building w-4"></i>
-                                        <span>قسم البناء</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-calendar w-4"></i>
-                                        <span>انضم في: مارس 2023</span>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-between pt-4 border-t border-border">
-                                    <div class="text-sm">
-                                        <span class="text-text-secondary">الراتب: </span>
-                                        <span class="font-bold text-text-primary">8,500 ريال</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <button onclick="editEmployee('mohamed')" class="p-2 text-primary hover:bg-primary-50 rounded-lg transition-fast">
-                                            <i class="fas fa-edit text-sm"></i>
-                                        </button>
-                                        <button onclick="viewEmployeeDetails('mohamed')" class="p-2 text-accent hover:bg-accent-50 rounded-lg transition-fast">
-                                            <i class="fas fa-eye text-sm"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Employee Card 3 -->
-                            <div class="employee-card bg-white border border-border rounded-lg p-6 hover:shadow-lg transition-fast" data-department="finance">
-                                <div class="flex items-center gap-4 mb-4">
-                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b5b51555?q=80&w=100&auto=format&fit=crop" alt="فاطمة المالية" class="w-16 h-16 rounded-full object-cover" />
-                                    <div class="flex-1">
-                                        <h4 class="font-bold text-text-primary">فاطمة المالية</h4>
-                                        <p class="text-text-secondary text-sm">محاسبة رئيسية</p>
-                                        <div class="flex items-center gap-1 mt-1">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                                نشطة
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="space-y-2 text-sm text-text-secondary mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-envelope w-4"></i>
-                                        <span>fatema.finance@contractorpro.sa</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-phone w-4"></i>
-                                        <span>+966 50 555 4444</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-building w-4"></i>
-                                        <span>قسم المالية</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <i class="fas fa-calendar w-4"></i>
-                                        <span>انضمت في: فبراير 2023</span>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center justify-between pt-4 border-t border-border">
-                                    <div class="text-sm">
-                                        <span class="text-text-secondary">الراتب: </span>
-                                        <span class="font-bold text-text-primary">9,500 ريال</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <button onclick="editEmployee('fatema')" class="p-2 text-primary hover:bg-primary-50 rounded-lg transition-fast">
-                                            <i class="fas fa-edit text-sm"></i>
-                                        </button>
-                                        <button onclick="viewEmployeeDetails('fatema')" class="p-2 text-accent hover:bg-accent-50 rounded-lg transition-fast">
-                                            <i class="fas fa-eye text-sm"></i>
-                                        </button>
-                                    </div>
-                                </div>
+                                <button onclick="openAddEmployeeForm()" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast">
+                                    <i class="fas fa-user-plus text-sm"></i>
+                                    إضافة أول موظف
+                                </button>
                             </div>
                         </div>
-                    </div>
-
                     <!-- Teams Management Tab -->
                     <div id="teams-tab" class="tab-content hidden">
                         <div class="flex items-center justify-between mb-6">
@@ -396,110 +258,20 @@
                             </button>
                         </div>
 
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Team Card 1 -->
-                            <div class="bg-white border border-border rounded-lg p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-hammer text-primary"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-text-primary">فريق البناء الأول</h4>
-                                            <p class="text-text-secondary text-sm">مشاريع الفلل السكنية</p>
-                                        </div>
-                                    </div>
-                                    <div class="text-left">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                            نشط
-                                        </span>
-                                    </div>
+                        <div id="teamsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+                        <div id="teamsEmptyState" class="hidden bg-secondary-50 border border-dashed border-border rounded-xl p-10 text-center text-text-secondary">
+                            <div class="max-w-lg mx-auto space-y-4">
+                                <div class="w-16 h-16 mx-auto bg-secondary-200 text-secondary-600 rounded-full flex items-center justify-center text-2xl">
+                                    <i class="fas fa-people-group"></i>
                                 </div>
-
-                                <div class="space-y-3 mb-4">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm text-text-secondary">قائد الفريق:</span>
-                                        <span class="text-sm font-medium text-text-primary">محمد البناء</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm text-text-secondary">عدد الأعضاء:</span>
-                                        <span class="text-sm font-medium text-text-primary">8 أعضاء</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm text-text-secondary">المشاريع النشطة:</span>
-                                        <span class="text-sm font-medium text-text-primary">3 مشاريع</span>
-                                    </div>
+                                <div class="space-y-2">
+                                    <h4 class="text-xl font-semibold text-text-primary">لا توجد فرق مسجلة</h4>
+                                    <p class="text-sm leading-6">قم بإنشاء أول فريق عمل لتنظيم الموظفين حسب المشاريع أو المواقع.</p>
                                 </div>
-
-                                <div class="flex -space-x-2 mb-4">
-                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=40&auto=format&fit=crop" alt="عضو 1" class="w-8 h-8 rounded-full border-2 border-white" />
-                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=40&auto=format&fit=crop" alt="عضو 2" class="w-8 h-8 rounded-full border-2 border-white" />
-                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b5b51555?q=80&w=40&auto=format&fit=crop" alt="عضو 3" class="w-8 h-8 rounded-full border-2 border-white" />
-                                    <div class="w-8 h-8 rounded-full border-2 border-white bg-secondary-200 flex items-center justify-center">
-                                        <span class="text-xs font-medium text-text-secondary">+5</span>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center gap-2 pt-4 border-t border-border">
-                                    <button onclick="viewTeamDetails('team1')" class="flex-1 px-4 py-2 text-sm border border-border rounded-lg hover:bg-secondary-50 transition-fast">
-                                        عرض التفاصيل
-                                    </button>
-                                    <button onclick="editTeam('team1')" class="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast">
-                                        تعديل
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Team Card 2 -->
-                            <div class="bg-white border border-border rounded-lg p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
-                                            <i class="fas fa-drafting-compass text-accent"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-text-primary">فريق التصميم</h4>
-                                            <p class="text-text-secondary text-sm">التخطيط والتصميم المعماري</p>
-                                        </div>
-                                    </div>
-                                    <div class="text-left">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                            نشط
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="space-y-3 mb-4">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm text-text-secondary">قائد الفريق:</span>
-                                        <span class="text-sm font-medium text-text-primary">أحمد المهندس</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm text-text-secondary">عدد الأعضاء:</span>
-                                        <span class="text-sm font-medium text-text-primary">5 أعضاء</span>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm text-text-secondary">المشاريع النشطة:</span>
-                                        <span class="text-sm font-medium text-text-primary">4 مشاريع</span>
-                                    </div>
-                                </div>
-
-                                <div class="flex -space-x-2 mb-4">
-                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=40&auto=format&fit=crop" alt="عضو 1" class="w-8 h-8 rounded-full border-2 border-white" />
-                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b5b51555?q=80&w=40&auto=format&fit=crop" alt="عضو 2" class="w-8 h-8 rounded-full border-2 border-white" />
-                                    <div class="w-8 h-8 rounded-full border-2 border-white bg-secondary-200 flex items-center justify-center">
-                                        <span class="text-xs font-medium text-text-secondary">+3</span>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center gap-2 pt-4 border-t border-border">
-                                    <button onclick="viewTeamDetails('team2')" class="flex-1 px-4 py-2 text-sm border border-border rounded-lg hover:bg-secondary-50 transition-fast">
-                                        عرض التفاصيل
-                                    </button>
-                                    <button onclick="editTeam('team2')" class="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast">
-                                        تعديل
-                                    </button>
-                                </div>
+                                <button onclick="openCreateTeamModal()" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast">
+                                    <i class="fas fa-plus text-sm"></i>
+                                    إنشاء فريق جديد
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -526,7 +298,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-text-secondary text-sm">إجمالي الرواتب</p>
-                                        <p class="text-2xl font-bold text-text-primary mt-1">185,500 ريال</p>
+                                        <p id="payrollTotalValue" class="text-2xl font-bold text-text-primary mt-1">0 ريال</p>
                                     </div>
                                     <div class="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center">
                                         <i class="fas fa-money-bill-wave text-success"></i>
@@ -538,7 +310,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-text-secondary text-sm">البدلات والمكافآت</p>
-                                        <p class="text-2xl font-bold text-text-primary mt-1">28,400 ريال</p>
+                                        <p id="allowancesTotalValue" class="text-2xl font-bold text-text-primary mt-1">0 ريال</p>
                                     </div>
                                     <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
                                         <i class="fas fa-gift text-primary"></i>
@@ -550,7 +322,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-text-secondary text-sm">الخصومات</p>
-                                        <p class="text-2xl font-bold text-text-primary mt-1">12,100 ريال</p>
+                                        <p id="deductionsTotalValue" class="text-2xl font-bold text-text-primary mt-1">0 ريال</p>
                                     </div>
                                     <div class="w-10 h-10 bg-error-100 rounded-lg flex items-center justify-center">
                                         <i class="fas fa-minus-circle text-error"></i>
@@ -564,274 +336,6 @@
                             <table class="w-full">
                                 <thead class="bg-secondary-50 border-b border-border">
                                     <tr>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">الموظف</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">الراتب الأساسي</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">البدلات</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">الخصومات</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">صافي الراتب</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">الحالة</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase tracking-wider">الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-border">
-                                    <tr class="hover:bg-secondary-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=40&auto=format&fit=crop" alt="أحمد المهندس" class="w-8 h-8 rounded-full ml-3" />
-                                                <div>
-                                                    <div class="text-sm font-medium text-text-primary">أحمد المهندس</div>
-                                                    <div class="text-sm text-text-secondary">مهندس مدني أول</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-primary">12,000</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-primary">1,500</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-primary">800</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-success">12,700</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                                مدفوع
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button onclick="viewPayslip('ahmed')" class="text-primary hover:text-primary-700 ml-3">عرض</button>
-                                            <button onclick="editPayroll('ahmed')" class="text-accent hover:text-accent-700">تعديل</button>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-secondary-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=40&auto=format&fit=crop" alt="محمد البناء" class="w-8 h-8 rounded-full ml-3" />
-                                                <div>
-                                                    <div class="text-sm font-medium text-text-primary">محمد البناء</div>
-                                                    <div class="text-sm text-text-secondary">مشرف موقع</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-primary">8,500</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-primary">1,200</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-primary">450</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-warning">9,250</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">
-                                                معلق
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button onclick="viewPayslip('mohamed')" class="text-primary hover:text-primary-700 ml-3">عرض</button>
-                                            <button onclick="editPayroll('mohamed')" class="text-accent hover:text-accent-700">تعديل</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Permissions Tab -->
-                    <div id="permissions-tab" class="tab-content hidden">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-lg font-bold text-text-primary">إدارة الصلاحيات والأدوار</h3>
-                            <button onclick="openCreateRoleModal()" class="px-4 py-2 bg-primary text-white text-sm rounded-lg hover:bg-primary-600 transition-fast">
-                                <i class="fas fa-plus ml-2"></i>
-                                إنشاء دور جديد
-                            </button>
-                        </div>
-
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <!-- Roles List -->
-                            <div class="space-y-4">
-                                <h4 class="font-medium text-text-primary mb-4">الأدوار المتاحة</h4>
-                                
-                                <div class="bg-white border border-border rounded-lg p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <div>
-                                            <h5 class="font-bold text-text-primary">مدير عام</h5>
-                                            <p class="text-sm text-text-secondary">صلاحية كاملة للنظام</p>
-                                        </div>
-                                        <span class="text-sm text-text-secondary">5 موظفين</span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                            كامل الصلاحيات
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="bg-white border border-border rounded-lg p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <div>
-                                            <h5 class="font-bold text-text-primary">مدير المشاريع</h5>
-                                            <p class="text-sm text-text-secondary">إدارة المشاريع والفرق</p>
-                                        </div>
-                                        <span class="text-sm text-text-secondary">8 موظفين</span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary">
-                                            إدارة المشاريع
-                                        </span>
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent-100 text-accent">
-                                            إدارة الفرق
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="bg-white border border-border rounded-lg p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <div>
-                                            <h5 class="font-bold text-text-primary">محاسب</h5>
-                                            <p class="text-sm text-text-secondary">إدارة الأمور المالية</p>
-                                        </div>
-                                        <span class="text-sm text-text-secondary">3 موظفين</span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">
-                                            المالية
-                                        </span>
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                            الفواتير
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Permissions Matrix -->
-                            <div>
-                                <h4 class="font-medium text-text-primary mb-4">مصفوفة الصلاحيات</h4>
-                                <div class="bg-white border border-border rounded-lg overflow-hidden">
-                                    <table class="w-full text-sm">
-                                        <thead class="bg-secondary-50">
-                                            <tr>
-                                                <th class="px-4 py-3 text-right font-medium text-text-secondary">الصلاحية</th>
-                                                <th class="px-4 py-3 text-center font-medium text-text-secondary">مدير</th>
-                                                <th class="px-4 py-3 text-center font-medium text-text-secondary">مشاريع</th>
-                                                <th class="px-4 py-3 text-center font-medium text-text-secondary">محاسب</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-border">
-                                            <tr>
-                                                <td class="px-4 py-3 text-text-primary">عرض المشاريع</td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-check text-success"></i></td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-check text-success"></i></td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-check text-success"></i></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-4 py-3 text-text-primary">إدارة المشاريع</td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-check text-success"></i></td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-check text-success"></i></td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-times text-error"></i></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-4 py-3 text-text-primary">إدارة المالية</td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-check text-success"></i></td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-times text-error"></i></td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-check text-success"></i></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-4 py-3 text-text-primary">إدارة الموظفين</td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-check text-success"></i></td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-times text-error"></i></td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-times text-error"></i></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="px-4 py-3 text-text-primary">إعدادات النظام</td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-check text-success"></i></td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-times text-error"></i></td>
-                                                <td class="px-4 py-3 text-center"><i class="fas fa-times text-error"></i></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Attendance Tab -->
-                    <div id="attendance-tab" class="tab-content hidden">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-lg font-bold text-text-primary">إدارة الحضور والانصراف</h3>
-                            <div class="flex items-center gap-3">
-                                <button onclick="exportAttendance()" class="px-4 py-2 text-sm border border-border rounded-lg hover:bg-secondary-50 transition-fast">
-                                    <i class="fas fa-download ml-2"></i>
-                                    تصدير التقرير
-                                </button>
-                                <button onclick="markAttendance()" class="px-4 py-2 bg-success text-white text-sm rounded-lg hover:bg-success-600 transition-fast">
-                                    <i class="fas fa-clock ml-2"></i>
-                                    تسجيل الحضور
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Today's Attendance Overview -->
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                            <div class="bg-white border border-border rounded-lg p-6">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-text-secondary text-sm">الحضور اليوم</p>
-                                        <p class="text-2xl font-bold text-success mt-1">45</p>
-                                    </div>
-                                    <div class="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-user-check text-success"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-white border border-border rounded-lg p-6">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-text-secondary text-sm">المتأخرين</p>
-                                        <p class="text-2xl font-bold text-warning mt-1">3</p>
-                                    </div>
-                                    <div class="w-10 h-10 bg-warning-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-clock text-warning"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-white border border-border rounded-lg p-6">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-text-secondary text-sm">الغياب</p>
-                                        <p class="text-2xl font-bold text-error mt-1">2</p>
-                                    </div>
-                                    <div class="w-10 h-10 bg-error-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-user-times text-error"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-white border border-border rounded-lg p-6">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-text-secondary text-sm">معدل الحضور</p>
-                                        <p class="text-2xl font-bold text-text-primary mt-1">94%</p>
-                                    </div>
-                                    <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-percentage text-primary"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Attendance Table -->
-                        <div class="bg-white border border-border rounded-lg overflow-hidden">
-                            <div class="px-6 py-4 border-b border-border">
-                                <div class="flex items-center justify-between">
-                                    <h4 class="font-medium text-text-primary">سجل الحضور - اليوم</h4>
-                                    <div class="flex items-center gap-3">
-                                        <input type="date" class="px-3 py-2 text-sm border border-border rounded-lg" value="2025-01-04" />
-                                        <select class="px-3 py-2 text-sm border border-border rounded-lg">
-                                            <option>كل الأقسام</option>
-                                            <option>الهندسة</option>
-                                            <option>البناء</option>
-                                            <option>المالية</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <table class="w-full">
-                                <thead class="bg-secondary-50 border-b border-border">
-                                    <tr>
                                         <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">الموظف</th>
                                         <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">وقت الحضور</th>
                                         <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">وقت الانصراف</th>
@@ -840,48 +344,7 @@
                                         <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">ملاحظات</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-border">
-                                    <tr class="hover:bg-secondary-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=40&auto=format&fit=crop" alt="أحمد المهندس" class="w-8 h-8 rounded-full ml-3" />
-                                                <div>
-                                                    <div class="text-sm font-medium text-text-primary">أحمد المهندس</div>
-                                                    <div class="text-sm text-text-secondary">الهندسة</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-primary">07:45</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-primary">16:30</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-primary">8.45</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                                حاضر
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">-</td>
-                                    </tr>
-                                    <tr class="hover:bg-secondary-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=40&auto=format&fit=crop" alt="محمد البناء" class="w-8 h-8 rounded-full ml-3" />
-                                                <div>
-                                                    <div class="text-sm font-medium text-text-primary">محمد البناء</div>
-                                                    <div class="text-sm text-text-secondary">البناء</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-primary">08:15</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">-</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">-</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">
-                                                متأخر
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">15 دقيقة تأخير</td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="attendanceTableBody" class="bg-white divide-y divide-border"></tbody>
                             </table>
                         </div>
                     </div>
@@ -1071,6 +534,261 @@
             </div>
         </main>
 
+
+        <!-- HR Modals and Utilities -->
+        <div id="payrollModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+            <div class="bg-surface w-full max-w-4xl rounded-2xl border border-border shadow-modal overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+                    <h3 class="text-lg font-semibold text-text-primary">معالجة الرواتب</h3>
+                    <button type="button" class="text-text-tertiary hover:text-text-primary" data-close-modal="payrollModal">
+                        <i class="fas fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <p class="text-sm text-text-secondary">حدد دورة الرواتب الحالية</p>
+                            <div class="mt-2 flex flex-wrap gap-3">
+                                <select class="px-4 py-2 border border-border rounded-lg focus:outline-none focus:border-primary">
+                                    <option>يناير 2025</option>
+                                    <option>ديسمبر 2024</option>
+                                    <option>نوفمبر 2024</option>
+                                </select>
+                                <button type="button" class="px-4 py-2 bg-secondary-100 text-text-secondary rounded-lg hover:bg-secondary-200 transition-fast">مزامنة مع النظام المالي</button>
+                            </div>
+                        </div>
+                        <div class="text-sm text-text-secondary bg-secondary-50 border border-border rounded-xl px-4 py-3">
+                            <p>سيتم إرسال إشعارات بالبريد الإلكتروني تلقائياً بعد الإقفال.</p>
+                        </div>
+                    </div>
+                    <div class="overflow-auto max-h-96 border border-border rounded-xl">
+                        <table class="min-w-full text-sm">
+                            <thead class="bg-secondary-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-right font-medium text-text-secondary">الموظف</th>
+                                    <th class="px-4 py-3 text-right font-medium text-text-secondary">القسم</th>
+                                    <th class="px-4 py-3 text-right font-medium text-text-secondary">الراتب الأساسي</th>
+                                    <th class="px-4 py-3 text-right font-medium text-text-secondary">البدلات</th>
+                                    <th class="px-4 py-3 text-right font-medium text-text-secondary">الخصومات</th>
+                                    <th class="px-4 py-3 text-right font-medium text-text-secondary">صافي الراتب</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payrollModalBody" class="divide-y divide-border bg-white"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between px-6 py-4 border-t border-border text-sm">
+                    <button type="button" class="text-text-secondary hover:text-text-primary" data-close-modal="payrollModal">إغلاق</button>
+                    <div class="flex items-center gap-3">
+                        <button type="button" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast" onclick="generatePayrollReport()">تصدير التقرير</button>
+                        <button type="button" class="px-4 py-2 bg-success text-white rounded-lg hover:bg-success-600 transition-fast" onclick="showToast('تم إرسال طلب المعالجة إلى قسم المالية', 'success'); closeModal('payrollModal');">تأكيد المعالجة</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="attendanceModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+            <div class="bg-surface w-full max-w-2xl rounded-2xl border border-border shadow-modal overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+                    <h3 class="text-lg font-semibold text-text-primary">تسجيل حضور يدوي</h3>
+                    <button type="button" class="text-text-tertiary hover:text-text-primary" data-close-modal="attendanceModal">
+                        <i class="fas fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <form id="attendanceForm" class="p-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="space-y-1 text-sm">
+                            <span class="text-text-secondary">الموظف</span>
+                            <select id="attendanceEmployee" name="attendanceEmployee" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" required>
+                                <option value="">اختر الموظف</option>
+                            </select>
+                        </label>
+                        <label class="space-y-1 text-sm">
+                            <span class="text-text-secondary">الحالة</span>
+                            <select name="attendanceStatus" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary">
+                                <option value="present">حاضر</option>
+                                <option value="late">متأخر</option>
+                                <option value="remote">عن بعد</option>
+                                <option value="absent">غائب</option>
+                            </select>
+                        </label>
+                        <label class="space-y-1 text-sm">
+                            <span class="text-text-secondary">وقت الحضور</span>
+                            <input type="time" name="attendanceIn" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" />
+                        </label>
+                        <label class="space-y-1 text-sm">
+                            <span class="text-text-secondary">وقت الانصراف</span>
+                            <input type="time" name="attendanceOut" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" />
+                        </label>
+                        <label class="space-y-1 text-sm">
+                            <span class="text-text-secondary">ساعات العمل</span>
+                            <input type="number" step="0.25" name="attendanceHours" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: 8.5" />
+                        </label>
+                        <label class="space-y-1 text-sm md:col-span-2">
+                            <span class="text-text-secondary">ملاحظات</span>
+                            <textarea name="attendanceNote" rows="3" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="أدخل تفاصيل إضافية"></textarea>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-border text-sm">
+                        <button type="button" class="text-text-secondary hover:text-text-primary" data-close-modal="attendanceModal">إلغاء</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast">حفظ السجل</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="teamModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+            <div class="bg-surface w-full max-w-2xl rounded-2xl border border-border shadow-modal overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+                    <h3 class="text-lg font-semibold text-text-primary">بيانات الفريق</h3>
+                    <button type="button" class="text-text-tertiary hover:text-text-primary" data-close-modal="teamModal">
+                        <i class="fas fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <form id="teamForm" class="p-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <label class="space-y-1">
+                            <span class="text-text-secondary">اسم الفريق</span>
+                            <input type="text" name="teamName" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" required />
+                        </label>
+                        <label class="space-y-1">
+                            <span class="text-text-secondary">مجال العمل</span>
+                            <input type="text" name="teamFocus" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" required />
+                        </label>
+                        <label class="space-y-1">
+                            <span class="text-text-secondary">قائد الفريق</span>
+                            <input type="text" name="teamLeader" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" required />
+                        </label>
+                        <label class="space-y-1">
+                            <span class="text-text-secondary">عدد الأعضاء</span>
+                            <input type="number" name="teamMembers" min="0" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" required />
+                        </label>
+                        <label class="space-y-1">
+                            <span class="text-text-secondary">المشاريع النشطة</span>
+                            <input type="number" name="teamProjects" min="0" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" />
+                        </label>
+                        <label class="space-y-1 md:col-span-2">
+                            <span class="text-text-secondary">وسوم التعريف (افصل بينها بفاصلة)</span>
+                            <input type="text" name="teamTags" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: البناء, الجودة" />
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-border text-sm">
+                        <button type="button" class="text-text-secondary hover:text-text-primary" data-close-modal="teamModal">إلغاء</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast">حفظ الفريق</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="roleModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+            <div class="bg-surface w-full max-w-lg rounded-2xl border border-border shadow-modal overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+                    <h3 class="text-lg font-semibold text-text-primary">إنشاء دور وصلاحيات</h3>
+                    <button type="button" class="text-text-tertiary hover:text-text-primary" data-close-modal="roleModal">
+                        <i class="fas fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <form class="p-6 space-y-4 text-sm">
+                    <label class="space-y-1">
+                        <span class="text-text-secondary">اسم الدور</span>
+                        <input type="text" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: مدير مشروع" />
+                    </label>
+                    <label class="space-y-1">
+                        <span class="text-text-secondary">الوصف المختصر</span>
+                        <textarea rows="3" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="حدد الصلاحيات والمسؤوليات"></textarea>
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" class="rounded border-border" checked />
+                            <span>إدارة الموظفين</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" class="rounded border-border" />
+                            <span>الاطلاع على الرواتب</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" class="rounded border-border" />
+                            <span>تعديل العقود</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" class="rounded border-border" />
+                            <span>إدارة الصلاحيات</span>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 border-t border-border">
+                        <button type="button" class="text-text-secondary hover:text-text-primary" data-close-modal="roleModal">إلغاء</button>
+                        <button type="button" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast" onclick="showToast('تم حفظ الدور الجديد', 'success'); closeModal('roleModal');">حفظ الدور</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="performanceModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+            <div class="bg-surface w-full max-w-xl rounded-2xl border border-border shadow-modal overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+                    <h3 class="text-lg font-semibold text-text-primary">تسجيل تقييم أداء</h3>
+                    <button type="button" class="text-text-tertiary hover:text-text-primary" data-close-modal="performanceModal">
+                        <i class="fas fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <form class="p-6 space-y-4 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="space-y-1">
+                            <span class="text-text-secondary">الموظف</span>
+                            <select class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary">
+                                <option>أحمد المهندس</option>
+                                <option>محمد البنا</option>
+                                <option>فاطمة المالية</option>
+                                <option>سارة الموارد</option>
+                            </select>
+                        </label>
+                        <label class="space-y-1">
+                            <span class="text-text-secondary">التقييم العام</span>
+                            <select class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary">
+                                <option>ممتاز</option>
+                                <option>جيد جداً</option>
+                                <option>جيد</option>
+                                <option>يحتاج تطوير</option>
+                            </select>
+                        </label>
+                        <label class="space-y-1">
+                            <span class="text-text-secondary">نسبة الإنجاز</span>
+                            <input type="number" min="0" max="100" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="مثال: 92" />
+                        </label>
+                        <label class="space-y-1">
+                            <span class="text-text-secondary">تاريخ التقييم</span>
+                            <input type="date" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" value="2025-01-04" />
+                        </label>
+                    </div>
+                    <label class="space-y-1 block">
+                        <span class="text-text-secondary">ملخص التقييم</span>
+                        <textarea rows="4" class="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-primary" placeholder="أبرز نقاط القوة وخطة التطوير"></textarea>
+                    </label>
+                    <div class="flex items-center justify-between pt-4 border-t border-border">
+                        <button type="button" class="text-text-secondary hover:text-text-primary" data-close-modal="performanceModal">إلغاء</button>
+                        <button type="button" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast" onclick="showToast('تم تسجيل التقييم بنجاح', 'success'); closeModal('performanceModal');">حفظ التقييم</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="orgChartModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+            <div class="bg-surface w-full max-w-5xl rounded-2xl border border-border shadow-modal overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+                    <h3 class="text-lg font-semibold text-text-primary">المخطط التنظيمي للمؤسسة</h3>
+                    <button type="button" class="text-text-tertiary hover:text-text-primary" data-close-modal="orgChartModal">
+                        <i class="fas fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div class="p-6 bg-secondary-50">
+                    <div data-org-chart class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+                <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-border text-sm">
+                    <button type="button" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast" onclick="showToast('تم حفظ نسخة PDF من المخطط التنظيمي', 'success');">حفظ كملف PDF</button>
+                    <button type="button" class="text-text-secondary hover:text-text-primary" data-close-modal="orgChartModal">إغلاق</button>
+                </div>
+            </div>
+        </div>
         <!-- Footer -->
         <footer class="bg-surface border-t border-border px-6 py-4 mt-8">
             <div class="flex items-center justify-between text-sm text-text-secondary">
@@ -1081,171 +799,1169 @@
     </div>
 
     <script>
-        // Tab switching functionality
-        function switchTab(tabName) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.add('hidden');
-            });
-            
-            // Remove active class from all tab buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active', 'border-primary', 'text-primary');
-                btn.classList.add('border-transparent', 'text-text-secondary');
-            });
-            
-            // Show selected tab
-            document.getElementById(tabName + '-tab').classList.remove('hidden');
-            
-            // Add active class to selected tab button
-            event.target.classList.add('active', 'border-primary', 'text-primary');
-            event.target.classList.remove('border-transparent', 'text-text-secondary');
+        const STORAGE_KEY = 'contractorProEmployees';
+        const LAST_EMPLOYEE_KEY = 'contractorProLastEmployee';
+        const TEAMS_STORAGE_KEY = 'contractorProTeams';
+
+        const baseEmployees = [
+            {
+                id: 'EMP-001',
+                employeeCode: 'EMP-001',
+                fullName: 'أحمد المهندس',
+                jobTitle: 'مهندس مدني أول',
+                department: 'engineering',
+                departmentName: 'قسم الهندسة',
+                email: 'ahmed.eng@contractorpro.sa',
+                phone: '+966 50 123 4567',
+                joinDate: '2023-01-12',
+                status: 'active',
+                statusLabel: 'نشط',
+                salary: 12000,
+                currency: 'ر.س',
+                location: 'الرياض',
+                manager: 'مها الدوسري',
+                grade: 'G9',
+                nationalId: '1029384756',
+                bankName: 'بنك الراجحي',
+                iban: 'SA0380000001234567891234',
+                allowances: [
+                    { title: 'بدل سكن', amount: 3000 },
+                    { title: 'بدل نقل', amount: 1000 }
+                ],
+                deductions: [
+                    { title: 'تأمينات اجتماعية', amount: 900 },
+                    { title: 'سلفة معدات', amount: 300 }
+                ],
+                payrollHistory: [
+                    { month: 'يناير 2025', gross: 15000, net: 12700, deductions: 2300, status: 'مدفوع' },
+                    { month: 'ديسمبر 2024', gross: 15000, net: 12650, deductions: 2350, status: 'مدفوع' },
+                    { month: 'نوفمبر 2024', gross: 15000, net: 12600, deductions: 2400, status: 'مدفوع' }
+                ],
+                leaves: [
+                    { type: 'سنوية', total: 24, used: 12 },
+                    { type: 'مرضية', total: 10, used: 2 }
+                ],
+                skills: ['إدارة المشاريع', 'تحليل المخاطر', 'BIM'],
+                tags: ['مشاريع البنية التحتية', 'جودة التنفيذ'],
+                employmentType: 'دوام كامل',
+                contractType: 'عقد دائم',
+                paySchedule: 'شهري',
+                upcomingPayments: [
+                    { title: 'مكافأة إنجاز مشروع جسر الرياض', date: '2025-02-10', amount: 5000 }
+                ],
+                documents: [
+                    { title: 'عقد العمل', url: '#', updatedAt: '2024-01-01' },
+                    { title: 'خطة التطوير الفردية', url: '#', updatedAt: '2024-09-15' }
+                ],
+                timeline: [
+                    { date: '2025-01-05', title: 'مراجعة أداء 2024', description: 'تقييم شامل مع اعتماد خطة تطوير متقدمة.' },
+                    { date: '2024-07-19', title: 'ترقية وظيفية', description: 'تمت ترقية أحمد إلى مهندس مدني أول مع زيادة في الراتب.' },
+                    { date: '2024-03-08', title: 'إنهاء مشروع مترو الرياض', description: 'قيادة فريق التنفيذ وتحقيق نسبة إنجاز 98%.' }
+                ],
+                photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=160&auto=format&fit=crop'
+            },
+            {
+                id: 'EMP-002',
+                employeeCode: 'EMP-002',
+                fullName: 'محمد البنا',
+                jobTitle: 'مشرف مواقع رئيسي',
+                department: 'construction',
+                departmentName: 'قسم البناء',
+                email: 'mohamed.site@contractorpro.sa',
+                phone: '+966 55 987 6543',
+                joinDate: '2022-05-04',
+                status: 'onsite',
+                statusLabel: 'في الموقع',
+                salary: 8500,
+                currency: 'ر.س',
+                location: 'مشروع ضاحية جدة',
+                manager: 'سعود الحربي',
+                grade: 'G6',
+                nationalId: '1087654321',
+                bankName: 'البنك الأهلي',
+                iban: 'SA5480000008765432109876',
+                allowances: [
+                    { title: 'بدل معيشة', amount: 1800 },
+                    { title: 'بدل تنقل ميداني', amount: 950 }
+                ],
+                deductions: [
+                    { title: 'تأمينات اجتماعية', amount: 650 }
+                ],
+                payrollHistory: [
+                    { month: 'يناير 2025', gross: 10450, net: 9600, deductions: 850, status: 'قيد المعالجة' },
+                    { month: 'ديسمبر 2024', gross: 10450, net: 9700, deductions: 750, status: 'مدفوع' },
+                    { month: 'نوفمبر 2024', gross: 10450, net: 9650, deductions: 800, status: 'مدفوع' }
+                ],
+                leaves: [
+                    { type: 'سنوية', total: 21, used: 5 }
+                ],
+                skills: ['إدارة فرق العمل', 'السلامة المهنية', 'التخطيط اليومي'],
+                tags: ['مشاريع الإسكان', 'السلامة الميدانية'],
+                employmentType: 'دوام كامل',
+                contractType: 'عقد دائم',
+                paySchedule: 'شهري',
+                upcomingPayments: [
+                    { title: 'حافز جودة التنفيذ', date: '2025-03-01', amount: 2500 }
+                ],
+                documents: [
+                    { title: 'رخصة السلامة المهنية', url: '#', updatedAt: '2024-10-02' }
+                ],
+                timeline: [
+                    { date: '2024-11-28', title: 'تدريب متقدم في السلامة', description: 'اجتاز برنامج السلامة OSHA المتقدم.' },
+                    { date: '2024-05-12', title: 'استلام مشروع جديد', description: 'تعيين محمد كقائد لمشروع ضاحية جدة السكنية.' }
+                ],
+                photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=160&auto=format&fit=crop'
+            },
+            {
+                id: 'EMP-003',
+                employeeCode: 'EMP-003',
+                fullName: 'فاطمة المالية',
+                jobTitle: 'مديرة الحسابات',
+                department: 'finance',
+                departmentName: 'قسم المالية',
+                email: 'fatema.finance@contractorpro.sa',
+                phone: '+966 50 555 4444',
+                joinDate: '2021-09-17',
+                status: 'remote',
+                statusLabel: 'عمل عن بعد',
+                salary: 9500,
+                currency: 'ر.س',
+                location: 'الخبر - المكتب الرئيسي',
+                manager: 'ليلى العنزي',
+                grade: 'G7',
+                nationalId: '1056789123',
+                bankName: 'مصرف الإنماء',
+                iban: 'SA1180000005678912345678',
+                allowances: [
+                    { title: 'بدل سكن', amount: 2500 },
+                    { title: 'بدل تقنية', amount: 600 }
+                ],
+                deductions: [
+                    { title: 'تأمينات اجتماعية', amount: 720 }
+                ],
+                payrollHistory: [
+                    { month: 'يناير 2025', gross: 12600, net: 11380, deductions: 1220, status: 'مدفوع' },
+                    { month: 'ديسمبر 2024', gross: 12600, net: 11400, deductions: 1200, status: 'مدفوع' },
+                    { month: 'نوفمبر 2024', gross: 12600, net: 11350, deductions: 1250, status: 'مدفوع' }
+                ],
+                leaves: [
+                    { type: 'سنوية', total: 30, used: 18 },
+                    { type: 'أمومة', total: 60, used: 45 }
+                ],
+                skills: ['التقارير المالية', 'التحليل المالي', 'إدارة النقد'],
+                tags: ['إقفال شهري', 'حوكمة مالية'],
+                employmentType: 'دوام كامل',
+                contractType: 'عقد غير محدد المدة',
+                paySchedule: 'شهري',
+                upcomingPayments: [
+                    { title: 'علاوة مراجعة سنوية', date: '2025-01-30', amount: 1800 }
+                ],
+                documents: [
+                    { title: 'اعتماد محاسب قانوني', url: '#', updatedAt: '2024-08-18' }
+                ],
+                timeline: [
+                    { date: '2024-12-01', title: 'إقفال مالي ناجح', description: 'إنهاء الإقفال السنوي دون ملاحظات تدقيق.' },
+                    { date: '2024-04-15', title: 'مشروع أتمتة النفقات', description: 'قيادة مشروع رقمنة طلبات الصرف الداخلية.' }
+                ],
+                photo: 'https://images.unsplash.com/photo-1494790108755-2616b5b51555?q=80&w=160&auto=format&fit=crop'
+            },
+            {
+                id: 'EMP-004',
+                employeeCode: 'EMP-004',
+                fullName: 'سارة الموارد',
+                jobTitle: 'أخصائية موارد بشرية',
+                department: 'hr',
+                departmentName: 'الموارد البشرية',
+                email: 'sara.hr@contractorpro.sa',
+                phone: '+966 58 222 1133',
+                joinDate: '2024-02-20',
+                status: 'active',
+                statusLabel: 'نشطة',
+                salary: 7800,
+                currency: 'ر.س',
+                location: 'الرياض - المقر',
+                manager: 'نايف المطيري',
+                grade: 'G5',
+                nationalId: '1099123456',
+                bankName: 'البنك السعودي الفرنسي',
+                iban: 'SA2680000009991234567890',
+                allowances: [
+                    { title: 'بدل سكن', amount: 2000 },
+                    { title: 'بدل مواصلات', amount: 800 }
+                ],
+                deductions: [
+                    { title: 'تأمينات اجتماعية', amount: 540 }
+                ],
+                payrollHistory: [
+                    { month: 'يناير 2025', gross: 9800, net: 9000, deductions: 800, status: 'مدفوع' },
+                    { month: 'ديسمبر 2024', gross: 9800, net: 9020, deductions: 780, status: 'مدفوع' },
+                    { month: 'نوفمبر 2024', gross: 9800, net: 9050, deductions: 750, status: 'مدفوع' }
+                ],
+                leaves: [
+                    { type: 'سنوية', total: 21, used: 6 }
+                ],
+                skills: ['اكتساب المواهب', 'تحليلات الموارد البشرية', 'تصميم السياسات'],
+                tags: ['بوابة الموظفين', 'خطة التحول الرقمي'],
+                employmentType: 'دوام كامل',
+                contractType: 'عقد دائم',
+                paySchedule: 'شهري',
+                upcomingPayments: [
+                    { title: 'مكافأة مشروع التحول', date: '2025-03-15', amount: 2000 }
+                ],
+                documents: [
+                    { title: 'خطة التعاقب الوظيفي', url: '#', updatedAt: '2024-11-21' }
+                ],
+                timeline: [
+                    { date: '2024-12-12', title: 'إطلاق بوابة الموظفين', description: 'إطلاق الواجهة الرقمية الجديدة لموظفي الشركة.' },
+                    { date: '2024-05-01', title: 'برنامج تأهيل القيادات', description: 'تنفيذ برنامج تدريبي لـ 25 قائد فريق.' }
+                ],
+                photo: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=160&auto=format&fit=crop'
+            }
+        ];
+
+        const baseTeams = [
+            {
+                id: 'TEAM-01',
+                name: 'فريق البناء الأول',
+                focus: 'مشاريع الفلل السكنية',
+                leader: 'محمد البنا',
+                members: 8,
+                activeProjects: 3,
+                status: 'active',
+                tags: ['البناء', 'ضاحية جدة'],
+                avatarColor: 'primary',
+                membersPhotos: [
+                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=80&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=80&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1494790108755-2616b5b51555?q=80&w=80&auto=format&fit=crop'
+                ]
+            },
+            {
+                id: 'TEAM-02',
+                name: 'فريق التصميم الهندسي',
+                focus: 'التخطيط والتصميم المعماري',
+                leader: 'أحمد المهندس',
+                members: 6,
+                activeProjects: 4,
+                status: 'active',
+                tags: ['الهندسة', 'التصميم'],
+                avatarColor: 'accent',
+                membersPhotos: [
+                    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=80&auto=format&fit=crop',
+                    'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=80&auto=format&fit=crop'
+                ]
+            },
+            {
+                id: 'TEAM-03',
+                name: 'فريق التحول الرقمي',
+                focus: 'أتمتة العمليات الداخلية',
+                leader: 'سارة الموارد',
+                members: 5,
+                activeProjects: 2,
+                status: 'planning',
+                tags: ['الموارد البشرية', 'التحول الرقمي'],
+                avatarColor: 'info',
+                membersPhotos: [
+                    'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=80&auto=format&fit=crop'
+                ]
+            }
+        ];
+
+        const attendanceSnapshot = {
+            present: 46,
+            late: 3,
+            absent: 1,
+            rate: 0.94,
+            records: [
+                {
+                    employeeId: 'EMP-001',
+                    checkIn: '07:45',
+                    checkOut: '16:30',
+                    hours: 8.75,
+                    status: 'present',
+                    note: '-',
+                    department: 'الهندسة'
+                },
+                {
+                    employeeId: 'EMP-002',
+                    checkIn: '08:15',
+                    checkOut: '16:20',
+                    hours: 7.9,
+                    status: 'late',
+                    note: 'تأخر بسبب ازدحام الطريق',
+                    department: 'البناء'
+                },
+                {
+                    employeeId: 'EMP-003',
+                    checkIn: '08:00',
+                    checkOut: '17:10',
+                    hours: 9.2,
+                    status: 'remote',
+                    note: 'عمل عن بعد - جولة تدقيق',
+                    department: 'المالية'
+                }
+            ]
+        };
+
+        let employeesData = [];
+        let teamsData = [];
+        let currentView = 'grid';
+        let filteredEmployees = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeHRPage();
+        });
+
+        function initializeHRPage() {
+            employeesData = loadEmployees();
+            teamsData = loadTeams();
+            setupTabNavigation();
+            setupViewToggles();
+            setupFilters();
+            renderEmployees();
+            renderTeams();
+            renderPayrollTable();
+            renderAttendanceTable();
+            populateAttendanceFormEmployees();
+            updateSummaryCards();
+            updateAttendanceSummary();
+            attachGlobalListeners();
+            syncFooterTime();
         }
 
-        // View toggle functionality
-        document.getElementById('gridViewBtn').addEventListener('click', function() {
-            // Switch to grid view
-            document.getElementById('employeesGrid').className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
-            this.classList.add('bg-primary', 'text-white');
-            this.classList.remove('text-text-secondary');
-            document.getElementById('listViewBtn').classList.remove('bg-primary', 'text-white');
-            document.getElementById('listViewBtn').classList.add('text-text-secondary');
-            document.getElementById('orgChartBtn').classList.remove('bg-primary', 'text-white');
-            document.getElementById('orgChartBtn').classList.add('text-text-secondary');
-        });
+        function loadEmployees() {
+            try {
+                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                if (Array.isArray(stored) && stored.length) {
+                    const map = new Map(baseEmployees.map(emp => [emp.id, emp]));
+                    stored.forEach(emp => {
+                        const base = map.get(emp.id) || {};
+                        map.set(emp.id, { ...base, ...emp });
+                    });
+                    const merged = Array.from(map.values());
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+                    return merged;
+                }
+            } catch (error) {
+                console.error('فشل في قراءة بيانات الموظفين المخزنة', error);
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(baseEmployees));
+            return [...baseEmployees];
+        }
 
-        document.getElementById('listViewBtn').addEventListener('click', function() {
-            // Switch to list view
-            document.getElementById('employeesGrid').className = 'space-y-4';
-            this.classList.add('bg-primary', 'text-white');
-            this.classList.remove('text-text-secondary');
-            document.getElementById('gridViewBtn').classList.remove('bg-primary', 'text-white');
-            document.getElementById('gridViewBtn').classList.add('text-text-secondary');
-            document.getElementById('orgChartBtn').classList.remove('bg-primary', 'text-white');
-            document.getElementById('orgChartBtn').classList.add('text-text-secondary');
-        });
+        function loadTeams() {
+            try {
+                const stored = JSON.parse(localStorage.getItem(TEAMS_STORAGE_KEY) || '[]');
+                if (Array.isArray(stored) && stored.length) {
+                    return stored;
+                }
+            } catch (error) {
+                console.error('فشل في قراءة بيانات الفرق', error);
+            }
+            localStorage.setItem(TEAMS_STORAGE_KEY, JSON.stringify(baseTeams));
+            return [...baseTeams];
+        }
 
-        // Search functionality
-        document.getElementById('employeeSearch').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const employees = document.querySelectorAll('.employee-card');
-            
-            employees.forEach(employee => {
-                const name = employee.querySelector('h4').textContent.toLowerCase();
-                const position = employee.querySelector('p').textContent.toLowerCase();
-                
-                if (name.includes(searchTerm) || position.includes(searchTerm)) {
-                    employee.style.display = '';
-                } else {
-                    employee.style.display = 'none';
+        function setupTabNavigation() {
+            document.querySelectorAll('.tab-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const target = button.dataset.tabTarget;
+                    if (!target) return;
+
+                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.remove('active', 'border-primary', 'text-primary');
+                        btn.classList.add('border-transparent', 'text-text-secondary');
+                    });
+
+                    document.getElementById(`${target}-tab`)?.classList.remove('hidden');
+                    button.classList.add('active', 'border-primary', 'text-primary');
+                    button.classList.remove('border-transparent', 'text-text-secondary');
+                });
+            });
+        }
+
+        function setupViewToggles() {
+            const gridBtn = document.getElementById('gridViewBtn');
+            const listBtn = document.getElementById('listViewBtn');
+            const orgBtn = document.getElementById('orgChartBtn');
+
+            if (gridBtn) {
+                gridBtn.addEventListener('click', () => {
+                    currentView = 'grid';
+                    updateViewButtons('grid');
+                    renderEmployees();
+                });
+            }
+
+            if (listBtn) {
+                listBtn.addEventListener('click', () => {
+                    currentView = 'list';
+                    updateViewButtons('list');
+                    renderEmployees();
+                });
+            }
+
+            if (orgBtn) {
+                orgBtn.addEventListener('click', () => {
+                    updateViewButtons('org');
+                    openOrgChartModal();
+                });
+            }
+        }
+
+        function updateViewButtons(active) {
+            const gridBtn = document.getElementById('gridViewBtn');
+            const listBtn = document.getElementById('listViewBtn');
+            const orgBtn = document.getElementById('orgChartBtn');
+            const activeClasses = ['bg-primary', 'text-white'];
+            const inactiveClasses = ['text-text-secondary'];
+
+            [gridBtn, listBtn, orgBtn].forEach(btn => {
+                if (!btn) return;
+                btn.classList.remove(...activeClasses);
+                btn.classList.add(...inactiveClasses);
+            });
+
+            if (active === 'grid' && gridBtn) {
+                gridBtn.classList.add(...activeClasses);
+                gridBtn.classList.remove(...inactiveClasses);
+            } else if (active === 'list' && listBtn) {
+                listBtn.classList.add(...activeClasses);
+                listBtn.classList.remove(...inactiveClasses);
+            } else if (active === 'org' && orgBtn) {
+                orgBtn.classList.add(...activeClasses);
+                orgBtn.classList.remove(...inactiveClasses);
+            }
+        }
+
+        function setupFilters() {
+            const searchInput = document.getElementById('employeeSearch');
+            const departmentFilter = document.getElementById('departmentFilter');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', () => renderEmployees());
+            }
+
+            if (departmentFilter) {
+                departmentFilter.addEventListener('change', () => renderEmployees());
+            }
+        }
+
+        function renderEmployees() {
+            const grid = document.getElementById('employeesGrid');
+            const emptyState = document.getElementById('employeesEmptyState');
+            const searchTerm = (document.getElementById('employeeSearch')?.value || '').toLowerCase().trim();
+            const selectedDepartment = document.getElementById('departmentFilter')?.value || '';
+            const lastAdded = localStorage.getItem(LAST_EMPLOYEE_KEY);
+
+            filteredEmployees = employeesData.filter(emp => {
+                const matchesDepartment = !selectedDepartment || emp.department === selectedDepartment;
+                const matchesSearch = !searchTerm || [
+                    emp.fullName,
+                    emp.jobTitle,
+                    emp.email,
+                    emp.employeeCode
+                ].some(field => field && field.toLowerCase().includes(searchTerm));
+                return matchesDepartment && matchesSearch;
+            });
+
+            updateSummaryCards();
+
+            if (!grid || !emptyState) return;
+
+            if (!filteredEmployees.length) {
+                grid.innerHTML = '';
+                grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            if (currentView === 'list') {
+                grid.className = 'space-y-4';
+                grid.innerHTML = createEmployeeTable(filteredEmployees);
+                return;
+            }
+
+            grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+            grid.innerHTML = filteredEmployees.map(emp => createEmployeeCard(emp, lastAdded === emp.id)).join('');
+        }
+
+        function createEmployeeCard(employee, isHighlighted) {
+            const badge = getStatusBadge(employee);
+            const classes = ['employee-card', 'bg-white', 'border', 'border-border', 'rounded-xl', 'p-6', 'hover:shadow-lg', 'transition-fast'];
+            if (isHighlighted) {
+                classes.push('ring-2', 'ring-primary', 'shadow-lg');
+            }
+            return `
+                <article class="${classes.join(' ')}" data-employee-id="${employee.id}">
+                    <div class="flex items-start gap-4">
+                        <img src="${employee.photo}" alt="${employee.fullName}" class="w-16 h-16 rounded-full object-cover" />
+                        <div class="flex-1 space-y-1">
+                            <div class="flex items-center justify-between gap-3">
+                                <h4 class="text-lg font-semibold text-text-primary">${employee.fullName}</h4>
+                                <span class="${badge.classes}">${badge.label}</span>
+                            </div>
+                            <p class="text-sm text-text-secondary">${employee.jobTitle}</p>
+                            <p class="text-xs text-text-tertiary">${employee.departmentName}</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 gap-3 text-sm text-text-secondary">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-id-card text-text-tertiary"></i>
+                            <span>${employee.employeeCode}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-calendar text-text-tertiary"></i>
+                            <span>${formatJoinDate(employee.joinDate)}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-phone text-text-tertiary"></i>
+                            <span>${employee.phone}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-location-dot text-text-tertiary"></i>
+                            <span>${employee.location}</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between border-t border-border pt-4">
+                        <div class="text-sm">
+                            <span class="text-text-secondary">الراتب:</span>
+                            <span class="font-semibold text-text-primary">${formatCurrency(employee.salary, employee.currency)}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" class="p-2 text-primary hover:bg-primary-50 rounded-lg transition-fast" onclick="openEmployeeForm('${employee.id}')">
+                                <i class="fas fa-edit text-sm"></i>
+                            </button>
+                            <a href="employee_profile.html?employeeId=${encodeURIComponent(employee.id)}" class="p-2 text-accent hover:bg-accent-50 rounded-lg transition-fast" title="عرض الملف الشخصي">
+                                <i class="fas fa-eye text-sm"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function createEmployeeTable(list) {
+            return `
+                <div class="bg-white border border-border rounded-xl overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-secondary-50">
+                            <tr>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">الموظف</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">القسم</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">تاريخ التعيين</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">الراتب</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">الحالة</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-text-secondary uppercase">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border text-sm text-text-secondary">
+                            ${list.map(employee => {
+                                const badge = getStatusBadge(employee);
+                                return `
+                                    <tr class="hover:bg-secondary-50 transition-fast">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-3">
+                                                <img src="${employee.photo}" alt="${employee.fullName}" class="w-10 h-10 rounded-full object-cover" />
+                                                <div>
+                                                    <div class="font-medium text-text-primary">${employee.fullName}</div>
+                                                    <div class="text-xs text-text-tertiary">${employee.jobTitle}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">${employee.departmentName}</td>
+                                        <td class="px-6 py-4">${formatJoinDate(employee.joinDate)}</td>
+                                        <td class="px-6 py-4">${formatCurrency(employee.salary, employee.currency)}</td>
+                                        <td class="px-6 py-4"><span class="${badge.classes}">${badge.label}</span></td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-3">
+                                                <button type="button" class="text-primary hover:text-primary-600" onclick="openEmployeeForm('${employee.id}')">تعديل</button>
+                                                <a class="text-accent hover:text-accent-600" href="employee_profile.html?employeeId=${encodeURIComponent(employee.id)}">عرض</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderTeams() {
+            const container = document.getElementById('teamsContainer');
+            const emptyState = document.getElementById('teamsEmptyState');
+            if (!container || !emptyState) return;
+
+            if (!teamsData.length) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            container.innerHTML = teamsData.map(team => createTeamCard(team)).join('');
+        }
+
+        function createTeamCard(team) {
+            const statusBadge = team.status === 'active'
+                ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">نشط</span>'
+                : '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">قيد التحضير</span>';
+            return `
+                <article class="bg-white border border-border rounded-xl p-6 flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-lg bg-${team.avatarColor || 'primary'}-100 flex items-center justify-center">
+                                <i class="fas fa-people-group text-${team.avatarColor || 'primary'}"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-text-primary">${team.name}</h4>
+                                <p class="text-sm text-text-secondary">${team.focus}</p>
+                            </div>
+                        </div>
+                        ${statusBadge}
+                    </div>
+                    <div class="space-y-2 text-sm text-text-secondary">
+                        <div class="flex items-center justify-between"><span>قائد الفريق:</span><span class="font-medium text-text-primary">${team.leader}</span></div>
+                        <div class="flex items-center justify-between"><span>عدد الأعضاء:</span><span class="font-medium text-text-primary">${team.members}</span></div>
+                        <div class="flex items-center justify-between"><span>المشاريع النشطة:</span><span class="font-medium text-text-primary">${team.activeProjects}</span></div>
+                    </div>
+                    <div class="flex -space-x-2">
+                        ${team.membersPhotos.map((photo, index) => `<img src="${photo}" alt="${team.name} عضو ${index + 1}" class="w-8 h-8 rounded-full border-2 border-white" />`).join('')}
+                        <div class="w-8 h-8 rounded-full border-2 border-white bg-secondary-200 flex items-center justify-center text-xs text-text-secondary">+${Math.max(team.members - team.membersPhotos.length, 0)}</div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        ${team.tags.map(tag => `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary-100 text-text-secondary">${tag}</span>`).join('')}
+                    </div>
+                    <div class="flex items-center gap-2 pt-2">
+                        <button type="button" class="flex-1 px-4 py-2 text-sm border border-border rounded-lg hover:bg-secondary-50 transition-fast" onclick="viewTeamDetails('${team.id}')">عرض التفاصيل</button>
+                        <button type="button" class="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast" onclick="editTeam('${team.id}')">تعديل</button>
+                    </div>
+                </article>
+            `;
+        }
+
+        function renderPayrollTable() {
+            const tableBody = document.getElementById('payrollTableBody');
+            if (!tableBody) return;
+            tableBody.innerHTML = employeesData.map(employee => {
+                const allowancesTotal = sumAmounts(employee.allowances);
+                const deductionsTotal = sumAmounts(employee.deductions);
+                const latestPayroll = employee.payrollHistory?.[0];
+                const status = latestPayroll?.status || 'قيد المعالجة';
+                const statusBadge = status === 'مدفوع'
+                    ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">مدفوع</span>'
+                    : '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">قيد المعالجة</span>';
+                return `
+                    <tr class="hover:bg-secondary-50 transition-fast">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <img src="${employee.photo}" alt="${employee.fullName}" class="w-10 h-10 rounded-full object-cover" />
+                                <div>
+                                    <div class="font-medium text-text-primary">${employee.fullName}</div>
+                                    <div class="text-xs text-text-tertiary">${employee.jobTitle}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-text-secondary">${formatCurrency(employee.salary, employee.currency)}</td>
+                        <td class="px-6 py-4 text-text-secondary">${formatCurrency(allowancesTotal, employee.currency)}</td>
+                        <td class="px-6 py-4 text-text-secondary">${formatCurrency(deductionsTotal, employee.currency)}</td>
+                        <td class="px-6 py-4 text-text-primary font-semibold">${formatCurrency((latestPayroll?.net ?? (employee.salary + allowancesTotal - deductionsTotal)), employee.currency)}</td>
+                        <td class="px-6 py-4">${statusBadge}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3 text-sm">
+                                <button type="button" class="text-accent hover:text-accent-600" onclick="viewPayslip('${employee.id}')">قسيمة الراتب</button>
+                                <button type="button" class="text-primary hover:text-primary-600" onclick="openEmployeeForm('${employee.id}')">تعديل</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            const payrollTotal = employeesData.reduce((total, employee) => {
+                const allowances = sumAmounts(employee.allowances);
+                return total + employee.salary + allowances;
+            }, 0);
+
+            const allowancesTotal = employeesData.reduce((total, employee) => total + sumAmounts(employee.allowances), 0);
+            const deductionsTotal = employeesData.reduce((total, employee) => total + sumAmounts(employee.deductions), 0);
+
+            setText('payrollTotalValue', formatCurrency(payrollTotal, 'ر.س'));
+            setText('allowancesTotalValue', formatCurrency(allowancesTotal, 'ر.س'));
+            setText('deductionsTotalValue', formatCurrency(deductionsTotal, 'ر.س'));
+        }
+
+        function renderAttendanceTable() {
+            const body = document.getElementById('attendanceTableBody');
+            if (!body) return;
+            body.innerHTML = attendanceSnapshot.records.map(record => {
+                const employee = employeesData.find(emp => emp.id === record.employeeId) || {};
+                const badge = getAttendanceBadge(record.status);
+                return `
+                    <tr class="hover:bg-secondary-50 transition-fast">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <img src="${employee.photo || 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=80&auto=format&fit=crop'}" alt="${employee.fullName || record.employeeId}" class="w-8 h-8 rounded-full ml-3">
+                                <div>
+                                    <div class="text-sm font-medium text-text-primary">${employee.fullName || record.employeeId}</div>
+                                    <div class="text-xs text-text-tertiary">${record.department || employee.departmentName || ''}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-text-primary">${record.checkIn}</td>
+                        <td class="px-6 py-4 text-sm text-text-primary">${record.checkOut || '-'}</td>
+                        <td class="px-6 py-4 text-sm text-text-primary">${record.hours?.toFixed(2) || '-'}</td>
+                        <td class="px-6 py-4">${badge}</td>
+                        <td class="px-6 py-4 text-sm text-text-secondary">${record.note || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        
+
+function populateAttendanceFormEmployees() {
+    const select = document.getElementById('attendanceEmployee');
+    if (!select) return;
+    const previousValue = select.value;
+    select.innerHTML = [
+        '<option value="">اختر الموظف</option>',
+        ...employeesData.map(employee => `<option value="${employee.id}">${employee.fullName} — ${employee.departmentName}</option>`)
+    ].join('');
+    if (previousValue && employeesData.some(emp => emp.id === previousValue)) {
+        select.value = previousValue;
+    }
+}
+function updateSummaryCards() {
+            const totalEmployees = employeesData.length;
+            const monthlyGrowth = employeesData.filter(emp => daysSince(emp.joinDate) <= 30).length;
+            const payrollSum = employeesData.reduce((total, employee) => total + employee.salary, 0);
+
+            setText('totalEmployeesCount', totalEmployees.toString());
+            setText('monthlyGrowthText', monthlyGrowth ? `+${monthlyGrowth} هذا الشهر` : 'مستقر');
+            setText('monthlyPayrollValue', formatCurrency(payrollSum, 'ر.س'));
+            setText('monthlyPayrollHint', 'إجمالي الرواتب الأساسية');
+
+            setText('activeTeamsCount', teamsData.length.toString());
+            setText('teamsChangeText', teamsData.length > baseTeams.length ? '+فريق جديد' : 'مستقر');
+        }
+
+        function updateAttendanceSummary() {
+            setText('attendancePresentCount', attendanceSnapshot.present.toString());
+            setText('attendanceLateCount', attendanceSnapshot.late.toString());
+            setText('attendanceAbsentCount', attendanceSnapshot.absent.toString());
+            const percentage = Math.round(attendanceSnapshot.rate * 100);
+            setText('attendanceRateValue', `${percentage}%`);
+            setText('attendanceRateCard', `${percentage}%`);
+            setText('attendanceStatusText', percentage >= 90 ? 'ممتاز' : 'يتطلب متابعة');
+        }
+
+        function attachGlobalListeners() {
+            window.addEventListener('storage', event => {
+                if ([STORAGE_KEY, TEAMS_STORAGE_KEY].includes(event.key)) {
+                    employeesData = loadEmployees();
+                    teamsData = loadTeams();
+                    renderEmployees();
+                    renderTeams();
+                    renderPayrollTable();
+                    renderAttendanceTable();
+                    populateAttendanceFormEmployees();
+                    updateSummaryCards();
                 }
             });
-        });
+        }
 
-        // Department filter
-        document.getElementById('departmentFilter').addEventListener('change', function() {
-            const selectedDept = this.value;
-            const employees = document.querySelectorAll('.employee-card');
-            
-            employees.forEach(employee => {
-                if (selectedDept === '' || employee.dataset.department === selectedDept) {
-                    employee.style.display = '';
-                } else {
-                    employee.style.display = 'none';
-                }
+        function syncFooterTime() {
+            const footerTime = document.querySelector('footer p:last-child');
+            if (!footerTime) return;
+            const updateTime = () => {
+                const now = new Date();
+                footerTime.textContent = `مركز الموارد البشرية - آخر تحديث: ${now.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+            };
+            updateTime();
+            setInterval(updateTime, 60000);
+        }
+
+        function formatJoinDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long' });
+        }
+
+        function formatCurrency(amount, currency = 'ر.س') {
+            if (amount === undefined || amount === null || isNaN(Number(amount))) return '-';
+            return `${Number(amount).toLocaleString('ar-SA')} ${currency}`;
+        }
+
+        function sumAmounts(items = []) {
+            return items.reduce((total, item) => total + (Number(item.amount) || 0), 0);
+        }
+
+        function setText(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            }
+        }
+
+        function getStatusBadge(employee) {
+            const baseClasses = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium';
+            switch (employee.status) {
+                case 'active':
+                    return { label: employee.statusLabel || 'نشط', classes: `${baseClasses} bg-success-100 text-success` };
+                case 'onsite':
+                    return { label: employee.statusLabel || 'في الموقع', classes: `${baseClasses} bg-warning-100 text-warning` };
+                case 'remote':
+                    return { label: employee.statusLabel || 'عمل عن بعد', classes: `${baseClasses} bg-info-100 text-info` };
+                case 'leave':
+                    return { label: employee.statusLabel || 'إجازة', classes: `${baseClasses} bg-secondary-200 text-secondary-700` };
+                default:
+                    return { label: employee.statusLabel || 'غير محدد', classes: `${baseClasses} bg-secondary-100 text-text-secondary` };
+            }
+        }
+
+        function getAttendanceBadge(status) {
+            const base = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium';
+            switch (status) {
+                case 'present':
+                    return `<span class="${base} bg-success-100 text-success">حاضر</span>`;
+                case 'late':
+                    return `<span class="${base} bg-warning-100 text-warning">متأخر</span>`;
+                case 'remote':
+                    return `<span class="${base} bg-info-100 text-info">عن بعد</span>`;
+                case 'absent':
+                    return `<span class="${base} bg-error-100 text-error">غائب</span>`;
+                default:
+                    return `<span class="${base} bg-secondary-100 text-text-secondary">غير محدد</span>`;
+            }
+        }
+
+        function daysSince(dateString) {
+            if (!dateString) return Infinity;
+            const now = new Date();
+            const then = new Date(dateString);
+            const diff = now - then;
+            return Math.floor(diff / (1000 * 60 * 60 * 24));
+        }
+
+        function showToast(message, type = 'info') {
+            let toast = document.getElementById('hrToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'hrToast';
+                toast.className = 'fixed top-6 left-6 z-50 hidden';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<div class="px-5 py-3 rounded-xl shadow-lg text-sm text-white ${type === 'success' ? 'bg-success' : type === 'error' ? 'bg-error' : 'bg-primary'}">${message}</div>`;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3500);
+        }
+
+        function toggleModal(id, show = true) {
+            const modal = document.getElementById(id);
+            if (!modal) return;
+            modal.classList.toggle('hidden', !show);
+            if (show) {
+                modal.classList.add('flex');
+            } else {
+                modal.classList.remove('flex');
+            }
+        }
+
+        function openOrgChartModal() {
+            const modal = document.getElementById('orgChartModal');
+            if (!modal) return showToast('المخطط التنظيمي غير متوفر حالياً', 'info');
+            const container = modal.querySelector('[data-org-chart]');
+            if (container) {
+                container.innerHTML = employeesData.map(employee => `
+                    <div class="border border-border rounded-lg p-4 bg-white shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <img src="${employee.photo}" alt="${employee.fullName}" class="w-12 h-12 rounded-full object-cover" />
+                            <div>
+                                <p class="font-semibold text-text-primary">${employee.fullName}</p>
+                                <p class="text-xs text-text-secondary">${employee.jobTitle}</p>
+                                <p class="text-xs text-text-tertiary">${employee.manager ? `يشرف عليه: ${employee.manager}` : ''}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            toggleModal('orgChartModal', true);
+        }
+
+        function generatePayrollReport() {
+            const headers = ['المعرف', 'الاسم الكامل', 'القسم', 'الراتب الأساسي', 'إجمالي البدلات', 'إجمالي الخصومات', 'صافي الراتب'];
+            const rows = employeesData.map(employee => {
+                const allowances = sumAmounts(employee.allowances);
+                const deductions = sumAmounts(employee.deductions);
+                const latestPayroll = employee.payrollHistory?.[0];
+                const net = latestPayroll?.net ?? (employee.salary + allowances - deductions);
+                return [
+                    employee.employeeCode,
+                    employee.fullName,
+                    employee.departmentName,
+                    employee.salary,
+                    allowances,
+                    deductions,
+                    net
+                ];
             });
-        });
-
-        // Modal functions
-        function openAddEmployeeModal() {
-            alert('فتح نموذج إضافة موظف جديد');
-        }
-
-        function openPayrollModal() {
-            alert('فتح نموذج إدارة الرواتب');
-        }
-
-        function openAttendanceModal() {
-            alert('فتح نموذج تسجيل الحضور');
-        }
-
-        function openCreateTeamModal() {
-            alert('فتح نموذج إنشاء فريق جديد');
-        }
-
-        function openCreateRoleModal() {
-            alert('فتح نموذج إنشاء دور جديد');
-        }
-
-        function openPerformanceReviewModal() {
-            alert('فتح نموذج تقييم الأداء');
-        }
-
-        // Employee action functions
-        function editEmployee(id) {
-            alert('تعديل بيانات الموظف: ' + id);
-        }
-
-        function viewEmployeeDetails(id) {
-            alert('عرض تفاصيل الموظف: ' + id);
+            const csv = [headers, ...rows].map(row => row.map(value => `"${value}"`).join(',')).join('\n');
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'payroll-report.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('تم إنشاء تقرير الرواتب بنجاح', 'success');
         }
 
         function exportEmployees() {
-            alert('تصدير بيانات الموظفين');
+            const headers = ['المعرف', 'الاسم', 'القسم', 'الوظيفة', 'البريد', 'الهاتف', 'تاريخ التعيين'];
+            const rows = filteredEmployees.map(employee => [
+                employee.employeeCode,
+                employee.fullName,
+                employee.departmentName,
+                employee.jobTitle,
+                employee.email,
+                employee.phone,
+                formatJoinDate(employee.joinDate)
+            ]);
+            if (!rows.length) {
+                showToast('لا توجد بيانات لتصديرها بحسب عوامل التصفية الحالية', 'error');
+                return;
+            }
+            const csv = [headers, ...rows].map(row => row.map(value => `"${value}"`).join(',')).join('\n');
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'employees-export.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('تم تصدير قائمة الموظفين', 'success');
         }
 
-        // Team functions
-        function viewTeamDetails(id) {
-            alert('عرض تفاصيل الفريق: ' + id);
-        }
-
-        function editTeam(id) {
-            alert('تعديل الفريق: ' + id);
-        }
-
-        // Payroll functions
-        function generatePayrollReport() {
-            alert('إنشاء تقرير الرواتب');
+        function exportAttendance() {
+            const headers = ['الموظف', 'القسم', 'وقت الحضور', 'وقت الانصراف', 'ساعات العمل', 'الحالة', 'ملاحظات'];
+            const rows = attendanceSnapshot.records.map(record => {
+                const employee = employeesData.find(emp => emp.id === record.employeeId) || {};
+                return [
+                    employee.fullName || record.employeeId,
+                    record.department || employee.departmentName || '-',
+                    record.checkIn,
+                    record.checkOut || '-',
+                    record.hours || '-',
+                    record.status,
+                    record.note || '-'
+                ];
+            });
+            const csv = [headers, ...rows].map(row => row.map(value => `"${value}"`).join(',')).join('\n');
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'attendance-report.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast('تم تصدير سجل الحضور', 'success');
         }
 
         function processPayroll() {
-            alert('معالجة رواتب الموظفين');
-        }
-
-        function viewPayslip(id) {
-            alert('عرض قسيمة راتب: ' + id);
-        }
-
-        function editPayroll(id) {
-            alert('تعديل راتب: ' + id);
-        }
-
-        // Attendance functions
-        function exportAttendance() {
-            alert('تصدير تقرير الحضور');
+            toggleModal('payrollModal', true);
+            const modalBody = document.getElementById('payrollModalBody');
+            if (!modalBody) return;
+            modalBody.innerHTML = employeesData.map(employee => {
+                const allowances = sumAmounts(employee.allowances);
+                const deductions = sumAmounts(employee.deductions);
+                const net = employee.salary + allowances - deductions;
+                return `
+                    <tr class="text-sm">
+                        <td class="px-4 py-3">${employee.fullName}</td>
+                        <td class="px-4 py-3 text-text-secondary">${employee.departmentName}</td>
+                        <td class="px-4 py-3">${formatCurrency(employee.salary, employee.currency)}</td>
+                        <td class="px-4 py-3 text-success">${formatCurrency(allowances, employee.currency)}</td>
+                        <td class="px-4 py-3 text-error">${formatCurrency(deductions, employee.currency)}</td>
+                        <td class="px-4 py-3 font-semibold text-text-primary">${formatCurrency(net, employee.currency)}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function markAttendance() {
-            alert('تسجيل حضور جديد');
+            toggleModal('attendanceModal', true);
         }
 
-        // Initialize real-time updates
-        document.addEventListener('DOMContentLoaded', function() {
-            // Update time every minute
-            setInterval(function() {
-                const now = new Date();
-                const timeString = now.toLocaleString('ar-SA', {
-                    year: 'numeric',
-                    month: 'long', 
-                    day: 'numeric'
-                });
-                
-                const footerTime = document.querySelector('footer p:last-child');
-                if (footerTime) {
-                    footerTime.textContent = `مركز الموارد البشرية - آخر تحديث: ${timeString}`;
+        function openCreateTeamModal() {
+            toggleModal('teamModal', true);
+            const form = document.getElementById('teamForm');
+            if (form) {
+                delete form.dataset.teamId;
+                form.reset();
+            }
+        }
+
+        function openCreateRoleModal() {
+            toggleModal('roleModal', true);
+        }
+
+        function openPerformanceReviewModal() {
+            toggleModal('performanceModal', true);
+        }
+
+        function openPayrollModal() {
+            toggleModal('payrollModal', true);
+        }
+
+        function openAttendanceModal() {
+            toggleModal('attendanceModal', true);
+        }
+
+        function closeModal(id) {
+            toggleModal(id, false);
+        }
+
+        function viewPayslip(employeeId) {
+            const employee = employeesData.find(emp => emp.id === employeeId);
+            if (!employee) {
+                showToast('تعذر العثور على الموظف المحدد', 'error');
+                return;
+            }
+            showToast(`تم فتح قسيمة الراتب لـ ${employee.fullName}`, 'info');
+        }
+
+        function openEmployeeForm(employeeId) {
+            const url = employeeId ? `add_employee.html?employeeId=${encodeURIComponent(employeeId)}` : 'add_employee.html';
+            window.location.href = url;
+        }
+
+        function editEmployee(employeeId) {
+            openEmployeeForm(employeeId);
+        }
+
+        function viewEmployeeDetails(employeeId) {
+            window.location.href = `employee_profile.html?employeeId=${encodeURIComponent(employeeId)}`;
+        }
+
+        function viewTeamDetails(teamId) {
+            const team = teamsData.find(t => t.id === teamId);
+            if (!team) {
+                showToast('الفريق غير موجود', 'error');
+                return;
+            }
+            showToast(`فريق ${team.name} يضم ${team.members} أعضاء`, 'info');
+        }
+
+        function editTeam(teamId) {
+            const team = teamsData.find(t => t.id === teamId);
+            if (!team) {
+                showToast('الفريق غير موجود', 'error');
+                return;
+            }
+            toggleModal('teamModal', true);
+            const form = document.getElementById('teamForm');
+            if (!form) return;
+            form.dataset.teamId = teamId;
+            form.querySelector('[name="teamName"]').value = team.name;
+            form.querySelector('[name="teamFocus"]').value = team.focus;
+            form.querySelector('[name="teamLeader"]').value = team.leader;
+            form.querySelector('[name="teamMembers"]').value = team.members;
+            form.querySelector('[name="teamProjects"]').value = team.activeProjects;
+            form.querySelector('[name="teamTags"]').value = team.tags.join(', ');
+        }
+
+        document.addEventListener('submit', event => {
+            if (event.target?.id === 'teamForm') {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                const newTeam = {
+                    id: form.dataset.teamId || `TEAM-${Date.now()}`,
+                    name: formData.get('teamName'),
+                    focus: formData.get('teamFocus'),
+                    leader: formData.get('teamLeader'),
+                    members: Number(formData.get('teamMembers')) || 0,
+                    activeProjects: Number(formData.get('teamProjects')) || 0,
+                    status: 'active',
+                    tags: (formData.get('teamTags') || '').split(',').map(tag => tag.trim()).filter(Boolean),
+                    avatarColor: 'primary',
+                    membersPhotos: []
+                };
+                const existingIndex = teamsData.findIndex(team => team.id === newTeam.id);
+                if (existingIndex >= 0) {
+                    teamsData[existingIndex] = newTeam;
+                } else {
+                    teamsData.push(newTeam);
                 }
-            }, 60000);
+                localStorage.setItem(TEAMS_STORAGE_KEY, JSON.stringify(teamsData));
+                renderTeams();
+                updateSummaryCards();
+                toggleModal('teamModal', false);
+                showToast('تم حفظ بيانات الفريق', 'success');
+            }
         });
+
+        document.addEventListener('submit', event => {
+            if (event.target?.id === 'attendanceForm') {
+                event.preventDefault();
+                const formData = new FormData(event.target);
+                const employeeId = formData.get('attendanceEmployee');
+                const employee = employeesData.find(emp => emp.id === employeeId);
+                if (!employee) {
+                    showToast('يرجى اختيار موظف صالح', 'error');
+                    return;
+                }
+                attendanceSnapshot.records.unshift({
+                    employeeId,
+                    checkIn: formData.get('attendanceIn') || '-',
+                    checkOut: formData.get('attendanceOut') || '-',
+                    hours: Number(formData.get('attendanceHours')) || 0,
+                    status: formData.get('attendanceStatus') || 'present',
+                    note: formData.get('attendanceNote') || '-',
+                    department: employee.departmentName
+                });
+                renderAttendanceTable();
+                toggleModal('attendanceModal', false);
+                showToast('تم تسجيل الحضور بنجاح', 'success');
+            }
+        });
+
+        document.addEventListener('click', event => {
+            if (event.target?.matches('[data-close-modal]')) {
+                const target = event.target.getAttribute('data-close-modal');
+                toggleModal(target, false);
+            }
+        });
+
+        window.openAddEmployeeForm = () => openEmployeeForm();
+        window.openPayrollModal = openPayrollModal;
+        window.openAttendanceModal = openAttendanceModal;
+        window.openCreateTeamModal = openCreateTeamModal;
+        window.openCreateRoleModal = openCreateRoleModal;
+        window.openPerformanceReviewModal = openPerformanceReviewModal;
+        window.generatePayrollReport = generatePayrollReport;
+        window.processPayroll = processPayroll;
+        window.exportEmployees = exportEmployees;
+        window.exportAttendance = exportAttendance;
+        window.viewPayslip = viewPayslip;
+        window.editEmployee = editEmployee;
+        window.viewEmployeeDetails = viewEmployeeDetails;
+        window.editTeam = editTeam;
+        window.viewTeamDetails = viewTeamDetails;
+        window.markAttendance = markAttendance;
+        window.closeModal = closeModal;
+        window.showToast = showToast;
+
     </script>
 <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
     <script src="../js/session.js" data-login-path="../login.html"></script>
