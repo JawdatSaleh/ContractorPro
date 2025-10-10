@@ -8,6 +8,83 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    <style>
+        .finance-tabs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .finance-nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            text-align: right;
+            padding: 1rem 1.25rem;
+            border-radius: 1.25rem;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid var(--border);
+            background-color: var(--surface);
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .finance-nav-btn .finance-nav-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .finance-nav-btn .finance-nav-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-50);
+            color: var(--primary);
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        .finance-nav-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .finance-nav-btn .finance-nav-arrow {
+            font-size: 0.85rem;
+            color: currentColor;
+            opacity: 0.7;
+        }
+
+        .finance-nav-btn.is-active {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .finance-nav-btn.is-active .finance-nav-icon {
+            background-color: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+        }
+
+        .finance-nav-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @media (max-width: 640px) {
+            .finance-nav-btn {
+                padding: 0.9rem 1rem;
+            }
+        }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-background text-text-primary font-arabic" data-active-link="finance">
@@ -89,17 +166,81 @@
         <main class="p-6 space-y-6" data-page-root>
             <!-- Tab navigation -->
             <section class="bg-surface border border-border rounded-2xl shadow-card">
-                <div class="px-6 py-4 border-b border-border flex flex-wrap items-center gap-3">
-                    <span class="text-sm text-text-secondary">أقسام المالية:</span>
-                    <div class="flex flex-wrap gap-2" role="tablist">
-                        <button class="tab-button is-active" data-target="tab-overview" role="tab" aria-selected="true">الصفحة الرئيسية</button>
-                        <button class="tab-button" data-target="tab-invoices" role="tab">الفواتير</button>
-                        <button class="tab-button" data-target="tab-quotes" role="tab">عروض الأسعار</button>
-                        <button class="tab-button" data-target="tab-payments" role="tab">المدفوعات</button>
-                        <button class="tab-button" data-target="tab-expenses" role="tab">المصاريف</button>
-                        <button class="tab-button" data-target="tab-commitments" role="tab">الالتزامات الشهرية</button>
-                        <button class="tab-button" data-target="tab-reports" role="tab">التقارير</button>
-                        <button class="tab-button" data-target="tab-settings" role="tab">الإعدادات</button>
+                <div class="px-6 py-4 border-b border-border space-y-4">
+                    <span class="text-sm text-text-secondary block">أقسام المالية:</span>
+                    <div class="finance-tabs-grid" role="tablist">
+                        <button class="tab-button finance-nav-btn is-active" data-target="tab-overview" role="tab" aria-selected="true">
+                            <span class="finance-nav-label">
+                                <span class="finance-nav-icon">
+                                    <i class="fas fa-home"></i>
+                                </span>
+                                <span class="finance-nav-title">الصفحة الرئيسية</span>
+                            </span>
+                            <i class="fas fa-arrow-left finance-nav-arrow"></i>
+                        </button>
+                        <button class="tab-button finance-nav-btn" data-target="tab-invoices" role="tab">
+                            <span class="finance-nav-label">
+                                <span class="finance-nav-icon">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                </span>
+                                <span class="finance-nav-title">الفواتير</span>
+                            </span>
+                            <i class="fas fa-arrow-left finance-nav-arrow"></i>
+                        </button>
+                        <button class="tab-button finance-nav-btn" data-target="tab-quotes" role="tab">
+                            <span class="finance-nav-label">
+                                <span class="finance-nav-icon">
+                                    <i class="fas fa-file-signature"></i>
+                                </span>
+                                <span class="finance-nav-title">عروض الأسعار</span>
+                            </span>
+                            <i class="fas fa-arrow-left finance-nav-arrow"></i>
+                        </button>
+                        <button class="tab-button finance-nav-btn" data-target="tab-payments" role="tab">
+                            <span class="finance-nav-label">
+                                <span class="finance-nav-icon">
+                                    <i class="fas fa-credit-card"></i>
+                                </span>
+                                <span class="finance-nav-title">المدفوعات</span>
+                            </span>
+                            <i class="fas fa-arrow-left finance-nav-arrow"></i>
+                        </button>
+                        <button class="tab-button finance-nav-btn" data-target="tab-expenses" role="tab">
+                            <span class="finance-nav-label">
+                                <span class="finance-nav-icon">
+                                    <i class="fas fa-wallet"></i>
+                                </span>
+                                <span class="finance-nav-title">المصاريف</span>
+                            </span>
+                            <i class="fas fa-arrow-left finance-nav-arrow"></i>
+                        </button>
+                        <button class="tab-button finance-nav-btn" data-target="tab-commitments" role="tab">
+                            <span class="finance-nav-label">
+                                <span class="finance-nav-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                </span>
+                                <span class="finance-nav-title">الالتزامات الشهرية</span>
+                            </span>
+                            <i class="fas fa-arrow-left finance-nav-arrow"></i>
+                        </button>
+                        <button class="tab-button finance-nav-btn" data-target="tab-reports" role="tab">
+                            <span class="finance-nav-label">
+                                <span class="finance-nav-icon">
+                                    <i class="fas fa-chart-pie"></i>
+                                </span>
+                                <span class="finance-nav-title">التقارير</span>
+                            </span>
+                            <i class="fas fa-arrow-left finance-nav-arrow"></i>
+                        </button>
+                        <button class="tab-button finance-nav-btn" data-target="tab-settings" role="tab">
+                            <span class="finance-nav-label">
+                                <span class="finance-nav-icon">
+                                    <i class="fas fa-sliders-h"></i>
+                                </span>
+                                <span class="finance-nav-title">الإعدادات</span>
+                            </span>
+                            <i class="fas fa-arrow-left finance-nav-arrow"></i>
+                        </button>
                     </div>
                 </div>
 
