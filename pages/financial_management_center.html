@@ -1794,6 +1794,7 @@
                 btn.classList.toggle('is-active', isActive);
                 btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
             });
+        }
 
             tabContents.forEach((content) => {
                 content.classList.toggle('hidden', content.id !== targetId);

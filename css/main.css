@@ -4360,6 +4360,7 @@ body {
   gap: 0.5rem;
 }
 
+
 .finance-focus-ring {
   position: relative;
 }
@@ -4457,3 +4458,4 @@ body {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
+
