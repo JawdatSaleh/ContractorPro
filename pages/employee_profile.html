@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ملف الموظف - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+</head>
+<body class="bg-background font-arabic">
+    <div class="min-h-screen">
+        <header class="bg-surface border-b border-border shadow-card">
+            <div class="max-w-6xl mx-auto px-6 py-5 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <p class="text-sm text-text-tertiary">مركز الموارد البشرية</p>
+                    <h1 class="text-2xl font-bold text-text-primary">الملف الشخصي للموظف</h1>
+                    <p class="text-sm text-text-secondary">نظرة شاملة على بيانات الموظف، الرواتب، الأداء، والوثائق.</p>
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="human_resources_center.html" class="px-4 py-2 border border-border rounded-lg hover:bg-secondary-50 transition-fast">
+                        <i class="fas fa-arrow-right ml-2"></i>
+                        العودة للموظفين
+                    </a>
+                    <button id="editEmployeeButton" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast">
+                        <i class="fas fa-pen ml-2"></i>
+                        تعديل البيانات
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto px-6 py-8 space-y-8" id="profileWrapper">
+            <section class="bg-surface border border-border rounded-2xl shadow-card overflow-hidden">
+                <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                    <div class="lg:col-span-2 flex flex-col gap-4">
+                        <div class="flex items-center gap-4 flex-wrap">
+                            <img id="employeePhoto" src="" alt="" class="w-20 h-20 rounded-2xl object-cover border border-border" />
+                            <div>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h2 id="employeeName" class="text-2xl font-bold text-text-primary"></h2>
+                                    <span id="employeeStatus" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"></span>
+                                </div>
+                                <p id="employeeJobTitle" class="text-sm text-text-secondary"></p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-text-secondary">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-building text-text-tertiary"></i>
+                                <span id="employeeDepartment"></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-user-tie text-text-tertiary"></i>
+                                <span id="employeeManager"></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-calendar text-text-tertiary"></i>
+                                <span id="employeeJoinDate"></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-location-dot text-text-tertiary"></i>
+                                <span id="employeeLocation"></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-envelope text-text-tertiary"></i>
+                                <a id="employeeEmail" class="hover:text-primary" href="mailto:"></a>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-phone text-text-tertiary"></i>
+                                <a id="employeePhone" class="hover:text-primary" href="tel:"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-secondary-50 border border-border rounded-2xl p-4 space-y-3 text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-secondary">الراتب الأساسي</span>
+                            <span id="employeeSalary" class="text-lg font-semibold text-text-primary"></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-secondary">إجمالي البدلات</span>
+                            <span id="employeeAllowanceTotal" class="font-medium text-success"></span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-secondary">الخصومات</span>
+                            <span id="employeeDeductionTotal" class="font-medium text-error"></span>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-border pt-3">
+                            <span class="text-text-secondary">صافي الراتب المتوقع</span>
+                            <span id="employeeNetSalary" class="font-semibold text-text-primary"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-text-primary">البدلات والمزايا</h3>
+                        <span class="text-xs text-text-tertiary">تحديث آخر دورة رواتب</span>
+                    </div>
+                    <ul id="allowancesList" class="space-y-3 text-sm text-text-secondary"></ul>
+                </div>
+                <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-text-primary">الخصومات والسلف</h3>
+                        <span class="text-xs text-text-tertiary">يتم خصمها تلقائياً</span>
+                    </div>
+                    <ul id="deductionsList" class="space-y-3 text-sm text-text-secondary"></ul>
+                </div>
+            </section>
+
+            <section class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-text-primary">سجل الرواتب الثلاثي</h3>
+                    <span class="text-xs text-text-tertiary">يمكن تصديره من مركز الموارد البشرية</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-secondary-50">
+                            <tr>
+                                <th class="px-4 py-3 text-right text-text-secondary font-medium">الشهر</th>
+                                <th class="px-4 py-3 text-right text-text-secondary font-medium">إجمالي الراتب</th>
+                                <th class="px-4 py-3 text-right text-text-secondary font-medium">الخصومات</th>
+                                <th class="px-4 py-3 text-right text-text-secondary font-medium">الصافي</th>
+                                <th class="px-4 py-3 text-right text-text-secondary font-medium">الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payrollHistoryBody" class="divide-y divide-border"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                    <h3 class="text-lg font-semibold text-text-primary">الإجازات والاستحقاقات</h3>
+                    <ul id="leavesList" class="space-y-3 text-sm text-text-secondary"></ul>
+                </div>
+                <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                    <h3 class="text-lg font-semibold text-text-primary">الدفعات القادمة</h3>
+                    <ul id="upcomingPaymentsList" class="space-y-3 text-sm text-text-secondary"></ul>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                    <h3 class="text-lg font-semibold text-text-primary">المهارات والمجالات</h3>
+                    <div id="skillsList" class="flex flex-wrap gap-2 text-sm"></div>
+                </div>
+                <div class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                    <h3 class="text-lg font-semibold text-text-primary">الوثائق المرفقة</h3>
+                    <ul id="documentsList" class="space-y-3 text-sm text-text-secondary"></ul>
+                </div>
+            </section>
+
+            <section class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-text-primary">الإنجازات والخط الزمني</h3>
+                <ol id="timelineList" class="relative border-s border-border space-y-4 ps-6 text-sm text-text-secondary"></ol>
+            </section>
+        </main>
+
+        <section id="notFound" class="max-w-4xl mx-auto px-6 py-16 hidden">
+            <div class="bg-surface border border-dashed border-border rounded-2xl shadow-card p-10 text-center space-y-6">
+                <div class="w-16 h-16 mx-auto bg-secondary-100 text-secondary-600 rounded-full flex items-center justify-center text-2xl">
+                    <i class="fas fa-user-slash"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-text-primary">الموظف غير موجود</h2>
+                <p class="text-text-secondary max-w-xl mx-auto">تأكد من صحة الرابط أو عد إلى مركز الموارد البشرية لاختيار موظف من القائمة الرئيسية.</p>
+                <a href="human_resources_center.html" class="inline-flex items-center gap-2 px-5 py-2 bg-primary text-white rounded-lg hover:bg-primary-600 transition-fast">
+                    <i class="fas fa-users"></i>
+                    استعراض جميع الموظفين
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'contractorProEmployees';
+        const params = new URLSearchParams(window.location.search);
+        const employeeId = params.get('employeeId');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const employees = loadEmployees();
+            const employee = employees.find(emp => emp.id === employeeId);
+            if (!employee) {
+                showNotFound();
+                return;
+            }
+            renderProfile(employee);
+        });
+
+        function loadEmployees() {
+            try {
+                const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                return Array.isArray(stored) ? stored : [];
+            } catch (error) {
+                console.error('تعذر قراءة بيانات الموظفين', error);
+                return [];
+            }
+        }
+
+        function renderProfile(employee) {
+            document.getElementById('profileWrapper').classList.remove('hidden');
+            document.getElementById('notFound').classList.add('hidden');
+
+            setText('employeeName', employee.fullName);
+            setText('employeeJobTitle', employee.jobTitle);
+            setText('employeeDepartment', employee.departmentName || 'غير محدد');
+            setText('employeeManager', employee.manager || 'غير محدد');
+            setText('employeeLocation', employee.location || 'غير محدد');
+            setText('employeeJoinDate', formatJoinDate(employee.joinDate));
+            setLink('employeeEmail', employee.email, `mailto:${employee.email}`);
+            setLink('employeePhone', employee.phone, `tel:${employee.phone?.replace(/\s+/g, '')}`);
+
+            const photo = employee.photo || getFallbackPhoto(employee.fullName);
+            const photoEl = document.getElementById('employeePhoto');
+            photoEl.src = photo;
+            photoEl.alt = employee.fullName;
+
+            const statusBadge = document.getElementById('employeeStatus');
+            const badge = getStatusBadge(employee.status, employee.statusLabel);
+            statusBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${badge.classes}`;
+            statusBadge.textContent = badge.label;
+
+            setText('employeeSalary', formatCurrency(employee.salary));
+            const allowanceTotal = sumAmounts(employee.allowances);
+            const deductionTotal = sumAmounts(employee.deductions);
+            setText('employeeAllowanceTotal', formatCurrency(allowanceTotal));
+            setText('employeeDeductionTotal', formatCurrency(deductionTotal));
+            setText('employeeNetSalary', formatCurrency(employee.salary + allowanceTotal - deductionTotal));
+
+            renderList('allowancesList', employee.allowances, 'لا توجد بدلات مسجلة.', item => `${item.title}: <span class="text-success font-medium">${formatCurrency(item.amount)}</span>`);
+            renderList('deductionsList', employee.deductions, 'لا توجد خصومات نشطة.', item => `${item.title}: <span class="text-error font-medium">${formatCurrency(item.amount)}</span>`);
+            renderList('leavesList', employee.leaves, 'لا توجد سجلات إجازة.', item => `${item.type}: ${item.used || 0} من ${item.total || 0} يوم`);
+            renderList('documentsList', employee.documents, 'لم يتم رفع وثائق.', item => `<a href="${item.url || '#'}" class="text-primary hover:underline">${item.title}</a> <span class="text-xs text-text-tertiary">آخر تحديث: ${item.updatedAt || '-'}</span>`);
+            renderList('upcomingPaymentsList', employee.upcomingPayments, 'لا توجد مدفوعات قادمة.', item => `${item.title} - ${item.date || '-'} <span class="text-success font-medium">${formatCurrency(item.amount)}</span>`);
+
+            renderSkills(employee.skills);
+            renderTimeline(employee.timeline);
+            renderPayrollHistory(employee.payrollHistory);
+
+            const editButton = document.getElementById('editEmployeeButton');
+            editButton.addEventListener('click', () => {
+                window.location.href = `add_employee.html?employeeId=${encodeURIComponent(employee.id)}`;
+            });
+        }
+
+        function renderPayrollHistory(history = []) {
+            const body = document.getElementById('payrollHistoryBody');
+            if (!history.length) {
+                body.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-text-secondary">لا توجد سجلات رواتب متاحة.</td></tr>`;
+                return;
+            }
+            body.innerHTML = history.map(record => `
+                <tr class="hover:bg-secondary-50 transition-fast">
+                    <td class="px-4 py-3">${record.month}</td>
+                    <td class="px-4 py-3">${formatCurrency(record.gross)}</td>
+                    <td class="px-4 py-3">${formatCurrency(record.deductions)}</td>
+                    <td class="px-4 py-3">${formatCurrency(record.net)}</td>
+                    <td class="px-4 py-3">${renderStatusBadge(record.status)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTimeline(timeline = []) {
+            const list = document.getElementById('timelineList');
+            if (!timeline.length) {
+                list.innerHTML = '<li class="text-text-secondary">لا توجد أحداث مسجلة حتى الآن.</li>';
+                return;
+            }
+            list.innerHTML = timeline.map(event => `
+                <li class="relative">
+                    <span class="absolute -right-2 top-1 w-3 h-3 rounded-full bg-primary"></span>
+                    <div class="bg-surface border border-border rounded-xl p-4">
+                        <p class="text-xs text-text-tertiary">${event.date || '-'}</p>
+                        <p class="text-sm font-medium text-text-primary">${event.title || 'حدث وظيفي'}</p>
+                        <p class="text-sm text-text-secondary">${event.description || ''}</p>
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        function renderSkills(skills = []) {
+            const container = document.getElementById('skillsList');
+            if (!skills.length) {
+                container.innerHTML = '<span class="text-text-secondary">لم يتم إضافة مهارات بعد.</span>';
+                return;
+            }
+            container.innerHTML = skills.map(skill => `<span class="px-3 py-1 bg-secondary-100 text-text-secondary rounded-full">${skill}</span>`).join('');
+        }
+
+        function renderList(elementId, items = [], emptyMessage, templateFn) {
+            const container = document.getElementById(elementId);
+            if (!items.length) {
+                container.innerHTML = `<li class="text-text-secondary">${emptyMessage}</li>`;
+                return;
+            }
+            container.innerHTML = items.map(item => `<li class="flex items-center justify-between border border-border rounded-xl px-4 py-3">${templateFn(item)}</li>`).join('');
+        }
+
+        function setText(id, value) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = value || 'غير محدد';
+            }
+        }
+
+        function setLink(id, label, href) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = label || 'غير متوفر';
+                if (href) el.href = href;
+            }
+        }
+
+        function formatCurrency(amount) {
+            if (amount === undefined || amount === null || Number.isNaN(Number(amount))) return '-';
+            return `${Number(amount).toLocaleString('ar-SA')} ر.س`;
+        }
+
+        function formatJoinDate(dateString) {
+            if (!dateString) return 'غير محدد';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function sumAmounts(items = []) {
+            return items.reduce((total, item) => total + (Number(item.amount) || 0), 0);
+        }
+
+        function getStatusBadge(status, label) {
+            const base = 'text-xs font-medium';
+            switch (status) {
+                case 'active':
+                    return { label: label || 'نشط', classes: `${base} bg-success-100 text-success` };
+                case 'onsite':
+                    return { label: label || 'في الموقع', classes: `${base} bg-warning-100 text-warning` };
+                case 'remote':
+                    return { label: label || 'عمل عن بعد', classes: `${base} bg-info-100 text-info` };
+                case 'leave':
+                    return { label: label || 'إجازة', classes: `${base} bg-secondary-200 text-secondary-700` };
+                default:
+                    return { label: label || 'غير محدد', classes: `${base} bg-secondary-100 text-text-secondary` };
+            }
+        }
+
+        function renderStatusBadge(status) {
+            switch (status) {
+                case 'مدفوع':
+                    return '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-success-100 text-success">مدفوع</span>';
+                case 'قيد المعالجة':
+                    return '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">قيد المعالجة</span>';
+                default:
+                    return `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary-100 text-text-secondary">${status || 'غير محدد'}</span>`;
+            }
+        }
+
+        function getFallbackPhoto(name) {
+            if (!name) {
+                return 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=160&auto=format&fit=crop';
+            }
+            const encoded = encodeURIComponent(name.trim());
+            return `https://api.dicebear.com/6.x/initials/svg?seed=${encoded}&backgroundColor=1C64F2,2563eb&fontFamily=Arial`;
+        }
+
+        function showNotFound() {
+            document.getElementById('profileWrapper').classList.add('hidden');
+            document.getElementById('notFound').classList.remove('hidden');
+        }
+    </script>
+    <script src="../js/session.js" data-login-path="../login.html"></script>
+</body>
+</html>

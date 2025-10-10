@@ -50,9 +50,9 @@
     {
       "name": "الموارد البشرية",
       "entries": [
-        "pages/employees_management_center.html",
         "pages/human_resources_center.html",
-        "pages/team_management.html",
+        "pages/add_employee.html",
+        "pages/employee_profile.html",
         "pages/user_profile.html"
       ]
     },
