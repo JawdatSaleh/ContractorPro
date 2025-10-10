@@ -65,181 +65,39 @@
                 </div>
             </header>
 
-            <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 py-6 space-y-8">
-                <!-- Top Metrics -->
-                <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4" id="overview-cards"></section>
-
-                <!-- Workforce Snapshot -->
-                <section class="grid gap-6 xl:grid-cols-[2fr,1fr] items-start">
-                    <div class="bg-surface border border-border rounded-3xl shadow-sm overflow-hidden">
-                        <div class="px-6 py-5 border-b border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div>
-                                <h3 class="text-lg font-semibold">سجل الموظفين</h3>
-                                <p class="text-sm text-text-secondary">بحث فوري، فلاتر ديناميكية، وعرض تفصيلي لكل موظف.</p>
-                            </div>
-                            <div class="flex flex-wrap items-center gap-2">
-                                <div class="relative">
-                                    <i class="fas fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary"></i>
-                                    <input id="search-input" type="search" placeholder="ابحث باسم الموظف أو بريده" class="pl-4 pr-10 py-2 rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm" />
-                                </div>
-                                <select id="department-filter" class="px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/40">
-                                    <option value="all">كل الإدارات</option>
-                                </select>
-                                <select id="status-filter" class="px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/40">
-                                    <option value="all">كل الحالات</option>
-                                    <option value="active">على رأس العمل</option>
-                                    <option value="leave">إجازة</option>
-                                    <option value="probation">تحت التجربة</option>
-                                    <option value="resigned">منتهٍ</option>
-                                </select>
-                            </div>
+                        <main class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 py-6 space-y-6">
+                <section class="bg-surface border border-border rounded-3xl shadow-sm overflow-hidden">
+                    <div class="px-6 py-5 border-b border-border flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h3 class="text-xl font-semibold text-text-primary">تطبيق الموارد البشرية التفاعلي</h3>
+                            <p class="text-sm text-text-secondary">
+                                يتم تحميل نظام إدارة الموظفين المبني بـ React وTypeScript داخل المنصة لضمان التكامل مع الرواتب والعقود والصلاحيات.
+                            </p>
                         </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full text-sm">
-                                <thead class="bg-secondary-50 text-text-secondary">
-                                    <tr class="text-right">
-                                        <th class="py-3 px-4 font-medium">الموظف</th>
-                                        <th class="py-3 px-4 font-medium">القسم</th>
-                                        <th class="py-3 px-4 font-medium">المشروع</th>
-                                        <th class="py-3 px-4 font-medium">الحالة</th>
-                                        <th class="py-3 px-4 font-medium">المدير المباشر</th>
-                                        <th class="py-3 px-4 font-medium">آخر عملية</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="employees-body" class="divide-y divide-border"></tbody>
-                            </table>
-                        </div>
-                        <div class="px-6 py-4 border-t border-border flex flex-col gap-2 text-sm text-text-secondary sm:flex-row sm:items-center sm:justify-between">
-                            <p>إجمالي السجلات: <span id="records-count" class="font-semibold text-text-primary">0</span></p>
-                            <div class="flex items-center gap-2">
-                                <button id="prev-page" class="px-3 py-2 rounded-lg border border-border hover:bg-secondary-100 disabled:opacity-40 disabled:cursor-not-allowed">السابق</button>
-                                <span id="pagination-info"></span>
-                                <button id="next-page" class="px-3 py-2 rounded-lg border border-border hover:bg-secondary-100 disabled:opacity-40 disabled:cursor-not-allowed">التالي</button>
-                            </div>
-                        </div>
+                        <a href="../apps/web/index.html#/employees" class="text-sm text-primary hover:underline" target="_blank" rel="noopener">
+                            فتح في نافذة جديدة
+                        </a>
                     </div>
-
-                    <div class="space-y-6">
-                        <div class="bg-surface border border-border rounded-3xl shadow-sm p-6 space-y-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="font-semibold">سير العمل الحالي</h3>
-                                <span class="text-xs px-3 py-1 rounded-full bg-secondary-100 text-text-secondary">اليوم</span>
-                            </div>
-                            <ul class="space-y-3 text-sm text-text-secondary" id="workflow-timeline"></ul>
-                        </div>
-                        <div class="bg-surface border border-border rounded-3xl shadow-sm p-6 space-y-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="font-semibold">مؤشرات الرضا</h3>
-                                <span class="text-xs text-success flex items-center gap-1"><i class="fas fa-arrow-trend-up"></i> +4% هذا الربع</span>
-                            </div>
-                            <div class="space-y-4 text-sm">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1">
-                                        <span>رضا الموظفين</span>
-                                        <span class="font-semibold text-text-primary">86%</span>
-                                    </div>
-                                    <div class="w-full bg-secondary-100 rounded-full h-2.5"><div class="h-full bg-primary rounded-full" style="width:86%"></div></div>
+                    <div class="bg-background/60 backdrop-blur">
+                        <div class="relative w-full" style="padding-top: 65vh" id="employees-app-wrapper">
+                            <iframe
+                                id="employees-app-frame"
+                                title="ContractorPro HRM"
+                                src="../apps/web/index.html#/employees"
+                                loading="lazy"
+                                class="absolute inset-0 h-full w-full border-0"
+                                allow="clipboard-write; fullscreen"
+                            ></iframe>
+                            <div id="employees-app-fallback" class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center text-sm text-text-secondary bg-surface">
+                                <div class="flex flex-col items-center gap-2">
+                                    <i class="fas fa-circle-notch fa-spin text-2xl text-primary"></i>
+                                    <p class="max-w-xl">
+                                        يتم تجهيز واجهة النظام. إذا لم يبدأ التحميل تلقائيًا خلال ثوانٍ، تأكد من تشغيل خادم الواجهة الأمامية باستخدام <code class="bg-secondary-100 px-2 py-1 rounded">npm run dev</code> داخل مجلد <code class="bg-secondary-100 px-2 py-1 rounded">apps/web</code>.
+                                    </p>
                                 </div>
-                                <div>
-                                    <div class="flex items-center justify-between mb-1">
-                                        <span>التزام الحضور</span>
-                                        <span class="font-semibold text-text-primary">92%</span>
-                                    </div>
-                                    <div class="w-full bg-secondary-100 rounded-full h-2.5"><div class="h-full bg-success rounded-full" style="width:92%"></div></div>
-                                </div>
-                                <div>
-                                    <div class="flex items-center justify-between mb-1">
-                                        <span>إكمال التقييمات السنوية</span>
-                                        <span class="font-semibold text-text-primary">68%</span>
-                                    </div>
-                                    <div class="w-full bg-secondary-100 rounded-full h-2.5"><div class="h-full bg-warning rounded-full" style="width:68%"></div></div>
-                                </div>
+                                <button id="retry-embed" class="px-4 py-2 rounded-xl bg-primary text-white hover:bg-primary-600">إعادة المحاولة</button>
                             </div>
                         </div>
-                    </div>
-                </section>
-
-                <!-- Detail Drawer and Insights -->
-                <section class="grid gap-6 xl:grid-cols-[1.4fr,1fr] items-start">
-                    <div class="bg-surface border border-border rounded-3xl shadow-sm">
-                        <div class="px-6 py-5 border-b border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                            <h3 class="text-lg font-semibold">ملف الموظف</h3>
-                            <div class="flex items-center gap-2 text-sm text-text-secondary">
-                                <span class="flex items-center gap-1"><i class="fas fa-shield-halved text-primary"></i> RBAC</span>
-                                <span class="flex items-center gap-1"><i class="fas fa-lock text-warning"></i> بيانات العقد مخفية للأدوار المحدودة</span>
-                            </div>
-                        </div>
-                        <div id="employee-details" class="p-6 text-sm text-text-secondary space-y-6">
-                            <p class="text-center text-text-tertiary">اختر موظفًا من القائمة لاستعراض ملفه التفصيلي.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-surface border border-border rounded-3xl shadow-sm p-6 space-y-5">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-semibold">نظرة سريعة على الرواتب</h3>
-                            <button class="px-3 py-1 text-xs rounded-full bg-primary/10 text-primary">دفعة مارس 2025</button>
-                        </div>
-                        <div class="grid gap-3 text-sm">
-                            <div class="flex items-center justify-between">
-                                <span class="text-text-secondary">إجمالي صافي الرواتب</span>
-                                <span class="font-semibold text-lg">٢٣٤٬٥٠٠ ر.س</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-text-secondary">البدلات</span>
-                                <span class="font-semibold">٥٦٬٨٠٠ ر.س</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-text-secondary">اقتطاعات السلف/القروض</span>
-                                <span class="font-semibold text-error">١٢٬٤٠٠ ر.س</span>
-                            </div>
-                        </div>
-                        <div class="border-t border-border pt-4 space-y-3 text-sm">
-                            <h4 class="font-semibold">مراكز التكلفة الأعلى</h4>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-primary block"></span>مشروع الأفق</span>
-                                    <span class="font-medium">٣٢٪</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-success block"></span>مشروع المطار</span>
-                                    <span class="font-medium">٢٧٪</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full bg-warning block"></span>المكتب الرئيسي</span>
-                                    <span class="font-medium">١٩٪</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Attendance & Leaves -->
-                <section class="grid gap-6 lg:grid-cols-2">
-                    <div class="bg-surface border border-border rounded-3xl shadow-sm p-6 space-y-5">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-semibold">الحضور اليومي</h3>
-                            <button class="text-xs px-3 py-1 rounded-full border border-border text-text-secondary hover:bg-secondary-100">تصدير CSV</button>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 text-sm">
-                            <div class="p-4 rounded-2xl bg-secondary-50 border border-border/60">
-                                <p class="text-text-secondary">نسبة الحضور</p>
-                                <p class="text-2xl font-bold mt-1">٩٣٪</p>
-                                <p class="text-success text-xs mt-1 flex items-center gap-1"><i class="fas fa-arrow-up"></i> +٢٪ عن الأسبوع الماضي</p>
-                            </div>
-                            <div class="p-4 rounded-2xl bg-secondary-50 border border-border/60">
-                                <p class="text-text-secondary">التأخيرات المسجلة</p>
-                                <p class="text-2xl font-bold mt-1">١٤</p>
-                                <p class="text-error text-xs mt-1 flex items-center gap-1"><i class="fas fa-arrow-down"></i> يتطلب متابعة</p>
-                            </div>
-                        </div>
-                        <ul class="space-y-3 text-sm" id="attendance-log"></ul>
-                    </div>
-                    <div class="bg-surface border border-border rounded-3xl shadow-sm p-6 space-y-5">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-semibold">طلبات الإجازة</h3>
-                            <button class="text-xs px-3 py-1 rounded-full bg-success text-white hover:bg-success-600">اعتماد جماعي</button>
-                        </div>
-                        <ul class="space-y-3 text-sm" id="leave-requests"></ul>
                     </div>
                 </section>
             </main>
@@ -331,545 +189,49 @@
         </div>
     </div>
 
-    <script>
-        const employees = [
-            {
-                id: "EMP-001",
-                name: "سارة الدوسري",
-                email: "sarah.d@contractorpro.sa",
-                department: "الهندسة",
-                project: "مشروع الأفق",
-                status: "active",
-                manager: "م. ناصر الغامدي",
-                lastAction: "تحديث تقييم الأداء",
-                avatar: "https://i.pravatar.cc/160?img=47",
-                joinDate: "2021-03-12",
-                role: "مهندس أول",
-                costCenter: "ENG-01",
-                contractVisibility: "full",
-                contractSummary: {
-                    type: "دائم",
-                    renewal: "أكتوبر 2024",
-                    allowances: ["بدل سكن 25%", "بدل نقل 10%"],
-                },
-                attendance: {
-                    month: "مارس",
-                    presence: 21,
-                    absence: 1,
-                    overtime: 8,
-                },
-                leaves: [
-                    { type: "سنوية", days: 14, remaining: 8 },
-                    { type: "طارئة", days: 5, remaining: 2 },
-                ],
-                payroll: {
-                    gross: "18٬500",
-                    net: "16٬950",
-                    deductions: "بدل سكن/نقل مدفوعة",
-                },
-            },
-            {
-                id: "EMP-002",
-                name: "محمد الشهري",
-                email: "m.shahri@contractorpro.sa",
-                department: "إدارة المشاريع",
-                project: "مشروع المطار",
-                status: "leave",
-                manager: "م. ليلى الحربي",
-                lastAction: "طلب إجازة طارئة",
-                avatar: "https://i.pravatar.cc/160?img=12",
-                joinDate: "2019-11-01",
-                role: "مدير مشروع",
-                costCenter: "PM-03",
-                contractVisibility: "limited",
-                contractSummary: {
-                    type: "عقد محدد",
-                    renewal: "يناير 2026",
-                    allowances: ["بدل موقع", "بدل مواصلات"],
-                },
-                attendance: {
-                    month: "مارس",
-                    presence: 19,
-                    absence: 3,
-                    overtime: 2,
-                },
-                leaves: [
-                    { type: "سنوية", days: 21, remaining: 12 },
-                ],
-                payroll: {
-                    gross: "22٬700",
-                    net: "20٬120",
-                    deductions: "قسط سلفة ٢٬٠٠٠",
-                },
-            },
-            {
-                id: "EMP-003",
-                name: "ليان المطيري",
-                email: "l.mutairi@contractorpro.sa",
-                department: "الموارد البشرية",
-                project: "المكتب الرئيسي",
-                status: "probation",
-                manager: "هدى السبيعي",
-                lastAction: "رفع ملف العقد",
-                avatar: "https://i.pravatar.cc/160?img=32",
-                joinDate: "2025-01-15",
-                role: "أخصائية توظيف",
-                costCenter: "HR-02",
-                contractVisibility: "hidden",
-                contractSummary: {
-                    type: "تجربة 90 يوم",
-                    renewal: "أبريل 2025",
-                    allowances: ["بدل مواصلات"],
-                },
-                attendance: {
-                    month: "مارس",
-                    presence: 18,
-                    absence: 2,
-                    overtime: 0,
-                },
-                leaves: [
-                    { type: "طارئة", days: 2, remaining: 1 },
-                ],
-                payroll: {
-                    gross: "9٬800",
-                    net: "9٬200",
-                    deductions: "لا يوجد",
-                },
-            },
-            {
-                id: "EMP-004",
-                name: "عبدالله القحطاني",
-                email: "abdullah.q@contractorpro.sa",
-                department: "الهندسة",
-                project: "مشروع الأفق",
-                status: "active",
-                manager: "م. ناصر الغامدي",
-                lastAction: "اعتماد ساعات إضافية",
-                avatar: "https://i.pravatar.cc/160?img=55",
-                joinDate: "2020-06-22",
-                role: "مهندس موقع",
-                costCenter: "ENG-01",
-                contractVisibility: "limited",
-                contractSummary: {
-                    type: "دائم",
-                    renewal: "يونيو 2025",
-                    allowances: ["بدل موقع 15%"],
-                },
-                attendance: {
-                    month: "مارس",
-                    presence: 22,
-                    absence: 0,
-                    overtime: 14,
-                },
-                leaves: [
-                    { type: "سنوية", days: 18, remaining: 10 },
-                ],
-                payroll: {
-                    gross: "15٬200",
-                    net: "14٬350",
-                    deductions: "حسم تأخير ١٥٠",
-                },
-            },
-            {
-                id: "EMP-005",
-                name: "شهد البقمي",
-                email: "shahad.b@contractorpro.sa",
-                department: "المالية",
-                project: "المكتب الرئيسي",
-                status: "active",
-                manager: "طارق الحارثي",
-                lastAction: "إكمال تسوية سلفة",
-                avatar: "https://i.pravatar.cc/160?img=5",
-                joinDate: "2018-08-09",
-                role: "محاسبة أولى",
-                costCenter: "FIN-01",
-                contractVisibility: "full",
-                contractSummary: {
-                    type: "دائم",
-                    renewal: "أغسطس 2025",
-                    allowances: ["بدل شهادات مهنية"],
-                },
-                attendance: {
-                    month: "مارس",
-                    presence: 21,
-                    absence: 1,
-                    overtime: 3,
-                },
-                leaves: [
-                    { type: "سنوية", days: 24, remaining: 14 },
-                    { type: "مرضية", days: 7, remaining: 6 },
-                ],
-                payroll: {
-                    gross: "17٬400",
-                    net: "16٬950",
-                    deductions: "اشتراك هيئة المحاسبين",
-                },
-            },
-        ];
+        <script>
+        const iframe = document.getElementById('employees-app-frame');
+        const fallback = document.getElementById('employees-app-fallback');
+        const retryButton = document.getElementById('retry-embed');
 
-        const overviewMetrics = [
-            {
-                label: "إجمالي الموظفين",
-                key: "total",
-                icon: "fa-users",
-                color: "bg-primary/10 text-primary",
-            },
-            {
-                label: "تعيينات هذا الربع",
-                key: "newHires",
-                icon: "fa-person-circle-plus",
-                color: "bg-success/10 text-success",
-            },
-            {
-                label: "طلبات الإجازة المفتوحة",
-                key: "openLeaves",
-                icon: "fa-plane-departure",
-                color: "bg-warning/10 text-warning",
-            },
-            {
-                label: "السلف النشطة",
-                key: "activeAdvances",
-                icon: "fa-sack-dollar",
-                color: "bg-error/10 text-error",
-            },
-        ];
-
-        const workflowItems = [
-            { time: "09:20", title: "اعتماد عقد جديد", description: "تم اعتماد عقد ليان المطيري من قبل مدير الموارد البشرية" },
-            { time: "10:05", title: "تذكير تقييم أداء", description: "تم إرسال إشعار للمديرين لإكمال تقييمات الربع الأول" },
-            { time: "11:40", title: "طلب سلفة", description: "تم استلام طلب سلفة من خالد السبيعي بقيمة ٥٬٠٠٠ ر.س" },
-            { time: "13:15", title: "تعديل مركز تكلفة", description: "تم نقل موظفين اثنين إلى مشروع الأفق" },
-        ];
-
-        const attendanceLog = [
-            { employee: "عبدالله القحطاني", status: "حضور", note: "ساعات إضافية 4" },
-            { employee: "ليان المطيري", status: "حضور", note: "تدريب على النظام" },
-            { employee: "محمد الشهري", status: "إجازة", note: "طارئة معتمدة" },
-            { employee: "سارة الدوسري", status: "متأخر", note: "15 دقيقة" },
-        ];
-
-        const leaveRequests = [
-            { employee: "سارة الدوسري", type: "سنوية", range: "٢٤-٢٨ مارس", approver: "م. ناصر الغامدي", status: "قيد الموافقة" },
-            { employee: "خالد السبيعي", type: "طارئة", range: "١٥ مارس", approver: "ليلى الحربي", status: "بانتظار التوقيع" },
-            { employee: "مها العبدالله", type: "دراسية", range: "١٠ أبريل - ١٠ مايو", approver: "طارق الحارثي", status: "مستندات مطلوبة" },
-        ];
-
-        const overviewEl = document.getElementById("overview-cards");
-        const departmentFilter = document.getElementById("department-filter");
-        const statusFilter = document.getElementById("status-filter");
-        const searchInput = document.getElementById("search-input");
-        const employeesBody = document.getElementById("employees-body");
-        const recordsCount = document.getElementById("records-count");
-        const paginationInfo = document.getElementById("pagination-info");
-        const prevPageBtn = document.getElementById("prev-page");
-        const nextPageBtn = document.getElementById("next-page");
-        const workflowTimeline = document.getElementById("workflow-timeline");
-        const attendanceLogEl = document.getElementById("attendance-log");
-        const leaveRequestsEl = document.getElementById("leave-requests");
-        const employeeDetails = document.getElementById("employee-details");
-
-        const createModal = document.getElementById("create-modal");
-        const importModal = document.getElementById("import-modal");
-        const openCreate = document.getElementById("open-create");
-        const openImport = document.getElementById("open-import");
-
-        let currentPage = 1;
-        const pageSize = 4;
-
-        function formatStatus(status) {
-            const map = {
-                active: { label: "على رأس العمل", badge: "bg-success/10 text-success" },
-                leave: { label: "إجازة", badge: "bg-warning/10 text-warning" },
-                probation: { label: "تحت التجربة", badge: "bg-accent/10 text-accent" },
-                resigned: { label: "منتهٍ", badge: "bg-error/10 text-error" },
-            };
-            return map[status] || { label: status, badge: "bg-secondary-100 text-text-secondary" };
-        }
-
-        function renderOverview() {
-            const metrics = {
-                total: employees.length,
-                newHires: employees.filter((emp) => new Date(emp.joinDate) >= new Date("2024-12-31")).length,
-                openLeaves: leaveRequests.length,
-                activeAdvances: 6,
-            };
-
-            overviewEl.innerHTML = overviewMetrics
-                .map(
-                    (metric) => `
-                        <div class="bg-surface border border-border rounded-3xl shadow-sm p-5 flex flex-col gap-4">
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-text-secondary">${metric.label}</span>
-                                <span class="w-10 h-10 rounded-2xl flex items-center justify-center ${metric.color}"><i class="fas ${metric.icon}"></i></span>
-                            </div>
-                            <div class="text-3xl font-bold">${metrics[metric.key]}</div>
-                            <p class="text-xs text-text-tertiary">تم التحديث قبل دقيقة بواسطة نظام المراقبة اللحظي.</p>
-                        </div>
-                    `
-                )
-                .join("");
-        }
-
-        function renderWorkflow() {
-            workflowTimeline.innerHTML = workflowItems
-                .map(
-                    (item) => `
-                        <li class="flex gap-3 items-start">
-                            <span class="text-xs font-semibold text-text-tertiary mt-1">${item.time}</span>
-                            <div class="flex-1 space-y-1">
-                                <p class="font-medium text-text-primary">${item.title}</p>
-                                <p>${item.description}</p>
-                            </div>
-                        </li>
-                    `
-                )
-                .join("");
-        }
-
-        function renderAttendanceLog() {
-            attendanceLogEl.innerHTML = attendanceLog
-                .map(
-                    (item) => `
-                        <li class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium text-text-primary">${item.employee}</span>
-                                <span class="text-xs px-3 py-1 rounded-full ${item.status === "حضور" ? "bg-success/10 text-success" : item.status === "إجازة" ? "bg-warning/10 text-warning" : "bg-error/10 text-error"}">${item.status}</span>
-                            </div>
-                            <p class="text-xs text-text-secondary mt-2">${item.note}</p>
-                        </li>
-                    `
-                )
-                .join("");
-        }
-
-        function renderLeaves() {
-            leaveRequestsEl.innerHTML = leaveRequests
-                .map(
-                    (item) => `
-                        <li class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
-                            <div class="flex items-center justify-between gap-3">
-                                <div>
-                                    <p class="font-medium text-text-primary">${item.employee}</p>
-                                    <p class="text-xs text-text-secondary mt-1">${item.type} • ${item.range}</p>
-                                </div>
-                                <span class="text-xs text-text-tertiary">${item.status}</span>
-                            </div>
-                            <p class="text-xs text-text-secondary mt-3">المعتمد المتوقع: ${item.approver}</p>
-                        </li>
-                    `
-                )
-                .join("");
-        }
-
-        function populateDepartments() {
-            const departments = Array.from(new Set(employees.map((emp) => emp.department)));
-            departments.forEach((dept) => {
-                const option = document.createElement("option");
-                option.value = dept;
-                option.textContent = dept;
-                departmentFilter.append(option);
-            });
-        }
-
-        function applyFilters() {
-            const query = searchInput.value.trim().toLowerCase();
-            const dept = departmentFilter.value;
-            const status = statusFilter.value;
-
-            return employees.filter((emp) => {
-                const matchesQuery = !query || emp.name.toLowerCase().includes(query) || emp.email.toLowerCase().includes(query);
-                const matchesDept = dept === "all" || emp.department === dept;
-                const matchesStatus = status === "all" || emp.status === status;
-                return matchesQuery && matchesDept && matchesStatus;
-            });
-        }
-
-        function paginate(data) {
-            const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
-            if (currentPage > totalPages) currentPage = totalPages;
-            const start = (currentPage - 1) * pageSize;
-            const end = start + pageSize;
-            const slice = data.slice(start, end);
-
-            prevPageBtn.disabled = currentPage === 1;
-            nextPageBtn.disabled = currentPage === totalPages;
-            paginationInfo.textContent = `صفحة ${currentPage} من ${totalPages}`;
-            recordsCount.textContent = data.length;
-            return slice;
-        }
-
-        function renderEmployees() {
-            const filtered = applyFilters();
-            const pageData = paginate(filtered);
-            employeesBody.innerHTML = pageData
-                .map((emp) => {
-                    const statusInfo = formatStatus(emp.status);
-                    return `
-                        <tr class="hover:bg-secondary-50 transition cursor-pointer" data-id="${emp.id}">
-                            <td class="py-4 px-4">
-                                <div class="flex items-center gap-3">
-                                    <img src="${emp.avatar}" alt="${emp.name}" class="w-10 h-10 rounded-full object-cover" />
-                                    <div>
-                                        <p class="font-medium text-text-primary">${emp.name}</p>
-                                        <p class="text-xs text-text-secondary">${emp.email}</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="py-4 px-4 text-text-secondary">${emp.department}</td>
-                            <td class="py-4 px-4 text-text-secondary">${emp.project}</td>
-                            <td class="py-4 px-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-medium ${statusInfo.badge}">${statusInfo.label}</span>
-                            </td>
-                            <td class="py-4 px-4 text-text-secondary">${emp.manager}</td>
-                            <td class="py-4 px-4 text-text-tertiary">${emp.lastAction}</td>
-                        </tr>
-                    `;
-                })
-                .join("");
-
-            if (!filtered.length) {
-                employeesBody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-text-tertiary">لا توجد نتائج مطابقة للبحث الحالي.</td></tr>`;
+        function hideFallback() {
+            if (fallback) {
+                fallback.classList.add('hidden');
             }
         }
 
-        function renderEmployeeDetails(emp) {
-            if (!emp) {
-                employeeDetails.innerHTML = `<p class="text-center text-text-tertiary">اختر موظفًا من القائمة لاستعراض ملفه التفصيلي.</p>`;
-                return;
+        function showFallback() {
+            if (fallback) {
+                fallback.classList.remove('hidden');
             }
-
-            const statusInfo = formatStatus(emp.status);
-            employeeDetails.innerHTML = `
-                <div class="flex flex-col gap-5">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div class="flex items-center gap-4">
-                            <img src="${emp.avatar}" alt="${emp.name}" class="w-16 h-16 rounded-2xl object-cover" />
-                            <div>
-                                <h4 class="text-lg font-semibold text-text-primary">${emp.name}</h4>
-                                <p class="text-sm text-text-secondary">${emp.role} • ${emp.department}</p>
-                                <p class="text-xs text-text-tertiary mt-1">منضم منذ ${new Date(emp.joinDate).toLocaleDateString("ar-SA")}</p>
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-2 text-xs">
-                            <span class="px-3 py-1 rounded-full border border-border text-text-secondary">${emp.id}</span>
-                            <span class="px-3 py-1 rounded-full ${statusInfo.badge}">${statusInfo.label}</span>
-                            <span class="px-3 py-1 rounded-full bg-secondary-100 text-text-secondary">${emp.project}</span>
-                        </div>
-                    </div>
-
-                    <div class="grid gap-4 md:grid-cols-2">
-                        <div class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
-                            <h5 class="font-semibold text-text-primary mb-2 flex items-center gap-2"><i class="fas fa-id-card-clip text-primary"></i> بيانات الهوية والارتباط</h5>
-                            <ul class="space-y-1 text-xs text-text-secondary">
-                                <li>البريد: ${emp.email}</li>
-                                <li>المسؤول المباشر: ${emp.manager}</li>
-                                <li>مركز التكلفة: ${emp.costCenter}</li>
-                                <li>انتماء RBAC: ${emp.contractVisibility === "full" ? "وصول كامل" : emp.contractVisibility === "limited" ? "تفاصيل مالية مخفية" : "عرض عام بدون تفاصيل مالية"}</li>
-                            </ul>
-                        </div>
-                        <div class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
-                            <h5 class="font-semibold text-text-primary mb-2 flex items-center gap-2"><i class="fas fa-briefcase text-primary"></i> ملخص العقد</h5>
-                            <p class="text-xs text-text-secondary">نوع العقد: ${emp.contractSummary.type}</p>
-                            <p class="text-xs text-text-secondary mt-1">تجديد متوقع: ${emp.contractSummary.renewal}</p>
-                            <p class="text-xs text-text-secondary mt-2">البدلات المفعلة:</p>
-                            <ul class="list-disc list-inside text-xs text-text-secondary space-y-1">
-                                ${emp.contractSummary.allowances.map((allowance) => `<li>${allowance}</li>`).join("")}
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="grid gap-4 md:grid-cols-3 text-xs text-text-secondary">
-                        <div class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
-                            <p class="text-text-primary font-semibold mb-1">الحضور (${emp.attendance.month})</p>
-                            <p>أيام حضور: <span class="font-medium text-text-primary">${emp.attendance.presence}</span></p>
-                            <p>غياب: <span class="font-medium text-text-primary">${emp.attendance.absence}</span></p>
-                            <p>ساعات إضافية: <span class="font-medium text-text-primary">${emp.attendance.overtime}</span></p>
-                        </div>
-                        <div class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
-                            <p class="text-text-primary font-semibold mb-1">الإجازات المتاحة</p>
-                            <ul class="space-y-1">
-                                ${emp.leaves.map((leave) => `<li>${leave.type}: ${leave.remaining} أيام متبقية</li>`).join("")}
-                            </ul>
-                        </div>
-                        <div class="p-4 rounded-2xl border border-border/60 bg-secondary-50">
-                            <p class="text-text-primary font-semibold mb-1">ملخص الرواتب</p>
-                            <p>الإجمالي: ${emp.payroll.gross} ر.س</p>
-                            <p>الصافي: ${emp.payroll.net} ر.س</p>
-                            <p>ملحوظة: ${emp.payroll.deductions}</p>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-3 text-xs">
-                        <button class="px-4 py-2 rounded-xl bg-primary text-white hover:bg-primary-600 flex items-center gap-2"><i class="fas fa-pen"></i> تعديل البيانات</button>
-                        <button class="px-4 py-2 rounded-xl border border-border hover:bg-secondary-100 flex items-center gap-2"><i class="fas fa-file-contract"></i> إدارة العقود</button>
-                        <button class="px-4 py-2 rounded-xl border border-border hover:bg-secondary-100 flex items-center gap-2"><i class="fas fa-wallet"></i> سجل الرواتب</button>
-                    </div>
-                </div>
-            `;
         }
 
-        function attachRowEvents() {
-            employeesBody.addEventListener("click", (event) => {
-                const row = event.target.closest("tr[data-id]");
-                if (!row) return;
-                const id = row.dataset.id;
-                const employee = employees.find((emp) => emp.id === id);
-                renderEmployeeDetails(employee);
-                employeesBody.querySelectorAll("tr").forEach((tr) => tr.classList.remove("bg-primary/5"));
-                row.classList.add("bg-primary/5");
-            });
-        }
-
-        function attachFilters() {
-            [searchInput, departmentFilter, statusFilter].forEach((input) => {
-                input.addEventListener("input", () => {
-                    currentPage = 1;
-                    renderEmployees();
-                });
-            });
-
-            prevPageBtn.addEventListener("click", () => {
-                currentPage = Math.max(1, currentPage - 1);
-                renderEmployees();
-            });
-
-            nextPageBtn.addEventListener("click", () => {
-                currentPage += 1;
-                renderEmployees();
-            });
-        }
-
-        function initModals() {
-            const modals = [createModal, importModal];
-            modals.forEach((modal) => {
-                modal.addEventListener("click", (event) => {
-                    if (event.target === modal || event.target.closest("[data-close]")) {
-                        modal.classList.add("hidden");
-                        modal.classList.remove("flex");
+        if (iframe) {
+            iframe.addEventListener('load', () => {
+                try {
+                    const hasContent = iframe.contentDocument?.body?.childElementCount;
+                    if (hasContent && hasContent > 0) {
+                        hideFallback();
                     }
-                });
-            });
-
-            openCreate.addEventListener("click", () => {
-                createModal.classList.remove("hidden");
-                createModal.classList.add("flex");
-            });
-
-            openImport.addEventListener("click", () => {
-                importModal.classList.remove("hidden");
-                importModal.classList.add("flex");
+                } catch (error) {
+                    // Cross-origin access is blocked when served from different host, hide fallback regardless
+                    hideFallback();
+                }
             });
         }
 
-        renderOverview();
-        renderWorkflow();
-        renderAttendanceLog();
-        renderLeaves();
-        populateDepartments();
-        renderEmployees();
-        attachRowEvents();
-        attachFilters();
-        initModals();
+        if (retryButton && iframe) {
+            retryButton.addEventListener('click', () => {
+                showFallback();
+                const currentSrc = iframe.getAttribute('src');
+                iframe.setAttribute('src', 'about:blank');
+                requestAnimationFrame(() => {
+                    iframe.setAttribute('src', currentSrc);
+                });
+            });
+        }
+
+        document.addEventListener('rocket:session:ready', hideFallback);
     </script>
     <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
     <script src="../js/session.js" data-login-path="../login.html"></script>
