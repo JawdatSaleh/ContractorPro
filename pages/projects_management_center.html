@@ -3781,6 +3781,7 @@ class ProjectStore {
         const serialized = JSON.stringify(this.projects);
         localStorage.setItem(PROJECTS_STORAGE_KEY, serialized);
         localStorage.setItem(PROJECTS_LEGACY_KEY, serialized);
+        localStorage.setItem('contractorPro.projects.hasUserData', this.projects.length > 0 ? 'true' : 'false');
     }
 
     loadProjects() {
@@ -3788,6 +3789,7 @@ class ProjectStore {
 
         const storedPrimary = localStorage.getItem(PROJECTS_STORAGE_KEY);
         const storedLegacy = localStorage.getItem(PROJECTS_LEGACY_KEY);
+        const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
 
         try {
             if (storedPrimary) {
@@ -3800,18 +3802,32 @@ class ProjectStore {
         if (!Array.isArray(parsed) || parsed.length === 0) {
             try {
                 if (storedLegacy) {
-                    parsed = JSON.parse(storedLegacy);
+                    const legacyParsed = JSON.parse(storedLegacy);
+                    if (Array.isArray(legacyParsed) && legacyParsed.length) {
+                        parsed = legacyParsed;
+                    }
                 }
             } catch (error) {
                 parsed = null;
             }
         }
 
-        const normalized = this.normalizeProjects(parsed || this.getDefaultProjects());
+        let sourceProjects = Array.isArray(parsed) && parsed.length ? parsed : null;
+
+        if (!sourceProjects) {
+            if (hasUserDataFlag === 'false') {
+                sourceProjects = [];
+            } else {
+                sourceProjects = this.getDefaultProjects();
+            }
+        }
+
+        const normalized = this.normalizeProjects(sourceProjects);
         this.syncPhasesRepository(normalized);
         const serialized = JSON.stringify(normalized);
         localStorage.setItem(PROJECTS_STORAGE_KEY, serialized);
         localStorage.setItem(PROJECTS_LEGACY_KEY, serialized);
+        localStorage.setItem('contractorPro.projects.hasUserData', normalized.length > 0 ? 'true' : 'false');
         return normalized;
     }
 
@@ -7684,76 +7700,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    const reportFilesInput = document.getElementById('reportFiles');
-    if (reportFilesInput) {
-        reportFilesInput.addEventListener('change', (e) => handleFileSelection(e.target.files));
-    }
-
-    const photosInput = document.getElementById('photosInput');
-    if (photosInput) {
-        photosInput.addEventListener('change', (e) => handlePhotoSelection(e.target.files));
-    }
-
-    const galleryFilter = document.getElementById('galleryFilter');
-    if (galleryFilter) {
-        galleryFilter.addEventListener('change', () => sortGalleryPhotos(true));
-    }
-
-    const phaseCsvInput = document.getElementById('phaseCsvInput');
-    if (phaseCsvInput) {
-        phaseCsvInput.addEventListener('change', handlePhaseCsvImport);
-    }
-
-    const contractUploadForm = document.getElementById('contractUploadForm');
-    if (contractUploadForm) {
-        contractUploadForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            if (!currentProjectId || !projectStore) {
-                showToast('يرجى اختيار مشروع قبل رفع العقد الرئيسي', false);
-                return;
-            }
-
-            const fileInput = document.getElementById('mainContractFile');
-            const notesInput = document.getElementById('contractNotes');
-            const file = fileInput?.files?.[0];
-
-            if (!file) {
-                showToast('يرجى اختيار ملف العقد بصيغة PDF', false);
-                return;
-            }
-
-            if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
-                showToast('الرجاء رفع ملف PDF صالح للعقد', false);
-                return;
-            }
-
-            let dataUrl;
-            try {
-                dataUrl = await fileToDataUrl(file);
-            } catch (error) {
-                console.error('Failed to read contract file', error);
-                showToast('تعذر قراءة ملف العقد. حاول مرة أخرى.', false);
-                return;
-            }
-            const contractDocument = {
-                id: 'main-contract-' + Date.now(),
-                fileName: file.name,
-                fileSize: file.size,
-                uploadedAt: new Date().toISOString(),
-                notes: notesInput?.value?.trim() || '',
-                dataUrl: dataUrl
-            };
-
-            projectStore.updateProject(currentProjectId, { contractDocument });
-            currentProjectData = projectStore.getProject(currentProjectId);
-            renderContractFileSection();
-            showToast('تم رفع عقد العمل بنجاح');
-            contractUploadForm.reset();
-            closeContractUploadModal();
-        });
-    }
-
     const galleryFilter = document.getElementById('galleryFilter');
     if (galleryFilter) {
         galleryFilter.addEventListener('change', () => sortGalleryPhotos(true));
@@ -9510,6 +9456,7 @@ function openFinancialCustomization() {
   const STORAGE_KEY = 'contractorPro.projects';
 
   function getProjects(){
+    const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
     try {
       const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       if (Array.isArray(stored) && stored.length) {
@@ -9525,7 +9472,17 @@ function openFinancialCustomization() {
     } catch(e){ /* ignore */ }
 
     if (window.projectStore && Array.isArray(window.projectStore.projects)) {
+      if (window.projectStore.projects.length) {
+        return window.projectStore.projects;
+      }
+      if (hasUserDataFlag !== 'false' && typeof window.projectStore.getDefaultProjects === 'function') {
+        return window.projectStore.getDefaultProjects();
+      }
       return window.projectStore.projects;
+    }
+
+    if (hasUserDataFlag !== 'false' && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
+      return window.projectStore.getDefaultProjects();
     }
 
     return [];
@@ -9534,6 +9491,7 @@ function openFinancialCustomization() {
     const serialized = JSON.stringify(arr);
     localStorage.setItem(STORAGE_KEY, serialized);
     localStorage.setItem('projects', serialized);
+    localStorage.setItem('contractorPro.projects.hasUserData', Array.isArray(arr) && arr.length ? 'true' : 'false');
   }
 
   function statusArabic(s){
@@ -9616,11 +9574,16 @@ function openFinancialCustomization() {
       grid.dataset.enhanced = 'true';
     }
 
+    const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
     const storedProjects = getProjects() || [];
     let sourceProjects = Array.isArray(storedProjects) ? storedProjects.slice() : [];
 
-    if (!sourceProjects.length && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
-      sourceProjects = window.projectStore.getDefaultProjects().map(project => ({ ...project }));
+    if (!sourceProjects.length) {
+      if (hasUserDataFlag !== 'false' && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
+        sourceProjects = window.projectStore.getDefaultProjects().map(project => ({ ...project }));
+      } else if (hasUserDataFlag !== 'false' && Array.isArray(window.projectStore?.projects) && window.projectStore.projects.length) {
+        sourceProjects = window.projectStore.projects.map(project => ({ ...project }));
+      }
     }
 
     const normalizedProjects = window.projectStore
