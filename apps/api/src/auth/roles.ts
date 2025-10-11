@@ -27,5 +27,8 @@ export const permissionKeys = {
   VIEW_CONTRACT_VALUES: 'view_contract_values',
   MANAGE_PAYROLL: 'manage_payroll',
   APPROVE_ADVANCES: 'approve_advances',
-  VIEW_FINANCE_REPORTS: 'view_finance_reports'
+  VIEW_FINANCE_REPORTS: 'view_finance_reports',
+  VIEW_ACTIVITY_LOGS: 'view_activity_logs',
+  MANAGE_ACTIVITY_RETENTION: 'manage_activity_retention',
+  VIEW_ACTIVITY_ANALYTICS: 'view_activity_analytics'
 } as const;

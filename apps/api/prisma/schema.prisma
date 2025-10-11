@@ -17,6 +17,7 @@ model User {
   roles        UserRole[]
   employee     Employee?
   auditLogs    AuditLog[]  @relation("AuditActor")
+  activityLogs ActivityLog[] @relation("ActivityActor")
   advances     Advance[]   @relation("AdvanceApprover")
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
@@ -269,6 +270,24 @@ model AuditLog {
   afterJson   Json?
   at          DateTime @default(now())
   actor       User?    @relation("AuditActor", fields: [actorUserId], references: [id])
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  actionType  String
+  entityType  String
+  entityId    String?
+  description String?
+  metadata    Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  user        User?    @relation("ActivityActor", fields: [userId], references: [id])
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([entityType, entityId])
 }
 
 view v_employee_public {
