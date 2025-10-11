@@ -1464,6 +1464,7 @@
                                         <i class="fas fa-upload"></i>
                                         <span>استيراد من ملف CSV</span>
                                     </button>
+                                    <input type="file" id="paymentsCsvInput" accept=".csv" class="hidden" />
                                 </div>
                             </div>
                             
@@ -3038,14 +3039,30 @@ class DailyReportsStore {
 
     // Attachment management
     uploadAttachment(reportId, file, type) {
+        if (!file) return null;
+        const payload = {
+            fileName: file.name || file.fileName || 'ملف بدون اسم',
+            fileSize: file.size || file.fileSize || 0,
+            fileType: type || file.fileType || (file.type && file.type.startsWith('video') ? 'video' : 'image'),
+            fileUrl: file.fileDataUrl || file.dataUrl || file.fileUrl || ''
+        };
+
+        return this.createAttachment(reportId, payload);
+    }
+
+    createAttachment(reportId, data) {
+        if (!data || !data.fileUrl) {
+            return null;
+        }
+
         const attachment = {
-            id: 'attachment-' + Date.now(),
-            reportId: reportId,
-            fileName: file.name,
-            fileSize: file.size,
-            fileType: type, // 'image', 'video', 'pdf'
-            fileUrl: URL.createObjectURL(file), // In real app, this would be uploaded to server
-            uploadedAt: new Date().toISOString()
+            id: 'attachment-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+            reportId,
+            fileName: data.fileName || 'ملف',
+            fileSize: data.fileSize || 0,
+            fileType: data.fileType || 'image',
+            fileUrl: data.fileUrl,
+            uploadedAt: data.uploadedAt || new Date().toISOString()
         };
 
         this.attachments.push(attachment);
@@ -3318,6 +3335,14 @@ class ProjectStore {
             normalized.client.type = normalized.clientType;
         }
 
+        if (normalized.mainContract && (!normalized.mainContract.fileDataUrl || !normalized.mainContract.fileName)) {
+            normalized.mainContract = null;
+        }
+
+        if (!normalized.mainContract) {
+            normalized.mainContract = null;
+        }
+
         if (!normalized.startDate && normalized.timeline?.startDate) {
             normalized.startDate = normalized.timeline.startDate;
         }
@@ -3447,6 +3472,31 @@ class ProjectStore {
             }
         });
 
+        this.saveProjects();
+        return this.projects[projectIndex];
+    }
+
+    setMainContract(projectId, data) {
+        const projectIndex = this.projects.findIndex(project => project.id === projectId);
+        if (projectIndex === -1) return null;
+
+        this.projects[projectIndex].mainContract = {
+            fileName: data.fileName,
+            fileSize: data.fileSize || 0,
+            notes: data.notes || '',
+            uploadedAt: data.uploadedAt || new Date().toISOString(),
+            fileDataUrl: data.fileDataUrl
+        };
+
+        this.saveProjects();
+        return this.projects[projectIndex];
+    }
+
+    clearMainContract(projectId) {
+        const projectIndex = this.projects.findIndex(project => project.id === projectId);
+        if (projectIndex === -1) return null;
+
+        this.projects[projectIndex].mainContract = null;
         this.saveProjects();
         return this.projects[projectIndex];
     }
@@ -5649,11 +5699,60 @@ function closePreviousReportsModal() {
 }
 
 function updateCumulativeProgress() {
-    if (confirm('هل تريد تحديث التقدم التراكمي لجميع المراحل من التقارير اليومية؟')) {
-        alert('تم تحديث التقدم التراكمي بنجاح');
-        if (phasesStore) {
-            loadProjectPhases(currentProjectId);
+    if (!currentProjectId || !phasesStore || !dailyReportsStore) {
+        showToast('لا يمكن تحديث التقدم قبل اختيار مشروع وتحميل البيانات', false);
+        return;
+    }
+
+    if (!confirm('هل تريد تحديث التقدم التراكمي لجميع المراحل من التقارير اليومية؟')) {
+        return;
+    }
+
+    const phases = phasesStore.listPhases(currentProjectId);
+    const reports = dailyReportsStore.listDailyReports(currentProjectId);
+
+    let updatedPhases = 0;
+    phases.forEach(phase => {
+        const relatedReports = reports.filter(report => report.phaseId === phase.id);
+        if (!relatedReports.length) {
+            return;
         }
+
+        const averageProgress = relatedReports.reduce((sum, report) => sum + (parseFloat(report.progressPercent) || 0), 0) / relatedReports.length;
+        const roundedProgress = Math.min(100, Math.round(averageProgress));
+
+        let status = 'in_progress';
+        if (roundedProgress >= 100) {
+            status = 'done';
+        } else {
+            const phaseEnd = new Date(phase.endDate);
+            if (!Number.isNaN(phaseEnd.getTime()) && phaseEnd < new Date()) {
+                status = 'delayed';
+            }
+        }
+
+        phasesStore.updatePhase(phase.id, {
+            progressPercent: roundedProgress,
+            status
+        });
+        updatedPhases++;
+    });
+
+    if (updatedPhases > 0) {
+        loadPhasesMainTab();
+        updatePhasesAnalytics();
+        loadPhasesLogs();
+        loadDailyReportsTable();
+        renderDailyReportCharts();
+
+        if (currentProjectData) {
+            currentProjectData.phases = phasesStore.listPhases(currentProjectId);
+            updateProjectInformation();
+        }
+
+        showToast(`تم تحديث التقدم التراكمي لـ ${updatedPhases} مرحلة`, true);
+    } else {
+        showToast('لا توجد تقارير مرتبطة بالمراحل لتحديث التقدم', false);
     }
 }
 
@@ -5853,6 +5952,8 @@ function updateProjectInformation() {
     setText('clientTaxText', client.tax || '-');
     setText('clientAddressText', client.address || location.address || '-');
 
+    renderContractFileSection(currentProjectData.mainContract);
+
     const specs = currentProjectData.specs || {};
     setText('projectTotalArea', formatAreaValue(specs.totalArea));
     setText('projectBuiltArea', formatAreaValue(specs.builtArea));
@@ -5905,6 +6006,104 @@ function updateProjectInformation() {
 
     // Update KPIs with real data
     updateProjectKPIs();
+}
+
+function renderContractFileSection(contract) {
+    const container = document.getElementById('contractFileSection');
+    if (!container) return;
+
+    if (!contract || !contract.fileDataUrl) {
+        container.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-file-upload text-4xl text-text-secondary mb-4"></i>
+                <p class="text-text-secondary mb-4">لم يتم رفع عقد العمل بعد</p>
+                <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast" onclick="uploadContractFile()">
+                    رفع ملف العقد (PDF)
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    const sizeLabel = contract.fileSize ? formatFileSize(contract.fileSize) : '';
+    const uploadedLabel = contract.uploadedAt ? formatDateTimeLocalized(contract.uploadedAt) : '';
+    const notesHtml = contract.notes
+        ? `<p class="mt-3 text-sm text-text-secondary leading-6">${escapeHtml(contract.notes).replace(/\n/g, '<br />')}</p>`
+        : '';
+
+    container.innerHTML = `
+        <div class="bg-white border border-primary-200 rounded-xl p-5 shadow-sm">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 bg-primary-100 text-primary rounded-lg flex items-center justify-center text-2xl">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div>
+                        <p class="text-lg font-semibold text-text-primary">${escapeHtml(contract.fileName)}</p>
+                        <p class="text-sm text-text-secondary mt-1">${sizeLabel ? `${escapeHtml(sizeLabel)} • ` : ''}${uploadedLabel ? `تم الرفع في ${escapeHtml(uploadedLabel)}` : ''}</p>
+                        ${notesHtml}
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast text-sm" onclick="previewMainContract()">
+                        <i class="fas fa-eye ml-2"></i> عرض
+                    </button>
+                    <button class="bg-success text-white px-4 py-2 rounded-lg hover:bg-success-600 transition-fast text-sm" onclick="downloadMainContract()">
+                        <i class="fas fa-download ml-2"></i> تحميل
+                    </button>
+                    <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast text-sm" onclick="uploadContractFile()">
+                        <i class="fas fa-sync ml-2"></i> استبدال
+                    </button>
+                    <button class="bg-error text-white px-3 py-2 rounded-lg hover:bg-error-600 transition-fast text-sm" onclick="removeMainContract()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function previewMainContract() {
+    const contract = currentProjectData?.mainContract;
+    if (!contract?.fileDataUrl) {
+        showToast('لا يوجد ملف عقد لعرضه حالياً', false);
+        return;
+    }
+
+    window.open(contract.fileDataUrl, '_blank');
+}
+
+function downloadMainContract() {
+    const contract = currentProjectData?.mainContract;
+    if (!contract?.fileDataUrl) {
+        showToast('لا يوجد ملف عقد متاح للتنزيل', false);
+        return;
+    }
+
+    const link = document.createElement('a');
+    link.href = contract.fileDataUrl;
+    link.download = contract.fileName || 'project-contract.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function removeMainContract() {
+    if (!currentProjectId || !projectStore) {
+        return;
+    }
+
+    if (!confirm('هل أنت متأكد من حذف عقد المشروع الحالي؟')) {
+        return;
+    }
+
+    const updated = projectStore.clearMainContract(currentProjectId);
+    currentProjectData = updated;
+    if (currentProjectData) {
+        currentProjectData.mainContract = null;
+    }
+    renderContractFileSection(null);
+    showToast('تم حذف ملف العقد من المشروع', true);
 }
 
 function updateProjectKPIs() {
@@ -7043,6 +7242,22 @@ function downloadJSONFile(filename, data) {
     }
 }
 
+function downloadBlobFile(filename, blob) {
+    try {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Failed to download blob file:', error);
+        alert('تعذر تنزيل الملف، يرجى المحاولة مرة أخرى.');
+    }
+}
+
 function formatCurrency(amount) {
     return new Intl.NumberFormat('ar-SA', {
         style: 'decimal',
@@ -7304,24 +7519,76 @@ document.addEventListener('DOMContentLoaded', function() {
     // Upload photos form
     const uploadPhotosForm = document.getElementById('uploadPhotosForm');
     if (uploadPhotosForm) {
-        uploadPhotosForm.addEventListener('submit', function(e) {
+        uploadPhotosForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+
+            if (!currentProjectId || !dailyReportsStore) {
+                showToast('يرجى اختيار مشروع قبل رفع الصور', false);
+                return;
+            }
 
             const formData = new FormData(e.target);
             const phaseId = formData.get('phaseId');
-            const notes = formData.get('notes');
-            const files = document.getElementById('photosInput').files;
-            
-            if (files.length > 0 && phaseId) {
-                // In real app, would upload files to server
-                console.log('Uploading photos for phase:', phaseId, 'Files:', files.length);
-                alert('تم رفع الصور بنجاح!');
-                
+            const notes = (formData.get('notes') || '').trim();
+            const files = Array.from(document.getElementById('photosInput')?.files || []);
+
+            if (!phaseId || files.length === 0) {
+                showToast('يرجى اختيار المرحلة واختيار صور أو فيديوهات للرفع', false);
+                return;
+            }
+
+            const today = new Date().toISOString().slice(0, 10);
+            const reports = dailyReportsStore.listDailyReports(currentProjectId);
+            let targetReport = reports.find(report => report.phaseId === phaseId && report.date === today);
+
+            if (!targetReport) {
+                targetReport = dailyReportsStore.createDailyReport(currentProjectId, {
+                    phaseId,
+                    date: today,
+                    progressPercent: 0,
+                    workDescription: notes ? `صور اليوم: ${notes}` : 'صور اليوم المرفوعة من نموذج رفع الصور',
+                    issues: '',
+                    weather: '',
+                    workersCount: 0,
+                    equipmentUsed: ''
+                });
+            } else if (notes) {
+                const updatedNotes = targetReport.issues ? `${targetReport.issues}\n${notes}` : notes;
+                dailyReportsStore.updateDailyReport(targetReport.id, { issues: updatedNotes });
+            }
+
+            try {
+                const attachmentsData = await Promise.all(files.map(async (file) => {
+                    const dataUrl = await readFileAsDataURL(file);
+                    return {
+                        fileName: file.name,
+                        fileSize: file.size,
+                        fileType: file.type && file.type.startsWith('video') ? 'video' : 'image',
+                        fileUrl: dataUrl
+                    };
+                }));
+
+                attachmentsData.forEach(data => {
+                    dailyReportsStore.createAttachment(targetReport.id, data);
+                });
+
                 loadPhotoGallery();
                 updateDailyReportKPIs();
+                loadDailyReportsTable();
+                loadWeeklySummary();
+                renderDailyReportCharts();
+                showToast('تم رفع الصور وربطها بالتقارير اليومية بنجاح ✅', true);
+
+                uploadPhotosForm.reset();
+                const preview = document.getElementById('photoPreviewGrid');
+                if (preview) {
+                    preview.classList.add('hidden');
+                    preview.innerHTML = '';
+                }
                 closeUploadPhotosModal();
-            } else {
-                alert('يرجى اختيار المرحلة والصور');
+            } catch (error) {
+                console.error('Error uploading photos:', error);
+                showToast('تعذر رفع الصور، يرجى المحاولة مرة أخرى', false);
             }
         });
     }
@@ -7334,6 +7601,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const phaseCsvInput = document.getElementById('phaseCsvInput');
     if (phaseCsvInput) {
         phaseCsvInput.addEventListener('change', handlePhaseCsvImport);
+    }
+
+    const paymentsCsvInput = document.getElementById('paymentsCsvInput');
+    if (paymentsCsvInput) {
+        paymentsCsvInput.addEventListener('change', handlePaymentsCsvImport);
     }
 
     // File drop zone handlers
@@ -7413,6 +7685,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update header
                 document.getElementById('currentProjectTitle').textContent = updatedProject.name;
                 document.getElementById('currentProjectCode').textContent = updatedProject.code;
+            }
+        });
+    }
+
+    const contractUploadForm = document.getElementById('contractUploadForm');
+    if (contractUploadForm) {
+        contractUploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!currentProjectId || !projectStore) {
+                showToast('يرجى اختيار مشروع أولاً قبل رفع العقد', false);
+                return;
+            }
+
+            const fileInput = document.getElementById('mainContractFile');
+            const notesInput = document.getElementById('contractNotes');
+            const file = fileInput?.files?.[0] || null;
+
+            if (!file) {
+                showToast('يرجى اختيار ملف عقد بصيغة PDF', false);
+                return;
+            }
+
+            if (!file.name.toLowerCase().endsWith('.pdf')) {
+                showToast('الرجاء رفع ملف بصيغة PDF فقط', false);
+                return;
+            }
+
+            try {
+                const fileDataUrl = await readFileAsDataURL(file);
+                const contractPayload = {
+                    fileName: file.name,
+                    fileSize: file.size,
+                    uploadedAt: new Date().toISOString(),
+                    notes: notesInput?.value?.trim() || '',
+                    fileDataUrl
+                };
+
+                const updatedProject = projectStore.setMainContract(currentProjectId, contractPayload);
+                if (updatedProject) {
+                    currentProjectData = updatedProject;
+                    renderContractFileSection(updatedProject.mainContract);
+                    showToast('تم حفظ عقد المشروع بنجاح ✅', true);
+                }
+
+                contractUploadForm.reset();
+                closeContractUploadModal();
+            } catch (error) {
+                console.error('Error while reading contract file:', error);
+                showToast('تعذر قراءة ملف العقد، حاول مرة أخرى', false);
             }
         });
     }
@@ -8064,6 +8386,15 @@ function handlePhaseCsvImport(event) {
     event.target.value = '';
 }
 
+function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error || new Error('فشل في قراءة الملف'));
+        reader.readAsDataURL(file);
+    });
+}
+
 function splitCsvLine(line) {
     const result = [];
     let current = '';
@@ -8089,6 +8420,33 @@ function splitCsvLine(line) {
 
     result.push(current.trim());
     return result.map(value => value.replace(/^"|"$/g, '').trim());
+}
+
+function normalizePaymentType(value) {
+    if (!value) return 'incoming';
+    const normalized = value.toString().trim().toLowerCase();
+    if (['incoming', 'in', 'عميل', 'وارد', 'تحصيل'].includes(normalized)) {
+        return 'incoming';
+    }
+    if (['outgoing', 'out', 'مقاول', 'صرف', 'باطن', 'subcontract', 'مورد'].some(term => normalized.includes(term))) {
+        return 'outgoing';
+    }
+    return normalized.includes('out') ? 'outgoing' : 'incoming';
+}
+
+function normalizePaymentStatus(value) {
+    if (!value) return 'pending';
+    const normalized = value.toString().trim().toLowerCase();
+    if (['received', 'paid', 'done', 'completed', 'مستلمة', 'مدفوعة', 'محصلة'].includes(normalized)) {
+        return 'received';
+    }
+    if (['overdue', 'late', 'متأخرة', 'متاخره'].includes(normalized)) {
+        return 'overdue';
+    }
+    if (['pending', 'waiting', 'مستحقة', 'قيد التحصيل', 'غير مدفوعة'].includes(normalized)) {
+        return 'pending';
+    }
+    return normalized.includes('over') ? 'overdue' : 'pending';
 }
 
 function exportLogs() {
@@ -8328,7 +8686,102 @@ function deletePayment(paymentId) {
 }
 
 function importPaymentsCSV() {
-    showToast('ميزة استيراد الدفعات من CSV ستتوفر قريباً', false);
+    const input = document.getElementById('paymentsCsvInput');
+    if (!input) return;
+
+    input.value = '';
+    input.click();
+}
+
+function handlePaymentsCsvImport(event) {
+    if (!currentProjectId || !projectStore) {
+        showToast('يرجى اختيار مشروع قبل استيراد الدفعات', false);
+        event.target.value = '';
+        return;
+    }
+
+    const file = event.target.files?.[0];
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const content = e.target.result;
+            const rows = content.split(/\r?\n/).map(row => row.trim()).filter(Boolean);
+
+            if (rows.length <= 1) {
+                alert('ملف CSV لا يحتوي على بيانات دفعات صالحة.');
+                return;
+            }
+
+            const headers = splitCsvLine(rows[0]).map(header => header.toLowerCase());
+            const headerIndex = (name) => headers.indexOf(name.toLowerCase());
+
+            const requiredColumns = ['name', 'amount', 'duedate', 'type'];
+            const missing = requiredColumns.filter(column => headerIndex(column) === -1);
+            if (missing.length) {
+                alert('يجب أن يحتوي الملف على الأعمدة التالية: ' + missing.join(', '));
+                return;
+            }
+
+            let importedCount = 0;
+
+            for (let i = 1; i < rows.length; i++) {
+                const columns = splitCsvLine(rows[i]);
+                if (!columns.length) continue;
+
+                const name = columns[headerIndex('name')].trim();
+                const amountValue = columns[headerIndex('amount')];
+                const dueDate = columns[headerIndex('duedate')];
+                const typeValue = columns[headerIndex('type')];
+
+                if (!name || !amountValue || !dueDate || !typeValue) {
+                    continue;
+                }
+
+                const amount = parseFloat(amountValue.replace(/[^0-9.,-]/g, '').replace(',', '.'));
+                if (Number.isNaN(amount)) {
+                    continue;
+                }
+
+                const paymentData = {
+                    name,
+                    amount,
+                    dueDate,
+                    type: normalizePaymentType(typeValue),
+                    status: normalizePaymentStatus(headerIndex('status') !== -1 ? columns[headerIndex('status')] : ''),
+                    party: headerIndex('party') !== -1 ? columns[headerIndex('party')].trim() : '',
+                    paidDate: headerIndex('paiddate') !== -1 ? columns[headerIndex('paiddate')].trim() || null : null,
+                    notes: headerIndex('notes') !== -1 ? columns[headerIndex('notes')].trim() : ''
+                };
+
+                projectStore.createPayment(currentProjectId, paymentData);
+                importedCount++;
+            }
+
+            if (importedCount > 0) {
+                loadProjectPayments(currentProjectId);
+                loadFinancialAnalysis(currentProjectId);
+                showToast(`تم استيراد ${importedCount} دفعة بنجاح ✅`, true);
+            } else {
+                alert('لم يتم العثور على دفعات صالحة للاستيراد.');
+            }
+        } catch (error) {
+            console.error('Error importing payments CSV:', error);
+            alert('حدث خطأ أثناء استيراد ملف الدفعات، يرجى التحقق من التنسيق.');
+        } finally {
+            event.target.value = '';
+        }
+    };
+
+    reader.onerror = () => {
+        showToast('تعذر قراءة ملف CSV، حاول مرة أخرى', false);
+        event.target.value = '';
+    };
+
+    reader.readAsText(file, 'utf-8');
 }
 
 function refreshTimeline() {
@@ -8907,10 +9360,253 @@ function toggleCostView() {
 }
 
 function downloadFinancialReport(format) {
-    const message = format === 'excel'
-        ? 'سيتم تنزيل تقرير Excel يتضمن تفاصيل الدفعات والمصاريف.'
-        : 'سيتم تنزيل تقرير PDF بملخص المركز المالي.';
-    showToast(message);
+    if (!currentProjectId || !projectStore) {
+        showToast('يرجى اختيار مشروع قبل تحميل التقارير المالية', false);
+        return;
+    }
+
+    const reportData = collectFinancialReportData();
+    if (!reportData) {
+        showToast('لا تتوفر بيانات مالية كافية للتقرير', false);
+        return;
+    }
+
+    const timestamp = new Date().toISOString().slice(0, 10);
+    const baseName = `financial-report-${currentProjectId}-${timestamp}`;
+
+    try {
+        if (format === 'excel') {
+            const blob = generateFinancialExcel(reportData);
+            downloadBlobFile(`${baseName}.xls`, blob);
+            showToast('تم تنزيل تقرير Excel بنجاح ✅', true);
+        } else {
+            const blob = generateFinancialPdf(reportData);
+            downloadBlobFile(`${baseName}.pdf`, blob);
+            showToast('تم تنزيل تقرير PDF بنجاح ✅', true);
+        }
+    } catch (error) {
+        console.error('Failed to generate financial report:', error);
+        showToast('تعذر إنشاء التقرير المالي، يرجى المحاولة مرة أخرى', false);
+    }
+}
+
+function collectFinancialReportData() {
+    if (!projectStore || !currentProjectId) {
+        return null;
+    }
+
+    const project = projectStore.getProject(currentProjectId) || currentProjectData;
+    if (!project) {
+        return null;
+    }
+
+    const combinedStats = projectStore.computeCombinedStats(currentProjectId);
+    const payments = projectStore.listPayments(currentProjectId) || [];
+    const expenses = projectStore.listExpenses(currentProjectId) || [];
+    const subcontracts = projectStore.listSubcontracts(currentProjectId) || [];
+
+    return {
+        project,
+        combinedStats,
+        payments,
+        expenses,
+        subcontracts
+    };
+}
+
+function generateFinancialPdf(reportData) {
+    const projectName = reportData.project.name || reportData.project.id;
+    const stats = reportData.combinedStats || {};
+    const paymentStats = stats.payments || {};
+    const expenseStats = stats.expenses || {};
+    const contractStats = stats.contracts || {};
+
+    const amount = (value) => Number(value || 0).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }) + ' SAR';
+
+    const lines = [
+        `Financial Report - ${projectName}`,
+        `Generated at: ${new Date().toLocaleString('en-GB')}`,
+        '',
+        `Revenue received: ${amount(paymentStats.incomingReceived)}`,
+        `Pending receivables: ${amount(paymentStats.incomingPending + paymentStats.incomingOverdue)}`,
+        `Expenses (with VAT): ${amount(expenseStats.totalWithVAT)}`,
+        `Outgoing payments: ${amount(paymentStats.outgoingPaid)}`,
+        `Net cash flow: ${amount((paymentStats.incomingReceived || 0) - ((expenseStats.totalWithVAT || 0) + (paymentStats.outgoingPaid || 0)))}`,
+        `Subcontract commitments: ${amount(contractStats.totalRemaining)}`,
+        ''
+    ];
+
+    const topIncoming = reportData.payments
+        .filter(payment => payment.type === 'incoming')
+        .slice(0, 5);
+    if (topIncoming.length) {
+        lines.push('Top incoming payments:');
+        topIncoming.forEach(payment => {
+            lines.push(` - ${payment.name || 'Payment'} (${payment.party || 'Client'}) : ${amount(payment.amount)} due ${payment.dueDate}`);
+        });
+        lines.push('');
+    }
+
+    const topExpenses = reportData.expenses.slice(0, 5);
+    if (topExpenses.length) {
+        lines.push('Key expenses:');
+        topExpenses.forEach(expense => {
+            lines.push(` - ${expense.description || expense.category || 'Expense'} : ${amount(expense.total || expense.amount)} on ${expense.date}`);
+        });
+        lines.push('');
+    }
+
+    const pdfString = createSimplePdfDocument(lines);
+    return new Blob([pdfString], { type: 'application/pdf' });
+}
+
+function generateFinancialExcel(reportData) {
+    const escape = escapeHtml;
+    const projectName = escape(reportData.project.name || reportData.project.id);
+    const paymentStats = reportData.combinedStats.payments;
+    const expenseStats = reportData.combinedStats.expenses;
+    const contractStats = reportData.combinedStats.contracts;
+
+    const summaryRows = [
+        ['إجمالي الدفعات المستلمة', formatCurrency(paymentStats.incomingReceived)],
+        ['الدفعات المستحقة', formatCurrency(paymentStats.incomingPending + paymentStats.incomingOverdue)],
+        ['إجمالي المصاريف (مع الضريبة)', formatCurrency(expenseStats.totalWithVAT)],
+        ['الدفعات المسددة للمقاولين', formatCurrency(paymentStats.outgoingPaid)],
+        ['صافي التدفق النقدي', formatCurrency(paymentStats.incomingReceived - (expenseStats.totalWithVAT + paymentStats.outgoingPaid))],
+        ['عقود الباطن المتبقية', formatCurrency(contractStats.totalRemaining)]
+    ].map(row => `<tr><th>${escape(row[0])}</th><td>${escape(row[1])}</td></tr>`).join('');
+
+    const paymentRows = reportData.payments.slice(0, 20).map(payment => `
+        <tr>
+            <td>${escape(payment.name || 'دفعة')}</td>
+            <td>${escape(payment.party || '')}</td>
+            <td>${escape(payment.type === 'incoming' ? 'واردة' : 'صادرة')}</td>
+            <td>${escape(formatCurrency(payment.amount || 0))}</td>
+            <td>${escape(payment.dueDate || '')}</td>
+            <td>${escape(payment.status || '')}</td>
+        </tr>
+    `).join('');
+
+    const expenseRows = reportData.expenses.slice(0, 20).map(expense => `
+        <tr>
+            <td>${escape(expense.description || 'مصروف')}</td>
+            <td>${escape(expense.category || '')}</td>
+            <td>${escape(expense.date || '')}</td>
+            <td>${escape(formatCurrency(expense.total || expense.amount || 0))}</td>
+            <td>${escape(expense.paymentMethod || '')}</td>
+        </tr>
+    `).join('');
+
+    const html = `<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        table { border-collapse: collapse; width: 100%; margin-bottom: 24px; }
+        th, td { border: 1px solid #cccccc; padding: 8px; text-align: right; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
+        th { background-color: #f1f5f9; }
+        caption { text-align: right; font-weight: bold; margin-bottom: 8px; }
+        h2, h3 { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
+    </style>
+</head>
+<body>
+    <h2>تقرير مالي للمشروع ${projectName}</h2>
+    <p>تاريخ التوليد: ${escape(new Date().toLocaleString('ar-SA'))}</p>
+
+    <table>
+        <caption>ملخص المؤشرات الرئيسية</caption>
+        <tbody>${summaryRows}</tbody>
+    </table>
+
+    <table>
+        <caption>أهم الدفعات</caption>
+        <thead>
+            <tr>
+                <th>الدفعة</th>
+                <th>الجهة</th>
+                <th>النوع</th>
+                <th>المبلغ</th>
+                <th>تاريخ الاستحقاق</th>
+                <th>الحالة</th>
+            </tr>
+        </thead>
+        <tbody>${paymentRows || '<tr><td colspan="6">لا توجد دفعات مسجلة</td></tr>'}</tbody>
+    </table>
+
+    <table>
+        <caption>أبرز المصاريف</caption>
+        <thead>
+            <tr>
+                <th>الوصف</th>
+                <th>التصنيف</th>
+                <th>التاريخ</th>
+                <th>القيمة</th>
+                <th>طريقة الدفع</th>
+            </tr>
+        </thead>
+        <tbody>${expenseRows || '<tr><td colspan="5">لا توجد مصاريف مسجلة</td></tr>'}</tbody>
+    </table>
+</body>
+</html>`;
+
+    return new Blob([html], { type: 'application/vnd.ms-excel' });
+}
+
+function createSimplePdfDocument(lines) {
+    const escapeText = escapePdfText;
+    const contentLines = [
+        'BT',
+        '/F1 12 Tf',
+        '72 760 Td',
+        ...lines.map((line, index) => index === 0 ? `(${escapeText(line)}) Tj` : `T* (${escapeText(line)}) Tj`),
+        'ET'
+    ];
+    const content = contentLines.join('\n');
+
+    const objects = [];
+    objects.push('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+    objects.push('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
+    objects.push('3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n');
+    objects.push(`4 0 obj\n<< /Length ${content.length} >>\nstream\n${content}\nendstream\nendobj\n`);
+    objects.push('5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n');
+
+    const header = '%PDF-1.3\n';
+    let body = '';
+    const xref = ['0000000000 65535 f '];
+    let offset = header.length;
+
+    objects.forEach(obj => {
+        xref.push(String(offset).padStart(10, '0') + ' 00000 n ');
+        body += obj;
+        offset += obj.length;
+    });
+
+    const xrefOffset = offset;
+    const xrefTable = 'xref\n0 ' + (objects.length + 1) + '\n' + xref.join('\n') + '\n';
+    const trailer = `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+    return header + body + xrefTable + trailer;
+}
+
+function escapePdfText(text) {
+    if (!text) return '';
+    return text
+        .replace(/\\/g, '\\\\')
+        .replace(/\(/g, '\\(')
+        .replace(/\)/g, '\\)');
+}
+
+function escapeHtml(value) {
+    if (value === null || value === undefined) return '';
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 function openFinancialCustomization() {
