@@ -93,6 +93,23 @@
             }
         }
 
+        .sidebar-nav-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            width: 100%;
+        }
+
+        #sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        #sidebar nav > * {
+            width: 100%;
+        }
+
         .sidebar-submenu {
             margin-top: 0.5rem;
             padding-right: 3.25rem;
@@ -123,6 +140,25 @@
 
         .submenu-chevron {
             transition: transform 0.2s ease;
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 1023.98px) {
+            #sidebar nav {
+                gap: 0.65rem;
+            }
+
+            #sidebar nav > a,
+            #sidebar nav > .sidebar-nav-group {
+                width: 100%;
+            }
+
+            .sidebar-submenu {
+                padding-right: 2.5rem;
+            }
         }
 
         #projects-overview,
@@ -160,7 +196,7 @@
             </a>
 
             <!-- Projects Section -->
-            <div>
+            <div class="sidebar-nav-group">
                 <button type="button" class="projects-nav-toggle flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary w-full text-right transition-fast" data-submenu-toggle="projectsSubmenu" aria-expanded="false">
                     <i class="fas fa-building w-5"></i>
                     <span class="font-medium">المشاريع</span>
