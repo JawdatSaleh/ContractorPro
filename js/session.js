@@ -8,9 +8,22 @@
     const currentScript = document.currentScript;
     const isPublicPage = body.dataset.publicPage === 'true';
 
-    let deferredScripts = [];
-    if (!isPublicPage) {
-        deferredScripts = initializeApplicationLayout();
+    function getStoredSession() {
+        const rawSession = localStorage.getItem(SESSION_KEY);
+        if (!rawSession) {
+            return null;
+        }
+
+        try {
+            const parsed = JSON.parse(rawSession);
+            if (!parsed || !parsed.email) {
+                return null;
+            }
+            return parsed;
+        } catch (error) {
+            console.error('Unable to parse stored session.', error);
+            return null;
+        }
     }
 
 
@@ -294,6 +307,10 @@ function initializeApplicationLayout() {
         ? currentScript.dataset.loginPath
         : 'login.html';
 
+    const redirectToLogin = () => {
+        window.location.replace(loginPath);
+    };
+
     if (isPublicPage) {
         document.dispatchEvent(new CustomEvent('contractorpro-auth-ready', {
             detail: { user: null, public: true }
@@ -301,31 +318,16 @@ function initializeApplicationLayout() {
         return;
     }
 
-    function redirectToLogin() {
-        window.location.replace(loginPath);
-    }
+    const shouldPreserveLayout = body.dataset.preserveLayout === 'true' || body.hasAttribute('data-preserve-layout');
 
-    const rawSession = localStorage.getItem(SESSION_KEY);
-    if (!rawSession) {
-        redirectToLogin();
-        return;
-    }
-
-    let userSession;
-    try {
-        userSession = JSON.parse(rawSession);
-    } catch (error) {
-        console.error('Unable to parse stored session.', error);
+    const userSession = getStoredSession();
+    if (!userSession) {
         localStorage.removeItem(SESSION_KEY);
         redirectToLogin();
         return;
     }
 
-    if (!userSession || !userSession.email) {
-        localStorage.removeItem(SESSION_KEY);
-        redirectToLogin();
-        return;
-    }
+    const deferredScripts = shouldPreserveLayout ? [] : (initializeApplicationLayout() || []);
 
     document.querySelectorAll('[data-current-user]').forEach((element) => {
         element.textContent = userSession.email;
@@ -344,18 +346,20 @@ function initializeApplicationLayout() {
         detail: { user: userSession, public: false }
     }));
 
-    deferredScripts.forEach((scriptInfo) => {
-        const script = document.createElement('script');
-        scriptInfo.attrs.forEach(({ name, value }) => {
-            if (name !== 'src') {
-                script.setAttribute(name, value);
+    if (!shouldPreserveLayout) {
+        deferredScripts.forEach((scriptInfo) => {
+            const script = document.createElement('script');
+            scriptInfo.attrs.forEach(({ name, value }) => {
+                if (name !== 'src') {
+                    script.setAttribute(name, value);
+                }
+            });
+            if (scriptInfo.src) {
+                script.src = scriptInfo.src;
+            } else if (scriptInfo.text) {
+                script.textContent = scriptInfo.text;
             }
+            body.appendChild(script);
         });
-        if (scriptInfo.src) {
-            script.src = scriptInfo.src;
-        } else if (scriptInfo.text) {
-            script.textContent = scriptInfo.text;
-        }
-        body.appendChild(script);
-    });
+    }
 })();

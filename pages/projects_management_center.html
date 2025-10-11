@@ -173,7 +173,7 @@
 <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
 <script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
 </head>
-<body class="bg-background font-arabic">
+<body class="bg-background font-arabic" data-preserve-layout="true">
     <!-- Navigation Sidebar -->
     <div class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-50 transform transition-transform duration-300" id="sidebar">
         <div class="p-6 border-b border-border">
@@ -10607,6 +10607,11 @@ function openFinancialCustomization() {
           openProjectDetails(targetProject.id, targetProject.name || 'مشروع');
         }, 120);
       }
+    } else if (renderedProjects.length && typeof openProjectDetails === 'function') {
+      const firstProject = renderedProjects[0];
+      setTimeout(() => {
+        openProjectDetails(firstProject.id, firstProject.name || 'مشروع');
+      }, 120);
     }
 
     if (createdId || directProjectId) {
