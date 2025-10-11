@@ -92,6 +92,81 @@
                 padding: 0.9rem 1rem;
             }
         }
+
+        .sidebar-nav-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            width: 100%;
+        }
+
+        #sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        #sidebar nav > * {
+            width: 100%;
+        }
+
+        .sidebar-submenu {
+            margin-top: 0.5rem;
+            padding-right: 3.25rem;
+            display: grid;
+            gap: 0.35rem;
+        }
+
+        .sidebar-submenu-link {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.55rem 1.1rem;
+            border-radius: 0.9rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .sidebar-submenu-link:hover,
+        .sidebar-submenu-link:focus {
+            background-color: rgba(37, 99, 235, 0.12);
+            color: var(--text-primary);
+        }
+
+        .projects-nav-toggle.is-open .submenu-chevron {
+            transform: rotate(180deg);
+        }
+
+        .submenu-chevron {
+            transition: transform 0.2s ease;
+        }
+
+        .rotate-180 {
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 1023.98px) {
+            #sidebar nav {
+                gap: 0.65rem;
+            }
+
+            #sidebar nav > a,
+            #sidebar nav > .sidebar-nav-group {
+                width: 100%;
+            }
+
+            .sidebar-submenu {
+                padding-right: 2.5rem;
+            }
+        }
+
+        #projects-overview,
+        #projects-performance,
+        #projects-health,
+        #projects-grid-section {
+            scroll-margin-top: 6rem;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -121,11 +196,31 @@
             </a>
 
             <!-- Projects Section -->
-            <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
-                <i class="fas fa-building w-5"></i>
-                <span>المشاريع</span>
-                <i class="fas fa-chevron-left mr-auto text-xs"></i>
-            </a>
+            <div class="sidebar-nav-group">
+                <button type="button" class="projects-nav-toggle flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary w-full text-right transition-fast" data-submenu-toggle="projectsSubmenu" aria-expanded="false">
+                    <i class="fas fa-building w-5"></i>
+                    <span class="font-medium">المشاريع</span>
+                    <i class="fas fa-chevron-down submenu-chevron mr-auto text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="projectsSubmenu" class="sidebar-submenu hidden">
+                    <a href="projects_management_center.html" class="sidebar-submenu-link">
+                        <i class="fas fa-layer-group text-primary text-xs"></i>
+                        <span>لوحة المشاريع الرئيسية</span>
+                    </a>
+                    <a href="#projects-overview" class="sidebar-submenu-link">
+                        <i class="fas fa-chart-pie text-success text-xs"></i>
+                        <span>نظرة عامة سريعة</span>
+                    </a>
+                    <a href="#projects-performance" class="sidebar-submenu-link">
+                        <i class="fas fa-wave-square text-warning text-xs"></i>
+                        <span>تحليلات الأداء</span>
+                    </a>
+                    <a href="#projects-grid-section" class="sidebar-submenu-link">
+                        <i class="fas fa-clipboard-list text-accent text-xs"></i>
+                        <span>قائمة المشاريع</span>
+                    </a>
+                </div>
+            </div>
 
             <!-- Finance Section -->
             <a href="financial_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
@@ -174,135 +269,265 @@
         <main class="p-6">
             <!-- Projects List View (Default) -->
             <div id="projects-list" class="projects-view">
-                <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold text-text-primary">جميع المشاريع</h2>
-                        <div class="flex items-center gap-4">
-                            <div class="bg-primary-50 px-4 py-2 rounded-lg">
-                                <span class="text-primary font-bold text-lg">3</span>
-                                <span class="text-primary text-sm mr-2">مشاريع نشطة</span>
+                <section id="projects-overview" class="mb-6">
+                    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-l from-primary-600 via-primary-500 to-primary-400 text-white shadow-card">
+                        <div class="absolute -left-28 top-1/2 -translate-y-1/2 w-80 h-80 bg-white/15 blur-3xl rounded-full hidden lg:block"></div>
+                        <div class="relative p-8 md:p-10 space-y-8">
+                            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+                                <div class="space-y-4 max-w-2xl">
+                                    <span class="inline-flex items-center gap-2 bg-white/15 text-white/90 text-xs font-semibold tracking-widest uppercase rounded-full px-3 py-1">
+                                        <i class="fas fa-satellite"></i>
+                                        لوحة قيادة فورية
+                                    </span>
+                                    <h2 class="text-3xl md:text-4xl font-bold">نظرة تنفيذية على محفظة المشاريع</h2>
+                                    <p class="text-white/80 leading-7">
+                                        استعرض حالة المشاريع، قيم العقود، ونسب الإنجاز في لحظات لتوجيه القرارات التشغيلية والمالية بثقة أكبر.
+                                    </p>
+                                    <div class="flex flex-wrap items-center gap-4 text-sm text-white/80">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded-full bg-success"></span>
+                                            <span id="projectsOverviewHighlight">-</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded-full bg-warning"></span>
+                                            <span id="projectsDelayedHighlight">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 w-full lg:max-w-lg">
+                                    <div class="backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl p-4 shadow-lg">
+                                        <p class="text-xs text-white/70 mb-2">إجمالي المشاريع</p>
+                                        <p class="text-3xl font-bold" id="totalProjectsMetric">0</p>
+                                        <p class="text-xs text-white/70">مشروع داخل المحفظة</p>
+                                    </div>
+                                    <div class="backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl p-4 shadow-lg">
+                                        <p class="text-xs text-white/70 mb-2">المشاريع النشطة</p>
+                                        <p class="text-3xl font-bold" id="activeProjectsMetric">0</p>
+                                        <p class="text-xs text-white/70">تشمل قيد التنفيذ</p>
+                                    </div>
+                                    <div class="backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl p-4 shadow-lg">
+                                        <p class="text-xs text-white/70 mb-2">متوسط الإنجاز</p>
+                                        <p class="text-3xl font-bold" id="averageProgressMetric">0%</p>
+                                        <p class="text-xs text-white/70">مقارنة بالأهداف الزمنية</p>
+                                    </div>
+                                    <div class="backdrop-blur-sm bg-white/10 border border-white/20 rounded-2xl p-4 shadow-lg">
+                                        <p class="text-xs text-white/70 mb-2">القيمة التعاقدية</p>
+                                        <p class="text-3xl font-bold" id="totalContractValueMetric">0 ر.س</p>
+                                        <p class="text-xs text-white/70">إجمالي العقود الحالية</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </section>
 
-                    <!-- Projects Grid -->
-                    <div id="projectsGrid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                        <!-- Project 1 -->
-                        <div class="border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card" onclick="openProjectDetails('project-001', 'فيلا الرياض الحديثة')">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <h3 class="text-lg font-bold text-text-primary">فيلا الرياض الحديثة</h3>
-                                    <p class="text-sm text-text-secondary">العميل: محمد العبدالله</p>
-                                </div>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                    نشط
-                                </span>
-                            </div>
-                            
-                            <div class="space-y-3 mb-4">
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">قيمة المشروع:</span>
-                                    <span class="font-bold text-text-primary">850,000 ريال</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">تاريخ البداية:</span>
-                                    <span class="font-medium">1 يناير 2025</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">نسبة الإنجاز:</span>
-                                    <span class="font-bold text-success">85%</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Progress Bar -->
-                            <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
-                                <div class="bg-success h-2 rounded-full" style="width: 85%"></div>
-                            </div>
-                            
-                            <div class="flex items-center gap-2 text-sm text-text-secondary">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>ينتهي في: 15 فبراير 2025</span>
+                <section id="projects-performance" class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-surface rounded-2xl border border-border shadow-card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-text-primary">توزيع حالات المشاريع</h3>
+                            <span class="text-xs text-text-secondary" id="projectsStatusSummary">يتم التحميل...</span>
+                        </div>
+                        <canvas id="projectsStatusChart" height="240"></canvas>
+                    </div>
+                    <div class="bg-surface rounded-2xl border border-border shadow-card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-text-primary">القيمة التعاقدية حسب الجدول الزمني</h3>
+                            <span class="text-xs text-text-secondary" id="projectsValueSummary">يتم التحميل...</span>
+                        </div>
+                        <canvas id="projectsValueTrendChart" height="240"></canvas>
+                    </div>
+                    <div class="bg-surface rounded-2xl border border-border shadow-card p-6 flex flex-col gap-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-text-primary mb-3">أبرز الملاحظات</h3>
+                            <div id="projectsInsightsList" class="space-y-3 text-sm text-text-secondary">
+                                <p>سيتم إظهار أبرز الملاحظات بعد تحميل البيانات.</p>
                             </div>
                         </div>
-
-                        <!-- Project 2 -->
-                        <div class="border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card" onclick="openProjectDetails('project-002', 'مجمع تجاري جدة')">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <h3 class="text-lg font-bold text-text-primary">مجمع تجاري جدة</h3>
-                                    <p class="text-sm text-text-secondary">العميل: شركة الأندلس للاستثمار</p>
-                                </div>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">
-                                    قيد التنفيذ
-                                </span>
-                            </div>
-                            
-                            <div class="space-y-3 mb-4">
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">قيمة المشروع:</span>
-                                    <span class="font-bold text-text-primary">1,200,000 ريال</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">تاريخ البداية:</span>
-                                    <span class="font-medium">10 يناير 2025</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">نسبة الإنجاز:</span>
-                                    <span class="font-bold text-warning">45%</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Progress Bar -->
-                            <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
-                                <div class="bg-warning h-2 rounded-full" style="width: 45%"></div>
-                            </div>
-                            
-                            <div class="flex items-center gap-2 text-sm text-text-secondary">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>ينتهي في: 25 مارس 2025</span>
-                            </div>
-                        </div>
-
-                        <!-- Project 3 -->
-                        <div class="border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card" onclick="openProjectDetails('project-003', 'مشروع سكني الدمام')">
-                            <div class="flex items-start justify-between mb-4">
-                                <div>
-                                    <h3 class="text-lg font-bold text-text-primary">مشروع سكني الدمام</h3>
-                                    <p class="text-sm text-text-secondary">العميل: فهد الخالدي</p>
-                                </div>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary">
-                                    بداية المشروع
-                                </span>
-                            </div>
-                            
-                            <div class="space-y-3 mb-4">
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">قيمة المشروع:</span>
-                                    <span class="font-bold text-text-primary">650,000 ريال</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">تاريخ البداية:</span>
-                                    <span class="font-medium">20 يناير 2025</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">نسبة الإنجاز:</span>
-                                    <span class="font-bold text-primary">20%</span>
-                                </div>
-                            </div>
-                            
-                            <!-- Progress Bar -->
-                            <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
-                                <div class="bg-primary h-2 rounded-full" style="width: 20%"></div>
-                            </div>
-                            
-                            <div class="flex items-center gap-2 text-sm text-text-secondary">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>ينتهي في: 15 أبريل 2025</span>
+                        <div class="border-t border-dashed border-border pt-4">
+                            <h4 class="text-sm font-semibold text-text-primary mb-3">مواعيد التسليم القادمة</h4>
+                            <div id="projectsUpcomingDeadlines" class="space-y-3 text-sm text-text-secondary">
+                                <p>لا توجد مواعيد قريبة حالياً.</p>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </section>
+
+                <section id="projects-health" class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-surface rounded-2xl border border-border shadow-card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-base font-bold text-text-primary">مؤشر صحة المحفظة</h3>
+                            <span class="inline-flex items-center gap-2 text-xs text-text-secondary">
+                                <i class="fas fa-heartbeat text-error"></i>
+                                <span id="portfolioHealthScore">0%</span>
+                            </span>
+                        </div>
+                        <p class="text-sm text-text-secondary leading-6 mb-4" id="portfolioHealthDescription">يتم تحديث المؤشر باستمرار حسب أداء المشاريع الفعلي.</p>
+                        <div class="w-full bg-secondary-200 h-3 rounded-full overflow-hidden mb-3">
+                            <div id="portfolioHealthBar" class="h-3 bg-gradient-to-l from-success to-primary rounded-full transition-all duration-500" style="width: 0%;"></div>
+                        </div>
+                        <p class="text-xs text-text-secondary">يستند المؤشر إلى التقدم الكلي مقابل نسب التأخير الحالية.</p>
+                    </div>
+                    <div class="bg-surface rounded-2xl border border-border shadow-card p-6 space-y-4">
+                        <h3 class="text-base font-bold text-text-primary">تفاصيل الحالات</h3>
+                        <div id="statusBreakdownList" class="space-y-3 text-xs text-text-secondary">
+                            <p>سيتم عرض توزيع الحالات بعد تحميل البيانات.</p>
+                        </div>
+                    </div>
+                    <div class="bg-surface rounded-2xl border border-border shadow-card p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-text-primary">مشاريع تحتاج متابعة</h3>
+                            <span class="text-xs text-warning bg-warning-50 px-2 py-1 rounded-full" id="projectsFocusCount">0</span>
+                        </div>
+                        <div id="projectsFocusList" class="space-y-3 text-sm text-text-secondary">
+                            <p>لا توجد مشاريع بحاجة لمتابعة فورية.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="projects-grid-section">
+                    <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-bold text-text-primary">جميع المشاريع</h2>
+                            <div class="flex items-center gap-4">
+                                <div class="bg-primary-50 px-4 py-2 rounded-lg">
+                                    <span class="text-primary font-bold text-lg" id="activeProjectsPill">0</span>
+                                    <span class="text-primary text-sm mr-2">مشاريع نشطة</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Projects Grid -->
+                        <div id="projectsGrid" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                            <div class="border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card" data-static-card="true">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-text-primary">فيلا الرياض الحديثة</h3>
+                                        <p class="text-sm text-text-secondary">العميل: محمد العبدالله</p>
+                                    </div>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
+                                        نشط
+                                    </span>
+                                </div>
+
+                                <div class="space-y-3 mb-4">
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">قيمة المشروع:</span>
+                                        <span class="font-bold text-text-primary">850,000 ر.س</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">تاريخ البداية:</span>
+                                        <span class="font-medium">1 يناير 2025</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">تاريخ التسليم:</span>
+                                        <span class="font-medium">15 فبراير 2025</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">نسبة الإنجاز:</span>
+                                        <span class="font-bold text-success">85%</span>
+                                    </div>
+                                </div>
+
+                                <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
+                                    <div class="bg-success h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+
+                                <div class="flex items-center justify-between gap-3 text-xs text-text-secondary mt-4 pt-3 border-t border-border">
+                                    <span class="inline-flex items-center gap-1"><i class="fas fa-layer-group text-primary"></i>فيلا سكنية</span>
+                                    <span class="inline-flex items-center gap-1"><i class="fas fa-map-pin text-error"></i>الرياض • حي النخيل</span>
+                                </div>
+                                <p class="text-[11px] text-text-secondary opacity-70 mt-2">بيانات تجريبية لعرض تصميم البطاقة.</p>
+                            </div>
+
+                            <div class="border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card" data-static-card="true">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-text-primary">مجمع تجاري جدة</h3>
+                                        <p class="text-sm text-text-secondary">العميل: شركة الأندلس للاستثمار</p>
+                                    </div>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">
+                                        قيد التنفيذ
+                                    </span>
+                                </div>
+
+                                <div class="space-y-3 mb-4">
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">قيمة المشروع:</span>
+                                        <span class="font-bold text-text-primary">1,200,000 ر.س</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">تاريخ البداية:</span>
+                                        <span class="font-medium">10 يناير 2025</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">تاريخ التسليم:</span>
+                                        <span class="font-medium">25 مارس 2025</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">نسبة الإنجاز:</span>
+                                        <span class="font-bold text-warning">45%</span>
+                                    </div>
+                                </div>
+
+                                <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
+                                    <div class="bg-warning h-2 rounded-full" style="width: 45%"></div>
+                                </div>
+
+                                <div class="flex items-center justify-between gap-3 text-xs text-text-secondary mt-4 pt-3 border-t border-border">
+                                    <span class="inline-flex items-center gap-1"><i class="fas fa-layer-group text-primary"></i>مشروع تجاري</span>
+                                    <span class="inline-flex items-center gap-1"><i class="fas fa-map-pin text-error"></i>جدة • حي الشاطئ</span>
+                                </div>
+                                <p class="text-[11px] text-text-secondary opacity-70 mt-2">بيانات تجريبية لعرض تصميم البطاقة.</p>
+                            </div>
+
+                            <div class="border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card" data-static-card="true">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-text-primary">مشروع سكني الدمام</h3>
+                                        <p class="text-sm text-text-secondary">العميل: فهد الخالدي</p>
+                                    </div>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary">
+                                        بداية المشروع
+                                    </span>
+                                </div>
+
+                                <div class="space-y-3 mb-4">
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">قيمة المشروع:</span>
+                                        <span class="font-bold text-text-primary">650,000 ر.س</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">تاريخ البداية:</span>
+                                        <span class="font-medium">20 يناير 2025</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">تاريخ التسليم:</span>
+                                        <span class="font-medium">15 أبريل 2025</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-text-secondary">نسبة الإنجاز:</span>
+                                        <span class="font-bold text-primary">20%</span>
+                                    </div>
+                                </div>
+
+                                <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
+                                    <div class="bg-primary h-2 rounded-full" style="width: 20%"></div>
+                                </div>
+
+                                <div class="flex items-center justify-between gap-3 text-xs text-text-secondary mt-4 pt-3 border-t border-border">
+                                    <span class="inline-flex items-center gap-1"><i class="fas fa-layer-group text-primary"></i>مشروع سكني</span>
+                                    <span class="inline-flex items-center gap-1"><i class="fas fa-map-pin text-error"></i>الدمام • حي المزروعية</span>
+                                </div>
+                                <p class="text-[11px] text-text-secondary opacity-70 mt-2">بيانات تجريبية لعرض تصميم البطاقة.</p>
+                            </div>
+
+                            <div data-empty-state class="hidden col-span-full text-center text-text-secondary bg-secondary-50 border border-dashed border-border rounded-xl p-8">
+                                <i class="fas fa-layer-group text-3xl text-primary mb-3 block"></i>
+                                <p>سيتم تحميل المشاريع المسجلة وعرضها هنا تلقائياً، وستحل محل هذه البيانات التجريبية عند توفرها.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
             <!-- Project Details View (Hidden by default) -->
             <div id="project-details" class="projects-view hidden">
@@ -9711,154 +9936,637 @@ function openFinancialCustomization() {
     return v;
   }
 
-  function renderStoredProjects(highlightId){
-    const grid = document.querySelector('#projects-list .grid');
-    if(!grid) return;
+  let projectsStatusChartInstance = null;
+  let projectsValueTrendChartInstance = null;
 
-    if (!grid.dataset.enhanced) {
-      grid.querySelectorAll('.project-card:not([data-proj-id])').forEach(el => el.remove());
-      grid.dataset.enhanced = 'true';
-    }
+  const STATUS_META = [
+    { key: 'active', label: 'نشط', color: '#0EA5E9' },
+    { key: 'in_progress', label: 'قيد التنفيذ', color: '#2563EB' },
+    { key: 'planned', label: 'البداية', color: '#A855F7' },
+    { key: 'done', label: 'مكتمل', color: '#22C55E' },
+    { key: 'paused', label: 'موقوف', color: '#94A3B8' },
+    { key: 'delayed', label: 'متأخر', color: '#F97316' }
+  ];
 
-    const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
-    let userClearedFlag = localStorage.getItem(USER_CLEARED_KEY);
-    const userClearedAt = localStorage.getItem(USER_CLEARED_AT_KEY);
-    const userClearedFresh = isClearedFresh(userClearedFlag, userClearedAt);
-    if (!userClearedFresh && userClearedFlag === 'true') {
-      localStorage.removeItem(USER_CLEARED_KEY);
-      localStorage.removeItem(USER_CLEARED_AT_KEY);
-      userClearedFlag = null;
-    }
-    const storedProjects = getProjects() || [];
-    let sourceProjects = Array.isArray(storedProjects) ? storedProjects.slice() : [];
+  function setupSidebarNavigation() {
+    const toggles = document.querySelectorAll('[data-submenu-toggle]');
+    toggles.forEach(toggle => {
+      toggle.addEventListener('click', event => {
+        event.preventDefault();
+        const submenuId = toggle.getAttribute('data-submenu-toggle');
+        const submenu = document.getElementById(submenuId);
+        if (!submenu) return;
 
-    if (!sourceProjects.length) {
-      const allowDefaults = hasUserDataFlag !== 'false' || !userClearedFresh;
-      if (allowDefaults && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
-        sourceProjects = window.projectStore.getDefaultProjects().map(project => ({ ...project }));
-      } else if (allowDefaults && Array.isArray(window.projectStore?.projects) && window.projectStore.projects.length) {
-        sourceProjects = window.projectStore.projects.map(project => ({ ...project }));
-      }
-    }
+        const willOpen = submenu.classList.contains('hidden');
 
-    const normalizedProjects = window.projectStore
-      ? window.projectStore.normalizeProjects(sourceProjects)
-      : sourceProjects.slice();
+        toggles.forEach(btn => {
+          const id = btn.getAttribute('data-submenu-toggle');
+          const menu = document.getElementById(id);
+          if (menu && menu !== submenu) {
+            menu.classList.add('hidden');
+          }
+          btn.classList.remove('is-open');
+          btn.setAttribute('aria-expanded', 'false');
+          const chevron = btn.querySelector('.submenu-chevron');
+          if (chevron) {
+            chevron.classList.remove('rotate-180');
+          }
+        });
 
-    if (window.projectStore) {
-      window.projectStore.projects = normalizedProjects.slice();
-      if (normalizedProjects.length) {
-        window.projectStore.saveProjects();
-      }
-    } else if (normalizedProjects.length) {
-      saveProjects(normalizedProjects);
-    }
-
-    const projects = normalizedProjects
-      .slice()
-      .sort((a, b) => {
-        const aTime = new Date(a.createdAt || a.id || 0).getTime();
-        const bTime = new Date(b.createdAt || b.id || 0).getTime();
-        return bTime - aTime;
-      });
-
-    grid.querySelectorAll('.project-card[data-proj-id]').forEach(el => el.remove());
-
-    const emptyState = grid.querySelector('[data-empty-state]');
-    if (!projects.length) {
-      if (!emptyState) {
-        const placeholder = document.createElement('div');
-        placeholder.setAttribute('data-empty-state', 'true');
-        placeholder.className = 'col-span-full bg-white border border-dashed border-border rounded-xl p-8 text-center text-text-secondary';
-        placeholder.innerHTML = '<i class="fas fa-folder-open text-3xl text-primary mb-3 block"></i>لا توجد مشاريع مسجلة بعد. ابدأ بإنشاء مشروع جديد من الإجراءات السريعة.';
-        grid.appendChild(placeholder);
-      }
-    } else if (emptyState) {
-      emptyState.remove();
-    }
-
-    projects.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card';
-      card.setAttribute('data-proj-id', p.id);
-      card.onclick = () => {
-        if (typeof openProjectDetails === 'function') {
-          openProjectDetails(p.id, p.name || 'مشروع');
+        if (willOpen) {
+          submenu.classList.remove('hidden');
+          toggle.classList.add('is-open');
+          toggle.setAttribute('aria-expanded', 'true');
+          const icon = toggle.querySelector('.submenu-chevron');
+          if (icon) {
+            icon.classList.add('rotate-180');
+          }
+        } else {
+          submenu.classList.add('hidden');
         }
-      };
-
-      const progressValue = Math.max(0, Math.min(100, Number(p.progress ?? 0)));
-      const clientDisplay = (p.client && p.client.name) || p.clientName || (typeof p.client === 'string' ? p.client : 'غير محدد');
-      const budgetValue = p.budget?.contractValue ?? p.value;
-      const startDate = p.timeline?.startDate || p.startDate || null;
-      const endDate = p.timeline?.endDate || p.endDate || null;
-      const startDateLabel = formatDateSafe(startDate);
-      const endDateLabel = formatDateSafe(endDate);
-      const typeLabel = p.typeLabel || projectTypeLabel(p.type);
-      const locationLabel = formatLocationText(p.location || p.projectLocation || {});
-
-      card.innerHTML = `
-        <div class="flex items-start justify-between mb-4">
-          <div>
-            <h3 class="text-lg font-bold text-text-primary">${p.name || 'مشروع جديد'}</h3>
-            <p class="text-sm text-text-secondary">العميل: ${clientDisplay || 'غير محدد'}</p>
-          </div>
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusBadgeClass(p.status)}">
-            ${statusArabic(p.status)}
-          </span>
-        </div>
-
-        <div class="space-y-3 mb-4">
-          <div class="flex justify-between">
-            <span class="text-text-secondary">قيمة المشروع:</span>
-            <span class="font-bold text-text-primary">${formatCurrency(budgetValue)}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-text-secondary">تاريخ البداية:</span>
-            <span class="font-medium">${startDateLabel}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-text-secondary">تاريخ التسليم:</span>
-            <span class="font-medium">${endDateLabel}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-text-secondary">نسبة الإنجاز:</span>
-            <span class="font-bold ${progressColor(progressValue)}">${progressValue}%</span>
-          </div>
-        </div>
-
-        <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
-          <div class="${progressBarColor(progressValue)} h-2 rounded-full" style="width: ${progressValue}%"></div>
-        </div>
-
-        <div class="flex items-center gap-2 text-sm text-text-secondary">
-          <i class="fas fa-calendar-alt"></i>
-          <span>ينتهي في: ${endDateLabel}</span>
-        </div>
-        <div class="flex items-center justify-between gap-3 text-xs text-text-secondary mt-4 pt-3 border-t border-border">
-          <span class="inline-flex items-center gap-1"><i class="fas fa-layer-group text-primary"></i>${typeLabel}</span>
-          <span class="inline-flex items-center gap-1"><i class="fas fa-map-pin text-error"></i>${locationLabel}</span>
-        </div>
-      `;
-
-      grid.prepend(card);
-
-      if (highlightId && highlightId === p.id) {
-        const originalShadow = card.style.boxShadow;
-        card.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.35), 0 15px 30px rgba(0, 0, 0, 0.12)';
-        setTimeout(() => {
-          card.style.boxShadow = originalShadow;
-        }, 3200);
-        setTimeout(() => {
-          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 150);
-      }
+      });
     });
 
-    const activeCounter = document.querySelector('#projects-list .text-primary.font-bold.text-lg');
-    if (activeCounter) {
-      activeCounter.textContent = String(projects.length);
+    const activeToggle = document.querySelector('.projects-nav-toggle[data-submenu-toggle="projectsSubmenu"]');
+    const activeSubmenu = document.getElementById('projectsSubmenu');
+    if (activeToggle && activeSubmenu) {
+      activeSubmenu.classList.remove('hidden');
+      activeToggle.classList.add('is-open');
+      activeToggle.setAttribute('aria-expanded', 'true');
+      const icon = activeToggle.querySelector('.submenu-chevron');
+      if (icon) {
+        icon.classList.add('rotate-180');
+      }
     }
+  }
+
+  function normalizeProjectStatus(status) {
+    const normalized = String(status || '').toLowerCase();
+    if (['active', 'in_progress', 'planned', 'paused', 'done'].includes(normalized)) {
+      return normalized;
+    }
+    if (['completed', 'complete'].includes(normalized)) {
+      return 'done';
+    }
+    if (['delayed', 'overdue', 'late'].includes(normalized)) {
+      return 'delayed';
+    }
+    if (['pending', 'draft'].includes(normalized)) {
+      return 'planned';
+    }
+    return 'in_progress';
+  }
+
+  function getProjectContractValue(project) {
+    if (!project || typeof project !== 'object') return 0;
+    const budgetValue = project.budget && (project.budget.contractValue ?? project.budget.totalValue);
+    const directValue = project.value ?? project.contractValue ?? project.totalValue;
+    const fallback = project.financials && (project.financials.totalValue ?? project.financials.contractValue);
+    const value = budgetValue ?? directValue ?? fallback ?? 0;
+    const num = Number(value);
+    return Number.isFinite(num) ? num : 0;
+  }
+
+  function renderProjectsStatusChart(statusData) {
+    const canvas = document.getElementById('projectsStatusChart');
+    if (!canvas) return;
+
+    const labels = statusData.length ? statusData.map(item => item.label) : ['لا توجد بيانات'];
+    const values = statusData.length ? statusData.map(item => item.count) : [0];
+    const colors = statusData.length ? statusData.map(item => item.color) : ['#CBD5F5'];
+
+    if (projectsStatusChartInstance) {
+      projectsStatusChartInstance.data.labels = labels;
+      projectsStatusChartInstance.data.datasets[0].data = values;
+      projectsStatusChartInstance.data.datasets[0].backgroundColor = colors;
+      projectsStatusChartInstance.update();
+      return;
+    }
+
+    projectsStatusChartInstance = new Chart(canvas.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [
+          {
+            data: values,
+            backgroundColor: colors,
+            borderWidth: 0,
+            hoverOffset: 12
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 20,
+              font: {
+                family: 'Noto Sans Arabic'
+              }
+            }
+          }
+        },
+        cutout: '62%',
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
+  }
+
+  function renderProjectsValueTrendChart(trendData) {
+    const canvas = document.getElementById('projectsValueTrendChart');
+    if (!canvas) return;
+
+    const dataToUse = trendData.length ? trendData : [{ label: 'لا توجد بيانات', value: 0 }];
+    const labels = dataToUse.map(item => item.label);
+    const values = dataToUse.map(item => item.value);
+
+    if (projectsValueTrendChartInstance) {
+      projectsValueTrendChartInstance.data.labels = labels;
+      projectsValueTrendChartInstance.data.datasets[0].data = values;
+      projectsValueTrendChartInstance.update();
+      return;
+    }
+
+    projectsValueTrendChartInstance = new Chart(canvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            data: values,
+            backgroundColor: 'rgba(37, 99, 235, 0.18)',
+            borderColor: '#2563EB',
+            borderWidth: 2,
+            borderRadius: 12,
+            maxBarThickness: 36
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label(context) {
+                const value = context.parsed.y || 0;
+                return formatCurrency(value);
+              }
+            }
+          }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            ticks: {
+              font: { family: 'Noto Sans Arabic' }
+            },
+            grid: { display: false }
+          },
+          y: {
+            ticks: {
+              font: { family: 'Noto Sans Arabic' }
+            },
+            grid: {
+              borderDash: [6, 6]
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function updateProjectsOverview(projects) {
+    const list = Array.isArray(projects) ? projects : [];
+    const formatNumber = value => Number(value || 0).toLocaleString('ar-EG');
+    const totals = { active: 0, in_progress: 0, planned: 0, paused: 0, done: 0, delayed: 0 };
+    const summaries = list.map(project => {
+      const statusKey = normalizeProjectStatus(project?.status);
+      totals[statusKey] = (totals[statusKey] || 0) + 1;
+      const value = getProjectContractValue(project);
+      const progress = Number(project?.progress ?? project?.progressPercent ?? 0) || 0;
+      const endDateRaw = project?.endDate || project?.timeline?.endDate || project?.deliveryDate;
+      const startDateRaw = project?.startDate || project?.timeline?.startDate;
+      return {
+        project,
+        statusKey,
+        value,
+        progress,
+        endDate: endDateRaw ? new Date(endDateRaw) : null,
+        startDate: startDateRaw ? new Date(startDateRaw) : null
+      };
+    });
+
+    const totalProjects = list.length;
+    const activeProjects = (totals.active || 0) + (totals.in_progress || 0);
+    const delayedProjects = totals.delayed || 0;
+    const totalContractValue = summaries.reduce((sum, item) => sum + item.value, 0);
+    const averageProgress = totalProjects ? summaries.reduce((sum, item) => sum + item.progress, 0) / totalProjects : 0;
+
+    const totalEl = document.getElementById('totalProjectsMetric');
+    if (totalEl) totalEl.textContent = formatNumber(totalProjects);
+    const activeEl = document.getElementById('activeProjectsMetric');
+    if (activeEl) activeEl.textContent = formatNumber(activeProjects);
+    const activePill = document.getElementById('activeProjectsPill');
+    if (activePill) activePill.textContent = formatNumber(activeProjects);
+    const avgEl = document.getElementById('averageProgressMetric');
+    if (avgEl) avgEl.textContent = `${Math.round(averageProgress)}%`;
+    const valueEl = document.getElementById('totalContractValueMetric');
+    if (valueEl) valueEl.textContent = totalContractValue ? formatCurrency(totalContractValue) : '0 ر.س';
+
+    const overviewHighlight = document.getElementById('projectsOverviewHighlight');
+    if (overviewHighlight) {
+      overviewHighlight.textContent = totalProjects
+        ? `${formatNumber(activeProjects)} مشروع نشط من أصل ${formatNumber(totalProjects)}`
+        : 'لا توجد مشاريع مسجلة حالياً.';
+    }
+
+    const now = new Date();
+    const upcomingDeadlines = summaries
+      .filter(item => item.endDate && !Number.isNaN(item.endDate.getTime()))
+      .sort((a, b) => a.endDate - b.endDate);
+
+    const upcomingWithinSixty = upcomingDeadlines
+      .filter(item => item.endDate >= now)
+      .filter(item => (item.endDate - now) / (1000 * 60 * 60 * 24) <= 60)
+      .slice(0, 3);
+
+    const delayedHighlight = document.getElementById('projectsDelayedHighlight');
+    if (delayedHighlight) {
+      if (delayedProjects > 0) {
+        delayedHighlight.textContent = `${formatNumber(delayedProjects)} مشروع بحاجة إلى تدخل عاجل`;
+      } else if (upcomingWithinSixty.length) {
+        const nearest = upcomingWithinSixty[0];
+        const label = formatDateSafe(nearest.endDate?.toISOString?.() || nearest.project?.endDate);
+        delayedHighlight.textContent = `أقرب تسليم في ${label}`;
+      } else {
+        delayedHighlight.textContent = 'لا توجد مؤشرات تأخير حالياً.';
+      }
+    }
+
+    const statusData = STATUS_META
+      .map(meta => ({ ...meta, count: totals[meta.key] || 0 }))
+      .filter(item => item.count > 0);
+
+    renderProjectsStatusChart(statusData);
+
+    const statusSummary = document.getElementById('projectsStatusSummary');
+    if (statusSummary) {
+      statusSummary.textContent = totalProjects
+        ? STATUS_META.filter(meta => totals[meta.key])
+            .map(meta => `${meta.label}: ${formatNumber(totals[meta.key])}`)
+            .join(' • ')
+        : 'لا توجد مشاريع مسجلة';
+    }
+
+    const trendData = summaries
+      .filter(item => item.startDate && Number.isFinite(item.value))
+      .sort((a, b) => a.startDate - b.startDate)
+      .map(item => ({
+        label: item.project?.name || 'مشروع',
+        value: item.value
+      }));
+    renderProjectsValueTrendChart(trendData);
+
+    const valueSummary = document.getElementById('projectsValueSummary');
+    if (valueSummary) {
+      valueSummary.textContent = totalContractValue
+        ? `إجمالي العقود ${formatCurrency(totalContractValue)}`
+        : 'لا توجد بيانات مالية متاحة';
+    }
+
+    const insightsEl = document.getElementById('projectsInsightsList');
+    if (insightsEl) {
+      const insights = [];
+      const highestValue = summaries
+        .filter(item => item.value > 0)
+        .sort((a, b) => b.value - a.value)[0];
+      if (highestValue) {
+        insights.push({
+          title: 'أعلى قيمة عقد',
+          description: highestValue.project?.name || 'مشروع',
+          meta: formatCurrency(highestValue.value)
+        });
+      }
+
+      const bestProgress = summaries
+        .filter(item => item.progress > 0)
+        .sort((a, b) => b.progress - a.progress)[0];
+      if (bestProgress) {
+        insights.push({
+          title: 'أسرع مشروع تقدماً',
+          description: bestProgress.project?.name || 'مشروع',
+          meta: `${Math.round(bestProgress.progress)}% إنجاز`
+        });
+      }
+
+      if (upcomingWithinSixty.length) {
+        const soonest = upcomingWithinSixty[0];
+        const daysDiff = Math.max(0, Math.ceil((soonest.endDate - now) / (1000 * 60 * 60 * 24)));
+        const dueLabel = daysDiff <= 1 ? 'خلال يوم' : `خلال ${daysDiff} يوم`;
+        insights.push({
+          title: 'موعد تسليم قريب',
+          description: soonest.project?.name || 'مشروع',
+          meta: dueLabel
+        });
+      }
+
+      if (insights.length) {
+        insightsEl.innerHTML = insights.map(item => `
+          <div class="flex items-start gap-3">
+            <span class="mt-1 w-2 h-2 rounded-full bg-primary"></span>
+            <div>
+              <p class="text-sm font-medium text-text-primary">${item.title}</p>
+              <p class="text-sm text-text-secondary">${item.description}</p>
+              <p class="text-xs text-text-secondary mt-1">${item.meta}</p>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        insightsEl.innerHTML = '<p>سيتم إظهار أبرز الملاحظات عند توفر بيانات كافية.</p>';
+      }
+    }
+
+    const upcomingListEl = document.getElementById('projectsUpcomingDeadlines');
+    if (upcomingListEl) {
+      if (upcomingWithinSixty.length) {
+        upcomingListEl.innerHTML = upcomingWithinSixty.map(item => {
+          const days = Math.max(0, Math.ceil((item.endDate - now) / (1000 * 60 * 60 * 24)));
+          const dueLabel = days === 0 ? 'اليوم' : days === 1 ? 'غداً' : `بعد ${days} يوم`;
+          const formattedDate = formatDateSafe(item.endDate?.toISOString?.() || item.project?.endDate);
+          return `
+            <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-xl">
+              <div>
+                <p class="text-sm font-medium text-text-primary">${item.project?.name || 'مشروع'}</p>
+                <p class="text-xs text-text-secondary">التسليم: ${formattedDate}</p>
+              </div>
+              <span class="text-xs font-medium text-warning bg-warning-50 px-3 py-1 rounded-full">${dueLabel}</span>
+            </div>
+          `;
+        }).join('');
+      } else {
+        upcomingListEl.innerHTML = '<p class="text-sm text-text-secondary">لا توجد مواعيد قريبة خلال الفترة القادمة.</p>';
+      }
+    }
+
+    const statusBreakdownEl = document.getElementById('statusBreakdownList');
+    if (statusBreakdownEl) {
+      if (totalProjects) {
+        statusBreakdownEl.innerHTML = STATUS_META.map(meta => {
+          const count = totals[meta.key] || 0;
+          const percentage = totalProjects ? Math.round((count / totalProjects) * 100) : 0;
+          return `
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-text-secondary">${meta.label}</span>
+                <span class="text-text-secondary">${formatNumber(count)} (${percentage}%)</span>
+              </div>
+              <div class="w-full bg-secondary-200 h-2 rounded-full overflow-hidden">
+                <div class="h-2 rounded-full" style="width: ${percentage}%; background-color: ${meta.color};"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        statusBreakdownEl.innerHTML = '<p>لا توجد بيانات لعرض توزيع الحالات.</p>';
+      }
+    }
+
+    const focusProjects = summaries
+      .filter(item => item.statusKey === 'delayed' || item.progress < 45)
+      .sort((a, b) => {
+        if (a.statusKey === 'delayed' && b.statusKey !== 'delayed') return -1;
+        if (b.statusKey === 'delayed' && a.statusKey !== 'delayed') return 1;
+        return a.progress - b.progress;
+      })
+      .slice(0, 3);
+
+    const focusCountEl = document.getElementById('projectsFocusCount');
+    if (focusCountEl) focusCountEl.textContent = formatNumber(focusProjects.length);
+
+    const focusListEl = document.getElementById('projectsFocusList');
+    if (focusListEl) {
+      if (focusProjects.length) {
+        focusListEl.innerHTML = focusProjects.map(item => {
+          return `
+            <div class="p-3 bg-secondary-50 rounded-xl">
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium text-text-primary">${item.project?.name || 'مشروع'}</p>
+                <span class="text-xs font-semibold ${item.statusKey === 'delayed' ? 'text-error' : 'text-warning'}">${Math.round(item.progress)}%</span>
+              </div>
+              <p class="text-xs text-text-secondary mt-1">${STATUS_META.find(meta => meta.key === item.statusKey)?.label || 'قيد المتابعة'}</p>
+            </div>
+          `;
+        }).join('');
+      } else {
+        focusListEl.innerHTML = '<p>لا توجد مشاريع بحاجة لمتابعة فورية.</p>';
+      }
+    }
+
+    const healthScoreBase = totalProjects
+      ? Math.max(0, Math.min(100, (averageProgress * 0.6) + ((activeProjects / Math.max(totalProjects, 1)) * 30) - ((delayedProjects / Math.max(totalProjects, 1)) * 20)))
+      : 0;
+    const healthScore = Math.round(healthScoreBase);
+    const healthScoreEl = document.getElementById('portfolioHealthScore');
+    if (healthScoreEl) healthScoreEl.textContent = `${healthScore}%`;
+    const healthBarEl = document.getElementById('portfolioHealthBar');
+    if (healthBarEl) healthBarEl.style.width = `${Math.min(Math.max(healthScore, 0), 100)}%`;
+    const healthDescriptionEl = document.getElementById('portfolioHealthDescription');
+    if (healthDescriptionEl) {
+      healthDescriptionEl.textContent = healthScore >= 80
+        ? 'المحفظة في وضع ممتاز مع تقدم ثابت في جميع المشاريع.'
+        : healthScore >= 55
+          ? 'أداء جيد مع بعض النقاط التي تتطلب متابعة دورية.'
+          : 'يوصى بمتابعة المشاريع الحرجة لضمان التقدم حسب الخطة.';
+    }
+  }
+
+  function renderStoredProjects(highlightId){
+    const grid = document.getElementById('projectsGrid');
+    if (!grid) return [];
+
+    const staticCards = Array.from(grid.querySelectorAll('[data-static-card]'));
+    let emptyState = grid.querySelector('[data-empty-state]');
+
+    const setStaticVisibility = (visible) => {
+      staticCards.forEach(card => {
+        if (visible) {
+          card.classList.remove('hidden');
+          card.setAttribute('aria-hidden', 'false');
+        } else {
+          card.classList.add('hidden');
+          card.setAttribute('aria-hidden', 'true');
+        }
+      });
+    };
+
+    const clearDynamicCards = () => {
+      grid.querySelectorAll('.project-card[data-proj-id]').forEach(el => el.remove());
+    };
+
+    const showEmptyState = () => {
+      if (!emptyState) {
+        emptyState = document.createElement('div');
+        emptyState.setAttribute('data-empty-state', 'true');
+        emptyState.className = 'col-span-full bg-white border border-dashed border-border rounded-xl p-8 text-center text-text-secondary';
+        emptyState.innerHTML = '<i class="fas fa-folder-open text-3xl text-primary mb-3 block"></i>لا توجد مشاريع مسجلة بعد. ابدأ بإنشاء مشروع جديد من الإجراءات السريعة.';
+        grid.appendChild(emptyState);
+      }
+      emptyState.classList.remove('hidden');
+      emptyState.setAttribute('aria-hidden', 'false');
+    };
+
+    const hideEmptyState = () => {
+      if (emptyState) {
+        emptyState.classList.add('hidden');
+        emptyState.setAttribute('aria-hidden', 'true');
+      }
+    };
+
+    let projects = [];
+    try {
+      const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
+      let userClearedFlag = localStorage.getItem(USER_CLEARED_KEY);
+      const userClearedAt = localStorage.getItem(USER_CLEARED_AT_KEY);
+      const userClearedFresh = isClearedFresh(userClearedFlag, userClearedAt);
+      if (!userClearedFresh && userClearedFlag === 'true') {
+        localStorage.removeItem(USER_CLEARED_KEY);
+        localStorage.removeItem(USER_CLEARED_AT_KEY);
+        userClearedFlag = null;
+      }
+
+      const storedProjects = getProjects() || [];
+      let sourceProjects = Array.isArray(storedProjects) ? storedProjects.slice() : [];
+
+      if (!sourceProjects.length) {
+        const allowDefaults = hasUserDataFlag !== 'false' || !userClearedFresh;
+        if (allowDefaults && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
+          sourceProjects = window.projectStore.getDefaultProjects().map(project => ({ ...project }));
+        } else if (allowDefaults && Array.isArray(window.projectStore?.projects) && window.projectStore.projects.length) {
+          sourceProjects = window.projectStore.projects.map(project => ({ ...project }));
+        }
+      }
+
+      const normalizedProjects = window.projectStore
+        ? window.projectStore.normalizeProjects(sourceProjects)
+        : sourceProjects.slice();
+
+      if (window.projectStore) {
+        window.projectStore.projects = normalizedProjects.slice();
+        if (normalizedProjects.length) {
+          window.projectStore.saveProjects();
+        }
+      } else if (normalizedProjects.length) {
+        saveProjects(normalizedProjects);
+      }
+
+      projects = normalizedProjects
+        .slice()
+        .sort((a, b) => {
+          const aTime = new Date(a.createdAt || a.id || 0).getTime();
+          const bTime = new Date(b.createdAt || b.id || 0).getTime();
+          const safeATime = Number.isFinite(aTime) ? aTime : 0;
+          const safeBTime = Number.isFinite(bTime) ? bTime : 0;
+          return safeBTime - safeATime;
+        });
+    } catch (error) {
+      console.error('تعذر تحميل المشاريع المخزنة', error);
+      projects = [];
+    }
+
+    clearDynamicCards();
+
+    if (!projects.length) {
+      setStaticVisibility(true);
+      showEmptyState();
+    } else {
+      setStaticVisibility(false);
+      hideEmptyState();
+
+      projects.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card';
+        card.setAttribute('data-proj-id', p.id);
+        card.onclick = () => {
+          if (typeof openProjectDetails === 'function') {
+            openProjectDetails(p.id, p.name || 'مشروع');
+          }
+        };
+
+        const progressValue = Math.max(0, Math.min(100, Number(p.progress ?? 0)));
+        const clientDisplay = (p.client && p.client.name) || p.clientName || (typeof p.client === 'string' ? p.client : 'غير محدد');
+        const budgetValue = p.budget?.contractValue ?? p.value;
+        const startDate = p.timeline?.startDate || p.startDate || null;
+        const endDate = p.timeline?.endDate || p.endDate || null;
+        const startDateLabel = formatDateSafe(startDate);
+        const endDateLabel = formatDateSafe(endDate);
+        const typeLabel = p.typeLabel || projectTypeLabel(p.type);
+        const locationLabel = formatLocationText(p.location || p.projectLocation || {});
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h3 class="text-lg font-bold text-text-primary">${p.name || 'مشروع جديد'}</h3>
+              <p class="text-sm text-text-secondary">العميل: ${clientDisplay || 'غير محدد'}</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusBadgeClass(p.status)}">
+              ${statusArabic(p.status)}
+            </span>
+          </div>
+
+          <div class="space-y-3 mb-4">
+            <div class="flex justify-between">
+              <span class="text-text-secondary">قيمة المشروع:</span>
+              <span class="font-bold text-text-primary">${formatCurrency(budgetValue)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-text-secondary">تاريخ البداية:</span>
+              <span class="font-medium">${startDateLabel}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-text-secondary">تاريخ التسليم:</span>
+              <span class="font-medium">${endDateLabel}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-text-secondary">نسبة الإنجاز:</span>
+              <span class="font-bold ${progressColor(progressValue)}">${progressValue}%</span>
+            </div>
+          </div>
+
+          <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
+            <div class="${progressBarColor(progressValue)} h-2 rounded-full" style="width: ${progressValue}%"></div>
+          </div>
+
+          <div class="flex items-center gap-2 text-sm text-text-secondary">
+            <i class="fas fa-calendar-alt"></i>
+            <span>ينتهي في: ${endDateLabel}</span>
+          </div>
+          <div class="flex items-center justify-between gap-3 text-xs text-text-secondary mt-4 pt-3 border-t border-border">
+            <span class="inline-flex items-center gap-1"><i class="fas fa-layer-group text-primary"></i>${typeLabel}</span>
+            <span class="inline-flex items-center gap-1"><i class="fas fa-map-pin text-error"></i>${locationLabel}</span>
+          </div>
+        `;
+
+        grid.prepend(card);
+
+        if (highlightId && highlightId === p.id) {
+          const originalShadow = card.style.boxShadow;
+          card.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.35), 0 15px 30px rgba(0, 0, 0, 0.12)';
+          setTimeout(() => {
+            card.style.boxShadow = originalShadow;
+          }, 3200);
+          setTimeout(() => {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 150);
+        }
+      });
+    }
+
+    updateProjectsOverview(projects);
 
     return projects;
   }
@@ -9879,6 +10587,7 @@ function openFinancialCustomization() {
   window.showToast = showToast;
 
   document.addEventListener('DOMContentLoaded', () => {
+    setupSidebarNavigation();
     const url = new URL(window.location.href);
     const createdId = url.searchParams.get('created');
 
