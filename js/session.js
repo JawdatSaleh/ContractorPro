@@ -318,6 +318,8 @@ function initializeApplicationLayout() {
         return;
     }
 
+    const shouldPreserveLayout = body.dataset.preserveLayout === 'true' || body.hasAttribute('data-preserve-layout');
+
     const userSession = getStoredSession();
     if (!userSession) {
         localStorage.removeItem(SESSION_KEY);
@@ -325,7 +327,7 @@ function initializeApplicationLayout() {
         return;
     }
 
-    const deferredScripts = initializeApplicationLayout() || [];
+    const deferredScripts = shouldPreserveLayout ? [] : (initializeApplicationLayout() || []);
 
     document.querySelectorAll('[data-current-user]').forEach((element) => {
         element.textContent = userSession.email;
@@ -344,18 +346,20 @@ function initializeApplicationLayout() {
         detail: { user: userSession, public: false }
     }));
 
-    deferredScripts.forEach((scriptInfo) => {
-        const script = document.createElement('script');
-        scriptInfo.attrs.forEach(({ name, value }) => {
-            if (name !== 'src') {
-                script.setAttribute(name, value);
+    if (!shouldPreserveLayout) {
+        deferredScripts.forEach((scriptInfo) => {
+            const script = document.createElement('script');
+            scriptInfo.attrs.forEach(({ name, value }) => {
+                if (name !== 'src') {
+                    script.setAttribute(name, value);
+                }
+            });
+            if (scriptInfo.src) {
+                script.src = scriptInfo.src;
+            } else if (scriptInfo.text) {
+                script.textContent = scriptInfo.text;
             }
+            body.appendChild(script);
         });
-        if (scriptInfo.src) {
-            script.src = scriptInfo.src;
-        } else if (scriptInfo.text) {
-            script.textContent = scriptInfo.text;
-        }
-        body.appendChild(script);
-    });
+    }
 })();
