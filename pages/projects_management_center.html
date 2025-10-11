@@ -3286,6 +3286,21 @@ function resolveCityLabel(value, fallback = '') {
 const PROJECTS_STORAGE_KEY = 'contractorPro.projects';
 const PROJECTS_LEGACY_KEY = 'projects';
 const PROJECTS_USER_CLEARED_KEY = 'contractorPro.projects.userCleared';
+const PROJECTS_USER_CLEARED_AT_KEY = 'contractorPro.projects.userClearedAt';
+const PROJECTS_USER_CLEARED_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
+
+function isUserClearedFresh(flag, timestamp, maxAgeMs = PROJECTS_USER_CLEARED_MAX_AGE_MS) {
+    if (flag !== 'true' || !timestamp) {
+        return false;
+    }
+
+    const parsed = Date.parse(timestamp);
+    if (Number.isNaN(parsed)) {
+        return false;
+    }
+
+    return (Date.now() - parsed) <= maxAgeMs;
+}
 
 // Project Data Store
 class ProjectStore {
@@ -3786,8 +3801,10 @@ class ProjectStore {
         localStorage.setItem('contractorPro.projects.hasUserData', hasEntries ? 'true' : 'false');
         if (hasEntries) {
             localStorage.removeItem(PROJECTS_USER_CLEARED_KEY);
+            localStorage.removeItem(PROJECTS_USER_CLEARED_AT_KEY);
         } else {
             localStorage.setItem(PROJECTS_USER_CLEARED_KEY, 'true');
+            localStorage.setItem(PROJECTS_USER_CLEARED_AT_KEY, new Date().toISOString());
         }
     }
 
@@ -3797,7 +3814,14 @@ class ProjectStore {
         const storedPrimary = localStorage.getItem(PROJECTS_STORAGE_KEY);
         const storedLegacy = localStorage.getItem(PROJECTS_LEGACY_KEY);
         const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
-        const userClearedFlag = localStorage.getItem(PROJECTS_USER_CLEARED_KEY);
+        let userClearedFlag = localStorage.getItem(PROJECTS_USER_CLEARED_KEY);
+        const userClearedAt = localStorage.getItem(PROJECTS_USER_CLEARED_AT_KEY);
+        const userClearedFresh = isUserClearedFresh(userClearedFlag, userClearedAt);
+        if (!userClearedFresh && userClearedFlag === 'true') {
+            localStorage.removeItem(PROJECTS_USER_CLEARED_KEY);
+            localStorage.removeItem(PROJECTS_USER_CLEARED_AT_KEY);
+            userClearedFlag = null;
+        }
 
         try {
             if (storedPrimary) {
@@ -3823,7 +3847,7 @@ class ProjectStore {
         let sourceProjects = Array.isArray(parsed) && parsed.length ? parsed : null;
 
         if (!sourceProjects) {
-            const shouldRespectEmptyState = hasUserDataFlag === 'false' && userClearedFlag === 'true';
+            const shouldRespectEmptyState = hasUserDataFlag === 'false' && userClearedFresh;
             if (shouldRespectEmptyState) {
                 sourceProjects = [];
             } else {
@@ -3840,8 +3864,10 @@ class ProjectStore {
         localStorage.setItem('contractorPro.projects.hasUserData', hasEntries ? 'true' : 'false');
         if (hasEntries) {
             localStorage.removeItem(PROJECTS_USER_CLEARED_KEY);
+            localStorage.removeItem(PROJECTS_USER_CLEARED_AT_KEY);
         } else {
             localStorage.setItem(PROJECTS_USER_CLEARED_KEY, 'true');
+            localStorage.setItem(PROJECTS_USER_CLEARED_AT_KEY, new Date().toISOString());
         }
         return normalized;
     }
@@ -9540,10 +9566,35 @@ function openFinancialCustomization() {
 (() => {
   const STORAGE_KEY = 'contractorPro.projects';
   const USER_CLEARED_KEY = 'contractorPro.projects.userCleared';
+  const USER_CLEARED_AT_KEY = 'contractorPro.projects.userClearedAt';
+  const USER_CLEARED_MAX_AGE_MS = typeof PROJECTS_USER_CLEARED_MAX_AGE_MS === 'number'
+    ? PROJECTS_USER_CLEARED_MAX_AGE_MS
+    : 1000 * 60 * 60 * 24 * 7;
+
+  function isClearedFresh(flag, timestamp) {
+    if (typeof isUserClearedFresh === 'function') {
+      return isUserClearedFresh(flag, timestamp, USER_CLEARED_MAX_AGE_MS);
+    }
+    if (flag !== 'true' || !timestamp) {
+      return false;
+    }
+    const parsed = Date.parse(timestamp);
+    if (Number.isNaN(parsed)) {
+      return false;
+    }
+    return (Date.now() - parsed) <= USER_CLEARED_MAX_AGE_MS;
+  }
 
   function getProjects(){
     const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
-    const userClearedFlag = localStorage.getItem(USER_CLEARED_KEY);
+    let userClearedFlag = localStorage.getItem(USER_CLEARED_KEY);
+    const userClearedAt = localStorage.getItem(USER_CLEARED_AT_KEY);
+    const userClearedFresh = isClearedFresh(userClearedFlag, userClearedAt);
+    if (!userClearedFresh && userClearedFlag === 'true') {
+      localStorage.removeItem(USER_CLEARED_KEY);
+      localStorage.removeItem(USER_CLEARED_AT_KEY);
+      userClearedFlag = null;
+    }
     try {
       const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       if (Array.isArray(stored) && stored.length) {
@@ -9562,13 +9613,13 @@ function openFinancialCustomization() {
       if (window.projectStore.projects.length) {
         return window.projectStore.projects;
       }
-      if ((hasUserDataFlag !== 'false' || userClearedFlag !== 'true') && typeof window.projectStore.getDefaultProjects === 'function') {
+      if ((hasUserDataFlag !== 'false' || !userClearedFresh) && typeof window.projectStore.getDefaultProjects === 'function') {
         return window.projectStore.getDefaultProjects();
       }
       return window.projectStore.projects;
     }
 
-    if ((hasUserDataFlag !== 'false' || userClearedFlag !== 'true') && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
+    if ((hasUserDataFlag !== 'false' || !userClearedFresh) && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
       return window.projectStore.getDefaultProjects();
     }
 
@@ -9582,8 +9633,10 @@ function openFinancialCustomization() {
     localStorage.setItem('contractorPro.projects.hasUserData', hasEntries ? 'true' : 'false');
     if (hasEntries) {
       localStorage.removeItem(USER_CLEARED_KEY);
+      localStorage.removeItem(USER_CLEARED_AT_KEY);
     } else {
       localStorage.setItem(USER_CLEARED_KEY, 'true');
+      localStorage.setItem(USER_CLEARED_AT_KEY, new Date().toISOString());
     }
   }
 
@@ -9668,12 +9721,19 @@ function openFinancialCustomization() {
     }
 
     const hasUserDataFlag = localStorage.getItem('contractorPro.projects.hasUserData');
-    const userClearedFlag = localStorage.getItem(USER_CLEARED_KEY);
+    let userClearedFlag = localStorage.getItem(USER_CLEARED_KEY);
+    const userClearedAt = localStorage.getItem(USER_CLEARED_AT_KEY);
+    const userClearedFresh = isClearedFresh(userClearedFlag, userClearedAt);
+    if (!userClearedFresh && userClearedFlag === 'true') {
+      localStorage.removeItem(USER_CLEARED_KEY);
+      localStorage.removeItem(USER_CLEARED_AT_KEY);
+      userClearedFlag = null;
+    }
     const storedProjects = getProjects() || [];
     let sourceProjects = Array.isArray(storedProjects) ? storedProjects.slice() : [];
 
     if (!sourceProjects.length) {
-      const allowDefaults = hasUserDataFlag !== 'false' || userClearedFlag !== 'true';
+      const allowDefaults = hasUserDataFlag !== 'false' || !userClearedFresh;
       if (allowDefaults && window.projectStore && typeof window.projectStore.getDefaultProjects === 'function') {
         sourceProjects = window.projectStore.getDefaultProjects().map(project => ({ ...project }));
       } else if (allowDefaults && Array.isArray(window.projectStore?.projects) && window.projectStore.projects.length) {
