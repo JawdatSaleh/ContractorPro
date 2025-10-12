@@ -1,0 +1,36 @@
+html[dir="rtl"] {
+  direction: rtl;
+}
+
+html[dir="rtl"] body {
+  font-family: "Cairo", "Tajawal", system-ui, sans-serif;
+}
+
+html[dir="rtl"] .app-shell {
+  direction: rtl;
+}
+
+html[dir="rtl"] .side-nav {
+  border-inline-end: none;
+  border-inline-start: 1px solid var(--color-border);
+}
+
+html[dir="rtl"] .filters,
+html[dir="rtl"] .kpi-card,
+html[dir="rtl"] .chart-card,
+html[dir="rtl"] .table-card,
+html[dir="rtl"] .whatif-panel {
+  text-align: right;
+}
+
+html[dir="rtl"] .modal {
+  text-align: right;
+}
+
+html[dir="rtl"] .modal-close {
+  transform: rotate(0deg);
+}
+
+html[dir="rtl"] .language-toggle {
+  flex-direction: row-reverse;
+}
