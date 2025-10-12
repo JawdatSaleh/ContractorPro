@@ -4090,6 +4090,11 @@ function backToProjectsList() {
 }
 
 function switchProjectTab(tabName) {
+    if (tabName === 'financial-analysis') {
+        redirectToFinancialAnalysis();
+        return;
+    }
+
     console.log('Switching to tab:', tabName);
     
     // Remove active class from all tab buttons
@@ -4136,6 +4141,29 @@ function switchProjectTab(tabName) {
         case 'financial-analysis':
             loadFinancialAnalysis(currentProjectId);
             break;
+    }
+}
+
+function redirectToFinancialAnalysis() {
+    const basePath = '../financial-analysis/index.html';
+    try {
+        const params = new URLSearchParams();
+        if (currentProjectId) {
+            params.set('project', currentProjectId);
+        }
+        if (currentProjectData && currentProjectData.currency) {
+            params.set('currency', currentProjectData.currency);
+        }
+        const docLang = document.documentElement.lang || '';
+        if (docLang) {
+            params.set('lang', docLang);
+        }
+        const queryString = params.toString();
+        const targetUrl = queryString ? `${basePath}?${queryString}` : basePath;
+        window.location.href = targetUrl;
+    } catch (error) {
+        console.error('Failed to redirect to financial analysis:', error);
+        window.location.href = basePath;
     }
 }
 
