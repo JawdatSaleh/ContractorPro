@@ -1,4 +1,4 @@
-import { translatePage, getDictionary } from "./i18n.js";
+import { translatePage, getDictionary, availableLanguages } from "./i18n.js";
 import {
   getState,
   subscribe,
@@ -44,7 +44,14 @@ const dataStore = {
 
 const modal = bindModal();
 
+const urlParams = new URLSearchParams(window.location.search);
+
 async function bootstrap() {
+  const requestedLang = urlParams.get("lang");
+  if (requestedLang && availableLanguages.includes(requestedLang)) {
+    setLanguage(requestedLang);
+  }
+
   setupLanguageButtons({
     currentLang: getState().lang,
     onChange: (lang) => {
@@ -59,12 +66,20 @@ async function bootstrap() {
   const [projectList, rates] = await Promise.all([fetchProjects(), fetchExchangeRates()]);
   dataStore.projects = projectList;
   setExchangeRates(rates);
-  populateProjectSelect(projectList);
+  const requestedProject = urlParams.get("project");
+  const defaultProject = requestedProject
+    ? projectList.find((project) => project.id === requestedProject)
+    : projectList[0];
 
-  const defaultProject = projectList[0];
+  populateProjectSelect(projectList, defaultProject?.id);
+
+  const requestedCurrency = urlParams.get("currency");
   if (defaultProject) {
     setProject(defaultProject.id);
-    updateFilters({ currency: defaultProject.currency });
+    const activeCurrency = requestedCurrency || defaultProject.currency;
+    if (activeCurrency) {
+      updateFilters({ currency: activeCurrency });
+    }
     await loadProjectData(defaultProject.id);
   }
 
@@ -101,11 +116,14 @@ async function loadProjectData(projectId) {
   populateStatusSelect(invoices);
 }
 
-function populateProjectSelect(projects) {
+function populateProjectSelect(projects, selectedId) {
   const select = document.getElementById("projectSelect");
   select.innerHTML = projects
     .map((project) => `<option value="${project.id}">${project.name}</option>`)
     .join("");
+  if (selectedId) {
+    select.value = selectedId;
+  }
 }
 
 function populatePhaseSelect(phases) {
@@ -179,6 +197,14 @@ function bindFilterEvents() {
   const defaultCurrency = getProjectCurrency();
   if (defaultCurrency) {
     currencySelect.value = defaultCurrency;
+  }
+  const stateCurrency = getState().filters.currency;
+  if (stateCurrency) {
+    currencySelect.value = stateCurrency;
+  }
+  const activeProject = getState().currentProjectId;
+  if (activeProject) {
+    projectSelect.value = activeProject;
   }
 }
 
