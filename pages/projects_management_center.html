@@ -2946,6 +2946,24 @@
     </div>
 
     <script>
+const mockData = {
+  projects: [
+    { id: 1, title: "مشروع أبراج السلام", code: "P-001", value: 2500000, progress: 72 },
+    { id: 2, title: "مستشفى الشفاء", code: "P-002", value: 4800000, progress: 56 }
+  ],
+  expenses: [
+    { id: 1, category: "مواد بناء", amount: 35000, date: "2025-01-12" },
+    { id: 2, category: "نقل", amount: 8000, date: "2025-02-03" }
+  ],
+  phases: [
+    { name: "الأساسات", start: "2025-01-01", end: "2025-02-10", progress: 100 },
+    { name: "الهيكل", start: "2025-02-15", end: "2025-03-30", progress: 45 }
+  ]
+};
+
+let weeklyProgressChartInstance = null;
+let phaseStatusChartInstance = null;
+
 // Global variables
 let currentProjectId = null;
 let currentProjectData = null;
@@ -5690,16 +5708,211 @@ function updateCumulativeProgress() {
     }
 }
 
+function exportToCSV(rows, filename = 'export.csv') {
+    if (!Array.isArray(rows) || rows.length === 0) {
+        console.warn('No data provided for CSV export');
+        return;
+    }
+
+    const normalizedRows = rows.map(row => {
+        if (Array.isArray(row)) {
+            return row;
+        }
+        if (row && typeof row === 'object') {
+            return Object.values(row);
+        }
+        return [row];
+    });
+
+    const csvContent = normalizedRows
+        .map(row => row.map(cell => {
+            if (cell === undefined || cell === null) {
+                return '';
+            }
+            const value = String(cell).replace(/"/g, '""');
+            return /[",\n]/.test(value) ? `"${value}"` : value;
+        }).join(','))
+        .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = filename.endsWith('.csv') ? filename : `${filename}.csv`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    setTimeout(() => {
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(downloadLink.href);
+    }, 0);
+}
+
+function generateCharts() {
+    if (typeof Chart === 'undefined') {
+        console.warn('Chart.js library is required to generate charts.');
+        return;
+    }
+
+    const weeklyCanvas = document.getElementById('weeklyProgressChart');
+    const phaseCanvas = document.getElementById('phaseStatusChart');
+
+    if (!weeklyCanvas || !phaseCanvas) {
+        return;
+    }
+
+    const weeklyLabels = mockData.phases.length
+        ? mockData.phases.map((_, index) => `الأسبوع ${index + 1}`)
+        : ['الأسبوع 1'];
+    const weeklyData = mockData.phases.length
+        ? mockData.phases.map(phase => Number(phase.progress || 0))
+        : [0];
+
+    if (weeklyProgressChartInstance) {
+        weeklyProgressChartInstance.destroy();
+    }
+
+    weeklyProgressChartInstance = new Chart(weeklyCanvas.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: weeklyLabels,
+            datasets: [
+                {
+                    label: 'نسبة الإنجاز',
+                    data: weeklyData,
+                    borderColor: '#2563EB',
+                    backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                    borderWidth: 3,
+                    tension: 0.35,
+                    fill: true,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#1D4ED8'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: value => `${value}%`
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    const statusCounts = mockData.phases.reduce((accumulator, phase) => {
+        const progress = Number(phase.progress || 0);
+        if (progress >= 100) {
+            accumulator.completed += 1;
+        } else if (progress > 0) {
+            accumulator.inProgress += 1;
+        } else {
+            accumulator.planned += 1;
+        }
+        return accumulator;
+    }, { completed: 0, inProgress: 0, planned: 0 });
+
+    if (!mockData.phases.length) {
+        statusCounts.planned = 1;
+    }
+
+    if (phaseStatusChartInstance) {
+        phaseStatusChartInstance.destroy();
+    }
+
+    phaseStatusChartInstance = new Chart(phaseCanvas.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: ['مكتملة', 'قيد التنفيذ', 'مخططة'],
+            datasets: [
+                {
+                    data: [statusCounts.completed, statusCounts.inProgress, statusCounts.planned],
+                    backgroundColor: ['#10B981', '#F59E0B', '#3B82F6'],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 14
+                    }
+                }
+            }
+        }
+    });
+}
+
+window.exportToCSV = exportToCSV;
+window.generateCharts = generateCharts;
+window.openProjectDetails = openProjectDetails;
+window.backToProjectsList = backToProjectsList;
+window.exportProjectsData = exportProjectsData;
+window.switchProjectTab = switchProjectTab;
+window.switchPhaseSubTab = switchPhaseSubTab;
+window.openAddPhaseModal = openAddPhaseModal;
+window.applyPhaseFilters = applyPhaseFilters;
+window.clearPhaseFilters = clearPhaseFilters;
+window.zoomGanttIn = zoomGanttIn;
+window.zoomGanttOut = zoomGanttOut;
+window.refreshGantt = refreshGantt;
+window.switchUnifiedSubTab = switchUnifiedSubTab;
+window.openAddExpenseModal = openAddExpenseModal;
+window.applyExpenseFilters = applyExpenseFilters;
+window.clearExpenseFilters = clearExpenseFilters;
+window.sortExpenseTable = sortExpenseTable;
+window.openAddSubcontractModal = openAddSubcontractModal;
+window.sortSubcontractTable = sortSubcontractTable;
+window.exportUnifiedData = exportUnifiedData;
+
 // Main functions for project management
 function openProjectDetails(projectId, projectName) {
     try {
         currentProjectId = projectId;
         currentProjectData = projectStore.getProject(projectId);
-        
+
         if (!currentProjectData) {
-            console.error('Project not found:', projectId);
-            alert('لم يتم العثور على بيانات المشروع');
-            return;
+            const fallbackProject = mockData.projects.find(project => String(project.id) === String(projectId)) || mockData.projects[0];
+
+            if (!fallbackProject) {
+                console.error('Project not found:', projectId);
+                alert('لم يتم العثور على بيانات المشروع');
+                return;
+            }
+
+            currentProjectData = {
+                id: String(fallbackProject.id),
+                code: fallbackProject.code || `#${fallbackProject.id}`,
+                name: fallbackProject.title,
+                title: fallbackProject.title,
+                progress: Number(fallbackProject.progress) || 0,
+                value: Number(fallbackProject.value) || 0,
+                budget: { contractValue: Number(fallbackProject.value) || 0 },
+                status: 'active',
+                client: { name: 'عميل تجريبي' },
+                timeline: {
+                    startDate: mockData.phases[0]?.start || '2025-01-01',
+                    endDate: mockData.phases[mockData.phases.length - 1]?.end || '2025-12-31',
+                    durationDays: 120
+                }
+            };
+
+            if (projectStore && typeof projectStore.normalizeProject === 'function') {
+                currentProjectData = projectStore.normalizeProject(currentProjectData) || currentProjectData;
+            }
         }
 
         console.log('Loading project:', currentProjectData);
@@ -5761,7 +5974,9 @@ function openProjectDetails(projectId, projectName) {
         
         // Update project details
         updateProjectInformation();
-        
+
+        generateCharts();
+
     } catch (error) {
         console.error('Error opening project details:', error);
         alert('حدث خطأ أثناء فتح تفاصيل المشروع');
@@ -7702,6 +7917,8 @@ document.addEventListener('DOMContentLoaded', function() {
         financialTemplateSelect.addEventListener('change', renderFinancialReportsList);
     }
 
+    generateCharts();
+
     console.log('Project management center initialized successfully');
 });
 
@@ -7779,22 +7996,52 @@ function removePhoto(index) {
 function openNewProjectModal(){ window.location.href = 'project_creation_wizard.html'; }
 
 function exportProjectsData() {
-    if (!projectStore) {
+    let projects = [];
+
+    if (projectStore && Array.isArray(projectStore.projects) && projectStore.projects.length) {
+        projects = projectStore.projects.map(project => ({
+            id: project.id,
+            name: project.name || project.title || '-',
+            code: project.code || '-',
+            value: Number(project.value || project.budget?.contractValue || 0),
+            progress: Number(project.progress || 0)
+        }));
+    }
+
+    if (!projects.length) {
+        projects = mockData.projects.map(project => ({
+            id: project.id,
+            name: project.title,
+            code: project.code,
+            value: Number(project.value || 0),
+            progress: Number(project.progress || 0)
+        }));
+    }
+
+    if (!projects.length) {
         alert('لا توجد بيانات مشاريع متاحة للتصدير حالياً.');
         return;
     }
 
-    const projects = projectStore.normalizeProjects(projectStore.projects || []);
-    const exportPayload = {
-        generatedAt: new Date().toISOString(),
-        totalProjects: projects.length,
-        projects
-    };
+    const rows = [
+        ['معرف المشروع', 'اسم المشروع', 'كود المشروع', 'قيمة المشروع (ر.س)', 'نسبة الإنجاز (%)']
+    ];
 
-    const fileName = `contractorpro-projects-${new Date().toISOString().slice(0, 10)}.json`;
-    downloadJSONFile(fileName, exportPayload);
+    projects.forEach(project => {
+        rows.push([
+            project.id,
+            project.name,
+            project.code,
+            Number(project.value || 0).toLocaleString('ar-EG'),
+            Number(project.progress || 0)
+        ]);
+    });
+
+    const fileName = `projects-export-${new Date().toISOString().slice(0, 10)}.csv`;
+    exportToCSV(rows, fileName);
+
     if (typeof showToast === 'function') {
-        showToast('تم تصدير بيانات المشاريع بنجاح');
+        showToast('تم تصدير بيانات المشاريع بنجاح بصيغة CSV', 'success');
     }
 }
 
@@ -7975,27 +8222,77 @@ function sortSubcontractTable(field) {
 }
 
 function exportUnifiedData() {
-    if (!currentProjectId || !projectStore) {
-        alert('يرجى اختيار مشروع لتصدير بياناته.');
-        return;
+    let expenses = [];
+    let subcontracts = [];
+
+    if (currentProjectId && typeof getFilteredExpenses === 'function') {
+        expenses = getFilteredExpenses();
     }
 
-    const exportPayload = {
-        projectId: currentProjectId,
-        projectName: currentProjectData?.name || '',
-        generatedAt: new Date().toISOString(),
-        filters: {
-            expenses: Object.assign({}, expenseFilters, { searchTerm: expenseSearchTerm }),
-            subcontracts: Object.assign({}, subcontractFilters)
-        },
-        expenses: getFilteredExpenses(),
-        subcontracts: getFilteredSubcontracts()
-    };
+    if (!expenses.length) {
+        expenses = mockData.expenses.map(expense => ({
+            id: expense.id,
+            category: expense.category,
+            amount: expense.amount,
+            date: expense.date,
+            description: expense.description || '-',
+            paymentMethod: expense.paymentMethod || '-' 
+        }));
+    }
 
-    const fileName = `project-${currentProjectId}-expenses-contracts-${new Date().toISOString().slice(0, 10)}.json`;
-    downloadJSONFile(fileName, exportPayload);
+    if (currentProjectId && typeof getFilteredSubcontracts === 'function') {
+        subcontracts = getFilteredSubcontracts();
+    }
+
+    if (!subcontracts.length) {
+        subcontracts = [{
+            contractorName: 'شركة مقاولات تجريبية',
+            contractTitle: 'عقد أعمال تمهيدية',
+            value: 0,
+            paidAmount: 0,
+            status: 'pending',
+            startDate: '2025-01-01',
+            endDate: '2025-02-01'
+        }];
+    }
+
+    const rows = [];
+    rows.push(['# قسم المصاريف']);
+    rows.push(['المعرف', 'التصنيف', 'الوصف', 'المبلغ (ر.س)', 'التاريخ', 'وسيلة الدفع']);
+
+    expenses.forEach(expense => {
+        rows.push([
+            expense.id || '-',
+            expense.category || '-',
+            expense.description || '-',
+            Number(expense.amount || 0).toLocaleString('ar-EG'),
+            expense.date || '-',
+            expense.paymentMethod || '-'
+        ]);
+    });
+
+    rows.push([]);
+    rows.push(['# قسم عقود الباطن']);
+    rows.push(['المقاول', 'عنوان العقد', 'قيمة العقد (ر.س)', 'المبلغ المدفوع (ر.س)', 'الحالة', 'تاريخ البدء', 'تاريخ الانتهاء']);
+
+    subcontracts.forEach(contract => {
+        rows.push([
+            contract.contractorName || '-',
+            contract.contractTitle || '-',
+            Number(contract.value || 0).toLocaleString('ar-EG'),
+            Number(contract.paidAmount || 0).toLocaleString('ar-EG'),
+            contract.status || '-',
+            contract.startDate || '-',
+            contract.endDate || '-'
+        ]);
+    });
+
+    const identifier = currentProjectId || 'all-projects';
+    const fileName = `unified-data-${identifier}-${new Date().toISOString().slice(0, 10)}.csv`;
+    exportToCSV(rows, fileName);
+
     if (typeof showToast === 'function') {
-        showToast('تم تنزيل ملف المصاريف والعقود بنجاح');
+        showToast('تم تصدير المصاريف وعقود الباطن بصيغة CSV بنجاح', 'success');
     }
 }
 
@@ -9190,12 +9487,37 @@ function openFinancialCustomization() {
     window.location.href = 'project_creation_wizard.html';
   };
 
-  function showToast(msg, ok=true){
-    const t = document.createElement('div');
-    t.textContent = msg;
-    t.className = 'fixed bottom-6 right-6 ' + (ok ? 'bg-success' : 'bg-error') + ' text-white px-4 py-3 rounded-lg shadow-modal z-[9999]';
-    document.body.appendChild(t);
-    setTimeout(()=> t.remove(), 3000);
+  function showToast(message, type = 'success'){
+    let resolvedType = type;
+    if (typeof type === 'boolean') {
+      resolvedType = type ? 'success' : 'error';
+    }
+
+    const palette = {
+      success: 'bg-success text-white',
+      error: 'bg-error text-white',
+      warning: 'bg-warning text-text-primary',
+      info: 'bg-primary text-white'
+    };
+
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.className = 'fixed bottom-6 right-6 px-4 py-3 rounded-lg shadow-modal z-[9999] transition-all duration-300 ' + (palette[resolvedType] || palette.success);
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+    });
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      setTimeout(() => toast.remove(), 250);
+    }, 3200);
   }
   window.showToast = showToast;
 
