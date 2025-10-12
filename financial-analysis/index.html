@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Financial Analysis</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet" href="assets/rtl.css" id="rtlStylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/css/tabulator.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/css/tabulator_midnight.min.css"
+      media="(prefers-color-scheme: dark)"
+    />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="logo">🏗️ ContractorPro</div>
+      <nav class="language-toggle" aria-label="Language switcher">
+        <button data-lang="ar" class="lang-btn is-active">العربية</button>
+        <button data-lang="en" class="lang-btn">English</button>
+      </nav>
+    </header>
+
+    <main id="app" class="app-shell">
+      <aside class="side-nav">
+        <ul>
+          <li><a href="#info">🧾 <span data-i18n="nav.info">المعلومات</span></a></li>
+          <li><a href="#phases">🧱 <span data-i18n="nav.phases">مراحل المشروع</span></a></li>
+          <li><a href="#financial-analysis" class="is-active">💹 <span data-i18n="nav.financial">التحليل المالي</span></a></li>
+          <li><a href="#expenses">💰 <span data-i18n="nav.expenses">المصاريف والعقود</span></a></li>
+          <li><a href="#payments">💳 <span data-i18n="nav.payments">دفعات المشروع</span></a></li>
+          <li><a href="#reports">📅 <span data-i18n="nav.reports">التقارير اليومية</span></a></li>
+        </ul>
+      </aside>
+
+      <section class="tab-panel" id="financial-analysis">
+        <h1 class="panel-title" data-i18n="titles.financialAnalysis">التحليل المالي</h1>
+
+        <section class="filters" aria-label="Filters toolbar">
+          <div class="filter-group">
+            <label for="projectSelect" data-i18n="filters.project">المشروع</label>
+            <select id="projectSelect"></select>
+          </div>
+          <div class="filter-group">
+            <label for="phaseSelect" data-i18n="filters.phase">المرحلة</label>
+            <select id="phaseSelect" multiple></select>
+          </div>
+          <div class="filter-group">
+            <label for="statusSelect" data-i18n="filters.invoiceStatus">حالة الفاتورة</label>
+            <select id="statusSelect"></select>
+          </div>
+          <div class="filter-group">
+            <label for="currencySelect" data-i18n="filters.currency">العملة</label>
+            <select id="currencySelect"></select>
+          </div>
+          <div class="filter-group">
+            <label for="dateFrom" data-i18n="filters.dateFrom">من تاريخ</label>
+            <input type="date" id="dateFrom" />
+          </div>
+          <div class="filter-group">
+            <label for="dateTo" data-i18n="filters.dateTo">إلى تاريخ</label>
+            <input type="date" id="dateTo" />
+          </div>
+          <div class="filter-actions">
+            <button id="applyFilters" class="btn primary" data-i18n="actions.apply">تطبيق</button>
+            <button id="resetFilters" class="btn ghost" data-i18n="actions.reset">إعادة تعيين</button>
+          </div>
+        </section>
+
+        <section class="kpi-grid" aria-label="Key performance indicators" id="kpiContainer">
+          <!-- KPI cards rendered by JS -->
+        </section>
+
+        <section class="charts-grid">
+          <article class="chart-card">
+            <header>
+              <h2 data-i18n="charts.cashflow">التدفق النقدي</h2>
+              <button class="btn ghost export-chart" data-chart="cashflow" data-i18n="actions.export">تصدير</button>
+            </header>
+            <canvas id="cashflowChart" aria-describedby="cashflowDesc"></canvas>
+            <p id="cashflowDesc" class="sr-only" data-i18n="charts.cashflowDesc">رسم يظهر التدفق النقدي الداخل والخارج وصافي التدفق شهريًا.</p>
+          </article>
+
+          <article class="chart-card">
+            <header>
+              <h2 data-i18n="charts.budgetActual">الميزانية مقابل الفعلي</h2>
+              <button class="btn ghost export-chart" data-chart="budgetActual" data-i18n="actions.export">تصدير</button>
+            </header>
+            <canvas id="budgetActualChart"></canvas>
+          </article>
+
+          <article class="chart-card">
+            <header>
+              <h2 data-i18n="charts.cpiSpi">أداء الجدول والتكلفة</h2>
+              <button class="btn ghost export-chart" data-chart="cpiSpi" data-i18n="actions.export">تصدير</button>
+            </header>
+            <canvas id="cpiSpiChart"></canvas>
+          </article>
+
+          <article class="chart-card">
+            <header>
+              <h2 data-i18n="charts.waterfall">تأثير أوامر التغيير</h2>
+              <button class="btn ghost export-chart" data-chart="waterfall" data-i18n="actions.export">تصدير</button>
+            </header>
+            <canvas id="waterfallChart"></canvas>
+          </article>
+        </section>
+
+        <section class="tables-grid">
+          <article class="table-card">
+            <header>
+              <h2 data-i18n="tables.variance">الانحراف حسب المرحلة</h2>
+              <div class="table-actions">
+                <button class="btn ghost export-table" data-table="variance" data-format="csv">CSV</button>
+                <button class="btn ghost export-table" data-table="variance" data-format="xlsx">Excel</button>
+                <button class="btn ghost export-table" data-table="variance" data-format="pdf">PDF</button>
+              </div>
+            </header>
+            <div id="varianceTable" class="data-table"></div>
+          </article>
+
+          <article class="table-card">
+            <header>
+              <h2 data-i18n="tables.expenses">دفتر المصروفات</h2>
+              <div class="table-actions">
+                <button class="btn ghost export-table" data-table="expenses" data-format="csv">CSV</button>
+                <button class="btn ghost export-table" data-table="expenses" data-format="xlsx">Excel</button>
+                <button class="btn ghost export-table" data-table="expenses" data-format="pdf">PDF</button>
+              </div>
+            </header>
+            <div id="expensesTable" class="data-table"></div>
+          </article>
+
+          <article class="table-card">
+            <header>
+              <h2 data-i18n="tables.payments">فواتير العملاء / دفعات المقاولين</h2>
+              <div class="table-actions">
+                <button class="btn ghost export-table" data-table="payments" data-format="csv">CSV</button>
+                <button class="btn ghost export-table" data-table="payments" data-format="xlsx">Excel</button>
+                <button class="btn ghost export-table" data-table="payments" data-format="pdf">PDF</button>
+              </div>
+            </header>
+            <div id="paymentsTable" class="data-table"></div>
+          </article>
+        </section>
+
+        <section class="whatif-panel" id="whatIfPanel">
+          <header>
+            <h2 data-i18n="whatif.title">محاكاة السيناريوهات</h2>
+            <p data-i18n="whatif.subtitle">قم بضبط التغييرات وشاهد تأثيرها على مؤشرات المشروع.</p>
+          </header>
+          <div class="whatif-controls">
+            <div class="slider-group">
+              <label for="materialsSlider" data-i18n="whatif.materials">تكلفة المواد</label>
+              <input type="range" id="materialsSlider" min="-10" max="10" step="5" value="0" />
+              <span class="slider-value" data-for="materialsSlider">0%</span>
+            </div>
+            <div class="slider-group">
+              <label for="laborSlider" data-i18n="whatif.labor">تكلفة الأجور</label>
+              <input type="range" id="laborSlider" min="-10" max="10" step="5" value="0" />
+              <span class="slider-value" data-for="laborSlider">0%</span>
+            </div>
+            <div class="slider-group">
+              <label for="scopeSlider" data-i18n="whatif.scope">تغير نطاق العمل</label>
+              <input type="range" id="scopeSlider" min="-10" max="10" step="5" value="0" />
+              <span class="slider-value" data-for="scopeSlider">0%</span>
+            </div>
+            <div class="slider-group">
+              <label for="delaySlider" data-i18n="whatif.delay">تأخير التنفيذ (أيام)</label>
+              <input type="range" id="delaySlider" min="0" max="30" step="5" value="0" />
+              <span class="slider-value" data-for="delaySlider">0</span>
+            </div>
+          </div>
+          <div class="whatif-results" id="whatIfResults"></div>
+        </section>
+      </section>
+    </main>
+
+    <div id="drilldownModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal-content">
+        <header class="modal-header">
+          <h2 data-i18n="modal.title">تفاصيل القيود</h2>
+          <button class="modal-close" aria-label="Close">×</button>
+        </header>
+        <div class="modal-body">
+          <div id="drilldownContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <template id="kpiCardTemplate">
+      <article class="kpi-card" tabindex="0">
+        <header>
+          <h3 class="kpi-label"></h3>
+          <button class="info" aria-label="Info">?</button>
+        </header>
+        <p class="kpi-value">--</p>
+        <p class="kpi-delta"></p>
+      </article>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isoWeek.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.6.2/dist/js/tabulator.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
