@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Project Financial Analysis</title>
+    <title>التحليل المالي للمشاريع - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="assets/styles.css" />
     <link rel="stylesheet" href="assets/rtl.css" id="rtlStylesheet" />
     <link
@@ -16,142 +21,284 @@
       media="(prefers-color-scheme: dark)"
     />
   </head>
-  <body>
-    <header class="app-header">
-      <div class="logo">🏗️ ContractorPro</div>
-      <nav class="language-toggle" aria-label="Language switcher">
-        <button data-lang="ar" class="lang-btn is-active">العربية</button>
-        <button data-lang="en" class="lang-btn">English</button>
+  <body class="bg-background font-arabic">
+    <!-- Navigation Sidebar -->
+    <div
+      id="sidebar"
+      class="fixed right-0 top-0 z-50 h-full w-64 transform bg-surface shadow-modal transition-transform duration-300 translate-x-full md:translate-x-0"
+    >
+      <div class="border-b border-border p-6">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+            <i class="fas fa-hard-hat text-lg text-white"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
+            <p class="text-sm text-text-secondary">نظام إدارة المقاولات</p>
+          </div>
+        </div>
+      </div>
+
+      <nav class="space-y-2 p-4">
+        <a
+          href="../pages/main_dashboard.html"
+          class="flex items-center gap-3 rounded-lg px-4 py-3 text-text-secondary transition-fast hover:bg-secondary-100"
+        >
+          <i class="fas fa-tachometer-alt w-5"></i>
+          <span>لوحة التحكم</span>
+        </a>
+        <a
+          href="../pages/projects_hub.html"
+          class="flex items-center gap-3 rounded-lg px-4 py-3 text-text-secondary transition-fast hover:bg-secondary-100"
+        >
+          <i class="fas fa-building w-5"></i>
+          <span>مركز المشاريع</span>
+        </a>
+        <a
+          href="index.html"
+          class="flex items-center gap-3 rounded-lg border-r-4 border-primary bg-primary-50 px-4 py-3 text-primary"
+        >
+          <i class="fas fa-chart-line w-5"></i>
+          <span class="font-medium">التحليل المالي</span>
+        </a>
+        <a
+          href="../pages/financial_operations_dashboard.html"
+          class="flex items-center gap-3 rounded-lg px-4 py-3 text-text-secondary transition-fast hover:bg-secondary-100"
+        >
+          <i class="fas fa-wallet w-5"></i>
+          <span>العمليات المالية</span>
+        </a>
+        <a
+          href="../pages/human_resources_center.html"
+          class="flex items-center gap-3 rounded-lg px-4 py-3 text-text-secondary transition-fast hover:bg-secondary-100"
+        >
+          <i class="fas fa-users w-5"></i>
+          <span>مركز الموارد البشرية</span>
+        </a>
+        <a
+          href="../pages/system_settings.html"
+          class="flex items-center gap-3 rounded-lg px-4 py-3 text-text-secondary transition-fast hover:bg-secondary-100"
+        >
+          <i class="fas fa-cog w-5"></i>
+          <span>إعدادات النظام</span>
+        </a>
       </nav>
-    </header>
+    </div>
 
-    <main id="app" class="app-shell">
-      <aside class="side-nav">
-        <ul>
-          <li><a href="#info">🧾 <span data-i18n="nav.info">المعلومات</span></a></li>
-          <li><a href="#phases">🧱 <span data-i18n="nav.phases">مراحل المشروع</span></a></li>
-          <li><a href="#financial-analysis" class="is-active">💹 <span data-i18n="nav.financial">التحليل المالي</span></a></li>
-          <li><a href="#expenses">💰 <span data-i18n="nav.expenses">المصاريف والعقود</span></a></li>
-          <li><a href="#payments">💳 <span data-i18n="nav.payments">دفعات المشروع</span></a></li>
-          <li><a href="#reports">📅 <span data-i18n="nav.reports">التقارير اليومية</span></a></li>
-        </ul>
-      </aside>
+    <!-- Mobile Menu Toggle -->
+    <div class="fixed right-4 top-4 z-50 md:hidden">
+      <button
+        id="mobileMenuToggle"
+        class="rounded-lg border border-border bg-surface p-3 shadow-card"
+        aria-label="فتح القائمة الجانبية"
+      >
+        <i class="fas fa-bars text-text-primary"></i>
+      </button>
+    </div>
 
-      <section class="tab-panel" id="financial-analysis">
-        <h1 class="panel-title" data-i18n="titles.financialAnalysis">التحليل المالي</h1>
+    <div class="mr-0 min-h-screen md:mr-64">
+      <header
+        class="flex flex-col gap-4 border-b border-border bg-surface px-6 py-4 shadow-card md:flex-row md:items-center md:justify-between"
+      >
+        <div>
+          <h1 class="text-2xl font-bold text-text-primary" data-i18n="titles.financialAnalysis">
+            التحليل المالي
+          </h1>
+          <p class="text-sm text-text-secondary">
+            لوحة تحليل مالية متكاملة لمتابعة أداء المشاريع والميزانيات والدفعات.
+          </p>
+        </div>
+        <nav class="language-toggle flex items-center gap-2" aria-label="Language switcher">
+          <button data-lang="ar" class="lang-btn is-active">العربية</button>
+          <button data-lang="en" class="lang-btn">English</button>
+        </nav>
+      </header>
 
-        <section class="filters" aria-label="Filters toolbar">
-          <div class="filter-group">
-            <label for="projectSelect" data-i18n="filters.project">المشروع</label>
-            <select id="projectSelect"></select>
-          </div>
-          <div class="filter-group">
-            <label for="phaseSelect" data-i18n="filters.phase">المرحلة</label>
-            <select id="phaseSelect" multiple></select>
-          </div>
-          <div class="filter-group">
-            <label for="statusSelect" data-i18n="filters.invoiceStatus">حالة الفاتورة</label>
-            <select id="statusSelect"></select>
-          </div>
-          <div class="filter-group">
-            <label for="currencySelect" data-i18n="filters.currency">العملة</label>
-            <select id="currencySelect"></select>
-          </div>
-          <div class="filter-group">
-            <label for="dateFrom" data-i18n="filters.dateFrom">من تاريخ</label>
-            <input type="date" id="dateFrom" />
-          </div>
-          <div class="filter-group">
-            <label for="dateTo" data-i18n="filters.dateTo">إلى تاريخ</label>
-            <input type="date" id="dateTo" />
-          </div>
-          <div class="filter-actions">
-            <button id="applyFilters" class="btn primary" data-i18n="actions.apply">تطبيق</button>
-            <button id="resetFilters" class="btn ghost" data-i18n="actions.reset">إعادة تعيين</button>
-          </div>
-        </section>
-
-        <section class="kpi-grid" aria-label="Key performance indicators" id="kpiContainer">
-          <!-- KPI cards rendered by JS -->
-        </section>
-
-        <section class="charts-grid">
-          <article class="chart-card">
-            <header>
-              <h2 data-i18n="charts.cashflow">التدفق النقدي</h2>
-              <button class="btn ghost export-chart" data-chart="cashflow" data-i18n="actions.export">تصدير</button>
-            </header>
-            <canvas id="cashflowChart" aria-describedby="cashflowDesc"></canvas>
-            <p id="cashflowDesc" class="sr-only" data-i18n="charts.cashflowDesc">رسم يظهر التدفق النقدي الداخل والخارج وصافي التدفق شهريًا.</p>
-          </article>
-
-          <article class="chart-card">
-            <header>
-              <h2 data-i18n="charts.budgetActual">الميزانية مقابل الفعلي</h2>
-              <button class="btn ghost export-chart" data-chart="budgetActual" data-i18n="actions.export">تصدير</button>
-            </header>
-            <canvas id="budgetActualChart"></canvas>
-          </article>
-
-          <article class="chart-card">
-            <header>
-              <h2 data-i18n="charts.cpiSpi">أداء الجدول والتكلفة</h2>
-              <button class="btn ghost export-chart" data-chart="cpiSpi" data-i18n="actions.export">تصدير</button>
-            </header>
-            <canvas id="cpiSpiChart"></canvas>
-          </article>
-
-          <article class="chart-card">
-            <header>
-              <h2 data-i18n="charts.waterfall">تأثير أوامر التغيير</h2>
-              <button class="btn ghost export-chart" data-chart="waterfall" data-i18n="actions.export">تصدير</button>
-            </header>
-            <canvas id="waterfallChart"></canvas>
-          </article>
-        </section>
-
-        <section class="tables-grid">
-          <article class="table-card">
-            <header>
-              <h2 data-i18n="tables.variance">الانحراف حسب المرحلة</h2>
-              <div class="table-actions">
-                <button class="btn ghost export-table" data-table="variance" data-format="csv">CSV</button>
-                <button class="btn ghost export-table" data-table="variance" data-format="xlsx">Excel</button>
-                <button class="btn ghost export-table" data-table="variance" data-format="pdf">PDF</button>
+      <main id="app" class="space-y-6 p-6">
+        <section class="space-y-6 rounded-xl border border-border bg-surface p-6 shadow-card">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="flex items-center gap-3">
+              <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary">
+                <i class="fas fa-chart-pie text-xl"></i>
+              </span>
+              <div>
+                <h2 class="text-xl font-bold text-text-primary" data-i18n="titles.filters">
+                  إعدادات التحليل
+                </h2>
+                <p class="text-sm text-text-secondary" data-i18n="filters.subtitle">
+                  اختر المشروع والمرحلة والعملات لرؤية المؤشرات المناسبة.
+                </p>
               </div>
-            </header>
-            <div id="varianceTable" class="data-table"></div>
-          </article>
+            </div>
+          </div>
 
-          <article class="table-card">
-            <header>
-              <h2 data-i18n="tables.expenses">دفتر المصروفات</h2>
-              <div class="table-actions">
-                <button class="btn ghost export-table" data-table="expenses" data-format="csv">CSV</button>
-                <button class="btn ghost export-table" data-table="expenses" data-format="xlsx">Excel</button>
-                <button class="btn ghost export-table" data-table="expenses" data-format="pdf">PDF</button>
-              </div>
-            </header>
-            <div id="expensesTable" class="data-table"></div>
-          </article>
-
-          <article class="table-card">
-            <header>
-              <h2 data-i18n="tables.payments">فواتير العملاء / دفعات المقاولين</h2>
-              <div class="table-actions">
-                <button class="btn ghost export-table" data-table="payments" data-format="csv">CSV</button>
-                <button class="btn ghost export-table" data-table="payments" data-format="xlsx">Excel</button>
-                <button class="btn ghost export-table" data-table="payments" data-format="pdf">PDF</button>
-              </div>
-            </header>
-            <div id="paymentsTable" class="data-table"></div>
-          </article>
+          <div class="filters grid gap-4 md:grid-cols-2 xl:grid-cols-3" aria-label="Filters toolbar">
+            <div class="filter-group">
+              <label for="projectSelect" data-i18n="filters.project">المشروع</label>
+              <select
+                id="projectSelect"
+                class="w-full rounded-lg border border-border bg-background px-3 py-2 focus:border-primary focus:outline-none"
+              ></select>
+            </div>
+            <div class="filter-group">
+              <label for="phaseSelect" data-i18n="filters.phase">المرحلة</label>
+              <select
+                id="phaseSelect"
+                multiple
+                class="w-full rounded-lg border border-border bg-background px-3 py-2 focus:border-primary focus:outline-none"
+              ></select>
+            </div>
+            <div class="filter-group">
+              <label for="statusSelect" data-i18n="filters.invoiceStatus">حالة الفاتورة</label>
+              <select
+                id="statusSelect"
+                class="w-full rounded-lg border border-border bg-background px-3 py-2 focus:border-primary focus:outline-none"
+              ></select>
+            </div>
+            <div class="filter-group">
+              <label for="currencySelect" data-i18n="filters.currency">العملة</label>
+              <select
+                id="currencySelect"
+                class="w-full rounded-lg border border-border bg-background px-3 py-2 focus:border-primary focus:outline-none"
+              ></select>
+            </div>
+            <div class="filter-group">
+              <label for="dateFrom" data-i18n="filters.dateFrom">من تاريخ</label>
+              <input
+                type="date"
+                id="dateFrom"
+                class="w-full rounded-lg border border-border bg-background px-3 py-2 focus:border-primary focus:outline-none"
+              />
+            </div>
+            <div class="filter-group">
+              <label for="dateTo" data-i18n="filters.dateTo">إلى تاريخ</label>
+              <input
+                type="date"
+                id="dateTo"
+                class="w-full rounded-lg border border-border bg-background px-3 py-2 focus:border-primary focus:outline-none"
+              />
+            </div>
+            <div class="filter-actions flex flex-col gap-3 sm:flex-row sm:items-end">
+              <button id="applyFilters" class="btn primary px-6" data-i18n="actions.apply">تطبيق</button>
+              <button id="resetFilters" class="btn ghost px-6" data-i18n="actions.reset">إعادة تعيين</button>
+            </div>
+          </div>
         </section>
 
-        <section class="whatif-panel" id="whatIfPanel">
+        <section class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-text-primary" data-i18n="titles.overview">
+              المؤشرات الرئيسية
+            </h2>
+          </div>
+          <section
+            class="kpi-grid grid gap-4 md:grid-cols-2 xl:grid-cols-4"
+            aria-label="Key performance indicators"
+            id="kpiContainer"
+          >
+            <!-- KPI cards rendered by JS -->
+          </section>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-text-primary" data-i18n="titles.charts">لوحات بيانية</h2>
+          </div>
+          <section class="charts-grid grid gap-6 xl:grid-cols-2">
+            <article class="chart-card">
+              <header>
+                <h3 data-i18n="charts.cashflow">التدفق النقدي</h3>
+                <button class="btn ghost export-chart" data-chart="cashflow" data-i18n="actions.export">
+                  تصدير
+                </button>
+              </header>
+              <canvas id="cashflowChart" aria-describedby="cashflowDesc"></canvas>
+              <p id="cashflowDesc" class="sr-only" data-i18n="charts.cashflowDesc">
+                رسم يظهر التدفق النقدي الداخل والخارج وصافي التدفق شهريًا.
+              </p>
+            </article>
+
+            <article class="chart-card">
+              <header>
+                <h3 data-i18n="charts.budgetActual">الميزانية مقابل الفعلي</h3>
+                <button class="btn ghost export-chart" data-chart="budgetActual" data-i18n="actions.export">
+                  تصدير
+                </button>
+              </header>
+              <canvas id="budgetActualChart"></canvas>
+            </article>
+
+            <article class="chart-card">
+              <header>
+                <h3 data-i18n="charts.cpiSpi">أداء الجدول والتكلفة</h3>
+                <button class="btn ghost export-chart" data-chart="cpiSpi" data-i18n="actions.export">
+                  تصدير
+                </button>
+              </header>
+              <canvas id="cpiSpiChart"></canvas>
+            </article>
+
+            <article class="chart-card">
+              <header>
+                <h3 data-i18n="charts.waterfall">تأثير أوامر التغيير</h3>
+                <button class="btn ghost export-chart" data-chart="waterfall" data-i18n="actions.export">
+                  تصدير
+                </button>
+              </header>
+              <canvas id="waterfallChart"></canvas>
+            </article>
+          </section>
+        </section>
+
+        <section class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-text-primary" data-i18n="titles.tables">الجداول التفصيلية</h2>
+          </div>
+          <section class="tables-grid grid gap-6 xl:grid-cols-2">
+            <article class="table-card">
+              <header>
+                <h3 data-i18n="tables.variance">الانحراف حسب المرحلة</h3>
+                <div class="table-actions flex flex-wrap items-center gap-2">
+                  <button class="btn ghost export-table" data-table="variance" data-format="csv">CSV</button>
+                  <button class="btn ghost export-table" data-table="variance" data-format="xlsx">Excel</button>
+                  <button class="btn ghost export-table" data-table="variance" data-format="pdf">PDF</button>
+                </div>
+              </header>
+              <div id="varianceTable" class="data-table"></div>
+            </article>
+
+            <article class="table-card">
+              <header>
+                <h3 data-i18n="tables.expenses">دفتر المصروفات</h3>
+                <div class="table-actions flex flex-wrap items-center gap-2">
+                  <button class="btn ghost export-table" data-table="expenses" data-format="csv">CSV</button>
+                  <button class="btn ghost export-table" data-table="expenses" data-format="xlsx">Excel</button>
+                  <button class="btn ghost export-table" data-table="expenses" data-format="pdf">PDF</button>
+                </div>
+              </header>
+              <div id="expensesTable" class="data-table"></div>
+            </article>
+
+            <article class="table-card xl:col-span-2">
+              <header>
+                <h3 data-i18n="tables.payments">فواتير العملاء / دفعات المقاولين</h3>
+                <div class="table-actions flex flex-wrap items-center gap-2">
+                  <button class="btn ghost export-table" data-table="payments" data-format="csv">CSV</button>
+                  <button class="btn ghost export-table" data-table="payments" data-format="xlsx">Excel</button>
+                  <button class="btn ghost export-table" data-table="payments" data-format="pdf">PDF</button>
+                </div>
+              </header>
+              <div id="paymentsTable" class="data-table"></div>
+            </article>
+          </section>
+        </section>
+
+        <section class="whatif-panel">
           <header>
-            <h2 data-i18n="whatif.title">محاكاة السيناريوهات</h2>
-            <p data-i18n="whatif.subtitle">قم بضبط التغييرات وشاهد تأثيرها على مؤشرات المشروع.</p>
+            <div>
+              <h2 data-i18n="whatif.title">محاكاة السيناريوهات</h2>
+              <p data-i18n="whatif.subtitle">قم بضبط التغييرات وشاهد تأثيرها على مؤشرات المشروع.</p>
+            </div>
           </header>
           <div class="whatif-controls">
             <div class="slider-group">
@@ -177,8 +324,8 @@
           </div>
           <div class="whatif-results" id="whatIfResults"></div>
         </section>
-      </section>
-    </main>
+      </main>
+    </div>
 
     <div id="drilldownModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="modal-content">
@@ -210,6 +357,23 @@
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <script>
+      const mobileMenuToggle = document.getElementById("mobileMenuToggle");
+      const sidebar = document.getElementById("sidebar");
+      if (mobileMenuToggle && sidebar) {
+        mobileMenuToggle.addEventListener("click", () => {
+          sidebar.classList.toggle("translate-x-full");
+        });
+
+        document.addEventListener("click", (event) => {
+          const isClickInside = sidebar.contains(event.target) || mobileMenuToggle.contains(event.target);
+          if (!isClickInside && window.innerWidth < 768) {
+            sidebar.classList.add("translate-x-full");
+          }
+        });
+      }
+    </script>
 
     <script type="module" src="js/app.js"></script>
   </body>

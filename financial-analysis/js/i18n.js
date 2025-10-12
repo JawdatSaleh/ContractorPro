@@ -12,6 +12,10 @@ const translations = {
     },
     titles: {
       financialAnalysis: "التحليل المالي",
+      filters: "إعدادات التحليل",
+      overview: "المؤشرات الرئيسية",
+      charts: "لوحات بيانية",
+      tables: "الجداول التفصيلية",
     },
     filters: {
       project: "المشروع",
@@ -20,6 +24,7 @@ const translations = {
       currency: "العملة",
       dateFrom: "من تاريخ",
       dateTo: "إلى تاريخ",
+      subtitle: "اختر المشروع والمرحلة والعملات لرؤية المؤشرات المناسبة.",
     },
     actions: {
       apply: "تطبيق",
@@ -96,6 +101,10 @@ const translations = {
     },
     titles: {
       financialAnalysis: "Financial Analysis",
+      filters: "Analysis Settings",
+      overview: "Key Indicators",
+      charts: "Visual Dashboards",
+      tables: "Detailed Tables",
     },
     filters: {
       project: "Project",
@@ -104,6 +113,7 @@ const translations = {
       currency: "Currency",
       dateFrom: "Date from",
       dateTo: "Date to",
+      subtitle: "Select project, phases, and currency to tailor the insights.",
     },
     actions: {
       apply: "Apply",
