@@ -92,6 +92,39 @@
                 padding: 0.9rem 1rem;
             }
         }
+
+        /* Additional styles for completeness */
+        .modal {
+            display: none;
+        }
+
+        .modal:not(.hidden) {
+            display: flex !important;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .phase-subtab-button.active {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .unified-subtab-button.active {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .phase-subtab-content:not(.hidden),
+        .unified-subtab-content:not(.hidden) {
+            display: block;
+        }
+
+        .phase-subtab-content.hidden,
+        .unified-subtab-content.hidden {
+            display: none;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
