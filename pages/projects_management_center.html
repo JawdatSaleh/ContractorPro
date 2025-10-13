@@ -84,6 +84,53 @@
 
         <!-- Main Content Area -->
         <main class="p-6">
+            <!-- Dashboard Summary Cards -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
+                <div class="bg-surface border border-border rounded-2xl p-6 shadow-card flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary-50 text-primary flex items-center justify-center text-xl">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm text-text-secondary">إجمالي المشاريع</p>
+                        <p class="text-2xl font-bold text-text-primary">24</p>
+                        <p class="text-xs text-success mt-1">+3 مشاريع جديدة</p>
+                    </div>
+                </div>
+
+                <div class="bg-surface border border-border rounded-2xl p-6 shadow-card flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-warning-50 text-warning flex items-center justify-center text-xl">
+                        <i class="fas fa-hard-hat"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm text-text-secondary">المشاريع النشطة</p>
+                        <p class="text-2xl font-bold text-text-primary">12</p>
+                        <p class="text-xs text-warning mt-1">قيد التنفيذ</p>
+                    </div>
+                </div>
+
+                <div class="bg-surface border border-border rounded-2xl p-6 shadow-card flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-success-50 text-success flex items-center justify-center text-xl">
+                        <i class="fas fa-sack-dollar"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm text-text-secondary">قيمة المشاريع الإجمالية</p>
+                        <p class="text-2xl font-bold text-text-primary">18.5M ريال</p>
+                        <p class="text-xs text-success mt-1">%22 نمو</p>
+                    </div>
+                </div>
+
+                <div class="bg-surface border border-border rounded-2xl p-6 shadow-card flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary-50 text-primary flex items-center justify-center text-xl">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm text-text-secondary">المقاولون الفرعيون</p>
+                        <p class="text-2xl font-bold text-text-primary">35</p>
+                        <p class="text-xs text-primary mt-1">نشط</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- Projects List View (Default) -->
             <div id="projects-list" class="projects-view">
                 <div class="bg-surface rounded-xl p-6 shadow-card border border-border">
@@ -100,116 +147,209 @@
                     <!-- Projects Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         <!-- Project 1 -->
-                        <div class="border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card" onclick="openProjectDetails('project-001', 'فيلا الرياض الحديثة')">
-                            <div class="flex items-start justify-between mb-4">
+                        <div class="border border-border rounded-2xl overflow-hidden bg-surface hover:shadow-2xl hover:scale-105 transition transform duration-300 cursor-pointer project-card" onclick="openProjectDetails('project-001', 'فيلا الرياض الحديثة')">
+                            <div class="relative h-40">
+                                <img src="https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=800" alt="صورة مشروع فيلا الرياض الحديثة" class="w-full h-full object-cover" />
+                                <span class="absolute top-4 left-4 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-success-100 text-success shadow-sm">نشط</span>
+                            </div>
+
+                            <div class="p-6 flex flex-col gap-6">
+                                <div class="flex items-center gap-4">
+                                    <img src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200" alt="صورة العميل" class="w-12 h-12 rounded-full object-cover border-2 border-surface" />
+                                    <div>
+                                        <h3 class="text-xl font-bold text-text-primary">فيلا الرياض الحديثة</h3>
+                                        <p class="text-sm text-text-secondary">العميل: محمد العبدالله</p>
+                                    </div>
+                                </div>
+
                                 <div>
-                                    <h3 class="text-lg font-bold text-text-primary">فيلا الرياض الحديثة</h3>
-                                    <p class="text-sm text-text-secondary">العميل: محمد العبدالله</p>
+                                    <div class="flex items-center justify-between mb-2 text-sm">
+                                        <span class="text-text-secondary">نسبة الإنجاز</span>
+                                        <span class="font-semibold text-success">85%</span>
+                                    </div>
+                                    <div class="w-full bg-secondary-200 rounded-full h-2">
+                                        <div class="bg-success h-2 rounded-full" style="width: 85%"></div>
+                                    </div>
                                 </div>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success-100 text-success">
-                                    نشط
-                                </span>
-                            </div>
-                            
-                            <div class="space-y-3 mb-4">
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">قيمة المشروع:</span>
-                                    <span class="font-bold text-text-primary">850,000 ريال</span>
+
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">القيمة</p>
+                                        <p class="font-semibold text-text-primary">850,000 ريال</p>
+                                    </div>
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">المدة</p>
+                                        <p class="font-semibold text-text-primary">8 أشهر</p>
+                                    </div>
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">تاريخ البدء</p>
+                                        <p class="font-semibold text-text-primary">1 يناير 2025</p>
+                                    </div>
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">المقاولون الفرعيون</p>
+                                        <p class="font-semibold text-text-primary">6</p>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">تاريخ البداية:</span>
-                                    <span class="font-medium">1 يناير 2025</span>
+
+                                <div class="flex flex-col gap-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-text-secondary">إجمالي المصاريف</span>
+                                        <span class="font-semibold text-error">520,000 ريال</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-text-secondary">الربح المتوقع</span>
+                                        <span class="font-semibold text-success">330,000 ريال (39%)</span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">نسبة الإنجاز:</span>
-                                    <span class="font-bold text-success">85%</span>
+
+                                <div class="flex items-center justify-between text-xs text-text-secondary border-t border-border pt-4">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>ينتهي في: 15 فبراير 2025</span>
+                                    </div>
+                                    <button class="bg-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm hover:bg-primary-600" onclick="event.stopPropagation(); openProjectDetails('project-001', 'فيلا الرياض الحديثة')">
+                                        <i class="fas fa-eye"></i>
+                                        <span>عرض التفاصيل</span>
+                                    </button>
                                 </div>
-                            </div>
-                            
-                            <!-- Progress Bar -->
-                            <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
-                                <div class="bg-success h-2 rounded-full" style="width: 85%"></div>
-                            </div>
-                            
-                            <div class="flex items-center gap-2 text-sm text-text-secondary">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>ينتهي في: 15 فبراير 2025</span>
                             </div>
                         </div>
 
                         <!-- Project 2 -->
-                        <div class="border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card" onclick="openProjectDetails('project-002', 'مجمع تجاري جدة')">
-                            <div class="flex items-start justify-between mb-4">
+                        <div class="border border-border rounded-2xl overflow-hidden bg-surface hover:shadow-2xl hover:scale-105 transition transform duration-300 cursor-pointer project-card" onclick="openProjectDetails('project-002', 'مجمع تجاري جدة')">
+                            <div class="relative h-40">
+                                <img src="https://images.pexels.com/photos/2397656/pexels-photo-2397656.jpeg?auto=compress&cs=tinysrgb&w=800" alt="صورة مشروع مجمع تجاري جدة" class="w-full h-full object-cover" />
+                                <span class="absolute top-4 left-4 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-warning-100 text-warning shadow-sm">قيد التنفيذ</span>
+                            </div>
+
+                            <div class="p-6 flex flex-col gap-6">
+                                <div class="flex items-center gap-4">
+                                    <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=200" alt="صورة العميل" class="w-12 h-12 rounded-full object-cover border-2 border-surface" />
+                                    <div>
+                                        <h3 class="text-xl font-bold text-text-primary">مجمع تجاري جدة</h3>
+                                        <p class="text-sm text-text-secondary">العميل: شركة الأندلس للاستثمار</p>
+                                    </div>
+                                </div>
+
                                 <div>
-                                    <h3 class="text-lg font-bold text-text-primary">مجمع تجاري جدة</h3>
-                                    <p class="text-sm text-text-secondary">العميل: شركة الأندلس للاستثمار</p>
+                                    <div class="flex items-center justify-between mb-2 text-sm">
+                                        <span class="text-text-secondary">نسبة الإنجاز</span>
+                                        <span class="font-semibold text-warning">45%</span>
+                                    </div>
+                                    <div class="w-full bg-secondary-200 rounded-full h-2">
+                                        <div class="bg-warning h-2 rounded-full" style="width: 45%"></div>
+                                    </div>
                                 </div>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning">
-                                    قيد التنفيذ
-                                </span>
-                            </div>
-                            
-                            <div class="space-y-3 mb-4">
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">قيمة المشروع:</span>
-                                    <span class="font-bold text-text-primary">1,200,000 ريال</span>
+
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">القيمة</p>
+                                        <p class="font-semibold text-text-primary">1,200,000 ريال</p>
+                                    </div>
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">المدة</p>
+                                        <p class="font-semibold text-text-primary">14 شهر</p>
+                                    </div>
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">تاريخ البدء</p>
+                                        <p class="font-semibold text-text-primary">10 يناير 2025</p>
+                                    </div>
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">المقاولون الفرعيون</p>
+                                        <p class="font-semibold text-text-primary">11</p>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">تاريخ البداية:</span>
-                                    <span class="font-medium">10 يناير 2025</span>
+
+                                <div class="flex flex-col gap-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-text-secondary">إجمالي المصاريف</span>
+                                        <span class="font-semibold text-error">730,000 ريال</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-text-secondary">الربح المتوقع</span>
+                                        <span class="font-semibold text-warning">470,000 ريال (29%)</span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">نسبة الإنجاز:</span>
-                                    <span class="font-bold text-warning">45%</span>
+
+                                <div class="flex items-center justify-between text-xs text-text-secondary border-t border-border pt-4">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>ينتهي في: 25 مارس 2025</span>
+                                    </div>
+                                    <button class="bg-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm hover:bg-primary-600" onclick="event.stopPropagation(); openProjectDetails('project-002', 'مجمع تجاري جدة')">
+                                        <i class="fas fa-eye"></i>
+                                        <span>عرض التفاصيل</span>
+                                    </button>
                                 </div>
-                            </div>
-                            
-                            <!-- Progress Bar -->
-                            <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
-                                <div class="bg-warning h-2 rounded-full" style="width: 45%"></div>
-                            </div>
-                            
-                            <div class="flex items-center gap-2 text-sm text-text-secondary">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>ينتهي في: 25 مارس 2025</span>
                             </div>
                         </div>
 
                         <!-- Project 3 -->
-                        <div class="border border-border rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer project-card" onclick="openProjectDetails('project-003', 'مشروع سكني الدمام')">
-                            <div class="flex items-start justify-between mb-4">
+                        <div class="border border-border rounded-2xl overflow-hidden bg-surface hover:shadow-2xl hover:scale-105 transition transform duration-300 cursor-pointer project-card" onclick="openProjectDetails('project-003', 'مشروع سكني الدمام')">
+                            <div class="relative h-40">
+                                <img src="https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=800" alt="صورة مشروع سكني الدمام" class="w-full h-full object-cover" />
+                                <span class="absolute top-4 left-4 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary-100 text-primary shadow-sm">بداية المشروع</span>
+                            </div>
+
+                            <div class="p-6 flex flex-col gap-6">
+                                <div class="flex items-center gap-4">
+                                    <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=200" alt="صورة العميل" class="w-12 h-12 rounded-full object-cover border-2 border-surface" />
+                                    <div>
+                                        <h3 class="text-xl font-bold text-text-primary">مشروع سكني الدمام</h3>
+                                        <p class="text-sm text-text-secondary">العميل: فهد الخالدي</p>
+                                    </div>
+                                </div>
+
                                 <div>
-                                    <h3 class="text-lg font-bold text-text-primary">مشروع سكني الدمام</h3>
-                                    <p class="text-sm text-text-secondary">العميل: فهد الخالدي</p>
+                                    <div class="flex items-center justify-between mb-2 text-sm">
+                                        <span class="text-text-secondary">نسبة الإنجاز</span>
+                                        <span class="font-semibold text-primary">20%</span>
+                                    </div>
+                                    <div class="w-full bg-secondary-200 rounded-full h-2">
+                                        <div class="bg-primary h-2 rounded-full" style="width: 20%"></div>
+                                    </div>
                                 </div>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary">
-                                    بداية المشروع
-                                </span>
-                            </div>
-                            
-                            <div class="space-y-3 mb-4">
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">قيمة المشروع:</span>
-                                    <span class="font-bold text-text-primary">650,000 ريال</span>
+
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">القيمة</p>
+                                        <p class="font-semibold text-text-primary">650,000 ريال</p>
+                                    </div>
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">المدة</p>
+                                        <p class="font-semibold text-text-primary">10 أشهر</p>
+                                    </div>
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">تاريخ البدء</p>
+                                        <p class="font-semibold text-text-primary">20 يناير 2025</p>
+                                    </div>
+                                    <div class="bg-secondary-100 rounded-xl p-3">
+                                        <p class="text-text-secondary">المقاولون الفرعيون</p>
+                                        <p class="font-semibold text-text-primary">4</p>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">تاريخ البداية:</span>
-                                    <span class="font-medium">20 يناير 2025</span>
+
+                                <div class="flex flex-col gap-2 text-sm">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-text-secondary">إجمالي المصاريف</span>
+                                        <span class="font-semibold text-error">210,000 ريال</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-text-secondary">الربح المتوقع</span>
+                                        <span class="font-semibold text-primary">440,000 ريال (27%)</span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-text-secondary">نسبة الإنجاز:</span>
-                                    <span class="font-bold text-primary">20%</span>
+
+                                <div class="flex items-center justify-between text-xs text-text-secondary border-t border-border pt-4">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>ينتهي في: 15 أبريل 2025</span>
+                                    </div>
+                                    <button class="bg-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm hover:bg-primary-600" onclick="event.stopPropagation(); openProjectDetails('project-003', 'مشروع سكني الدمام')">
+                                        <i class="fas fa-eye"></i>
+                                        <span>عرض التفاصيل</span>
+                                    </button>
                                 </div>
-                            </div>
-                            
-                            <!-- Progress Bar -->
-                            <div class="w-full bg-secondary-200 rounded-full h-2 mb-4">
-                                <div class="bg-primary h-2 rounded-full" style="width: 20%"></div>
-                            </div>
-                            
-                            <div class="flex items-center gap-2 text-sm text-text-secondary">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>ينتهي في: 15 أبريل 2025</span>
                             </div>
                         </div>
                     </div>
