@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مصاريف المشروع | ContractorPro</title>
+    <link rel="stylesheet" href="../css/projects.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-wxM7FJ6pGsIJptY6MFWL3wZ0pniS3pSkeYMt2rt7NmBGG99nmCaTKty+O+kO5+ywOB1p5MNDoAuCE3BzKBd1xA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+  <body data-page="project-expenses">
+    <div class="projects-content" style="max-width: 1200px; margin: 0 auto; padding: 48px 24px;">
+      <header class="layout-header">
+        <div>
+          <nav class="breadcrumb" data-breadcrumb>
+            <a href="../projects_management_center.html" class="breadcrumb-item">المشاريع</a>
+            <span class="breadcrumb-divider">/</span>
+            <span class="breadcrumb-item">مصاريف المشروع</span>
+          </nav>
+          <h1>المصاريف والعقود الباطنة</h1>
+          <p class="text-muted">إدارة مالية دقيقة للمشروع مع مراقبة العوائد.</p>
+        </div>
+        <div class="projects-actions">
+          <button class="btn btn-light" data-edit-project>
+            <i class="fas fa-pen"></i>
+            تعديل معلومات المشروع
+          </button>
+          <button class="btn btn-outline" onclick="window.location.href='../projects_management_center.html'">
+            <i class="fas fa-arrow-right"></i>
+            العودة للمشاريع
+          </button>
+        </div>
+      </header>
+
+      <section class="project-summary fade-in" data-project-summary>
+        <article class="project-summary__card">
+          <h3>القيمة التعاقدية</h3>
+          <strong data-project-contract>—</strong>
+          <span>نسبة الإنجاز: <strong data-project-progress>0%</strong></span>
+        </article>
+        <article class="project-summary__card">
+          <h3>إجمالي المصاريف</h3>
+          <strong data-expenses-total>0</strong>
+          <span>العقود الباطنة والعناصر التشغيلية</span>
+        </article>
+        <article class="project-summary__card">
+          <h3>إجمالي العوائد</h3>
+          <strong data-expenses-revenue>0</strong>
+          <span>دفعات العميل والإيرادات الإضافية</span>
+        </article>
+      </section>
+
+      <section class="section-card fade-in">
+        <header>
+          <div>
+            <h2>سجل المصاريف</h2>
+            <p class="text-muted">يمكن التصفية حسب النوع أو الفئة</p>
+          </div>
+        </header>
+        <div data-expenses-list></div>
+      </section>
+
+      <section class="section-card fade-in">
+        <header>
+          <div>
+            <h2>إضافة مصروف أو إيراد</h2>
+            <p class="text-muted">يتم تحديث مؤشرات الربحية تلقائياً بعد الإضافة</p>
+          </div>
+        </header>
+        <form id="expenseForm">
+          <div class="form-grid">
+            <label>
+              الوصف
+              <input type="text" name="title" required />
+            </label>
+            <label>
+              النوع
+              <select name="type">
+                <option value="expense">مصروف</option>
+                <option value="revenue">إيراد</option>
+              </select>
+            </label>
+            <label>
+              الفئة
+              <input type="text" name="category" placeholder="مواد، عمالة، عقد باطن..." />
+            </label>
+            <label>
+              المبلغ (ريال)
+              <input type="number" name="amount" min="0" step="500" required />
+            </label>
+            <label>
+              التاريخ
+              <input type="date" name="date" required />
+            </label>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-plus"></i>
+              حفظ المصروف
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <footer class="footer">© 2024 ContractorPro</footer>
+    </div>
+
+    <script type="module" src="../js/main.js"></script>
+  </body>
+</html>

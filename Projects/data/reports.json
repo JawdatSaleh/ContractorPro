@@ -1,0 +1,36 @@
+{
+  "reports": [
+    {
+      "id": "report-001",
+      "projectId": "project-001",
+      "title": "تقرير تقدم الأساسات",
+      "summary": "انتهاء صب القواعد بنسبة 100% مع فحص الجودة",
+      "date": "2024-02-20",
+      "progress": 45,
+      "photos": [
+        "https://images.pexels.com/photos/380769/pexels-photo-380769.jpeg?auto=compress&cs=tinysrgb&w=800",
+        "https://images.pexels.com/photos/585419/pexels-photo-585419.jpeg?auto=compress&cs=tinysrgb&w=800"
+      ]
+    },
+    {
+      "id": "report-002",
+      "projectId": "project-001",
+      "title": "استلام أعمال الأعمدة",
+      "summary": "تم استلام 70% من الأعمدة مع ملاحظات بسيطة",
+      "date": "2024-03-25",
+      "progress": 55,
+      "photos": [
+        "https://images.pexels.com/photos/439416/pexels-photo-439416.jpeg?auto=compress&cs=tinysrgb&w=800"
+      ]
+    },
+    {
+      "id": "report-003",
+      "projectId": "project-002",
+      "title": "تقدم التركيبات الطبية",
+      "summary": "تركيب 30% من الأجهزة الطبية في غرف العمليات",
+      "date": "2024-04-12",
+      "progress": 30,
+      "photos": []
+    }
+  ]
+}
