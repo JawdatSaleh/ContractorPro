@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>معلومات المشروع | ContractorPro</title>
+    <link rel="stylesheet" href="../css/projects.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  </head>
+  <body data-page="project-info">
+    <div class="projects-content" style="max-width: 1200px; margin: 0 auto; padding: 48px 24px;">
+      <header class="layout-header">
+        <div>
+          <nav class="breadcrumb" data-breadcrumb>
+            <a href="../projects_management_center.html" class="breadcrumb-item">المشاريع</a>
+            <span class="breadcrumb-divider">/</span>
+            <span class="breadcrumb-item">معلومات المشروع</span>
+          </nav>
+          <h1 data-project-name>—</h1>
+          <p class="text-muted">عرض شامل للمعلومات المالية والتنفيذية للمشروع.</p>
+        </div>
+        <div class="projects-actions">
+          <button class="btn btn-light" data-edit-project>
+            <i class="fas fa-pen"></i>
+            تعديل
+          </button>
+          <button class="btn btn-outline" onclick="window.location.href='../projects_management_center.html'">
+            <i class="fas fa-arrow-right"></i>
+            العودة للمشاريع
+          </button>
+        </div>
+      </header>
+
+      <section class="project-summary fade-in" data-project-summary>
+        <article class="project-summary__card">
+          <h3>العميل</h3>
+          <strong data-project-client>—</strong>
+          <span>مدير المشروع: <strong data-project-manager>—</strong></span>
+          <span>الحالة: <strong data-project-status>—</strong></span>
+        </article>
+        <article class="project-summary__card">
+          <h3>المدة الزمنية</h3>
+          <strong data-project-period>—</strong>
+          <div class="progress-bar">
+            <div data-project-progress-bar style="width: 0%"></div>
+          </div>
+          <span>نسبة الإنجاز: <strong data-project-progress>0%</strong></span>
+        </article>
+        <article class="project-summary__card">
+          <h3>القيمة المالية</h3>
+          <strong data-project-contract>—</strong>
+          <span>المصاريف: <strong data-project-expenses>—</strong></span>
+          <span>الربحية: <strong data-project-profit>—</strong></span>
+        </article>
+      </section>
+
+      <section class="section-card fade-in">
+        <header>
+          <div>
+            <h2>الدفعات المرتبطة</h2>
+            <p class="text-muted">خط زمني لأهم الدفعات</p>
+          </div>
+        </header>
+        <div data-payments-list></div>
+      </section>
+
+      <section class="section-card fade-in">
+        <header>
+          <div>
+            <h2>المصاريف والعقود الباطنة</h2>
+            <p class="text-muted">تتبع المصاريف وربطها بالعقود</p>
+          </div>
+        </header>
+        <div data-expenses-list></div>
+      </section>
+
+      <section class="section-card fade-in">
+        <header>
+          <div>
+            <h2>التقارير اليومية</h2>
+            <p class="text-muted">توثيق تقدم الأعمال ومرفقات الصور</p>
+          </div>
+        </header>
+        <div data-reports-list></div>
+      </section>
+
+      <footer class="footer">© 2024 ContractorPro</footer>
+    </div>
+
+    <script type="module" src="../js/main.js"></script>
+  </body>
+</html>

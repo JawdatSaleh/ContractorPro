@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مركز إدارة المشاريع | ContractorPro</title>
+    <link rel="stylesheet" href="css/projects.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  </head>
+  <body data-page="projects-management">
+    <div class="projects-shell">
+      <aside class="projects-sidebar fade-in">
+        <div class="projects-sidebar__logo">
+          <div class="projects-sidebar__logo-icon">
+            <i class="fas fa-building"></i>
+          </div>
+          <div>
+            <strong>ContractorPro</strong>
+            <p>إدارة المشاريع المتكاملة</p>
+          </div>
+        </div>
+        <nav>
+          <a href="../pages/main_dashboard.html">
+            <i class="fas fa-gauge"></i>
+            <span>لوحة القيادة</span>
+          </a>
+          <a href="projects_management_center.html" class="active">
+            <i class="fas fa-city"></i>
+            <span>إدارة المشاريع</span>
+          </a>
+          <a href="../pages/financial_management_center.html">
+            <i class="fas fa-sack-dollar"></i>
+            <span>المركز المالي</span>
+          </a>
+          <a href="../pages/human_resources_center.html">
+            <i class="fas fa-users"></i>
+            <span>الموارد البشرية</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="projects-content fade-in">
+        <header class="projects-header">
+          <div>
+            <h1>مركز إدارة المشاريع</h1>
+            <p>راقب الأداء المالي والفني لجميع مشاريعك في مكان واحد</p>
+          </div>
+          <div class="projects-actions">
+            <button class="btn btn-outline" onclick="window.location.href='../pages/projects_hub.html'">
+              <i class="fas fa-arrow-left"></i>
+              العودة للمحاور
+            </button>
+            <button class="btn btn-primary" data-create-project>
+              <i class="fas fa-plus"></i>
+              مشروع جديد
+            </button>
+          </div>
+        </header>
+
+        <section class="summary-grid">
+          <article class="summary-card">
+            <h3>إجمالي المشاريع</h3>
+            <strong data-total-projects>0</strong>
+            <span class="text-muted">عدد المشاريع المسجلة في النظام</span>
+          </article>
+          <article class="summary-card">
+            <h3>المشاريع النشطة</h3>
+            <strong data-active-projects>0</strong>
+            <span class="text-muted">مشاريع في طور التنفيذ حالياً</span>
+          </article>
+          <article class="summary-card">
+            <h3>القيمة التعاقدية</h3>
+            <strong data-total-value>0</strong>
+            <span class="text-muted">إجمالي العقود المرتبطة بالمشاريع</span>
+          </article>
+          <article class="summary-card">
+            <h3>المشاريع المكتملة</h3>
+            <strong data-completed-projects>0</strong>
+            <span class="text-muted">مشاريع أُنجزت خلال آخر 12 شهر</span>
+          </article>
+        </section>
+
+        <section class="hero-banner fade-in">
+          <h2>نظام موحد لإدارة المشاريع</h2>
+          <p>
+            تحكم بالمشاريع، راقب المصاريف والدفعات، واطلع على التقارير اليومية عبر تجربة سلسة تعمل على جميع الأجهزة
+            مع دعم كامل للغة العربية واتجاه RTL.
+          </p>
+        </section>
+
+        <section class="section-card fade-in">
+          <header>
+            <div>
+              <h2>جميع المشاريع</h2>
+              <p class="text-muted">تحديث حي للقوائم بناءً على بيانات التخزين المحلي</p>
+            </div>
+            <div class="projects-actions">
+              <button class="btn btn-light" onclick="window.location.href='project_creation_wizard.html'">
+                <i class="fas fa-magic-wand-sparkles"></i>
+                معالج إنشاء مشروع
+              </button>
+              <button class="btn btn-light" onclick="window.location.href='pages/project_reports.html'">
+                <i class="fas fa-file-export"></i>
+                مركز التقارير
+              </button>
+            </div>
+          </header>
+          <div class="projects-grid" data-projects-grid></div>
+        </section>
+
+        <footer class="footer">© 2024 ContractorPro - منصة إدارة المقاولات الذكية</footer>
+      </main>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
