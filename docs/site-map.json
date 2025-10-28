@@ -236,15 +236,15 @@
     { "name": "v_employee_public", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "fullName", "jobTitle", "department", "project"], "relations": [] }
   ],
   "frontendApiExpectations": [
-    { "endpoint": "POST /api/employees", "usedBy": "EmployeeForm.createEmployee", "source": "apps/web/src/api/employees.ts", "status": "missing-from-backend" },
-    { "endpoint": "PUT /api/employees/:id", "usedBy": "EmployeeForm.updateEmployee", "source": "apps/web/src/api/employees.ts", "status": "missing-from-backend" },
-    { "endpoint": "GET /api/employees/:id/finance", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "missing-from-backend" },
-    { "endpoint": "GET /api/employees/:id/contracts", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "missing-from-backend" },
-    { "endpoint": "GET /api/employees/:id/advances", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "missing-from-backend" },
-    { "endpoint": "GET /api/employees/:id/loans", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "missing-from-backend" },
-    { "endpoint": "GET /api/employees/:id/expenses", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "missing-from-backend" },
-    { "endpoint": "GET /api/payroll?employeeId=", "usedBy": "fetchPayrollByEmployee", "source": "apps/web/src/api/finance.ts", "status": "missing-from-backend" },
-    { "endpoint": "GET /api/expenses?employeeId=", "usedBy": "fetchExpensesByEmployee", "source": "apps/web/src/api/finance.ts", "status": "missing-from-backend" },
+    { "endpoint": "POST /api/employees", "usedBy": "EmployeeForm.createEmployee", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "PUT /api/employees/:id", "usedBy": "EmployeeForm.updateEmployee", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/employees/:id/finance", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/employees/:id/contracts", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/employees/:id/advances", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/employees/:id/loans", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/employees/:id/expenses", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/payroll?employeeId=", "usedBy": "fetchPayrollByEmployee", "source": "apps/web/src/api/finance.ts", "status": "implemented" },
+    { "endpoint": "GET /api/expenses?employeeId=", "usedBy": "fetchExpensesByEmployee", "source": "apps/web/src/api/finance.ts", "status": "implemented" },
     { "endpoint": "GET /api/contracts?employeeId=", "usedBy": "fetchContractsByEmployee", "source": "apps/web/src/api/contracts.ts", "status": "partial-backend-support" }
   ],
   "assets": {

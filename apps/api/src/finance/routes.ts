@@ -7,6 +7,19 @@ import { requirePermission, requireRole } from '../auth/rbac.js';
 import { z } from 'zod';
 import { recordActivity } from '../activity/service.js';
 
+function toRecord(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  return { ...(value as Record<string, unknown>) };
+}
+
+function sumJsonValues(record: Record<string, unknown>) {
+  return Object.values(record).reduce((total, value) => {
+    if (typeof value === 'number') return total + value;
+    const numeric = Number(value);
+    return Number.isNaN(numeric) ? total : total + numeric;
+  }, 0);
+}
+
 export function financeRoutes(app: FastifyInstance) {
   app.post('/api/payroll/batches', { preHandler: requirePermission([permissionKeys.MANAGE_PAYROLL]) }, async (request) => {
     const parsed = createPayrollBatchSchema.safeParse(request.body);
@@ -139,6 +152,89 @@ export function financeRoutes(app: FastifyInstance) {
       include: { entries: true }
     });
     return journal;
+  });
+
+  app.get('/api/payroll', { preHandler: requireRole([roleKeys.ADMIN, roleKeys.CEO, roleKeys.CFO, roleKeys.ACCOUNTANT, roleKeys.HR_MANAGER, roleKeys.SUPERVISOR, roleKeys.ENGINEER, roleKeys.EMPLOYEE]) }, async (request, reply) => {
+    const schema = z.object({ employeeId: z.string() });
+    const parsed = schema.safeParse(request.query);
+    if (!parsed.success) throw new ValidationError(parsed.error.flatten());
+
+    const employeeId = parsed.data.employeeId;
+    const employee = await prisma.employee.findUnique({ where: { id: employeeId }, select: { userId: true } });
+    if (!employee) {
+      reply.code(404).send({ message: 'Employee not found' });
+      return;
+    }
+    if (request.user?.roles.includes(roleKeys.EMPLOYEE) && employee.userId && request.user.sub !== employee.userId) {
+      reply.code(403).send({ message: 'Access denied' });
+      return;
+    }
+
+    const items = await prisma.payrollItem.findMany({
+      where: { employeeId },
+      include: { batch: true },
+      orderBy: [
+        { batch: { year: 'desc' } },
+        { batch: { month: 'desc' } }
+      ]
+    });
+
+    const mapped = items.map((item) => {
+      const earnings = toRecord(item.earningsJson ?? {});
+      const deductions = toRecord(item.deductionsJson ?? {});
+      const allowancesValue = Number(earnings.allowances ?? earnings.allowancesTotal ?? 0);
+      const currency = typeof earnings.currency === 'string' && earnings.currency.length > 0 ? earnings.currency : 'SAR';
+      const month = item.batch
+        ? `${item.batch.year}-${String(item.batch.month).padStart(2, '0')}`
+        : new Date().toISOString().slice(0, 7);
+
+      return {
+        id: item.id,
+        employeeId: item.employeeId,
+        month,
+        netSalary: Number(item.net),
+        allowances: Number.isFinite(allowancesValue) ? allowancesValue : 0,
+        deductions: sumJsonValues(deductions),
+        status: item.batch?.status ?? 'draft',
+        currency
+      };
+    });
+
+    reply.send(mapped);
+  });
+
+  app.get('/api/expenses', { preHandler: requireRole([roleKeys.ADMIN, roleKeys.CEO, roleKeys.CFO, roleKeys.ACCOUNTANT, roleKeys.HR_MANAGER, roleKeys.SUPERVISOR, roleKeys.ENGINEER, roleKeys.EMPLOYEE]) }, async (request, reply) => {
+    const schema = z.object({ employeeId: z.string() });
+    const parsed = schema.safeParse(request.query);
+    if (!parsed.success) throw new ValidationError(parsed.error.flatten());
+
+    const employeeId = parsed.data.employeeId;
+    const employee = await prisma.employee.findUnique({ where: { id: employeeId }, select: { userId: true } });
+    if (!employee) {
+      reply.code(404).send({ message: 'Employee not found' });
+      return;
+    }
+    if (request.user?.roles.includes(roleKeys.EMPLOYEE) && employee.userId && request.user.sub !== employee.userId) {
+      reply.code(403).send({ message: 'Access denied' });
+      return;
+    }
+
+    const expenses = await prisma.expense.findMany({
+      where: { employeeId },
+      orderBy: { date: 'desc' }
+    });
+
+    reply.send(
+      expenses.map((expense) => ({
+        id: expense.id,
+        employeeId: expense.employeeId,
+        description: expense.reference ?? expense.category,
+        category: expense.category,
+        amount: Number(expense.amount),
+        currency: expense.currency,
+        expenseDate: expense.date.toISOString()
+      }))
+    );
   });
 
   app.post('/api/advances', { preHandler: requireRole([roleKeys.ADMIN, roleKeys.CFO, roleKeys.ACCOUNTANT, roleKeys.HR_MANAGER, roleKeys.SUPERVISOR, roleKeys.ENGINEER, roleKeys.EMPLOYEE]) }, async (request) => {
