@@ -21,18 +21,6 @@
   .projects-content {
     padding: 24px;
   }
-
-  .projects-content--canvas {
-    padding: 0;
-  }
-
-  .project-page-bar {
-    padding: 24px 24px 12px;
-  }
-
-  .project-canvas {
-    padding: 24px;
-  }
 }
 
 @media (max-width: 900px) {
@@ -51,15 +39,9 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .project-card__quick-actions,
-  .project-card__footer {
+  .project-card__actions {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .project-nav__link {
-    flex: 1 1 auto;
-    justify-content: center;
   }
 
   .project-card__menu {
@@ -100,10 +82,6 @@
   }
 
   .project-summary {
-    grid-template-columns: 1fr;
-  }
-
-  .insight-grid {
     grid-template-columns: 1fr;
   }
 
