@@ -908,15 +908,15 @@ class NavigationHelper {
     }
 
     static openProjectDetails(projectId) {
-        window.location.href = `projects_management_center.html?project=${projectId}`;
+        window.location.href = `Projects/projects_management_center.html?project=${projectId}`;
     }
 
     static goToProjects() {
-        window.location.href = 'projects_management_center.html';
+        window.location.href = 'Projects/projects_management_center.html';
     }
 
     static goToAddProject() {
-        window.location.href = 'project_creation_wizard.html';
+        window.location.href = 'Projects/project_creation_wizard.html';
     }
 
     static goToDashboard() {

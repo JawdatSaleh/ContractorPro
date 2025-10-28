@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مركز إدارة المشاريع - ContractorPro</title>
+    <link rel="stylesheet" href="../../css/main.css" />
+    <link rel="stylesheet" href="assets/projects.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+</head>
+<body class="font-arabic text-text-primary" data-page="project-management">
+    <div class="min-h-screen flex bg-[color:var(--projects-background)]" data-projects-root>
+        <aside class="hidden lg:flex lg:w-72 bg-surface border-l border-border flex-col">
+            <div class="p-6 border-b border-border">
+                <div class="flex items-center gap-3">
+                    <span class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white text-xl"><i class="fas fa-hard-hat"></i></span>
+                    <div>
+                        <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
+                        <p class="text-sm text-text-secondary">نظام إدارة المقاولات المتكامل</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 overflow-y-auto p-5 space-y-2 text-text-secondary">
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-secondary-100 transition" href="../main_dashboard.html">
+                    <i class="fas fa-gauge"></i>
+                    <span>لوحة التحكم</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary text-white shadow-lg" href="projects_management_center.html">
+                    <i class="fas fa-building"></i>
+                    <span>المشاريع</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-secondary-100 transition" href="../financial_management_center.html">
+                    <i class="fas fa-chart-line"></i>
+                    <span>المركز المالي</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-secondary-100 transition" href="../human_resources_center.html">
+                    <i class="fas fa-users"></i>
+                    <span>الموارد البشرية</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-secondary-100 transition" href="../settings.html">
+                    <i class="fas fa-gear"></i>
+                    <span>الإعدادات</span>
+                </a>
+            </nav>
+            <div class="p-6 border-t border-border space-y-3">
+                <div class="text-sm text-text-secondary">تم آخر تحديث للبيانات في</div>
+                <div class="px-4 py-3 rounded-xl bg-secondary-100 text-secondary-900 flex items-center justify-between">
+                    <div>
+                        <p class="font-semibold" data-sidebar-date>—</p>
+                        <p class="text-xs text-secondary-700">تناغم الأرقام والبيانات</p>
+                    </div>
+                    <i class="fas fa-rotate"></i>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1">
+            <header class="bg-surface/80 backdrop-blur border-b border-border sticky top-0 z-40">
+                <div class="projects-shell py-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div class="space-y-2">
+                            <div class="inline-flex items-center gap-3 px-4 py-2 bg-primary-50 text-primary rounded-full text-sm font-semibold">
+                                <i class="fas fa-sparkles"></i>
+                                تجربة إدارة مشاريع جديدة ومتطورة
+                            </div>
+                            <h1 class="text-3xl lg:text-4xl font-bold tracking-tight">مركز إدارة المشاريع</h1>
+                            <p class="text-text-secondary max-w-3xl">منصة موحدة تربط بين المعلومات والمراحل والمالية والتقارير اليومية لكل مشروع بشكل متكامل يعكس أداء فرقك على أرض الواقع.</p>
+                        </div>
+                        <div class="projects-card shadow-lg border border-border/60 max-w-md">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h2 class="projects-card__title text-lg"><span>📈</span> المؤشرات الفورية</h2>
+                                    <p class="text-sm text-text-secondary">تحديثات حية مع كل تغيير في البيانات</p>
+                                </div>
+                                <div class="projects-progress" style="width:120px;">
+                                    <div class="projects-progress__value" data-project-progress aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+                                </div>
+                            </div>
+                            <div class="projects-card__body text-sm" data-project-overview>
+                                <div class="flex items-center gap-3">
+                                    <span class="projects-status" data-project-status data-variant="info">نشط</span>
+                                    <span data-project-client class="text-text-secondary">—</span>
+                                </div>
+                                <div class="text-text-secondary" data-project-dates>—</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="projects-card">
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                            <div class="flex flex-col gap-2">
+                                <div class="projects-card__title text-lg"><span>🧾</span> اختيار المشروع</div>
+                                <p class="text-sm text-text-secondary">قم بتحديد مشروع لعرض بياناته التفصيلية ومتابعته.</p>
+                            </div>
+                            <div class="flex flex-col gap-3 lg:flex-row lg:items-center">
+                                <label class="projects-input-group min-w-[260px]">
+                                    <span class="text-sm text-text-secondary">المشروع الحالي</span>
+                                    <select class="projects-input" data-project-selector></select>
+                                </label>
+                                <button type="button" class="projects-button projects-button--primary" data-action="open-wizard">
+                                    <i class="fas fa-plus"></i>
+                                    مشروع جديد
+                                </button>
+                                <button type="button" class="projects-button" data-action="refresh-data">
+                                    <i class="fas fa-rotate"></i>
+                                    تحديث البيانات
+                                </button>
+                            </div>
+                        </div>
+                        <div class="projects-card__meta">
+                            <span class="projects-card__meta-item"><i class="fas fa-user-tie"></i> <span data-project-title>—</span></span>
+                            <span class="projects-card__meta-item"><i class="fas fa-circle-nodes"></i> البيانات مترابطة بين المراحل والمصاريف والتقارير</span>
+                        </div>
+                    </div>
+
+                    <div class="projects-grid projects-grid--three">
+                        <button type="button" class="projects-card text-start" data-action="edit-info">
+                            <div class="projects-card__title"><span>🧾</span> المعلومات</div>
+                            <p class="text-sm text-text-secondary">تعديل بيانات المشروع الأساسية وإدارة الفريق المسؤول عنه.</p>
+                            <span class="projects-card__badge projects-status" data-variant="info">سجل كامل</span>
+                        </button>
+                        <button type="button" class="projects-card text-start" data-action="add-phase">
+                            <div class="projects-card__title"><span>🧱</span> مراحل المشروع</div>
+                            <p class="text-sm text-text-secondary">إضافة مراحل جديدة وتحديث نسبة الإنجاز مع الحفاظ على التسلسل الزمني.</p>
+                        </button>
+                        <div class="projects-card text-start space-y-4">
+                            <div class="projects-card__title"><span>🚀</span> التقدم العام</div>
+                            <p class="text-sm text-text-secondary">قياس متكامل يعتمد على المراحل والمصاريف والدفعات المسجلة.</p>
+                            <div class="projects-progress" style="height:14px;">
+                                <div class="projects-progress__value" data-project-progress style="width:0%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="projects-shell">
+                <div class="projects-grid projects-grid--two">
+                    <article class="projects-card">
+                        <header class="projects-card__title"><span>🧾</span> نظرة عامة</header>
+                        <div data-project-info></div>
+                    </article>
+                    <article class="projects-card">
+                        <header class="projects-card__title"><span>💬</span> تواصل الفريق</header>
+                        <div class="projects-card__body text-sm text-text-secondary">
+                            <p>يتم مزامنة التحديثات مع جميع أقسام المشروع لضمان وضوح الرؤية أمام الإدارة والفريق.</p>
+                            <ul class="projects-card__meta" data-team-list>
+                                <li class="projects-card__meta-item"><i class="fas fa-lightbulb"></i> قم بدعوة أعضاء جدد من مركز الموارد البشرية</li>
+                                <li class="projects-card__meta-item"><i class="fas fa-paper-plane"></i> شارك تقارير التقدم عبر البريد مباشرةً</li>
+                            </ul>
+                        </div>
+                    </article>
+                </div>
+
+                <article class="projects-card">
+                    <header class="flex items-center justify-between">
+                        <div class="projects-card__title"><span>🧱</span> مراحل المشروع</div>
+                        <button type="button" class="projects-button" data-action="add-phase"><i class="fas fa-plus"></i> إضافة مرحلة</button>
+                    </header>
+                    <div class="projects-timeline" data-project-phases></div>
+                </article>
+
+                <article class="projects-card">
+                    <header class="flex items-center justify-between">
+                        <div class="projects-card__title"><span>💰</span> المصاريف والعقود</div>
+                        <button type="button" class="projects-button" data-action="add-expense"><i class="fas fa-file-invoice-dollar"></i> تسجيل مصروف</button>
+                    </header>
+                    <div data-project-expenses></div>
+                </article>
+
+                <article class="projects-card">
+                    <header class="flex items-center justify-between">
+                        <div class="projects-card__title"><span>💳</span> دفعات المشروع</div>
+                        <button type="button" class="projects-button" data-action="add-payment"><i class="fas fa-credit-card"></i> إضافة دفعة</button>
+                    </header>
+                    <div data-project-payments></div>
+                </article>
+
+                <article class="projects-card">
+                    <header class="flex items-center justify-between">
+                        <div class="projects-card__title"><span>📅</span> التقارير اليومية</div>
+                        <button type="button" class="projects-button" data-action="add-report"><i class="fas fa-calendar-plus"></i> تقرير جديد</button>
+                    </header>
+                    <div class="projects-timeline" data-project-reports></div>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <dialog id="projectInfoModal" class="projects-modal">
+        <form method="dialog">
+            <div class="projects-modal__header">
+                <h2 class="projects-card__title"><span>🧾</span> تحديث معلومات المشروع</h2>
+            </div>
+            <div class="projects-modal__body">
+                <div class="projects-form-grid projects-form-grid--two">
+                    <label class="projects-input-group">
+                        <span>اسم المشروع</span>
+                        <input type="text" name="name" required />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>العميل</span>
+                        <input type="text" name="client" required />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>مدير المشروع</span>
+                        <input type="text" name="manager" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>حالة المشروع</span>
+                        <select name="status">
+                            <option value="planning">قيد التخطيط</option>
+                            <option value="active">قيد التنفيذ</option>
+                            <option value="completed">مكتمل</option>
+                        </select>
+                    </label>
+                    <label class="projects-input-group">
+                        <span>القطاع</span>
+                        <input type="text" name="sector" placeholder="سكني، تجاري، بنية تحتية..." />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>الموقع</span>
+                        <input type="text" name="location" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>تاريخ البدء</span>
+                        <input type="date" name="startDate" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>تاريخ التسليم المتوقع</span>
+                        <input type="date" name="endDate" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>قيمة العقد</span>
+                        <input type="number" min="0" step="1000" name="contractValue" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>العملة</span>
+                        <select name="currency">
+                            <option value="SAR">ريال سعودي</option>
+                            <option value="AED">درهم إماراتي</option>
+                            <option value="USD">دولار أمريكي</option>
+                        </select>
+                    </label>
+                    <label class="projects-input-group projects-form-grid col-span-full">
+                        <span>الفريق المرتبط بالمشروع (أسماء مفصولة بفاصلة)</span>
+                        <input type="text" name="team" placeholder="مثال: م. أحمد، م. سارة" />
+                    </label>
+                    <label class="projects-input-group col-span-full">
+                        <span>الوصف التفصيلي</span>
+                        <textarea name="description" placeholder="ملخص المشروع والأهداف الرئيسية"></textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="projects-modal__actions">
+                <button type="button" class="projects-button projects-button--ghost" onclick="this.closest('dialog').close()">إلغاء</button>
+                <button type="submit" class="projects-button projects-button--primary">حفظ التغييرات</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="projectPhaseModal" class="projects-modal">
+        <form method="dialog">
+            <div class="projects-modal__header">
+                <h2 class="projects-card__title"><span>🧱</span> إضافة مرحلة جديدة</h2>
+            </div>
+            <div class="projects-modal__body">
+                <div class="projects-form-grid projects-form-grid--two">
+                    <label class="projects-input-group">
+                        <span>اسم المرحلة</span>
+                        <input type="text" name="name" required />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>نسبة التقدم</span>
+                        <input type="number" name="progress" min="0" max="100" value="0" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>الحالة</span>
+                        <select name="status">
+                            <option value="planned">مخطط</option>
+                            <option value="active">قيد التنفيذ</option>
+                            <option value="completed">مكتمل</option>
+                        </select>
+                    </label>
+                    <label class="projects-input-group">
+                        <span>تاريخ البداية</span>
+                        <input type="date" name="startDate" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>تاريخ النهاية</span>
+                        <input type="date" name="endDate" />
+                    </label>
+                    <label class="projects-input-group col-span-full">
+                        <span>ملاحظات</span>
+                        <textarea name="notes" placeholder="تفاصيل إضافية حول المرحلة"></textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="projects-modal__actions">
+                <button type="button" class="projects-button projects-button--ghost" onclick="this.closest('dialog').close()">إلغاء</button>
+                <button type="submit" class="projects-button projects-button--primary">إضافة</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="projectExpenseModal" class="projects-modal">
+        <form method="dialog">
+            <div class="projects-modal__header">
+                <h2 class="projects-card__title"><span>💰</span> تسجيل مصروف</h2>
+            </div>
+            <div class="projects-modal__body">
+                <div class="projects-form-grid projects-form-grid--two">
+                    <label class="projects-input-group">
+                        <span>فئة المصروف</span>
+                        <input type="text" name="category" placeholder="مواد، معدات، أجور..." required />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>المبلغ</span>
+                        <input type="number" name="amount" min="0" step="100" required />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>المورد / الجهة</span>
+                        <input type="text" name="vendor" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>مرجع العقد</span>
+                        <input type="text" name="contractRef" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>تاريخ الصرف</span>
+                        <input type="date" name="date" />
+                    </label>
+                    <label class="projects-input-group col-span-full">
+                        <span>ملاحظات</span>
+                        <textarea name="notes" placeholder="تفاصيل إضافية"></textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="projects-modal__actions">
+                <button type="button" class="projects-button projects-button--ghost" onclick="this.closest('dialog').close()">إلغاء</button>
+                <button type="submit" class="projects-button projects-button--primary">حفظ</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="projectPaymentModal" class="projects-modal">
+        <form method="dialog">
+            <div class="projects-modal__header">
+                <h2 class="projects-card__title"><span>💳</span> إضافة دفعة</h2>
+            </div>
+            <div class="projects-modal__body">
+                <div class="projects-form-grid projects-form-grid--two">
+                    <label class="projects-input-group">
+                        <span>اسم الدفعة</span>
+                        <input type="text" name="title" required />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>قيمة الدفعة</span>
+                        <input type="number" name="amount" min="0" step="100" required />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>تاريخ الاستحقاق</span>
+                        <input type="date" name="dueDate" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>تاريخ السداد (إن وجد)</span>
+                        <input type="date" name="paidDate" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>طريقة الدفع</span>
+                        <select name="method">
+                            <option value="bank-transfer">تحويل بنكي</option>
+                            <option value="cash">نقدي</option>
+                            <option value="check">شيك</option>
+                        </select>
+                    </label>
+                    <label class="projects-input-group">
+                        <span>الحالة</span>
+                        <select name="status">
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="paid">مدفوع</option>
+                            <option value="overdue">متأخر</option>
+                        </select>
+                    </label>
+                    <label class="projects-input-group col-span-full">
+                        <span>ملاحظات</span>
+                        <textarea name="notes"></textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="projects-modal__actions">
+                <button type="button" class="projects-button projects-button--ghost" onclick="this.closest('dialog').close()">إلغاء</button>
+                <button type="submit" class="projects-button projects-button--primary">حفظ</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="projectReportModal" class="projects-modal">
+        <form method="dialog">
+            <div class="projects-modal__header">
+                <h2 class="projects-card__title"><span>📅</span> إضافة تقرير يومي</h2>
+            </div>
+            <div class="projects-modal__body">
+                <div class="projects-form-grid">
+                    <label class="projects-input-group">
+                        <span>تاريخ التقرير</span>
+                        <input type="date" name="date" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>ملخص الإنجاز</span>
+                        <textarea name="summary" required></textarea>
+                    </label>
+                    <label class="projects-input-group">
+                        <span>نسبة التقدم</span>
+                        <input type="number" name="progress" min="0" max="100" value="5" />
+                    </label>
+                    <label class="projects-input-group">
+                        <span>التحديات والمعوقات</span>
+                        <textarea name="blockers"></textarea>
+                    </label>
+                    <label class="projects-input-group">
+                        <span>خطة اليوم التالي</span>
+                        <textarea name="nextSteps"></textarea>
+                    </label>
+                </div>
+            </div>
+            <div class="projects-modal__actions">
+                <button type="button" class="projects-button projects-button--ghost" onclick="this.closest('dialog').close()">إلغاء</button>
+                <button type="submit" class="projects-button projects-button--primary">إضافة التقرير</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script defer src="assets/projects.js"></script>
+</body>
+</html>
