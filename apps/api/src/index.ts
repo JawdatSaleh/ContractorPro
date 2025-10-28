@@ -14,7 +14,21 @@ const server = Fastify({
   logger: true
 });
 
-await server.register(cors, { origin: true, credentials: true });
+const allowedOrigins = (process.env.CORS_ORIGINS ?? '')
+  .split(',')
+  .map((value) => value.trim())
+  .filter(Boolean);
+
+await server.register(cors, {
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      cb(null, origin ?? true);
+    } else {
+      cb(new Error('Origin not allowed'), false);
+    }
+  },
+  credentials: true
+});
 await server.register(swagger, {
   swagger: {
     info: {

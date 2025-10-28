@@ -8,6 +8,7 @@ import { roleKeys } from '../auth/roles.js';
 import { requireRole } from '../auth/rbac.js';
 import { z } from 'zod';
 import { recordActivity } from '../activity/service.js';
+import { serializeEntity } from '../common/serialization.js';
 
 function sanitizeContractForRole(contract: any, roleKeysList: string[]) {
   const privileged = ['system_admin', 'ceo', 'cfo', 'hr_manager'];
@@ -806,9 +807,4 @@ export function hrRoutes(app: FastifyInstance) {
     const leaves = await prisma.leave.findMany({ where, orderBy: { startDate: 'desc' } });
     return leaves;
   });
-}
-
-function serializeEntity<T>(value: T | null | undefined) {
-  if (!value) return null;
-  return JSON.parse(JSON.stringify(value));
 }

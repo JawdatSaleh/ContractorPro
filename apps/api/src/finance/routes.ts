@@ -6,6 +6,20 @@ import { permissionKeys, roleKeys } from '../auth/roles.js';
 import { requirePermission, requireRole } from '../auth/rbac.js';
 import { z } from 'zod';
 import { recordActivity } from '../activity/service.js';
+import { serializeEntity } from '../common/serialization.js';
+
+function toRecord(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  return { ...(value as Record<string, unknown>) };
+}
+
+function sumJsonValues(record: Record<string, unknown>) {
+  return Object.values(record).reduce((total, value) => {
+    if (typeof value === 'number') return total + value;
+    const numeric = Number(value);
+    return Number.isNaN(numeric) ? total : total + numeric;
+  }, 0);
+}
 
 function toRecord(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
@@ -387,9 +401,4 @@ export function financeRoutes(app: FastifyInstance) {
     });
     return items.map((row) => ({ costCenter: row.costCenter, totalNet: Number(row._sum.net ?? 0) }));
   });
-}
-
-function serializeEntity<T>(value: T | null | undefined) {
-  if (!value) return null;
-  return JSON.parse(JSON.stringify(value));
 }
