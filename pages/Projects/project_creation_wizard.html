@@ -1,374 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>منشئ المشاريع المتكامل - ContractorPro</title>
-    <link rel="stylesheet" href="../../css/main.css" />
-    <link rel="stylesheet" href="assets/projects.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
-</head>
-<body class="font-arabic text-text-primary" data-page="project-wizard">
-    <div class="min-h-screen flex bg-[color:var(--projects-background)]" data-wizard-root>
-        <aside class="hidden lg:flex lg:w-72 bg-surface border-l border-border flex-col">
-            <div class="p-6 border-b border-border">
-                <div class="flex items-center gap-3">
-                    <span class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-white text-xl"><i class="fas fa-wand-magic-sparkles"></i></span>
-                    <div>
-                        <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
-                        <p class="text-sm text-text-secondary">تجربة إنشاء مشروع متكاملة</p>
-                    </div>
-                </div>
-            </div>
-            <nav class="flex-1 overflow-y-auto p-5 space-y-2 text-text-secondary">
-                <a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-secondary-100 transition" href="projects_management_center.html">
-                    <i class="fas fa-arrow-right"></i>
-                    <span>العودة لمركز المشاريع</span>
-                </a>
-                <div class="px-4 py-3 rounded-xl bg-primary text-white shadow-lg space-y-1">
-                    <div class="text-sm opacity-80">المسار الحالي</div>
-                    <div class="font-semibold">معالج إنشاء مشروع جديد</div>
-                </div>
-                <div class="px-4 py-3 rounded-xl bg-secondary-100 text-secondary-900 space-y-2">
-                    <div class="text-sm font-semibold">التكامل الذكي</div>
-                    <p class="text-xs leading-relaxed text-secondary-800">يتم حفظ تقدمك تلقائياً، مع إمكانية تحرير كل قسم بعد إنشائه داخل مركز إدارة المشاريع.</p>
-                </div>
-            </nav>
-            <div class="p-6 border-t border-border space-y-3 text-sm text-text-secondary">
-                <p><i class="fas fa-lightbulb text-primary"></i> يمكنك العودة لاحقاً لإضافة المزيد من التفاصيل عبر النماذج المنبثقة في مركز إدارة المشاريع.</p>
-            </div>
-        </aside>
-
-        <main class="flex-1">
-            <header class="bg-surface/80 backdrop-blur border-b border-border sticky top-0 z-40">
-                <div class="projects-shell py-6">
-                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                        <div class="space-y-2">
-                            <div class="inline-flex items-center gap-3 px-4 py-2 bg-primary-50 text-primary rounded-full text-sm font-semibold">
-                                <i class="fas fa-route"></i>
-                                خطوات ديناميكية تربط المعلومات المالية والفنية
-                            </div>
-                            <h1 class="text-3xl lg:text-4xl font-bold tracking-tight">منشئ المشاريع المتكامل</h1>
-                            <p class="text-text-secondary max-w-3xl">يمكّنك هذا المعالج من بناء مشروع متكامل في دقائق معدودة مع الحفاظ على كل التفاصيل الضرورية للمعلومات والمراحل والمالية والتقارير اليومية.</p>
-                        </div>
-                        <div class="projects-card shadow-lg border border-border/60 max-w-md">
-                            <div class="projects-card__title text-lg"><span>🎯</span> حالة التقدم</div>
-                            <p class="text-sm text-text-secondary">اكمل جميع الخطوات لإطلاق مشروعك بشكل متكامل.</p>
-                            <div class="projects-progress" style="height:14px;">
-                                <div class="projects-progress__value" style="width:calc((var(--wizard-step,0) / 5) * 100%)" data-wizard-progress aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-            <section class="projects-shell">
-                <div class="projects-wizard">
-                    <div class="projects-wizard__steps">
-                        <div class="projects-wizard__step" data-wizard-step data-active="true">
-                            <span>🧾</span>
-                            <strong>المعلومات</strong>
-                            <small>البيانات الأساسية</small>
-                        </div>
-                        <div class="projects-wizard__step" data-wizard-step>
-                            <span>🧱</span>
-                            <strong>المراحل</strong>
-                            <small>الجدول الزمني</small>
-                        </div>
-                        <div class="projects-wizard__step" data-wizard-step>
-                            <span>💰</span>
-                            <strong>المصاريف</strong>
-                            <small>التكاليف والعقود</small>
-                        </div>
-                        <div class="projects-wizard__step" data-wizard-step>
-                            <span>💳</span>
-                            <strong>الدفعات</strong>
-                            <small>خطة الصرف</small>
-                        </div>
-                        <div class="projects-wizard__step" data-wizard-step>
-                            <span>📅</span>
-                            <strong>التقارير</strong>
-                            <small>المتابعة اليومية</small>
-                        </div>
-                        <div class="projects-wizard__step" data-wizard-step>
-                            <span>🚀</span>
-                            <strong>المراجعة</strong>
-                            <small>التأكيد والإطلاق</small>
-                        </div>
-                    </div>
-
-                    <div class="projects-wizard__content" data-wizard-section>
-                        <div class="projects-wizard__content-header">
-                            <h2 class="projects-wizard__content-title"><span>🧾</span> المعلومات الأساسية</h2>
-                            <p class="text-sm text-text-secondary">املأ تفاصيل المشروع الرئيسية ليتم استخدامها عبر جميع الأقسام الأخرى.</p>
-                        </div>
-                        <form id="wizardInfoForm" class="projects-form-grid projects-form-grid--two">
-                            <label class="projects-input-group">
-                                <span>اسم المشروع</span>
-                                <input type="text" name="name" placeholder="مثال: مجمع الواحة السكني" required />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>العميل</span>
-                                <input type="text" name="client" placeholder="اسم الجهة المالكة" required />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>مدير المشروع</span>
-                                <input type="text" name="manager" placeholder="م. أحمد المالك" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>حالة المشروع</span>
-                                <select name="status">
-                                    <option value="planning">قيد التخطيط</option>
-                                    <option value="active">قيد التنفيذ</option>
-                                    <option value="completed">مكتمل</option>
-                                </select>
-                            </label>
-                            <label class="projects-input-group">
-                                <span>القطاع</span>
-                                <input type="text" name="sector" placeholder="سكني، تجاري، بنية تحتية..." />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>الموقع</span>
-                                <input type="text" name="location" placeholder="المدينة / الحي" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>تاريخ البدء</span>
-                                <input type="date" name="startDate" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>تاريخ التسليم المتوقع</span>
-                                <input type="date" name="endDate" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>قيمة العقد</span>
-                                <input type="number" name="contractValue" min="0" step="1000" placeholder="بالريال" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>العملة</span>
-                                <select name="currency">
-                                    <option value="SAR">ريال سعودي</option>
-                                    <option value="AED">درهم إماراتي</option>
-                                    <option value="USD">دولار أمريكي</option>
-                                </select>
-                            </label>
-                            <label class="projects-input-group projects-form-grid col-span-full">
-                                <span>الفريق الأساسي (أسماء مفصولة بفاصلة)</span>
-                                <input type="text" name="team" placeholder="مثال: م. سارة الشريف، م. عبدالعزيز الفهد" />
-                            </label>
-                            <label class="projects-input-group col-span-full">
-                                <span>الوصف</span>
-                                <textarea name="description" rows="4" placeholder="لمحة عن المشروع وأهدافه"></textarea>
-                            </label>
-                            <div class="projects-wizard__footer col-span-full">
-                                <span></span>
-                                <button type="submit" class="projects-button projects-button--primary">
-                                    <i class="fas fa-arrow-left"></i>
-                                    حفظ ومتابعة المراحل
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="projects-wizard__content" data-wizard-section hidden>
-                        <div class="projects-wizard__content-header">
-                            <h2 class="projects-wizard__content-title"><span>🧱</span> مراحل المشروع</h2>
-                            <p class="text-sm text-text-secondary">قم بتقسيم المشروع إلى مراحل واضحة تساعد على تتبع التقدم والإنجاز.</p>
-                        </div>
-                        <form id="wizardPhaseForm" class="projects-form-grid projects-form-grid--two">
-                            <label class="projects-input-group">
-                                <span>اسم المرحلة</span>
-                                <input type="text" name="name" placeholder="مثال: الأعمال الإنشائية" required />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>نسبة التقدم الحالية</span>
-                                <input type="number" name="progress" min="0" max="100" value="0" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>الحالة</span>
-                                <select name="status">
-                                    <option value="planned">مخطط</option>
-                                    <option value="active">قيد التنفيذ</option>
-                                    <option value="completed">مكتمل</option>
-                                </select>
-                            </label>
-                            <label class="projects-input-group">
-                                <span>تاريخ البداية</span>
-                                <input type="date" name="startDate" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>تاريخ النهاية</span>
-                                <input type="date" name="endDate" />
-                            </label>
-                            <label class="projects-input-group col-span-full">
-                                <span>ملاحظات</span>
-                                <textarea name="notes" placeholder="تفاصيل إضافية"></textarea>
-                            </label>
-                            <div class="projects-wizard__footer col-span-full">
-                                <button type="submit" class="projects-button">
-                                    <i class="fas fa-plus"></i>
-                                    إضافة المرحلة للقائمة
-                                </button>
-                            </div>
-                        </form>
-                        <div class="projects-kanban" data-list="phases"></div>
-                    </div>
-
-                    <div class="projects-wizard__content" data-wizard-section hidden>
-                        <div class="projects-wizard__content-header">
-                            <h2 class="projects-wizard__content-title"><span>💰</span> المصاريف والعقود</h2>
-                            <p class="text-sm text-text-secondary">سجل المصاريف المتوقعة أو المعتمدة لبدء التخطيط المالي.</p>
-                        </div>
-                        <form id="wizardExpenseForm" class="projects-form-grid projects-form-grid--two">
-                            <label class="projects-input-group">
-                                <span>فئة المصروف</span>
-                                <input type="text" name="category" placeholder="مواد، معدات، أجور" required />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>قيمة المصروف</span>
-                                <input type="number" name="amount" min="0" step="100" required />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>المورد / الجهة</span>
-                                <input type="text" name="vendor" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>مرجع العقد</span>
-                                <input type="text" name="contractRef" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>تاريخ الصرف</span>
-                                <input type="date" name="date" />
-                            </label>
-                            <label class="projects-input-group col-span-full">
-                                <span>ملاحظات</span>
-                                <textarea name="notes"></textarea>
-                            </label>
-                            <div class="projects-wizard__footer col-span-full">
-                                <button type="submit" class="projects-button">
-                                    <i class="fas fa-plus"></i>
-                                    إضافة المصروف
-                                </button>
-                            </div>
-                        </form>
-                        <div class="projects-kanban" data-list="expenses"></div>
-                    </div>
-
-                    <div class="projects-wizard__content" data-wizard-section hidden>
-                        <div class="projects-wizard__content-header">
-                            <h2 class="projects-wizard__content-title"><span>💳</span> خطة الدفعات</h2>
-                            <p class="text-sm text-text-secondary">حدد الدفعات الرئيسية المرتبطة بالعقد والمتابعة المالية.</p>
-                        </div>
-                        <form id="wizardPaymentForm" class="projects-form-grid projects-form-grid--two">
-                            <label class="projects-input-group">
-                                <span>اسم الدفعة</span>
-                                <input type="text" name="title" placeholder="مثال: دفعة تأسيس" required />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>قيمة الدفعة</span>
-                                <input type="number" name="amount" min="0" step="100" required />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>تاريخ الاستحقاق</span>
-                                <input type="date" name="dueDate" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>طريقة الدفع</span>
-                                <select name="method">
-                                    <option value="bank-transfer">تحويل بنكي</option>
-                                    <option value="cash">نقدي</option>
-                                    <option value="check">شيك</option>
-                                </select>
-                            </label>
-                            <label class="projects-input-group">
-                                <span>الحالة</span>
-                                <select name="status">
-                                    <option value="pending">قيد الانتظار</option>
-                                    <option value="paid">مدفوع</option>
-                                    <option value="overdue">متأخر</option>
-                                </select>
-                            </label>
-                            <label class="projects-input-group col-span-full">
-                                <span>ملاحظات</span>
-                                <textarea name="notes"></textarea>
-                            </label>
-                            <div class="projects-wizard__footer col-span-full">
-                                <button type="submit" class="projects-button">
-                                    <i class="fas fa-plus"></i>
-                                    إضافة الدفعة
-                                </button>
-                            </div>
-                        </form>
-                        <div class="projects-kanban" data-list="payments"></div>
-                    </div>
-
-                    <div class="projects-wizard__content" data-wizard-section hidden>
-                        <div class="projects-wizard__content-header">
-                            <h2 class="projects-wizard__content-title"><span>📅</span> التقارير اليومية المبدئية</h2>
-                            <p class="text-sm text-text-secondary">أضف تقارير أو توقعات أولية لتسهيل المتابعة بعد إطلاق المشروع.</p>
-                        </div>
-                        <form id="wizardReportForm" class="projects-form-grid projects-form-grid--two">
-                            <label class="projects-input-group">
-                                <span>تاريخ التقرير</span>
-                                <input type="date" name="date" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>ملخص الإنجاز</span>
-                                <textarea name="summary" required></textarea>
-                            </label>
-                            <label class="projects-input-group">
-                                <span>نسبة التقدم</span>
-                                <input type="number" name="progress" min="0" max="100" value="5" />
-                            </label>
-                            <label class="projects-input-group">
-                                <span>التحديات</span>
-                                <textarea name="blockers"></textarea>
-                            </label>
-                            <label class="projects-input-group col-span-full">
-                                <span>خطة المتابعة</span>
-                                <textarea name="nextSteps"></textarea>
-                            </label>
-                            <div class="projects-wizard__footer col-span-full">
-                                <button type="submit" class="projects-button">
-                                    <i class="fas fa-plus"></i>
-                                    إضافة التقرير
-                                </button>
-                            </div>
-                        </form>
-                        <div class="projects-kanban" data-list="reports"></div>
-                    </div>
-
-                    <div class="projects-wizard__content" data-wizard-section hidden>
-                        <div class="projects-wizard__content-header">
-                            <h2 class="projects-wizard__content-title"><span>🚀</span> مراجعة وإطلاق المشروع</h2>
-                            <p class="text-sm text-text-secondary">تأكد من جميع التفاصيل قبل إنشاء المشروع وربطه بمركز الإدارة.</p>
-                        </div>
-                        <div data-wizard-summary></div>
-                        <div class="projects-card bg-primary/5 border-primary/30">
-                            <p class="text-sm text-primary">بعد الضغط على زر "إطلاق المشروع" سيتم حفظ جميع التفاصيل وربطها بشكل مباشر مع مركز إدارة المشاريع، حيث يمكنك إدارة جميع العناصر من مكان واحد.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="projects-wizard__footer">
-                    <button type="button" class="projects-button projects-button--ghost" data-wizard-prev>
-                        <i class="fas fa-arrow-right"></i>
-                        العودة
-                    </button>
-                    <div class="flex gap-2">
-                        <button type="button" class="projects-button" data-wizard-next>
-                            التالي
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                        <button type="button" class="projects-button projects-button--primary" data-wizard-finish hidden>
-                            <i class="fas fa-rocket"></i>
-                            إطلاق المشروع
-                        </button>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <script defer src="assets/projects.js"></script>
-</body>
-</html>
