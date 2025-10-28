@@ -110,60 +110,433 @@
             </article>
           </section>
 
-          <section class="section-card fade-in">
-            <header>
-              <div>
-                <h2>سجل المصاريف</h2>
-                <p class="text-muted">تصنيف دقيق مع تواريخ التنفيذ</p>
+          <section class="section-card fade-in" id="expenses-contracts-section">
+            <div class="mb-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-text-primary">💰 المصاريف والعقود</h3>
+                <div class="flex items-center gap-3">
+                  <button
+                    class="bg-error text-white px-4 py-2 rounded-lg hover:bg-error-600 transition-fast flex items-center gap-2"
+                    onclick="openAddExpenseModal()"
+                    type="button"
+                  >
+                    <i class="fas fa-plus"></i>
+                    <span>إضافة مصروف</span>
+                  </button>
+                  <button
+                    class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-600 transition-fast flex items-center gap-2"
+                    onclick="openAddSubcontractModal()"
+                    type="button"
+                  >
+                    <i class="fas fa-handshake"></i>
+                    <span>إضافة عقد باطن</span>
+                  </button>
+                  <button
+                    class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg hover:bg-secondary-300 transition-fast flex items-center gap-2"
+                    onclick="exportUnifiedData()"
+                    type="button"
+                  >
+                    <i class="fas fa-download"></i>
+                    <span>تصدير البيانات</span>
+                  </button>
+                </div>
               </div>
-              <div class="kpi-pills">
-                <span class="kpi-pill">المصروفات: <strong data-expenses-total>—</strong></span>
-                <span class="kpi-pill">الإيرادات: <strong data-expenses-revenue>—</strong></span>
-              </div>
-            </header>
-            <div data-expenses-list></div>
-          </section>
 
-          <section class="section-card fade-in">
-            <header>
-              <div>
-                <h2>إضافة مصروف</h2>
-                <p class="text-muted">سيتم تحديث المؤشرات المالية مباشرة</p>
+              <div class="border-b border-border">
+                <nav class="flex space-x-6 rtl:space-x-reverse">
+                  <button class="unified-subtab-button active py-2 px-3 border-b-2 border-primary text-primary text-sm font-medium" onclick="switchUnifiedSubTab('expenses-main')" data-subtab="expenses-main" type="button">
+                    🧾 مصاريف المشروع
+                  </button>
+                  <button class="unified-subtab-button py-2 px-3 border-b-2 border-transparent text-text-secondary hover:text-text-primary text-sm font-medium" onclick="switchUnifiedSubTab('subcontracts-main')" data-subtab="subcontracts-main" type="button">
+                    🤝 عقود الباطن
+                  </button>
+                  <button class="unified-subtab-button py-2 px-3 border-b-2 border-transparent text-text-secondary hover:text-text-primary text-sm font-medium" onclick="switchUnifiedSubTab('combined-analytics')" data-subtab="combined-analytics" type="button">
+                    📊 التحليل المالي
+                  </button>
+                </nav>
               </div>
-            </header>
-            <form id="expenseForm">
-              <div class="form-grid">
-                <label>
-                  العنوان
-                  <input type="text" name="title" required />
-                </label>
-                <label>
-                  الفئة
-                  <input type="text" name="category" placeholder="مصروف تشغيلي، عمالة..." />
-                </label>
-                <label>
-                  النوع
-                  <select name="type">
-                    <option value="expense">مصروف</option>
-                    <option value="revenue">إيراد</option>
+            </div>
+
+            <div id="expenses-main" class="unified-subtab-content">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-error-50 rounded-xl p-4 border border-error-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-error text-sm font-medium">إجمالي المصاريف</p>
+                      <p class="text-xl font-bold text-error mt-1" id="expensesTotalAmount">0 ريال</p>
+                    </div>
+                    <div class="w-10 h-10 bg-error-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-receipt text-error"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-warning-50 rounded-xl p-4 border border-warning-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-warning text-sm font-medium">مصاريف هذا الشهر</p>
+                      <p class="text-xl font-bold text-warning mt-1" id="expensesMonthlyAmount">0 ريال</p>
+                    </div>
+                    <div class="w-10 h-10 bg-warning-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-calendar-alt text-warning"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-primary-50 rounded-xl p-4 border border-primary-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-primary text-sm font-medium">عدد المصاريف</p>
+                      <p class="text-xl font-bold text-primary mt-1" id="expensesCount">0</p>
+                    </div>
+                    <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-list text-primary"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-accent-50 rounded-xl p-4 border border-accent-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-accent text-sm font-medium">متوسط المصروف</p>
+                      <p class="text-xl font-bold text-accent mt-1" id="expensesAverage">0 ريال</p>
+                    </div>
+                    <div class="w-10 h-10 bg-accent-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-chart-bar text-accent"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-4 mb-6 p-4 bg-secondary-50 rounded-lg">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm font-medium text-text-primary">التصنيف:</label>
+                  <select id="filterExpenseCategory" class="border border-border rounded-lg px-3 py-2 text-sm bg-white">
+                    <option value>جميع التصنيفات</option>
+                    <option value="مواد">🧱 مواد البناء</option>
+                    <option value="عمالة">👷 العمالة</option>
+                    <option value="معدات">🏗️ المعدات</option>
+                    <option value="نقل">🚚 النقل</option>
+                    <option value="ضيافة">☕ الضيافة</option>
+                    <option value="لوجستيات">📦 لوجستيات</option>
                   </select>
-                </label>
-                <label>
-                  المبلغ
-                  <input type="number" name="amount" min="0" step="0.01" required />
-                </label>
-                <label>
-                  التاريخ
-                  <input type="date" name="date" required />
-                </label>
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-plus"></i>
-                  حفظ المصروف
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm font-medium text-text-primary">وسيلة الدفع:</label>
+                  <select id="filterPaymentMethod" class="border border-border rounded-lg px-3 py-2 text-sm bg-white">
+                    <option value>جميع الوسائل</option>
+                    <option value="نقدي">نقدي</option>
+                    <option value="تحويل">تحويل بنكي</option>
+                    <option value="شيك">شيك</option>
+                    <option value="بطاقة">بطاقة ائتمان</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm font-medium text-text-primary">التاريخ:</label>
+                  <input type="date" id="filterDateFrom" class="border border-border rounded-lg px-3 py-2 text-sm bg-white" />
+                  <span class="text-text-secondary">إلى</span>
+                  <input type="date" id="filterDateTo" class="border border-border rounded-lg px-3 py-2 text-sm bg-white" />
+                </div>
+                <button
+                  class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-600 transition-fast"
+                  onclick="applyExpenseFilters()"
+                  type="button"
+                >
+                  تطبيق الفلاتر
+                </button>
+                <button
+                  class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg text-sm hover:bg-secondary-300 transition-fast"
+                  onclick="clearExpenseFilters()"
+                  type="button"
+                >
+                  مسح الفلاتر
                 </button>
               </div>
-            </form>
+
+              <div class="mb-6">
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="searchExpenses"
+                    placeholder="البحث في المصاريف..."
+                    class="w-full border border-border rounded-lg px-4 py-3 pr-10 text-sm bg-white"
+                  />
+                  <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-lg border border-border overflow-hidden mb-6">
+                <table class="w-full" id="tblExpenses">
+                  <thead class="bg-secondary-50">
+                    <tr>
+                      <th
+                        class="text-right p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100"
+                        onclick="sortExpenseTable('category')"
+                      >
+                        التصنيف <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th
+                        class="text-right p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100"
+                        onclick="sortExpenseTable('title')"
+                      >
+                        البيان <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th
+                        class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100"
+                        onclick="sortExpenseTable('date')"
+                      >
+                        التاريخ <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th
+                        class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100"
+                        onclick="sortExpenseTable('amount')"
+                      >
+                        المبلغ <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th
+                        class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100"
+                        onclick="sortExpenseTable('vatPercent')"
+                      >
+                        الضريبة (%) <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th
+                        class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100"
+                        onclick="sortExpenseTable('totalWithVat')"
+                      >
+                        الإجمالي <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th
+                        class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100"
+                        onclick="sortExpenseTable('paymentMethod')"
+                      >
+                        وسيلة الدفع <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th class="text-right p-4 border-b border-border text-sm font-semibold text-text-primary">ملاحظات</th>
+                      <th class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary">إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody id="expensesTableBody"></tbody>
+                </table>
+                <div id="expensesEmptyState" class="p-6 text-center text-text-secondary hidden">
+                  لا توجد مصاريف مطابقة للمعايير الحالية.
+                </div>
+              </div>
+            </div>
+
+            <div id="subcontracts-main" class="unified-subtab-content hidden">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-primary-50 rounded-xl p-4 border border-primary-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-primary text-sm font-medium">إجمالي العقود</p>
+                      <p class="text-xl font-bold text-primary mt-1" id="subcontractsCount">0</p>
+                    </div>
+                    <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-handshake text-primary"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-success-50 rounded-xl p-4 border border-success-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-success text-sm font-medium">إجمالي قيمة العقود</p>
+                      <p class="text-xl font-bold text-success mt-1" id="subcontractsTotalValue">0 ريال</p>
+                    </div>
+                    <div class="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-dollar-sign text-success"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-warning-50 rounded-xl p-4 border border-warning-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-warning text-sm font-medium">المدفوع</p>
+                      <p class="text-xl font-bold text-warning mt-1" id="subcontractsPaidAmount">0 ريال</p>
+                    </div>
+                    <div class="w-10 h-10 bg-warning-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-money-check text-warning"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-error-50 rounded-xl p-4 border border-error-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-error text-sm font-medium">المتبقي</p>
+                      <p class="text-xl font-bold text-error mt-1" id="subcontractsRemainingAmount">0 ريال</p>
+                    </div>
+                    <div class="w-10 h-10 bg-error-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-clock text-error"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-4 mb-6 p-4 bg-secondary-50 rounded-lg">
+                <div class="flex items-center gap-2">
+                  <label class="text-sm font-medium text-text-primary">المقاول:</label>
+                  <select id="filterContractor" class="border border-border rounded-lg px-3 py-2 text-sm bg-white">
+                    <option value>جميع المقاولين</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm font-medium text-text-primary">الحالة:</label>
+                  <select id="filterContractStatus" class="border border-border rounded-lg px-3 py-2 text-sm bg-white">
+                    <option value>كل الحالات</option>
+                    <option value="active">نشط</option>
+                    <option value="completed">مكتمل</option>
+                    <option value="pending">معلق</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm font-medium text-text-primary">تاريخ البدء:</label>
+                  <input type="date" id="filterContractStartDate" class="border border-border rounded-lg px-3 py-2 text-sm bg-white" />
+                  <span class="text-text-secondary">إلى</span>
+                  <input type="date" id="filterContractEndDate" class="border border-border rounded-lg px-3 py-2 text-sm bg-white" />
+                </div>
+                <button
+                  class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-600 transition-fast"
+                  onclick="applySubcontractFilters()"
+                  type="button"
+                >
+                  تطبيق الفلاتر
+                </button>
+                <button
+                  class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg text-sm hover:bg-secondary-300 transition-fast"
+                  onclick="clearSubcontractFilters()"
+                  type="button"
+                >
+                  مسح الفلاتر
+                </button>
+              </div>
+
+              <div class="bg-white rounded-lg border border-border overflow-hidden mb-6">
+                <table class="w-full" id="tblSubcontracts">
+                  <thead class="bg-secondary-50">
+                    <tr>
+                      <th class="text-right p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100" onclick="sortSubcontractTable('contractorName')">
+                        اسم المقاول <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th class="text-right p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100" onclick="sortSubcontractTable('contractTitle')">
+                        عنوان العقد <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100" onclick="sortSubcontractTable('value')">
+                        قيمة العقد <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100" onclick="sortSubcontractTable('startDate')">
+                        تاريخ البدء <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100" onclick="sortSubcontractTable('endDate')">
+                        تاريخ الانتهاء <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100" onclick="sortSubcontractTable('paidAmount')">
+                        المدفوع <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100" onclick="sortSubcontractTable('remainingAmount')">
+                        المتبقي <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary cursor-pointer hover:bg-secondary-100" onclick="sortSubcontractTable('status')">
+                        الحالة <i class="fas fa-sort text-xs mr-1"></i>
+                      </th>
+                      <th class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary">إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody id="subcontractsTableBody"></tbody>
+                </table>
+                <div id="subcontractsEmptyState" class="p-6 text-center text-text-secondary hidden">
+                  لا توجد عقود باطن مطابقة للمعايير الحالية.
+                </div>
+              </div>
+            </div>
+
+            <div id="combined-analytics" class="unified-subtab-content hidden">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-error-50 rounded-xl p-6 border border-error-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-error text-sm font-medium">إجمالي المصاريف</p>
+                      <p class="text-2xl font-bold text-error mt-2" id="combinedExpensesTotal">0 ريال</p>
+                    </div>
+                    <div class="w-12 h-12 bg-error-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-receipt text-error text-lg"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-primary-50 rounded-xl p-6 border border-primary-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-primary text-sm font-medium">إجمالي عقود الباطن</p>
+                      <p class="text-2xl font-bold text-primary mt-2" id="combinedContractsTotal">0 ريال</p>
+                    </div>
+                    <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-handshake text-primary text-lg"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-success-50 rounded-xl p-6 border border-success-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-success text-sm font-medium">نسبة العقود إلى المصاريف</p>
+                      <p class="text-2xl font-bold text-success mt-2" id="combinedRatio">0%</p>
+                    </div>
+                    <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-chart-pie text-success text-lg"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="bg-warning-50 rounded-xl p-6 border border-warning-200">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-warning text-sm font-medium">إجمالي الإنفاق الكلي</p>
+                      <p class="text-2xl font-bold text-warning mt-2" id="combinedTotalSpend">0 ريال</p>
+                    </div>
+                    <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
+                      <i class="fas fa-calculator text-warning text-lg"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 border border-border">
+                  <h4 class="text-lg font-bold text-text-primary mb-4">مقارنة المصاريف والعقود الشهرية</h4>
+                  <canvas id="monthlyComparisonChart" width="400" height="300"></canvas>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 border border-border">
+                  <h4 class="text-lg font-bold text-text-primary mb-4">توزيع الإنفاق (مصاريف مقابل عقود)</h4>
+                  <canvas id="expenseVsContractsPieChart" width="400" height="300"></canvas>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-xl p-6 border border-border">
+                <h4 class="text-lg font-bold text-text-primary mb-4">الخط الزمني للمصاريف والعقود</h4>
+                <div class="mb-4 flex items-center gap-4">
+                  <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-600 transition-fast" onclick="switchTimelineView('monthly')" type="button">
+                    عرض شهري
+                  </button>
+                  <button class="bg-secondary-200 text-text-primary px-4 py-2 rounded-lg text-sm hover:bg-secondary-300 transition-fast" onclick="switchTimelineView('quarterly')" type="button">
+                    عرض ربع سنوي
+                  </button>
+                </div>
+                <canvas id="timelineChart" width="800" height="300"></canvas>
+                <div class="mt-4 flex items-center justify-center gap-8 text-sm">
+                  <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 bg-error rounded"></div>
+                    <span>المصاريف</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-4 h-4 bg-primary rounded"></div>
+                    <span>عقود الباطن</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </section>
 
           <footer class="footer">© 2024 ContractorPro</footer>
@@ -171,6 +544,116 @@
       </main>
     </div>
 
+    <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 relative">
+        <button class="absolute top-4 left-4 text-text-secondary hover:text-text-primary" type="button" onclick="closeExpenseModal()">
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="text-xl font-bold text-text-primary mb-4" id="expenseModalTitle">إضافة مصروف</h3>
+        <form id="expenseModalForm" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              التصنيف
+              <input type="text" name="category" class="border border-border rounded-lg px-3 py-2" placeholder="مواد، عمالة، ضيافة..." required />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              البيان
+              <input type="text" name="title" class="border border-border rounded-lg px-3 py-2" required />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              التاريخ
+              <input type="date" name="date" class="border border-border rounded-lg px-3 py-2" required />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              المبلغ
+              <input type="number" name="amount" class="border border-border rounded-lg px-3 py-2" min="0" step="0.01" required />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              نسبة الضريبة
+              <input type="number" name="vatPercent" class="border border-border rounded-lg px-3 py-2" min="0" max="100" step="0.01" placeholder="15" />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              وسيلة الدفع
+              <select name="paymentMethod" class="border border-border rounded-lg px-3 py-2">
+                <option value="نقدي">نقدي</option>
+                <option value="تحويل">تحويل بنكي</option>
+                <option value="شيك">شيك</option>
+                <option value="بطاقة">بطاقة ائتمان</option>
+              </select>
+            </label>
+          </div>
+          <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+            ملاحظات إضافية
+            <textarea name="notes" rows="3" class="border border-border rounded-lg px-3 py-2"></textarea>
+          </label>
+          <div class="flex justify-end gap-3 pt-4 border-t border-border">
+            <button type="button" class="btn btn-light" onclick="closeExpenseModal()">إلغاء</button>
+            <button type="submit" class="btn btn-primary flex items-center gap-2">
+              <i class="fas fa-save"></i>
+              <span>حفظ</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="subcontractModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 relative">
+        <button class="absolute top-4 left-4 text-text-secondary hover:text-text-primary" type="button" onclick="closeSubcontractModal()">
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 class="text-xl font-bold text-text-primary mb-4" id="subcontractModalTitle">إضافة عقد باطن</h3>
+        <form id="subcontractModalForm" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              اسم المقاول
+              <input type="text" name="contractorName" class="border border-border rounded-lg px-3 py-2" required />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              عنوان العقد
+              <input type="text" name="contractTitle" class="border border-border rounded-lg px-3 py-2" required />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              تاريخ البدء
+              <input type="date" name="startDate" class="border border-border rounded-lg px-3 py-2" required />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              تاريخ الانتهاء
+              <input type="date" name="endDate" class="border border-border rounded-lg px-3 py-2" />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              قيمة العقد
+              <input type="number" name="value" class="border border-border rounded-lg px-3 py-2" min="0" step="0.01" required />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              المبلغ المدفوع
+              <input type="number" name="paidAmount" class="border border-border rounded-lg px-3 py-2" min="0" step="0.01" />
+            </label>
+            <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+              حالة العقد
+              <select name="status" class="border border-border rounded-lg px-3 py-2">
+                <option value="active">نشط</option>
+                <option value="pending">معلق</option>
+                <option value="completed">مكتمل</option>
+              </select>
+            </label>
+          </div>
+          <label class="flex flex-col gap-2 text-sm font-medium text-text-primary">
+            ملاحظات
+            <textarea name="notes" rows="3" class="border border-border rounded-lg px-3 py-2"></textarea>
+          </label>
+          <div class="flex justify-end gap-3 pt-4 border-t border-border">
+            <button type="button" class="btn btn-light" onclick="closeSubcontractModal()">إلغاء</button>
+            <button type="submit" class="btn btn-primary flex items-center gap-2">
+              <i class="fas fa-save"></i>
+              <span>حفظ</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="../js/main.js"></script>
   </body>
 </html>

@@ -1,6 +1,7 @@
 import { projectStore } from './project_store.js';
 import { phasesStore } from './phases_store.js';
 import { expensesStore } from './expenses_store.js';
+import { subcontractsStore } from './subcontracts_store.js';
 import { paymentsStore } from './payments_store.js';
 import { reportsStore } from './reports_store.js';
 import {
@@ -19,6 +20,21 @@ import {
 } from './utils.js';
 
 const page = document.body.dataset.page;
+
+const unifiedFinancialState = {
+  projectId: null,
+  expenses: [],
+  subcontracts: [],
+  expenseFilters: { category: '', paymentMethod: '', dateFrom: '', dateTo: '' },
+  expenseSearch: '',
+  expenseSort: { key: 'date', direction: 'desc' },
+  subcontractFilters: { contractor: '', status: '', startDate: '', endDate: '' },
+  subcontractSort: { key: 'startDate', direction: 'desc' },
+  timelineView: 'monthly',
+  charts: { monthlyComparison: null, expenseVsContracts: null, timeline: null },
+  editingExpenseId: null,
+  editingSubcontractId: null,
+};
 
 function ensureProjectContext() {
   const { projectId } = parseQueryParams();
@@ -1155,13 +1171,16 @@ async function renderPhases(projectId) {
 }
 
 async function renderExpenses(projectId) {
-  const list = document.querySelector('[data-expenses-list]');
-  if (!list) return;
   const expenses = await expensesStore.all(projectId);
-  list.innerHTML = expenses.length
-    ? expenses
-        .map(
-          (item) => `
+  unifiedFinancialState.projectId = projectId;
+  unifiedFinancialState.expenses = expenses;
+
+  const legacyList = document.querySelector('[data-expenses-list]');
+  if (legacyList) {
+    legacyList.innerHTML = expenses.length
+      ? expenses
+          .map(
+            (item) => `
       <div class="expense-row" data-expense-id="${item.id}">
         <div>
           <h4>${item.title}</h4>
@@ -1173,9 +1192,10 @@ async function renderExpenses(projectId) {
           <button class="btn btn-text danger" data-action="delete-expense">حذف</button>
         </div>
       </div>`
-        )
-        .join('')
-    : '<div class="empty-state">لا توجد مصاريف حتى الآن.</div>';
+          )
+          .join('')
+      : '<div class="empty-state">لا توجد مصاريف حتى الآن.</div>';
+  }
 
   const totals = await expensesStore.totals(projectId);
   const expensesTotalEl = document.querySelector('[data-expenses-total]');
@@ -1183,6 +1203,521 @@ async function renderExpenses(projectId) {
 
   const expensesRevenueEl = document.querySelector('[data-expenses-revenue]');
   if (expensesRevenueEl) expensesRevenueEl.textContent = formatCurrency(totals.revenueTotal);
+
+  renderUnifiedExpensesUI(projectId);
+  return expenses;
+}
+
+function parseDateValue(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function expenseTotalWithVat(expense) {
+  const amount = safeNumber(expense.amount);
+  const vatPercent = safeNumber(expense.vatPercent);
+  return amount + (amount * vatPercent) / 100;
+}
+
+function normalizedString(value) {
+  return (value || '').toString().toLowerCase().trim();
+}
+
+function renderUnifiedExpensesUI(projectId) {
+  const section = document.getElementById('expenses-contracts-section');
+  if (!section) return;
+
+  unifiedFinancialState.projectId = projectId;
+  const { expenseFilters, expenseSearch, expenseSort } = unifiedFinancialState;
+  const expenses = unifiedFinancialState.expenses.filter((item) => item.type !== 'revenue');
+  const now = new Date();
+
+  const filtered = expenses.filter((expense) => {
+    if (expenseFilters.category && normalizedString(expense.category) !== normalizedString(expenseFilters.category)) {
+      return false;
+    }
+    if (
+      expenseFilters.paymentMethod &&
+      normalizedString(expense.paymentMethod) !== normalizedString(expenseFilters.paymentMethod)
+    ) {
+      return false;
+    }
+
+    const expenseDate = parseDateValue(expense.date);
+    const fromDate = parseDateValue(expenseFilters.dateFrom);
+    const toDate = parseDateValue(expenseFilters.dateTo);
+    if (fromDate && expenseDate && expenseDate < fromDate) return false;
+    if (toDate && expenseDate && expenseDate > toDate) return false;
+
+    if (expenseSearch) {
+      const haystack = [expense.title, expense.category, expense.paymentMethod, expense.notes]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      if (!haystack.includes(expenseSearch.toLowerCase())) return false;
+    }
+    return true;
+  });
+
+  const valueExtractors = {
+    category: (expense) => normalizedString(expense.category),
+    title: (expense) => normalizedString(expense.title),
+    date: (expense) => parseDateValue(expense.date)?.getTime() || 0,
+    amount: (expense) => safeNumber(expense.amount),
+    vatPercent: (expense) => safeNumber(expense.vatPercent),
+    totalWithVat: (expense) => expenseTotalWithVat(expense),
+    paymentMethod: (expense) => normalizedString(expense.paymentMethod),
+  };
+
+  const sorted = [...filtered].sort((a, b) => {
+    const extractor = valueExtractors[expenseSort.key] || valueExtractors.date;
+    const aValue = extractor(a);
+    const bValue = extractor(b);
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      return aValue.localeCompare(bValue, 'ar');
+    }
+    return aValue - bValue;
+  });
+  if (expenseSort.direction === 'desc') sorted.reverse();
+
+  const totalAmount = expenses.reduce((sum, item) => sum + safeNumber(item.amount), 0);
+  const monthlyAmount = expenses.reduce((sum, item) => {
+    const expenseDate = parseDateValue(item.date);
+    if (!expenseDate) return sum;
+    if (expenseDate.getMonth() === now.getMonth() && expenseDate.getFullYear() === now.getFullYear()) {
+      return sum + safeNumber(item.amount);
+    }
+    return sum;
+  }, 0);
+  const averageAmount = expenses.length ? totalAmount / expenses.length : 0;
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText('expensesTotalAmount', formatCurrency(totalAmount));
+  setText('expensesMonthlyAmount', formatCurrency(monthlyAmount));
+  setText('expensesCount', expenses.length.toString());
+  setText('expensesAverage', formatCurrency(averageAmount));
+
+  const tbody = document.getElementById('expensesTableBody');
+  if (tbody) {
+    tbody.innerHTML = sorted
+      .map((expense) => {
+        const vatPercent = safeNumber(expense.vatPercent);
+        const totalWithVat = expenseTotalWithVat(expense);
+        return `
+      <tr data-expense-id="${expense.id}">
+        <td class="text-right p-4 border-b border-border text-sm">${expense.category || '—'}</td>
+        <td class="text-right p-4 border-b border-border text-sm">${expense.title || '—'}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${formatDate(expense.date)}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${formatCurrency(expense.amount)}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${vatPercent.toFixed(2)}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${formatCurrency(totalWithVat)}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${expense.paymentMethod || '—'}</td>
+        <td class="text-right p-4 border-b border-border text-sm">${expense.notes || '—'}</td>
+        <td class="text-center p-4 border-b border-border text-sm">
+          <div class="flex items-center justify-center gap-2">
+            <button type="button" class="btn btn-text" data-expense-action="edit">تعديل</button>
+            <button type="button" class="btn btn-text danger" data-expense-action="delete">حذف</button>
+          </div>
+        </td>
+      </tr>`;
+      })
+      .join('');
+  }
+
+  const emptyState = document.getElementById('expensesEmptyState');
+  if (emptyState) emptyState.classList.toggle('hidden', sorted.length > 0);
+
+  const categorySelect = document.getElementById('filterExpenseCategory');
+  if (categorySelect && categorySelect.value !== (expenseFilters.category || '')) {
+    categorySelect.value = expenseFilters.category || '';
+  }
+  const paymentSelect = document.getElementById('filterPaymentMethod');
+  if (paymentSelect && paymentSelect.value !== (expenseFilters.paymentMethod || '')) {
+    paymentSelect.value = expenseFilters.paymentMethod || '';
+  }
+  const fromInput = document.getElementById('filterDateFrom');
+  if (fromInput && fromInput.value !== (expenseFilters.dateFrom || '')) {
+    fromInput.value = expenseFilters.dateFrom || '';
+  }
+  const toInput = document.getElementById('filterDateTo');
+  if (toInput && toInput.value !== (expenseFilters.dateTo || '')) {
+    toInput.value = expenseFilters.dateTo || '';
+  }
+  const searchInput = document.getElementById('searchExpenses');
+  if (searchInput && searchInput.value !== expenseSearch) {
+    searchInput.value = expenseSearch;
+  }
+
+  renderCombinedAnalyticsUI();
+}
+
+async function renderSubcontracts(projectId) {
+  const subcontracts = await subcontractsStore.all(projectId);
+  unifiedFinancialState.subcontracts = subcontracts;
+  renderSubcontractsUI(projectId);
+}
+
+function translateContractStatus(status) {
+  switch (status) {
+    case 'completed':
+      return 'مكتمل';
+    case 'pending':
+      return 'معلق';
+    case 'cancelled':
+      return 'ملغي';
+    case 'active':
+    default:
+      return 'نشط';
+  }
+}
+
+function renderSubcontractsUI(projectId) {
+  const section = document.getElementById('subcontracts-main');
+  if (!section) return;
+
+  unifiedFinancialState.projectId = projectId;
+  const { subcontracts } = unifiedFinancialState;
+  const { contractor, status, startDate, endDate } = unifiedFinancialState.subcontractFilters;
+  const sortState = unifiedFinancialState.subcontractSort;
+
+  const totals = subcontracts.reduce(
+    (acc, item) => {
+      const value = safeNumber(item.value);
+      const paid = safeNumber(item.paidAmount);
+      acc.count += 1;
+      acc.totalValue += value;
+      acc.paidAmount += paid;
+      acc.remainingAmount += Math.max(0, value - paid);
+      return acc;
+    },
+    { count: 0, totalValue: 0, paidAmount: 0, remainingAmount: 0 }
+  );
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText('subcontractsCount', totals.count.toString());
+  setText('subcontractsTotalValue', formatCurrency(totals.totalValue));
+  setText('subcontractsPaidAmount', formatCurrency(totals.paidAmount));
+  setText('subcontractsRemainingAmount', formatCurrency(totals.remainingAmount));
+
+  const contractorSelect = document.getElementById('filterContractor');
+  if (contractorSelect) {
+    const uniqueContractors = Array.from(
+      new Set(subcontracts.map((item) => item.contractorName).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b, 'ar'));
+    contractorSelect.innerHTML = ['<option value>جميع المقاولين</option>', ...uniqueContractors.map((name) => `<option value="${name}">${name}</option>`)].join('');
+    contractorSelect.value = contractor || '';
+  }
+
+  const statusSelect = document.getElementById('filterContractStatus');
+  if (statusSelect) statusSelect.value = status || '';
+
+  const startInput = document.getElementById('filterContractStartDate');
+  if (startInput && startInput.value !== (startDate || '')) startInput.value = startDate || '';
+  const endInput = document.getElementById('filterContractEndDate');
+  if (endInput && endInput.value !== (endDate || '')) endInput.value = endDate || '';
+
+  let filtered = [...subcontracts];
+  if (contractor) {
+    filtered = filtered.filter((item) => normalizedString(item.contractorName) === normalizedString(contractor));
+  }
+  if (status) {
+    filtered = filtered.filter((item) => item.status === status);
+  }
+  const startBoundary = parseDateValue(startDate);
+  const endBoundary = parseDateValue(endDate);
+  if (startBoundary) {
+    filtered = filtered.filter((item) => {
+      const itemStart = parseDateValue(item.startDate);
+      return !itemStart || itemStart >= startBoundary;
+    });
+  }
+  if (endBoundary) {
+    filtered = filtered.filter((item) => {
+      const itemEnd = parseDateValue(item.endDate || item.startDate);
+      return !itemEnd || itemEnd <= endBoundary;
+    });
+  }
+
+  const valueExtractors = {
+    contractorName: (item) => normalizedString(item.contractorName),
+    contractTitle: (item) => normalizedString(item.contractTitle),
+    value: (item) => safeNumber(item.value),
+    startDate: (item) => parseDateValue(item.startDate)?.getTime() || 0,
+    endDate: (item) => parseDateValue(item.endDate)?.getTime() || 0,
+    paidAmount: (item) => safeNumber(item.paidAmount),
+    remainingAmount: (item) => Math.max(0, safeNumber(item.value) - safeNumber(item.paidAmount)),
+    status: (item) => normalizedString(item.status),
+  };
+
+  const sorted = filtered.sort((a, b) => {
+    const extractor = valueExtractors[sortState.key] || valueExtractors.startDate;
+    const aValue = extractor(a);
+    const bValue = extractor(b);
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      return aValue.localeCompare(bValue, 'ar');
+    }
+    return aValue - bValue;
+  });
+  if (sortState.direction === 'desc') sorted.reverse();
+
+  const tbody = document.getElementById('subcontractsTableBody');
+  if (tbody) {
+    tbody.innerHTML = sorted
+      .map((contract) => {
+        const remaining = Math.max(0, safeNumber(contract.value) - safeNumber(contract.paidAmount));
+        return `
+      <tr data-subcontract-id="${contract.id}">
+        <td class="text-right p-4 border-b border-border text-sm">${contract.contractorName || '—'}</td>
+        <td class="text-right p-4 border-b border-border text-sm">${contract.contractTitle || '—'}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${formatCurrency(contract.value)}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${formatDate(contract.startDate)}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${formatDate(contract.endDate)}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${formatCurrency(contract.paidAmount)}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${formatCurrency(remaining)}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${translateContractStatus(contract.status)}</td>
+        <td class="text-center p-4 border-b border-border text-sm">
+          <div class="flex items-center justify-center gap-2">
+            <button type="button" class="btn btn-text" data-subcontract-action="edit">تعديل</button>
+            <button type="button" class="btn btn-text danger" data-subcontract-action="delete">حذف</button>
+          </div>
+        </td>
+      </tr>`;
+      })
+      .join('');
+  }
+
+  const emptyState = document.getElementById('subcontractsEmptyState');
+  if (emptyState) emptyState.classList.toggle('hidden', sorted.length > 0);
+
+  renderCombinedAnalyticsUI();
+}
+
+function aggregateByMonth(items, dateField, amountField) {
+  const buckets = new Map();
+  items.forEach((item) => {
+    const date = parseDateValue(item[dateField]);
+    if (!date) return;
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    buckets.set(key, (buckets.get(key) || 0) + safeNumber(item[amountField]));
+  });
+  return buckets;
+}
+
+function formatMonthKey(key) {
+  const [year, month] = key.split('-').map((part) => Number(part));
+  const date = new Date(year, month - 1, 1);
+  return date.toLocaleDateString('ar-SA', { month: 'short', year: 'numeric' });
+}
+
+function toQuarterKey(monthKey) {
+  const [year, month] = monthKey.split('-').map((part) => Number(part));
+  const quarter = Math.floor((month - 1) / 3) + 1;
+  return `${year}-Q${quarter}`;
+}
+
+function formatQuarterKey(key) {
+  const [yearPart, quarterPart] = key.split('-Q');
+  const labels = ['الأول', 'الثاني', 'الثالث', 'الرابع'];
+  const quarterIndex = Number(quarterPart) - 1;
+  const quarterLabel = labels[quarterIndex] || quarterPart;
+  return `الربع ${quarterLabel} ${yearPart}`;
+}
+
+function buildTimelineSeries(view, monthlyExpenses, monthlyContracts) {
+  if (view === 'quarterly') {
+    const expenseBuckets = new Map();
+    monthlyExpenses.forEach((value, key) => {
+      const quarterKey = toQuarterKey(key);
+      expenseBuckets.set(quarterKey, (expenseBuckets.get(quarterKey) || 0) + value);
+    });
+    const contractBuckets = new Map();
+    monthlyContracts.forEach((value, key) => {
+      const quarterKey = toQuarterKey(key);
+      contractBuckets.set(quarterKey, (contractBuckets.get(quarterKey) || 0) + value);
+    });
+    const keys = Array.from(new Set([...expenseBuckets.keys(), ...contractBuckets.keys()])).sort();
+    const limited = keys.slice(-4);
+    return {
+      labels: limited.map((key) => formatQuarterKey(key)),
+      expenses: limited.map((key) => expenseBuckets.get(key) || 0),
+      contracts: limited.map((key) => contractBuckets.get(key) || 0),
+    };
+  }
+
+  const keys = Array.from(new Set([...monthlyExpenses.keys(), ...monthlyContracts.keys()])).sort();
+  const limited = keys.slice(-6);
+  return {
+    labels: limited.map((key) => formatMonthKey(key)),
+    expenses: limited.map((key) => monthlyExpenses.get(key) || 0),
+    contracts: limited.map((key) => monthlyContracts.get(key) || 0),
+  };
+}
+
+function ensureChartInstance(chartKey, canvasId, configFactory) {
+  if (typeof Chart === 'undefined') return;
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const context = canvas.getContext('2d');
+  if (!context) return;
+  const config = typeof configFactory === 'function' ? configFactory(context) : configFactory;
+  if (!config) return;
+  if (unifiedFinancialState.charts[chartKey]) {
+    unifiedFinancialState.charts[chartKey].destroy();
+  }
+  unifiedFinancialState.charts[chartKey] = new Chart(context, config);
+}
+
+function updateMonthlyComparisonChart(labels, expensesData, contractsData) {
+  ensureChartInstance('monthlyComparison', 'monthlyComparisonChart', () => ({
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'المصاريف',
+          data: expensesData,
+          backgroundColor: 'rgba(239, 68, 68, 0.7)',
+          borderRadius: 8,
+        },
+        {
+          label: 'عقود الباطن',
+          data: contractsData,
+          backgroundColor: 'rgba(59, 130, 246, 0.7)',
+          borderRadius: 8,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { family: 'Tajawal, sans-serif' } },
+        },
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: '#f1f5f9' } },
+      },
+    },
+  }));
+}
+
+function updateExpenseVsContractsChart(expenseTotal, contractTotal) {
+  ensureChartInstance('expenseVsContracts', 'expenseVsContractsPieChart', () => ({
+    type: 'doughnut',
+    data: {
+      labels: ['المصاريف', 'عقود الباطن'],
+      datasets: [
+        {
+          data: [expenseTotal, contractTotal],
+          backgroundColor: ['rgba(239, 68, 68, 0.8)', 'rgba(59, 130, 246, 0.8)'],
+          borderWidth: 0,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { family: 'Tajawal, sans-serif' } },
+        },
+      },
+    },
+  }));
+}
+
+function updateTimelineChart(labels, expensesData, contractsData) {
+  ensureChartInstance('timeline', 'timelineChart', () => ({
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'المصاريف',
+          data: expensesData,
+          borderColor: 'rgba(239, 68, 68, 1)',
+          backgroundColor: 'rgba(239, 68, 68, 0.15)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 3,
+        },
+        {
+          label: 'عقود الباطن',
+          data: contractsData,
+          borderColor: 'rgba(59, 130, 246, 1)',
+          backgroundColor: 'rgba(59, 130, 246, 0.15)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 3,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { family: 'Tajawal, sans-serif' } },
+        },
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: '#f1f5f9' } },
+      },
+    },
+  }));
+}
+
+function renderCombinedAnalyticsUI() {
+  const analyticsSection = document.getElementById('combined-analytics');
+  if (!analyticsSection) return;
+
+  const expenses = unifiedFinancialState.expenses.filter((item) => item.type !== 'revenue');
+  const subcontracts = unifiedFinancialState.subcontracts;
+
+  const expensesTotal = expenses.reduce((sum, item) => sum + safeNumber(item.amount), 0);
+  const contractsTotal = subcontracts.reduce((sum, item) => sum + safeNumber(item.value), 0);
+  const contractsPaid = subcontracts.reduce((sum, item) => sum + safeNumber(item.paidAmount), 0);
+  const ratioValue = expensesTotal ? (contractsTotal / expensesTotal) * 100 : 0;
+  const totalSpend = expensesTotal + contractsPaid;
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText('combinedExpensesTotal', formatCurrency(expensesTotal));
+  setText('combinedContractsTotal', formatCurrency(contractsTotal));
+  setText('combinedRatio', formatPercent(ratioValue));
+  setText('combinedTotalSpend', formatCurrency(totalSpend));
+
+  const monthlyExpenses = aggregateByMonth(expenses, 'date', 'amount');
+  const monthlyContracts = aggregateByMonth(subcontracts, 'startDate', 'value');
+  const monthKeys = Array.from(new Set([...monthlyExpenses.keys(), ...monthlyContracts.keys()])).sort();
+  const limitedMonthKeys = monthKeys.slice(-6);
+  const monthlyLabels = limitedMonthKeys.map((key) => formatMonthKey(key));
+  const monthlyExpenseSeries = limitedMonthKeys.map((key) => monthlyExpenses.get(key) || 0);
+  const monthlyContractSeries = limitedMonthKeys.map((key) => monthlyContracts.get(key) || 0);
+
+  updateMonthlyComparisonChart(monthlyLabels, monthlyExpenseSeries, monthlyContractSeries);
+  updateExpenseVsContractsChart(expensesTotal, contractsTotal);
+
+  const timeline = buildTimelineSeries(unifiedFinancialState.timelineView, monthlyExpenses, monthlyContracts);
+  updateTimelineChart(timeline.labels, timeline.expenses, timeline.contracts);
 }
 
 async function renderPayments(projectId) {
@@ -1300,31 +1835,191 @@ function bindPhaseActions(projectId) {
 }
 
 function bindExpensesActions(projectId) {
-  const container = document.querySelector('[data-expenses-list]');
-  if (!container || container.dataset.bound) return;
-  container.dataset.bound = 'true';
-  container.addEventListener('click', async (event) => {
-    const actionButton = event.target.closest('button[data-action]');
-    if (!actionButton) return;
-    const row = actionButton.closest('[data-expense-id]');
-    if (!row) return;
-    const { action } = actionButton.dataset;
-    const expenseId = row.dataset.expenseId;
+  const legacyContainer = document.querySelector('[data-expenses-list]');
+  if (legacyContainer && !legacyContainer.dataset.bound) {
+    legacyContainer.dataset.bound = 'true';
+    legacyContainer.addEventListener('click', async (event) => {
+      const actionButton = event.target.closest('button[data-action]');
+      if (!actionButton) return;
+      const row = actionButton.closest('[data-expense-id]');
+      if (!row) return;
+      const { action } = actionButton.dataset;
+      const expenseId = row.dataset.expenseId;
 
-    if (action === 'delete-expense') {
-      if (!confirm('هل ترغب في حذف هذا السجل المالي؟')) return;
-      await expensesStore.remove(projectId, expenseId);
+      if (action === 'delete-expense') {
+        if (!confirm('هل ترغب في حذف هذا السجل المالي؟')) return;
+        await expensesStore.remove(projectId, expenseId);
+      }
+
+      if (action === 'edit-expense') {
+        const expenses = await expensesStore.all(projectId);
+        const current = expenses.find((expense) => expense.id === expenseId);
+        if (!current) return;
+        const newAmount = Number(prompt('قيمة المبلغ', current.amount ?? 0));
+        if (Number.isNaN(newAmount)) return;
+        await expensesStore.update(projectId, expenseId, { amount: newAmount });
+      }
+
+      await renderExpenses(projectId);
+      const totals = await expensesStore.totals(projectId);
+      const payments = await paymentsStore.totals(projectId);
+      await projectStore.updateFinancials(projectId, {
+        expensesTotal: totals.expensesTotal,
+        paymentsTotal: payments.totalPaid,
+        revenue: totals.revenueTotal,
+      });
+      await renderProjectSummary(projectId);
+    });
+  }
+
+  const tableBody = document.getElementById('expensesTableBody');
+  if (tableBody && !tableBody.dataset.bound) {
+    tableBody.dataset.bound = 'true';
+    tableBody.addEventListener('click', async (event) => {
+      const actionButton = event.target.closest('button[data-expense-action]');
+      if (!actionButton) return;
+      const row = actionButton.closest('tr[data-expense-id]');
+      if (!row) return;
+      const expenseId = row.dataset.expenseId;
+      const action = actionButton.dataset.expenseAction;
+
+      if (action === 'delete') {
+        if (!confirm('هل ترغب في حذف هذا السجل المالي؟')) return;
+        await expensesStore.remove(projectId, expenseId);
+        await renderExpenses(projectId);
+        const totals = await expensesStore.totals(projectId);
+        const payments = await paymentsStore.totals(projectId);
+        await projectStore.updateFinancials(projectId, {
+          expensesTotal: totals.expensesTotal,
+          paymentsTotal: payments.totalPaid,
+          revenue: totals.revenueTotal,
+        });
+        await renderProjectSummary(projectId);
+        createToast('تم حذف المصروف', 'success');
+        return;
+      }
+
+      if (action === 'edit') {
+        const expenses = await expensesStore.all(projectId);
+        const current = expenses.find((expense) => expense.id === expenseId);
+        if (!current) return;
+        unifiedFinancialState.editingExpenseId = expenseId;
+        openAddExpenseModal(current);
+      }
+    });
+  }
+
+  const searchInput = document.getElementById('searchExpenses');
+  if (searchInput && !searchInput.dataset.bound) {
+    searchInput.dataset.bound = 'true';
+    searchInput.addEventListener('input', (event) => {
+      unifiedFinancialState.expenseSearch = event.target.value.trim();
+      renderUnifiedExpensesUI(projectId);
+    });
+  }
+}
+
+function bindSubcontractActions(projectId) {
+  const tableBody = document.getElementById('subcontractsTableBody');
+  if (tableBody && !tableBody.dataset.bound) {
+    tableBody.dataset.bound = 'true';
+    tableBody.addEventListener('click', async (event) => {
+      const actionButton = event.target.closest('button[data-subcontract-action]');
+      if (!actionButton) return;
+      const row = actionButton.closest('tr[data-subcontract-id]');
+      if (!row) return;
+      const subcontractId = row.dataset.subcontractId;
+      const action = actionButton.dataset.subcontractAction;
+
+      if (action === 'delete') {
+        if (!confirm('هل ترغب في حذف عقد الباطن هذا؟')) return;
+        await subcontractsStore.remove(projectId, subcontractId);
+        await renderSubcontracts(projectId);
+        createToast('تم حذف عقد الباطن', 'success');
+        return;
+      }
+
+      if (action === 'edit') {
+        const contracts = await subcontractsStore.all(projectId);
+        const current = contracts.find((contract) => contract.id === subcontractId);
+        if (!current) return;
+        unifiedFinancialState.editingSubcontractId = subcontractId;
+        openAddSubcontractModal(current);
+      }
+    });
+  }
+}
+
+function showModal(modal) {
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function hideModal(modal) {
+  if (!modal) return;
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
+
+function openAddExpenseModal(expense = null) {
+  const modal = document.getElementById('expenseModal');
+  const form = document.getElementById('expenseModalForm');
+  const titleEl = document.getElementById('expenseModalTitle');
+  if (!modal || !form) return;
+
+  form.reset();
+  unifiedFinancialState.editingExpenseId = expense?.id || null;
+  if (titleEl) titleEl.textContent = expense ? 'تعديل مصروف' : 'إضافة مصروف';
+
+  if (expense) {
+    form.category.value = expense.category || '';
+    form.title.value = expense.title || '';
+    form.date.value = expense.date ? expense.date.slice(0, 10) : '';
+    form.amount.value = safeNumber(expense.amount);
+    form.vatPercent.value = expense.vatPercent ?? '';
+    form.paymentMethod.value = expense.paymentMethod || 'نقدي';
+    form.notes.value = expense.notes || '';
+  }
+
+  showModal(modal);
+}
+
+function closeExpenseModal() {
+  unifiedFinancialState.editingExpenseId = null;
+  const modal = document.getElementById('expenseModal');
+  const form = document.getElementById('expenseModalForm');
+  if (form) form.reset();
+  hideModal(modal);
+}
+
+function bindExpenseModalForm(projectId) {
+  const form = document.getElementById('expenseModalForm');
+  if (!form || form.dataset.bound) return;
+  form.dataset.bound = 'true';
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const payload = {
+      category: formData.get('category')?.toString().trim() || 'عام',
+      title: formData.get('title')?.toString().trim() || 'مصروف',
+      date: formData.get('date'),
+      amount: safeNumber(formData.get('amount')), 
+      vatPercent: safeNumber(formData.get('vatPercent')), 
+      paymentMethod: formData.get('paymentMethod')?.toString().trim() || 'نقدي',
+      notes: formData.get('notes')?.toString().trim() || '',
+      type: 'expense',
+    };
+
+    if (unifiedFinancialState.editingExpenseId) {
+      await expensesStore.update(projectId, unifiedFinancialState.editingExpenseId, payload);
+      createToast('تم تحديث المصروف بنجاح', 'success');
+    } else {
+      await expensesStore.create(projectId, payload);
+      createToast('تمت إضافة المصروف بنجاح', 'success');
     }
 
-    if (action === 'edit-expense') {
-      const expenses = await expensesStore.all(projectId);
-      const current = expenses.find((expense) => expense.id === expenseId);
-      if (!current) return;
-      const newAmount = Number(prompt('قيمة المبلغ', current.amount ?? 0));
-      if (Number.isNaN(newAmount)) return;
-      await expensesStore.update(projectId, expenseId, { amount: newAmount });
-    }
-
+    closeExpenseModal();
     await renderExpenses(projectId);
     const totals = await expensesStore.totals(projectId);
     const payments = await paymentsStore.totals(projectId);
@@ -1335,6 +2030,202 @@ function bindExpensesActions(projectId) {
     });
     await renderProjectSummary(projectId);
   });
+}
+
+function openAddSubcontractModal(contract = null) {
+  const modal = document.getElementById('subcontractModal');
+  const form = document.getElementById('subcontractModalForm');
+  const titleEl = document.getElementById('subcontractModalTitle');
+  if (!modal || !form) return;
+
+  form.reset();
+  unifiedFinancialState.editingSubcontractId = contract?.id || null;
+  if (titleEl) titleEl.textContent = contract ? 'تعديل عقد باطن' : 'إضافة عقد باطن';
+
+  if (contract) {
+    form.contractorName.value = contract.contractorName || '';
+    form.contractTitle.value = contract.contractTitle || '';
+    form.startDate.value = contract.startDate ? contract.startDate.slice(0, 10) : '';
+    form.endDate.value = contract.endDate ? contract.endDate.slice(0, 10) : '';
+    form.value.value = safeNumber(contract.value);
+    form.paidAmount.value = safeNumber(contract.paidAmount);
+    form.status.value = contract.status || 'active';
+    form.notes.value = contract.notes || '';
+  }
+
+  showModal(modal);
+}
+
+function closeSubcontractModal() {
+  unifiedFinancialState.editingSubcontractId = null;
+  const modal = document.getElementById('subcontractModal');
+  const form = document.getElementById('subcontractModalForm');
+  if (form) form.reset();
+  hideModal(modal);
+}
+
+function bindSubcontractModalForm(projectId) {
+  const form = document.getElementById('subcontractModalForm');
+  if (!form || form.dataset.bound) return;
+  form.dataset.bound = 'true';
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const payload = {
+      contractorName: formData.get('contractorName')?.toString().trim() || '',
+      contractTitle: formData.get('contractTitle')?.toString().trim() || '',
+      startDate: formData.get('startDate'),
+      endDate: formData.get('endDate') || '',
+      value: safeNumber(formData.get('value')),
+      paidAmount: safeNumber(formData.get('paidAmount')),
+      status: formData.get('status')?.toString() || 'active',
+      notes: formData.get('notes')?.toString().trim() || '',
+    };
+
+    if (unifiedFinancialState.editingSubcontractId) {
+      await subcontractsStore.update(projectId, unifiedFinancialState.editingSubcontractId, payload);
+      createToast('تم تحديث عقد الباطن', 'success');
+    } else {
+      await subcontractsStore.create(projectId, payload);
+      createToast('تم إنشاء عقد الباطن', 'success');
+    }
+
+    closeSubcontractModal();
+    await renderSubcontracts(projectId);
+  });
+}
+
+function applyExpenseFilters() {
+  const category = document.getElementById('filterExpenseCategory')?.value || '';
+  const paymentMethod = document.getElementById('filterPaymentMethod')?.value || '';
+  const dateFrom = document.getElementById('filterDateFrom')?.value || '';
+  const dateTo = document.getElementById('filterDateTo')?.value || '';
+  unifiedFinancialState.expenseFilters = { category, paymentMethod, dateFrom, dateTo };
+  renderUnifiedExpensesUI(unifiedFinancialState.projectId);
+}
+
+function clearExpenseFilters() {
+  unifiedFinancialState.expenseFilters = { category: '', paymentMethod: '', dateFrom: '', dateTo: '' };
+  const category = document.getElementById('filterExpenseCategory');
+  const payment = document.getElementById('filterPaymentMethod');
+  const dateFrom = document.getElementById('filterDateFrom');
+  const dateTo = document.getElementById('filterDateTo');
+  if (category) category.value = '';
+  if (payment) payment.value = '';
+  if (dateFrom) dateFrom.value = '';
+  if (dateTo) dateTo.value = '';
+  renderUnifiedExpensesUI(unifiedFinancialState.projectId);
+}
+
+function sortExpenseTable(key) {
+  if (unifiedFinancialState.expenseSort.key === key) {
+    unifiedFinancialState.expenseSort.direction = unifiedFinancialState.expenseSort.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    unifiedFinancialState.expenseSort.key = key;
+    unifiedFinancialState.expenseSort.direction = 'asc';
+  }
+  renderUnifiedExpensesUI(unifiedFinancialState.projectId);
+}
+
+function applySubcontractFilters() {
+  const contractor = document.getElementById('filterContractor')?.value || '';
+  const status = document.getElementById('filterContractStatus')?.value || '';
+  const startDate = document.getElementById('filterContractStartDate')?.value || '';
+  const endDate = document.getElementById('filterContractEndDate')?.value || '';
+  unifiedFinancialState.subcontractFilters = { contractor, status, startDate, endDate };
+  renderSubcontractsUI(unifiedFinancialState.projectId);
+}
+
+function clearSubcontractFilters() {
+  unifiedFinancialState.subcontractFilters = { contractor: '', status: '', startDate: '', endDate: '' };
+  const contractor = document.getElementById('filterContractor');
+  const status = document.getElementById('filterContractStatus');
+  const startDate = document.getElementById('filterContractStartDate');
+  const endDate = document.getElementById('filterContractEndDate');
+  if (contractor) contractor.value = '';
+  if (status) status.value = '';
+  if (startDate) startDate.value = '';
+  if (endDate) endDate.value = '';
+  renderSubcontractsUI(unifiedFinancialState.projectId);
+}
+
+function sortSubcontractTable(key) {
+  if (unifiedFinancialState.subcontractSort.key === key) {
+    unifiedFinancialState.subcontractSort.direction =
+      unifiedFinancialState.subcontractSort.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    unifiedFinancialState.subcontractSort.key = key;
+    unifiedFinancialState.subcontractSort.direction = 'asc';
+  }
+  renderSubcontractsUI(unifiedFinancialState.projectId);
+}
+
+function switchUnifiedSubTab(subtabId) {
+  const section = document.getElementById('expenses-contracts-section');
+  if (!section) return;
+  section.querySelectorAll('.unified-subtab-content').forEach((content) => {
+    content.classList.toggle('hidden', content.id !== subtabId);
+  });
+  section.querySelectorAll('.unified-subtab-button').forEach((button) => {
+    const isActive = button.dataset.subtab === subtabId;
+    button.classList.toggle('active', isActive);
+    if (isActive) {
+      button.classList.add('border-primary', 'text-primary');
+      button.classList.remove('border-transparent', 'text-text-secondary');
+    } else {
+      button.classList.remove('border-primary', 'text-primary');
+      button.classList.add('border-transparent', 'text-text-secondary');
+    }
+  });
+}
+
+function switchTimelineView(view) {
+  unifiedFinancialState.timelineView = view;
+  renderCombinedAnalyticsUI();
+}
+
+function exportUnifiedData() {
+  const projectId = unifiedFinancialState.projectId || 'project';
+  const expenses = unifiedFinancialState.expenses.filter((item) => item.type !== 'revenue');
+  const subcontracts = unifiedFinancialState.subcontracts;
+  if (!expenses.length && !subcontracts.length) {
+    createToast('لا توجد بيانات للتصدير حالياً', 'warning');
+    return;
+  }
+
+  const rows = [
+    ['نوع السجل', 'التاريخ', 'البيان', 'القيمة', 'وسيلة الدفع / الحالة', 'ملاحظات'],
+    ...expenses.map((expense) => [
+      'مصروف',
+      formatDate(expense.date),
+      expense.title || expense.category || 'مصروف',
+      formatCurrency(expense.amount),
+      expense.paymentMethod || '—',
+      expense.notes || '',
+    ]),
+    ...subcontracts.map((contract) => [
+      'عقد باطن',
+      formatDate(contract.startDate),
+      contract.contractTitle || contract.contractorName || 'عقد',
+      formatCurrency(contract.value),
+      translateContractStatus(contract.status),
+      contract.notes || '',
+    ]),
+  ];
+
+  const csvContent = rows
+    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${projectId}-financial-export.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  createToast('تم تصدير البيانات بنجاح', 'success');
 }
 
 function bindPaymentsActions(projectId) {
@@ -1529,8 +2420,11 @@ async function setupExpensesPage() {
   configureProjectNavigation(projectId, 'expenses');
   await renderProjectSummary(projectId);
   await renderExpenses(projectId);
-  handleExpensesForm(projectId);
+  await renderSubcontracts(projectId);
   bindExpensesActions(projectId);
+  bindSubcontractActions(projectId);
+  bindExpenseModalForm(projectId);
+  bindSubcontractModalForm(projectId);
 }
 
 async function setupPaymentsPage() {
@@ -1574,6 +2468,22 @@ const pageInitializers = {
 if (pageInitializers[page]) {
   pageInitializers[page]();
 }
+
+Object.assign(window, {
+  openAddExpenseModal,
+  closeExpenseModal,
+  openAddSubcontractModal,
+  closeSubcontractModal,
+  applyExpenseFilters,
+  clearExpenseFilters,
+  sortExpenseTable,
+  applySubcontractFilters,
+  clearSubcontractFilters,
+  sortSubcontractTable,
+  switchUnifiedSubTab,
+  switchTimelineView,
+  exportUnifiedData,
+});
 
 window.contractorpro = window.contractorpro || {};
 window.contractorpro.projectsMain = { renderProjectsGrid };
