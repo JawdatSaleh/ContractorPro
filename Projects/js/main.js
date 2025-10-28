@@ -245,16 +245,36 @@ async function renderProjectSummary(projectId) {
     return;
   }
 
-  document.querySelector('[data-project-name]')?.textContent = project.name;
-  document.querySelector('[data-project-client]')?.textContent = project.clientName;
-  document.querySelector('[data-project-status]')?.innerHTML = projectStatusBadge(project.status);
-  document.querySelector('[data-project-period]')?.textContent = `${formatDate(project.startDate)} - ${formatDate(project.endDate)}`;
-  document.querySelector('[data-project-location]')?.textContent = project.location || '—';
-  document.querySelector('[data-project-manager]')?.textContent = project.manager || '—';
-  document.querySelector('[data-project-contract]')?.textContent = formatCurrency(project.contractValue || project.revenue || 0);
-  document.querySelector('[data-project-expenses]')?.textContent = formatCurrency(project.totalExpenses || 0);
-  document.querySelector('[data-project-profit]')?.textContent = formatCurrency(project.profitability || 0);
-  document.querySelector('[data-project-progress]')?.textContent = formatPercent(project.progress || 0);
+  const nameEl = document.querySelector('[data-project-name]');
+  if (nameEl) nameEl.textContent = project.name;
+
+  const clientEl = document.querySelector('[data-project-client]');
+  if (clientEl) clientEl.textContent = project.clientName;
+
+  const statusEl = document.querySelector('[data-project-status]');
+  if (statusEl) statusEl.innerHTML = projectStatusBadge(project.status);
+
+  const periodEl = document.querySelector('[data-project-period]');
+  if (periodEl) periodEl.textContent = `${formatDate(project.startDate)} - ${formatDate(project.endDate)}`;
+
+  const locationEl = document.querySelector('[data-project-location]');
+  if (locationEl) locationEl.textContent = project.location || '—';
+
+  const managerEl = document.querySelector('[data-project-manager]');
+  if (managerEl) managerEl.textContent = project.manager || '—';
+
+  const contractEl = document.querySelector('[data-project-contract]');
+  if (contractEl) contractEl.textContent = formatCurrency(project.contractValue || project.revenue || 0);
+
+  const expensesEl = document.querySelector('[data-project-expenses]');
+  if (expensesEl) expensesEl.textContent = formatCurrency(project.totalExpenses || 0);
+
+  const profitEl = document.querySelector('[data-project-profit]');
+  if (profitEl) profitEl.textContent = formatCurrency(project.profitability || 0);
+
+  const progressEl = document.querySelector('[data-project-progress]');
+  if (progressEl) progressEl.textContent = formatPercent(project.progress || 0);
+
   const progressBar = document.querySelector('[data-project-progress-bar]');
   if (progressBar) progressBar.style.width = `${project.progress || 0}%`;
 
@@ -291,8 +311,11 @@ async function renderPhases(projectId) {
     : '<div class="empty-state">لا توجد مراحل مسجلة.</div>';
 
   const { totalDuration, overallProgress } = await phasesStore.timeline(projectId);
-  document.querySelector('[data-phases-duration]')?.textContent = `${totalDuration} يوم`;
-  document.querySelector('[data-phases-progress]')?.textContent = formatPercent(overallProgress);
+  const phasesDurationEl = document.querySelector('[data-phases-duration]');
+  if (phasesDurationEl) phasesDurationEl.textContent = `${totalDuration} يوم`;
+
+  const phasesProgressEl = document.querySelector('[data-phases-progress]');
+  if (phasesProgressEl) phasesProgressEl.textContent = formatPercent(overallProgress);
   const timelineBar = document.querySelector('[data-phases-progress-bar]');
   if (timelineBar) timelineBar.style.width = `${overallProgress}%`;
 }
@@ -321,8 +344,11 @@ async function renderExpenses(projectId) {
     : '<div class="empty-state">لا توجد مصاريف حتى الآن.</div>';
 
   const totals = await expensesStore.totals(projectId);
-  document.querySelector('[data-expenses-total]')?.textContent = formatCurrency(totals.expensesTotal);
-  document.querySelector('[data-expenses-revenue]')?.textContent = formatCurrency(totals.revenueTotal);
+  const expensesTotalEl = document.querySelector('[data-expenses-total]');
+  if (expensesTotalEl) expensesTotalEl.textContent = formatCurrency(totals.expensesTotal);
+
+  const expensesRevenueEl = document.querySelector('[data-expenses-revenue]');
+  if (expensesRevenueEl) expensesRevenueEl.textContent = formatCurrency(totals.revenueTotal);
 }
 
 async function renderPayments(projectId) {
@@ -352,9 +378,14 @@ async function renderPayments(projectId) {
     : '<div class="empty-state">لا توجد دفعات مسجلة.</div>';
 
   const totals = await paymentsStore.totals(projectId);
-  document.querySelector('[data-payments-total]')?.textContent = formatCurrency(totals.totalScheduled);
-  document.querySelector('[data-payments-paid]')?.textContent = formatCurrency(totals.totalPaid);
-  document.querySelector('[data-payments-overdue]')?.textContent = totals.overdue;
+  const paymentsTotalEl = document.querySelector('[data-payments-total]');
+  if (paymentsTotalEl) paymentsTotalEl.textContent = formatCurrency(totals.totalScheduled);
+
+  const paymentsPaidEl = document.querySelector('[data-payments-paid]');
+  if (paymentsPaidEl) paymentsPaidEl.textContent = formatCurrency(totals.totalPaid);
+
+  const paymentsOverdueEl = document.querySelector('[data-payments-overdue]');
+  if (paymentsOverdueEl) paymentsOverdueEl.textContent = totals.overdue;
   const paymentsCountEl = document.querySelector('[data-payments-count]');
   if (paymentsCountEl) paymentsCountEl.textContent = totals.count;
 }
@@ -394,8 +425,11 @@ async function renderReports(projectId) {
   list.querySelectorAll('img[data-src]').forEach((img) => observer.observe(img));
 
   const weekly = await reportsStore.weeklyProgress(projectId);
-  document.querySelector('[data-reports-count]')?.textContent = weekly.reportsCount;
-  document.querySelector('[data-reports-weekly-progress]')?.textContent = formatPercent(weekly.progressAverage);
+  const reportsCountEl = document.querySelector('[data-reports-count]');
+  if (reportsCountEl) reportsCountEl.textContent = weekly.reportsCount;
+
+  const reportsWeeklyEl = document.querySelector('[data-reports-weekly-progress]');
+  if (reportsWeeklyEl) reportsWeeklyEl.textContent = formatPercent(weekly.progressAverage);
 }
 
 function bindPhaseActions(projectId) {
