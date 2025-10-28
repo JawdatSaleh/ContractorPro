@@ -3,34 +3,94 @@
     {
       "id": "payment-001",
       "projectId": "project-001",
+      "paymentNumber": "INV-001-2024",
       "title": "دفعة مقدمة",
+      "party": "صالح الغامدي",
+      "type": "incoming",
       "amount": 750000,
       "dueDate": "2024-01-05",
-      "status": "paid"
+      "status": "paid",
+      "paymentMethod": "تحويل بنكي",
+      "attachmentUrl": "https://files.contractorpro.app/invoices/inv-001-2024.pdf",
+      "notes": "تم التحصيل مع خصم 5% ضمان." 
     },
     {
       "id": "payment-002",
       "projectId": "project-001",
+      "paymentNumber": "INV-002-2024",
       "title": "دفعة المرحلة الثانية",
+      "party": "صالح الغامدي",
+      "type": "incoming",
       "amount": 800000,
       "dueDate": "2024-05-15",
-      "status": "scheduled"
+      "status": "scheduled",
+      "paymentMethod": "تحويل بنكي",
+      "notes": "متوقع التحصيل بعد اعتماد الأعمال الخرسانية."
     },
     {
       "id": "payment-003",
       "projectId": "project-002",
+      "paymentNumber": "INV-045-2023",
       "title": "دفعة اعتماد التصاميم",
+      "party": "مجموعة الرعاية الطبية",
+      "type": "incoming",
       "amount": 1200000,
       "dueDate": "2023-10-01",
-      "status": "paid"
+      "status": "paid",
+      "paymentMethod": "شيك مصرفي",
+      "notes": "تم التحصيل بعد تسليم مستندات التصميم النهائية."
     },
     {
       "id": "payment-004",
       "projectId": "project-002",
+      "paymentNumber": "INV-046-2024",
       "title": "دفعة الأعمال الإنشائية",
+      "party": "مجموعة الرعاية الطبية",
+      "type": "incoming",
       "amount": 1650000,
       "dueDate": "2024-04-20",
-      "status": "overdue"
+      "status": "overdue",
+      "paymentMethod": "تحويل بنكي",
+      "notes": "تم إرسال تذكير رسمي للعميل."
+    },
+    {
+      "id": "payment-005",
+      "projectId": "project-003",
+      "paymentNumber": "INV-310-2024",
+      "title": "دفعة التصميم البيئي",
+      "party": "هيئة تطوير العلا",
+      "type": "incoming",
+      "amount": 450000,
+      "dueDate": "2024-03-10",
+      "status": "paid",
+      "paymentMethod": "تحويل بنكي",
+      "attachmentUrl": "https://files.contractorpro.app/invoices/inv-310-2024.pdf"
+    },
+    {
+      "id": "payment-006",
+      "projectId": "project-003",
+      "paymentNumber": "INV-311-2024",
+      "title": "دفعة تجهيزات البنية التحتية",
+      "party": "هيئة تطوير العلا",
+      "type": "incoming",
+      "amount": 550000,
+      "dueDate": "2024-08-05",
+      "status": "scheduled",
+      "paymentMethod": "تحويل بنكي",
+      "notes": "مرتبطة بإنجاز مسار الخدمات الرئيسية."
+    },
+    {
+      "id": "payment-007",
+      "projectId": "project-003",
+      "paymentNumber": "SC-022-2024",
+      "title": "دفعة أعمال الأساسات",
+      "party": "مؤسسة البنى الحديثة",
+      "type": "outgoing",
+      "amount": 320000,
+      "dueDate": "2024-06-18",
+      "status": "overdue",
+      "paymentMethod": "تحويل بنكي",
+      "notes": "مستحق بعد اعتماد الأعمال من الاستشاري."
     }
   ]
 }
