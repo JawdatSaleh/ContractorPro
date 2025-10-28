@@ -30,9 +30,9 @@
       {
         "category": "المشاريع",
         "pages": [
-          { "url": "/pages/projects_management_center.html", "source": "pages/projects_management_center.html", "summary": "مركز إدارة المشاريع مع قوائم وخرائط زمنية" },
+          { "url": "/pages/Projects/projects_management_center.html", "source": "pages/Projects/projects_management_center.html", "summary": "مركز إدارة المشاريع مع قوائم وخرائط زمنية" },
           { "url": "/pages/projects_hub.html", "source": "pages/projects_hub.html", "summary": "مستودع مشاريع بمؤشرات حالة" },
-          { "url": "/pages/project_creation_wizard.html", "source": "pages/project_creation_wizard.html", "summary": "معالج متعدد الخطوات لإنشاء مشروع" }
+          { "url": "/pages/Projects/project_creation_wizard.html", "source": "pages/Projects/project_creation_wizard.html", "summary": "معالج متعدد الخطوات لإنشاء مشروع" }
         ]
       },
       {

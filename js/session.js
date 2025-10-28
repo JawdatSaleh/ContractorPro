@@ -41,7 +41,9 @@ function initializeApplicationLayout() {
         'about.html': 'home',
         'html_implementation_dashboard.html': 'projects',
         'projects_management_center.html': 'projects',
+        'Projects/projects_management_center.html': 'projects',
         'project_creation_wizard.html': 'projects',
+        'Projects/project_creation_wizard.html': 'projects',
         'projects_hub.html': 'projects',
         'advanced_invoice_creation_portal.html': 'finance',
         'advanced_quotation_invoice_designer.html': 'finance',
@@ -129,7 +131,7 @@ function initializeApplicationLayout() {
                     <i class="fas fa-tachometer-alt w-5"></i>
                     <span class="font-medium">الصفحة الرئيسية</span>
                 </a>
-                <a data-nav-link="projects" href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
+                <a data-nav-link="projects" href="Projects/projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition-fast">
                     <i class="fas fa-building w-5"></i>
                     <span>المشاريع</span>
                 </a>
