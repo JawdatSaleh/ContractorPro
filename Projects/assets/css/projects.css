@@ -1,0 +1,296 @@
+:root {
+  --projects-grid-gap: 1.5rem;
+  --projects-panel-width: 420px;
+}
+
+body.projects-module {
+  background: var(--color-background, #f5f6fa);
+}
+
+.projects-module main {
+  padding-bottom: 4rem;
+}
+
+.projects-sticky-actions {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.projects-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: var(--projects-grid-gap);
+}
+
+.projects-summary-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.projects-summary-card::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -32px;
+  inset-block-start: 50%;
+  transform: translateY(-50%);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.16), rgba(59, 130, 246, 0.04));
+  pointer-events: none;
+}
+
+.projects-summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 45px -25px rgba(30, 64, 175, 0.45);
+}
+
+.projects-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.projects-filters .filter-group {
+  min-width: 160px;
+}
+
+.projects-data-grid {
+  display: grid;
+  grid-template-columns: 1fr minmax(var(--projects-panel-width), 28vw);
+  gap: var(--projects-grid-gap);
+  align-items: start;
+}
+
+@media (max-width: 1280px) {
+  .projects-data-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-detail-panel {
+    position: relative;
+    inset: auto;
+    border-radius: 1rem;
+    box-shadow: none;
+  }
+}
+
+.projects-detail-panel {
+  position: sticky;
+  top: 6.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 45px -35px rgba(15, 23, 42, 0.25);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.projects-detail-panel.hidden {
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+}
+
+.projects-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.75rem;
+}
+
+.projects-table thead th {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(15, 23, 42, 0.65);
+  font-weight: 600;
+}
+
+.projects-table tbody tr {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+
+.projects-table tbody tr:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 32px -24px rgba(15, 23, 42, 0.55);
+}
+
+.projects-table tbody tr td {
+  background: #fff;
+  padding: 1rem 1.5rem;
+  border-inline-start: 1px solid rgba(15, 23, 42, 0.06);
+  border-inline-end: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.projects-table tbody tr td:first-child {
+  border-radius: 1rem 0 0 1rem;
+  border-inline-start-width: 2px;
+}
+
+.projects-table tbody tr td:last-child {
+  border-radius: 0 1rem 1rem 0;
+}
+
+.project-progress-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.24);
+}
+
+.project-progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #2563eb, #22d3ee);
+}
+
+.projects-kanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.projects-kanban-column {
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.projects-kanban-column header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.projects-kanban-card {
+  border-radius: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  background: linear-gradient(140deg, rgba(241, 245, 249, 0.95), rgba(248, 250, 252, 0.6));
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.projects-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+}
+
+.projects-tag.success {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+
+.projects-tag.warning {
+  background: rgba(245, 158, 11, 0.18);
+  color: #92400e;
+}
+
+.projects-tag.danger {
+  background: rgba(239, 68, 68, 0.16);
+  color: #b91c1c;
+}
+
+.metric-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+}
+
+.metric-pill.positive {
+  background: rgba(16, 185, 129, 0.16);
+  color: #047857;
+}
+
+.metric-pill.neutral {
+  background: rgba(37, 99, 235, 0.1);
+  color: #1d4ed8;
+}
+
+.metric-pill.negative {
+  background: rgba(239, 68, 68, 0.16);
+  color: #b91c1c;
+}
+
+.projects-timeline {
+  position: relative;
+  padding-inline-start: 1.5rem;
+}
+
+.projects-timeline::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0.6rem;
+  inset-block: 0;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.35), rgba(14, 165, 233, 0.45));
+}
+
+.projects-timeline li {
+  position: relative;
+  padding-inline-start: 1rem;
+  padding-block: 0.75rem 0.75rem;
+}
+
+.projects-timeline li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: -0.9rem;
+  inset-block-start: 0.9rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #2563eb;
+  background: #fff;
+}
+
+.projects-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.projects-detail-actions button {
+  flex: 1;
+  min-width: 120px;
+}
+
+.projects-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.projects-empty-state {
+  border: 2px dashed rgba(148, 163, 184, 0.35);
+  border-radius: 1.25rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.projects-empty-state i {
+  font-size: 2rem;
+  color: rgba(37, 99, 235, 0.55);
+  margin-bottom: 0.75rem;
+}

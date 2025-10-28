@@ -3,2024 +3,284 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>معالج إنشاء المشروع - ContractorPro</title>
+    <title>معالج إنشاء مشروع | ContractorPro</title>
     <link rel="stylesheet" href="../css/main.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-    <style>
-        /* Wizard-specific styles */
-        .step-indicator {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        .step-indicator.active {
-            background: linear-gradient(135deg, #3B82F6, #2563EB);
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-        }
-        
-        .step-indicator.completed {
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: white;
-        }
-        
-        .step-indicator.inactive {
-            background: #F3F4F6;
-            color: #9CA3AF;
-        }
-        
-        .step-line {
-            height: 3px;
-            background: #E5E7EB;
-            transition: all 0.3s ease;
-        }
-        
-        .step-line.completed {
-            background: linear-gradient(90deg, #10B981, #059669);
-        }
-        
-        .wizard-step {
-            opacity: 0;
-            transform: translateX(50px);
-            transition: all 0.4s ease;
-        }
-        
-        .wizard-step.active {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .file-drop-zone {
-            border: 2px dashed #D1D5DB;
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .file-drop-zone.dragover {
-            border-color: #3B82F6;
-            background-color: #EBF8FF;
-            transform: scale(1.02);
-        }
-        
-        .cost-calculator {
-            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
-            border-radius: 16px;
-            padding: 24px;
-        }
-        
-        .timeline-item {
-            position: relative;
-            padding-right: 40px;
-            border-right: 2px solid #E5E7EB;
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 8px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #3B82F6;
-        }
-        
-        .timeline-item:last-child {
-            border-right: none;
-        }
-        
-        .team-member-card {
-            background: #ffffff;
-            border: 2px solid #E5E7EB;
-            border-radius: 12px;
-            padding: 16px;
-            transition: all 0.3s ease;
-        }
-        
-        .team-member-card:hover {
-            border-color: #3B82F6;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .team-member-card.selected {
-            border-color: #10B981;
-            background: #ECFDF5;
-        }
-    </style>
-
-
-<style>
-/* === Fix for large empty space at bottom of project_creation_wizard === */
-.wizard-step {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-}
-.max-w-4xl.mx-auto.px-6.pb-12 {
-    padding-bottom: 1rem !important;
-}
-.bg-surface.rounded-2xl.shadow-xl.border.border-border {
-    margin-bottom: 0 !important;
-}
-footer, .wizard-navigation, .wizard-buttons {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-</style>
-
-
-<style>
-/* ✅ Final fix for large empty space at bottom of project_creation_wizard */
-
-/* Full height normalization */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-/* Wizard container height control */
-.max-w-4xl.mx-auto.px-6.pb-12 {
-  min-height: calc(100vh - 180px) !important;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding-bottom: 0 !important;
-}
-
-/* Step container flexibility */
-.wizard-step.active {
-  flex-grow: 1;
-  padding-bottom: 0 !important;
-  margin-bottom: 0 !important;
-}
-
-/* Prevent extra bottom margin */
-.bg-surface.rounded-2xl.shadow-xl.border.border-border {
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-/* Keep navigation buttons sticky at bottom */
-footer, .wizard-navigation, .wizard-buttons {
-  margin: 0 !important;
-  padding: 0.5rem 1rem !important;
-  position: sticky;
-  bottom: 0;
-  background: white;
-  border-top: 1px solid #E5E7EB;
-  z-index: 50;
-}
-
-/* Prevent horizontal scroll */
-body {
-  overflow-x: hidden;
-}
-</style>
-
-
-<style>
-/* ✅ Critical fix: hide inactive wizard steps to remove empty vertical space */
-.wizard-step { display: none !important; }
-.wizard-step.active { display: block !important; }
-</style>
-
-<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fcontractor7112back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
-<script type="module" src="https://static.rocket.new/rocket-shot.js?v=0.0.1"></script>
+    <link rel="stylesheet" href="../Projects/assets/css/projects.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
 </head>
-<body class="bg-gradient-to-br from-primary-50 via-background to-secondary-50 min-h-screen font-arabic">
-    
-    <!-- Header -->
-    <header class="bg-surface shadow-lg border-b border-border sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <!-- Logo and Title -->
-                <div class="flex items-center gap-4">
-                    <button onclick="goBack()" class="p-2 hover:bg-secondary-100 rounded-lg transition-all">
-                        <i class="fas fa-arrow-right text-text-secondary text-xl"></i>
-                    </button>
-                    <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-                        <i class="fas fa-magic text-white text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-text-primary">معالج إنشاء المشروع</h1>
-                        <p class="text-sm text-text-secondary">تكوين مشروع جديد خطوة بخطوة</p>
-                    </div>
+<body class="bg-background font-arabic projects-module">
+    <aside class="fixed right-0 top-0 h-full w-64 bg-surface shadow-modal z-40 border-l border-border">
+        <div class="p-6 border-b border-border">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fas fa-hard-hat text-white text-lg"></i>
                 </div>
-                
-                <!-- Progress Info -->
-                <div class="text-left">
-                    <div class="text-2xl font-bold text-primary" id="progressPercentage">0%</div>
-                    <div class="text-sm text-text-secondary">مكتمل</div>
+                <div>
+                    <h1 class="text-xl font-bold text-text-primary">ContractorPro</h1>
+                    <p class="text-xs text-text-secondary">نظام إنشاء المشاريع المتكامل</p>
                 </div>
             </div>
         </div>
-    </header>
-    
-    <!-- Wizard Progress Indicator -->
-    <div class="max-w-6xl mx-auto px-6 py-8">
-        <div class="flex items-center justify-center space-x-12" id="wizardProgress">
-            <!-- Step 1: Project Information -->
-            <div class="text-center">
-                <div class="step-indicator active" data-step="1">
-                    <i class="fas fa-info-circle"></i>
-                </div>
-                <div class="mt-3 text-sm font-medium text-text-primary">معلومات أساسية</div>
+        <nav class="p-4 space-y-1 text-sm">
+            <a href="projects_management_center.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-text-secondary hover:bg-secondary-100 transition">
+                <i class="fas fa-arrow-right"></i>
+                <span class="font-medium">العودة لمركز المشاريع</span>
+            </a>
+            <div class="px-4 py-3 rounded-lg bg-primary-50 text-primary border-r-4 border-primary">
+                <div class="text-xs text-text-secondary">المعالج الحالي</div>
+                <div class="text-sm font-semibold">إنشاء مشروع جديد</div>
             </div>
-            
-            <div class="step-line w-20" id="line1"></div>
-            
-            <!-- Step 2: Client Information -->
-            <div class="text-center">
-                <div class="step-indicator inactive" data-step="2">
-                    <i class="fas fa-user-tie"></i>
+        </nav>
+    </aside>
+
+    <div class="mr-64 min-h-screen">
+        <header class="projects-sticky-actions px-8 py-6 shadow-card border-b border-border">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-text-primary">معالج إنشاء مشروع جديد</h1>
+                    <p class="text-text-secondary text-sm">أدخل بيانات المشروع بدقة لإتاحته داخل منظومة ContractorPro وربط الفرق، الميزانية، والجدول الزمني.</p>
                 </div>
-                <div class="mt-3 text-sm font-medium text-text-secondary">بيانات العميل</div>
+                <div class="flex items-center gap-3 text-xs text-text-secondary">
+                    <div class="flex items-center gap-2 bg-success-50 text-success px-3 py-2 rounded-lg border border-success-200">
+                        <i class="fas fa-shield-check"></i>
+                        <span>نحفظ عملك تلقائياً في المتصفح</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-secondary-50 px-3 py-2 rounded-lg border border-secondary-100">
+                        <i class="fas fa-sparkles text-secondary"></i>
+                        <span>بناء هوية المشروع يتم تلقائياً</span>
+                    </div>
+                </div>
             </div>
-            
-            <div class="step-line w-20" id="line2"></div>
-            
-            <!-- Step 3: Project Specifications -->
-            <div class="text-center">
-                <div class="step-indicator inactive" data-step="3">
-                    <i class="fas fa-drafting-compass"></i>
-                </div>
-                <div class="mt-3 text-sm font-medium text-text-secondary">مواصفات المشروع</div>
-            </div>
-            
-            <div class="step-line w-20" id="line3"></div>
-            
-            <!-- Step 4: Timeline & Budget -->
-            <div class="text-center">
-                <div class="step-indicator inactive" data-step="4">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <div class="mt-3 text-sm font-medium text-text-secondary">الجدول الزمني والميزانية</div>
-            </div>
-            
-            <div class="step-line w-20" id="line4"></div>
-            
-            <!-- Step 5: Team Assignment -->
-            <div class="text-center">
-                <div class="step-indicator inactive" data-step="5">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="mt-3 text-sm font-medium text-text-secondary">الفريق والموارد</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Wizard Content -->
-    <div class="max-w-4xl mx-auto px-6 pb-12">
-        <div class="bg-surface rounded-2xl shadow-xl border border-border">
-            
-            <!-- Step 1: Basic Project Information -->
-            <div id="step1" class="wizard-step active p-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-text-primary mb-3">معلومات المشروع الأساسية</h2>
-                    <p class="text-text-secondary text-lg">ابدأ بإدخال المعلومات الأساسية للمشروع الجديد</p>
-                </div>
-                
-                <form class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Project Name -->
-                        <div>
-                            <label class="block text-sm font-medium text-text-primary mb-2">
-                                <i class="fas fa-building ml-2 text-primary"></i>اسم المشروع
-                            </label>
-                            <input type="text" id="projectName" required class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="مثال: فيلا الرياض الحديثة" />
-                        </div>
-                        
-                        <!-- Project Type -->
-                        <div>
-                            <label class="block text-sm font-medium text-text-primary mb-2">
-                                <i class="fas fa-layer-group ml-2 text-primary"></i>نوع المشروع
-                            </label>
-                            <select id="projectType" required class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
-                                <option value>اختر نوع المشروع</option>
-                                <option value="residential_villa">فيلا سكنية</option>
-                                <option value="residential_complex">مجمع سكني</option>
-                                <option value="commercial">مبنى تجاري</option>
-                                <option value="industrial">مبنى صناعي</option>
-                                <option value="infrastructure">مشروع بنية تحتية</option>
-                                <option value="renovation">تجديد وترميم</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <!-- Project Description -->
-                    <div>
-                        <label class="block text-sm font-medium text-text-primary mb-2">
-                            <i class="fas fa-align-left ml-2 text-primary"></i>وصف المشروع
-                        </label>
-                        <textarea id="projectDescription" rows="4" required class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="وصف تفصيلي للمشروع، الأهداف، والمتطلبات الخاصة..."></textarea>
-                    </div>
-                    
-                    <!-- Location -->
-                    <div>
-                        <label class="block text-sm font-medium text-text-primary mb-2">
-                            <i class="fas fa-map-marker-alt ml-2 text-primary"></i>موقع المشروع
-                        </label>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <select id="projectCity" required class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
-                                <option value>المدينة</option>
-                                <option value="riyadh">الرياض</option>
-                                <option value="jeddah">جدة</option>
-                                <option value="dammam">الدمام</option>
-                                <option value="mecca">مكة المكرمة</option>
-                                <option value="medina">المدينة المنورة</option>
-                                <option value="khobar">الخبر</option>
-                                <option value="tabuk">تبوك</option>
-                                <option value="abha">أبها</option>
-                            </select>
-                            
-                            <input type="text" id="projectDistrict" class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="الحي" />
-                            
-                            <input type="text" id="projectAddress" class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="العنوان التفصيلي" />
-                        </div>
-                    </div>
-                    
-                    <!-- Project Templates (Optional) -->
-                    <div class="bg-secondary-50 rounded-xl p-6 border border-secondary-200">
-                        <h4 class="font-medium text-text-primary mb-4">
-                            <i class="fas fa-templates ml-2 text-accent"></i>قوالب المشاريع (اختياري)
-                        </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="project-template-card bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('villa', this)">
-                                <div class="text-center">
-                                    <i class="fas fa-home text-primary text-2xl mb-2"></i>
-                                    <h5 class="font-medium text-text-primary">قالب فيلا سكنية</h5>
-                                    <p class="text-sm text-text-secondary">قالب شامل لبناء الفلل</p>
-                                </div>
-                            </div>
-                            
-                            <div class="project-template-card bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('commercial', this)">
-                                <div class="text-center">
-                                    <i class="fas fa-building text-success text-2xl mb-2"></i>
-                                    <h5 class="font-medium text-text-primary">قالب مبنى تجاري</h5>
-                                    <p class="text-sm text-text-secondary">للمباني التجارية والإدارية</p>
-                                </div>
-                            </div>
-                            
-                            <div class="project-template-card bg-white border border-border rounded-lg p-4 cursor-pointer hover:border-primary transition-all" onclick="selectTemplate('custom', this)">
-                                <div class="text-center">
-                                    <i class="fas fa-cog text-warning text-2xl mb-2"></i>
-                                    <h5 class="font-medium text-text-primary">تكوين مخصص</h5>
-                                    <p class="text-sm text-text-secondary">إعداد يدوي للمتطلبات</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            
-            <!-- Step 2: Client Information -->
-            <div id="step2" class="wizard-step p-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-text-primary mb-3">بيانات العميل</h2>
-                    <p class="text-text-secondary text-lg">معلومات العميل وتفاصيل الاتصال</p>
-                </div>
-                
-                <form class="space-y-6">
-                    <!-- Client Database Search -->
-                    <div class="bg-primary-50 rounded-xl p-6 border border-primary-200">
-                        <h4 class="font-medium text-primary mb-4">
-                            <i class="fas fa-database ml-2"></i>البحث في قاعدة العملاء
-                        </h4>
-                        <div class="relative">
-                            <input type="text" id="clientSearch" class="w-full px-4 py-3 pr-10 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="ابحث عن عميل موجود (اسم، رقم الهاتف، الإيميل...)" />
-                            <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
-                        </div>
-                        <div id="clientSuggestions" class="hidden mt-2 bg-white border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto"></div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Client Name -->
-                        <div>
-                            <label class="block text-sm font-medium text-text-primary mb-2">
-                                <i class="fas fa-user ml-2 text-primary"></i>اسم العميل
-                            </label>
-                            <input type="text" id="clientName" required class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="الاسم الكامل للعميل" />
-                        </div>
-                        
-                        <!-- Client Type -->
-                        <div>
-                            <label class="block text-sm font-medium text-text-primary mb-2">
-                                <i class="fas fa-building ml-2 text-primary"></i>نوع العميل
-                            </label>
-                            <select id="clientType" required class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
-                                <option value>اختر نوع العميل</option>
-                                <option value="individual">فردي</option>
-                                <option value="company">شركة</option>
-                                <option value="government">جهة حكومية</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Phone Number -->
-                        <div>
-                            <label class="block text-sm font-medium text-text-primary mb-2">
-                                <i class="fas fa-phone ml-2 text-primary"></i>رقم الهاتف
-                            </label>
-                            <input type="tel" id="clientPhone" required class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="05xxxxxxxx" />
-                        </div>
-                        
-                        <!-- Email -->
-                        <div>
-                            <label class="block text-sm font-medium text-text-primary mb-2">
-                                <i class="fas fa-envelope ml-2 text-primary"></i>البريد الإلكتروني
-                            </label>
-                            <input type="email" id="clientEmail" class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="client@example.com" />
-                        </div>
-                        
-                        <!-- National ID / CR -->
-                        <div>
-                            <label class="block text-sm font-medium text-text-primary mb-2">
-                                <i class="fas fa-id-card ml-2 text-primary"></i>رقم الهوية / السجل التجاري
-                            </label>
-                            <input type="text" id="clientId" required class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="رقم الهوية الوطنية أو السجل التجاري" />
-                        </div>
-                        
-                        <!-- Tax Number (Optional) -->
-                        <div>
-                            <label class="block text-sm font-medium text-text-primary mb-2">
-                                <i class="fas fa-receipt ml-2 text-primary"></i>الرقم الضريبي (اختياري)
-                            </label>
-                            <input type="text" id="clientTaxNumber" class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="الرقم الضريبي" />
-                        </div>
-                    </div>
-                    
-                    <!-- Client Address -->
-                    <div>
-                        <label class="block text-sm font-medium text-text-primary mb-2">
-                            <i class="fas fa-map-marker-alt ml-2 text-primary"></i>عنوان العميل
-                        </label>
-                        <textarea id="clientAddress" rows="3" class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="العنوان الكامل للعميل..."></textarea>
-                    </div>
-                </form>
-            </div>
-            
-            <!-- Step 3: Project Specifications -->
-            <div id="step3" class="wizard-step p-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-text-primary mb-3">مواصفات المشروع</h2>
-                    <p class="text-text-secondary text-lg">التفاصيل التقنية والمواصفات الفنية</p>
-                </div>
-                
-                <form class="space-y-6">
-                    <!-- Project Dimensions -->
-                    <div class="bg-secondary-50 rounded-xl p-6 border border-secondary-200">
-                        <h4 class="font-medium text-text-primary mb-4">
-                            <i class="fas fa-ruler-combined ml-2 text-primary"></i>أبعاد ومساحة المشروع
-                        </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        </header>
+
+        <main class="p-8">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                <section class="xl:col-span-2 bg-surface border border-border rounded-2xl shadow-card p-6 space-y-6">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
                             <div>
-                                <label class="block text-sm font-medium text-text-secondary mb-2">المساحة الإجمالية</label>
-                                <input type="number" id="totalArea" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all" placeholder="بالمتر المربع" />
+                                <h2 class="text-xl font-bold text-text-primary">خطوات المعالج</h2>
+                                <p class="text-xs text-text-secondary">أكمل الخطوات الأربع لإطلاق مشروعك وربطه بكافة الوحدات.</p>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-text-secondary mb-2">المساحة المبنية</label>
-                                <input type="number" id="builtArea" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all" placeholder="بالمتر المربع" />
+                            <button id="resetWizardBtn" class="text-xs text-text-secondary hover:text-danger transition flex items-center gap-2">
+                                <i class="fas fa-rotate-left"></i>
+                                <span>إعادة تعبئة المعالج</span>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-4 gap-3" id="wizardSteps">
+                            <div class="bg-secondary-50 border border-secondary-100 rounded-xl px-3 py-4 text-center step-card" data-step="1">
+                                <div class="text-xs text-text-secondary">الخطوة 1</div>
+                                <div class="text-sm font-semibold text-text-primary">بيانات المشروع</div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-text-secondary mb-2">عدد الطوابق</label>
-                                <input type="number" id="floorsCount" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all" placeholder="عدد" />
+                            <div class="bg-secondary-50 border border-secondary-100 rounded-xl px-3 py-4 text-center step-card" data-step="2">
+                                <div class="text-xs text-text-secondary">الخطوة 2</div>
+                                <div class="text-sm font-semibold text-text-primary">النطاق والجدول</div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-text-secondary mb-2">عدد الوحدات</label>
-                                <input type="number" id="unitsCount" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all" placeholder="عدد" />
+                            <div class="bg-secondary-50 border border-secondary-100 rounded-xl px-3 py-4 text-center step-card" data-step="3">
+                                <div class="text-xs text-text-secondary">الخطوة 3</div>
+                                <div class="text-sm font-semibold text-text-primary">المالية والموارد</div>
+                            </div>
+                            <div class="bg-secondary-50 border border-secondary-100 rounded-xl px-3 py-4 text-center step-card" data-step="4">
+                                <div class="text-xs text-text-secondary">الخطوة 4</div>
+                                <div class="text-sm font-semibold text-text-primary">المراجعة والإطلاق</div>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Construction Materials -->
-                    <div>
-                        <label class="block text-sm font-medium text-text-primary mb-4">
-                            <i class="fas fa-hammer ml-2 text-primary"></i>مواد البناء والمواصفات
-                        </label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-text-secondary mb-2">نوع الأساسات</label>
-                                <select id="foundationType" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all">
-                                    <option value>اختر نوع الأساسات</option>
-                                    <option value="isolated">أساسات منفصلة</option>
-                                    <option value="strip">أساسات شريطية</option>
-                                    <option value="mat">أساسات حصيرة</option>
-                                    <option value="pile">أساسات خوازيق</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-text-secondary mb-2">نوع الهيكل</label>
-                                <select id="structureType" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all">
-                                    <option value>اختر نوع الهيكل</option>
-                                    <option value="concrete">خرسانة مسلحة</option>
-                                    <option value="steel">هيكل معدني</option>
-                                    <option value="mixed">مختلط</option>
-                                    <option value="precast">خرسانة جاهزة</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-text-secondary mb-2">نوع الجدران</label>
-                                <select id="wallType" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all">
-                                    <option value>اختر نوع الجدران</option>
-                                    <option value="block">بلوك أسمنتي</option>
-                                    <option value="brick">طوب أحمر</option>
-                                    <option value="concrete">خرسانة</option>
-                                    <option value="prefab">جدران جاهزة</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-text-secondary mb-2">نوع الأسقف</label>
-                                <select id="roofType" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all">
-                                    <option value>اختر نوع الأسقف</option>
-                                    <option value="flat">سقف مسطح</option>
-                                    <option value="sloped">سقف مائل</option>
-                                    <option value="metal">سقف معدني</option>
-                                    <option value="tiles">قرميد</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- File Upload Section -->
-                    <div>
-                        <label class="block text-sm font-medium text-text-primary mb-4">
-                            <i class="fas fa-file-upload ml-2 text-primary"></i>رفع المستندات والمخططات
-                        </label>
-                        <div class="file-drop-zone" id="fileDropZone" onclick="document.getElementById('fileInput').click()">
-                            <div id="dropZoneContent">
-                                <i class="fas fa-cloud-upload-alt text-primary text-4xl mb-4"></i>
-                                <h4 class="font-medium text-text-primary mb-2">اسحب الملفات هنا أو انقر للرفع</h4>
-                                <p class="text-sm text-text-secondary mb-4">المخططات المعمارية، صور الموقع، المواصفات الفنية</p>
-                                <p class="text-xs text-text-secondary">PDF, JPG, PNG, DWG - حتى 10 ملفات</p>
-                            </div>
-                            <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.dwg" class="hidden" />
-                        </div>
-                        <div id="uploadedFiles" class="mt-4 space-y-2"></div>
-                    </div>
-                    
-                    <!-- Special Requirements -->
-                    <div>
-                        <label class="block text-sm font-medium text-text-primary mb-2">
-                            <i class="fas fa-star ml-2 text-primary"></i>متطلبات خاصة ومواصفات إضافية
-                        </label>
-                        <textarea id="specialRequirements" rows="4" class="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="أي متطلبات خاصة، مواصفات إضافية، أو ملاحظات مهمة..."></textarea>
-                    </div>
-                </form>
-            </div>
-            
-            <!-- Step 4: Timeline & Budget -->
-            <div id="step4" class="wizard-step p-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-text-primary mb-3">الجدول الزمني والميزانية</h2>
-                    <p class="text-text-secondary text-lg">تحديد المدة الزمنية والتكلفة المتوقعة</p>
-                </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Timeline Section -->
-                    <div>
-                        <h4 class="font-medium text-text-primary mb-4">
-                            <i class="fas fa-calendar-alt ml-2 text-primary"></i>الجدول الزمني للمشروع
-                        </h4>
-                        
-                        <div class="space-y-4">
-                            <!-- Project Dates -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-text-secondary mb-2">تاريخ البداية</label>
-                                    <input type="date" id="startDate" required class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all" />
+
+                    <form id="projectWizardForm" class="space-y-6">
+                        <div class="wizard-step" data-step="1">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">اسم المشروع<span class="text-danger">*</span></label>
+                                    <input type="text" name="name" required placeholder="مثال: مركز الخدمات الطبية المتكامل" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-text-secondary mb-2">تاريخ النهاية المتوقع</label>
-                                    <input type="date" id="endDate" required class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all" />
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">اسم العميل<span class="text-danger">*</span></label>
+                                    <input type="text" name="client" required placeholder="اسم الجهة المالكة" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
                                 </div>
-                            </div>
-                            
-                            <!-- Project Duration -->
-                            <div class="bg-secondary-50 rounded-lg p-4">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium text-text-secondary">مدة المشروع المقدرة:</span>
-                                    <span id="projectDuration" class="font-bold text-primary">-- يوم</span>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">القطاع</label>
+                                    <select name="sector" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200">
+                                        <option value="سكني">سكني</option>
+                                        <option value="تجاري">تجاري</option>
+                                        <option value="صحي">صحي</option>
+                                        <option value="تعليمي">تعليمي</option>
+                                        <option value="صناعي">صناعي</option>
+                                        <option value="بنية تحتية">بنية تحتية</option>
+                                    </select>
                                 </div>
-                            </div>
-                            
-                            <!-- Project Phases -->
-                            <div class="mt-6">
-                                <h5 class="font-medium text-text-primary mb-4">مراحل المشروع الرئيسية</h5>
-                                <div class="space-y-4" id="projectPhases">
-                                    <!-- Phase items will be generated dynamically -->
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">موقع المشروع</label>
+                                    <input type="text" name="location" placeholder="المدينة، الحي" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
                                 </div>
-                                <button type="button" onclick="addPhase()" class="mt-4 px-4 py-2 bg-primary-100 text-primary rounded-lg hover:bg-primary-200 transition-all text-sm">
-                                    <i class="fas fa-plus ml-1"></i>إضافة مرحلة جديدة
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Budget Section -->
-                    <div>
-                        <h4 class="font-medium text-text-primary mb-4">
-                            <i class="fas fa-calculator ml-2 text-success"></i>تقدير التكلفة والميزانية
-                        </h4>
-                        
-                        <div class="cost-calculator">
-                            <h5 class="font-medium text-text-primary mb-4">حاسبة التكلفة الذكية</h5>
-                            
-                            <!-- Cost Categories -->
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium">تكلفة المواد:</span>
-                                    <div class="flex items-center gap-2">
-                                        <input type="number" id="materialsCost" class="w-32 px-2 py-1 border border-border rounded text-sm" placeholder="0" />
-                                        <span class="text-sm text-text-secondary">ريال</span>
-                                    </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">مدير المشروع<span class="text-danger">*</span></label>
+                                    <input type="text" name="manager" required placeholder="المسؤول الأول عن التنفيذ" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
                                 </div>
-                                
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium">تكلفة العمالة:</span>
-                                    <div class="flex items-center gap-2">
-                                        <input type="number" id="laborCost" class="w-32 px-2 py-1 border border-border rounded text-sm" placeholder="0" />
-                                        <span class="text-sm text-text-secondary">ريال</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium">تكلفة المعدات:</span>
-                                    <div class="flex items-center gap-2">
-                                        <input type="number" id="equipmentCost" class="w-32 px-2 py-1 border border-border rounded text-sm" placeholder="0" />
-                                        <span class="text-sm text-text-secondary">ريال</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium">تكاليف إضافية:</span>
-                                    <div class="flex items-center gap-2">
-                                        <input type="number" id="additionalCost" class="w-32 px-2 py-1 border border-border rounded text-sm" placeholder="0" />
-                                        <span class="text-sm text-text-secondary">ريال</span>
-                                    </div>
-                                </div>
-                                
-                                <!-- Profit Margin -->
-                                <div class="flex items-center justify-between border-t border-warning-300 pt-4">
-                                    <span class="text-sm font-medium">هامش الربح:</span>
-                                    <div class="flex items-center gap-2">
-                                        <input type="number" id="profitMargin" class="w-20 px-2 py-1 border border-border rounded text-sm" value="15" min="0" max="100" />
-                                        <span class="text-sm text-text-secondary">%</span>
-                                    </div>
-                                </div>
-                                
-                                <!-- Total Cost -->
-                                <div class="bg-white rounded-lg p-4 border-t-4 border-success">
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-bold text-lg text-text-primary">إجمالي التكلفة:</span>
-                                        <span id="totalCost" class="font-bold text-2xl text-success">0 ريال</span>
-                                    </div>
-                                    <div class="flex items-center justify-between mt-2">
-                                        <span class="text-sm text-text-secondary">التكلفة لكل متر مربع:</span>
-                                        <span id="costPerMeter" class="text-sm font-medium text-text-primary">0 ريال/م²</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Cost Templates -->
-                            <div class="mt-6">
-                                <h6 class="text-sm font-medium text-text-primary mb-2">قوالب التكلفة السريعة:</h6>
-                                <div class="flex gap-2 flex-wrap">
-                                    <button type="button" onclick="applyCostTemplate('economy')" class="px-3 py-1 bg-white border border-border rounded text-xs hover:border-primary transition-all">اقتصادي</button>
-                                    <button type="button" onclick="applyCostTemplate('standard')" class="px-3 py-1 bg-white border border-border rounded text-xs hover:border-primary transition-all">قياسي</button>
-                                    <button type="button" onclick="applyCostTemplate('premium')" class="px-3 py-1 bg-white border border-border rounded text-xs hover:border-primary transition-all">فاخر</button>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">نطاق مختصر</label>
+                                    <textarea name="scope" rows="3" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" placeholder="أبرز مخرجات المشروع، عدد المباني، الخدمات الرئيسية"></textarea>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Payment Terms -->
-                        <div class="mt-6">
-                            <h5 class="font-medium text-text-primary mb-4">شروط الدفع</h5>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-text-secondary mb-2">دفعة مقدمة</label>
-                                    <div class="flex items-center gap-2">
-                                        <input type="number" id="advancePayment" class="flex-1 px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all" placeholder="0" min="0" max="100" />
-                                        <span class="text-sm text-text-secondary">%</span>
-                                    </div>
+
+                        <div class="wizard-step hidden" data-step="2">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">تاريخ البدء<span class="text-danger">*</span></label>
+                                    <input type="date" name="startDate" required class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
                                 </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-text-secondary mb-2">عدد الدفعات</label>
-                                    <select id="paymentTerms" class="w-full px-3 py-2 border border-border rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent transition-all">
-                                        <option value>اختر شروط الدفع</option>
-                                        <option value="lumpsum">دفعة واحدة</option>
-                                        <option value="2payments">دفعتان</option>
-                                        <option value="3payments">3 دفعات</option>
-                                        <option value="4payments">4 دفعات</option>
-                                        <option value="monthly">دفع شهري</option>
-                                        <option value="milestone">حسب مراحل الإنجاز</option>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">موعد التسليم المستهدف<span class="text-danger">*</span></label>
+                                    <input type="date" name="plannedCompletion" required class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">مرحلة التنفيذ الحالية</label>
+                                    <select name="stage" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200">
+                                        <option value="إطلاق المشروع">إطلاق المشروع</option>
+                                        <option value="التصميم التنفيذي">التصميم التنفيذي</option>
+                                        <option value="الأعمال الإنشائية">الأعمال الإنشائية</option>
+                                        <option value="الأعمال الميكانيكية والكهربائية">الأعمال الميكانيكية والكهربائية</option>
+                                        <option value="التشطيبات النهائية">التشطيبات النهائية</option>
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">نسبة الإنجاز الحالية</label>
+                                    <input type="number" name="progress" min="0" max="100" value="0" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">حالة المشروع</label>
+                                    <select name="status" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200">
+                                        <option value="planning">قيد التخطيط</option>
+                                        <option value="active">نشط</option>
+                                        <option value="on-hold">معلق</option>
+                                        <option value="closed">منجز</option>
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">مستوى المخاطر</label>
+                                    <select name="riskLevel" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200">
+                                        <option value="medium">متوسط</option>
+                                        <option value="low">منخفض</option>
+                                        <option value="high">مرتفع</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="wizard-step hidden" data-step="3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">قيمة العقد (ر.س)<span class="text-danger">*</span></label>
+                                    <input type="number" name="contractValue" required min="100000" step="1000" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">تكلفة التنفيذ المتوقعة (ر.س)<span class="text-danger">*</span></label>
+                                    <input type="number" name="expectedCost" required min="50000" step="1000" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">القيمة المحجوزة (Retention)</label>
+                                    <input type="number" name="retained" min="0" max="0.2" step="0.01" value="0.1" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">عدد أوامر التغيير</label>
+                                    <input type="number" name="changeOrders" min="0" value="0" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">فِرق العمل الأساسية</label>
+                                    <textarea name="teams" rows="3" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" placeholder="هندسة: ...\nالموقع: ...\nالجودة: ..."></textarea>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="text-xs font-semibold text-text-secondary">الكلمات المفتاحية</label>
+                                    <input type="text" name="tags" placeholder="أدخل كلمات مفصولة بفاصلة" class="bg-surface border border-border rounded-lg px-3 py-2 focus:border-primary focus:ring-2 focus:ring-primary-200" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="wizard-step hidden" data-step="4">
+                            <div class="bg-secondary-50 border border-secondary-100 rounded-2xl p-5 space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-text-primary">مراجعة تفاصيل المشروع</h3>
+                                        <p class="text-xs text-text-secondary">تحقق من جميع البيانات قبل الإطلاق، يمكن تعديلها لاحقاً من مركز المشاريع.</p>
+                                    </div>
+                                </div>
+                                <div id="reviewSummary" class="space-y-3 text-sm text-text-secondary"></div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-border">
+                        <button id="backStepBtn" class="px-4 py-2 rounded-lg border border-border text-text-secondary hover:text-primary transition flex items-center gap-2">
+                            <i class="fas fa-arrow-right"></i>
+                            <span>السابق</span>
+                        </button>
+                        <div class="flex items-center gap-3 text-xs text-text-secondary">
+                            <span>التقدم</span>
+                            <div class="w-32 h-2 bg-secondary-100 rounded-full overflow-hidden">
+                                <span id="wizardProgressBar" class="block h-full bg-primary" style="width: 25%"></span>
+                            </div>
+                            <span id="wizardProgressLabel" class="font-semibold text-text-primary">25%</span>
+                        </div>
+                        <button id="nextStepBtn" class="bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary-600 transition flex items-center gap-2">
+                            <span id="nextStepLabel">التالي</span>
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
                     </div>
-                </div>
-            </div>
-            
-            <!-- Step 5: Team Assignment -->
-            <div id="step5" class="wizard-step p-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-text-primary mb-3">الفريق والموارد</h2>
-                    <p class="text-text-secondary text-lg">اختر أعضاء الفريق والموارد المطلوبة</p>
-                </div>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Team Selection -->
+                </section>
+
+                <aside class="bg-surface border border-border rounded-2xl shadow-card p-6 space-y-6">
                     <div>
-                        <h4 class="font-medium text-text-primary mb-4">
-                            <i class="fas fa-users ml-2 text-primary"></i>تعيين أعضاء الفريق
-                        </h4>
-                        
-                        <!-- Project Manager -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-text-secondary mb-3">مدير المشروع</label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="projectManagers">
-                                <!-- Manager cards will be generated dynamically -->
-                            </div>
+                        <h2 class="text-xl font-bold text-text-primary">بطاقة المشروع المبدئية</h2>
+                        <p class="text-xs text-text-secondary">يتم تحديثها مباشرة أثناء إدخال البيانات.</p>
+                    </div>
+                    <div id="projectPreview" class="space-y-4 text-sm"></div>
+                    <div class="bg-primary-50 border border-primary-100 rounded-xl px-4 py-3 text-xs text-primary">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        <span>استخدم كلمات مفتاحية واضحة لتسهيل البحث والتقارير لاحقاً.</span>
+                    </div>
+                    <div class="space-y-3 text-xs text-text-secondary">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-cloud-arrow-up text-primary"></i>
+                            <span>يتم حفظ آخر نسخة في ذاكرة المتصفح ويمكن استعادتها لاحقاً.</span>
                         </div>
-                        
-                        <!-- Engineers -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-text-secondary mb-3">المهندسون</label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="engineers">
-                                <!-- Engineer cards will be generated dynamically -->
-                            </div>
-                        </div>
-                        
-                        <!-- Supervisors -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-text-secondary mb-3">المشرفون</label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="supervisors">
-                                <!-- Supervisor cards will be generated dynamically -->
-                            </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-shield-halved text-success"></i>
+                            <span>المشروع الجديد يتزامن مباشرة مع مركز الإدارة ويظهر في لوحة المؤشرات.</span>
                         </div>
                     </div>
-                    
-                    <!-- Equipment & Resources -->
-                    <div>
-                        <h4 class="font-medium text-text-primary mb-4">
-                            <i class="fas fa-tools ml-2 text-success"></i>المعدات والموارد
-                        </h4>
-                        
-                        <!-- Equipment Checklist -->
-                        <div class="space-y-4">
-                            <div class="bg-secondary-50 rounded-lg p-4">
-                                <h5 class="font-medium text-text-primary mb-3">المعدات المطلوبة</h5>
-                                <div class="space-y-2" id="equipmentList">
-                                    <!-- Equipment items will be generated dynamically -->
-                                </div>
-                            </div>
-                            
-                            <!-- Materials List -->
-                            <div class="bg-secondary-50 rounded-lg p-4">
-                                <h5 class="font-medium text-text-primary mb-3">المواد الأساسية</h5>
-                                <div class="space-y-2" id="materialsList">
-                                    <!-- Materials items will be generated dynamically -->
-                                </div>
-                            </div>
-                            
-                            <!-- Subcontractors -->
-                            <div class="bg-secondary-50 rounded-lg p-4">
-                                <h5 class="font-medium text-text-primary mb-3">المقاولون من الباطن</h5>
-                                <div class="space-y-3">
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="electricalContractor" class="ml-2" />
-                                        <label for="electricalContractor" class="text-sm">مقاول كهربائي</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="plumbingContractor" class="ml-2" />
-                                        <label for="plumbingContractor" class="text-sm">مقاول سباكة</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="finishingContractor" class="ml-2" />
-                                        <label for="finishingContractor" class="text-sm">مقاول تشطيبات</label>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="tilingContractor" class="ml-2" />
-                                        <label for="tilingContractor" class="text-sm">مقاول بلاط وسيراميك</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Project Summary -->
-                        <div class="mt-6 bg-primary-50 rounded-xl p-6 border border-primary-200">
-                            <h5 class="font-medium text-primary mb-4">
-                                <i class="fas fa-clipboard-list ml-2"></i>ملخص المشروع
-                            </h5>
-                            <div id="projectSummary" class="space-y-2 text-sm">
-                                <!-- Summary will be generated dynamically -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </aside>
             </div>
-            
-            <!-- Navigation Buttons -->
-            <div class="flex items-center justify-between p-8 border-t border-border">
-                <button type="button" id="prevBtn" onclick="previousStep()" class="px-6 py-3 border border-border rounded-xl text-text-secondary hover:bg-secondary-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    <i class="fas fa-arrow-right ml-2"></i>السابق
-                </button>
-                
-                <div class="flex gap-4">
-                    <button type="button" onclick="saveDraft()" class="px-6 py-3 bg-warning-100 text-warning rounded-xl hover:bg-warning-200 transition-all">
-                        <i class="fas fa-save ml-2"></i>حفظ كمسودة
-                    </button>
-                    
-                    <button type="button" id="nextBtn" onclick="nextStep()" class="px-8 py-3 bg-gradient-to-l from-primary to-primary-600 text-white rounded-xl hover:from-primary-600 hover:to-primary-700 transition-all font-medium">
-                        <span id="nextBtnText">التالي</span>
-                        <i class="fas fa-arrow-left mr-2"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
-    
-    <script>
-        // Wizard state management
-        let currentStep = 1;
-        const totalSteps = 5;
-        let projectData = {};
-        let selectedProjectTemplate = null;
-        
-        // Sample data for team members
-        const teamMembers = {
-            managers: [
-                {id: 'mgr1', name: 'أحمد المالك', position: 'مدير مشاريع أول', experience: '15 سنة', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'},
-                {id: 'mgr2', name: 'محمد العبدالله', position: 'مدير مشاريع', experience: '10 سنوات', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100'}
-            ],
-            engineers: [
-                {id: 'eng1', name: 'سعد المطيري', position: 'مهندس مدني', experience: '8 سنوات', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100'},
-                {id: 'eng2', name: 'فهد الخالدي', position: 'مهندس معماري', experience: '6 سنوات', avatar: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=100'}
-            ],
-            supervisors: [
-                {id: 'sup1', name: 'علي الشمراني', position: 'مشرف موقع', experience: '12 سنة', avatar: 'https://images.unsplash.com/photo-1566753323558-f4e0952af115?w=100'},
-                {id: 'sup2', name: 'خالد الزهراني', position: 'مشرف فني', experience: '9 سنوات', avatar: 'https://images.unsplash.com/photo-1503185912284-5271ff81b9a8?w=100'}
-            ]
-        };
-        
-        // Initialize wizard
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeWizard();
-            setupEventListeners();
-            loadTeamMembers();
-            generateEquipmentList();
-            generateDefaultPhases();
-            setupFileUpload();
-        });
-        
-        function initializeWizard() {
-            updateProgressIndicator();
-            updateNavigationButtons();
-            calculateProjectDuration();
-            updateTotalCost();
-        }
-        
-        function setupEventListeners() {
-            // Cost calculation listeners
-            ['materialsCost', 'laborCost', 'equipmentCost', 'additionalCost', 'profitMargin'].forEach(id => {
-                const input = document.getElementById(id);
-                if (input) {
-                    input.addEventListener('input', updateTotalCost);
-                }
-            });
-            
-            // Date calculation listeners
-            const startDateInput = document.getElementById('startDate');
-            const endDateInput = document.getElementById('endDate');
-            if (startDateInput && endDateInput) {
-                startDateInput.addEventListener('change', calculateProjectDuration);
-                endDateInput.addEventListener('change', calculateProjectDuration);
-            }
-            
-            // Client search functionality
-            const clientSearch = document.getElementById('clientSearch');
-            if (clientSearch) {
-                clientSearch.addEventListener('input', handleClientSearch);
-            }
-        }
-        
-        function nextStep() {
-            if (validateCurrentStep()) {
-                if (currentStep < totalSteps) {
-                    saveCurrentStepData();
-                    currentStep++;
-                    showStep(currentStep);
-                } else {
-                    // Final step - create project
-                    createProject();
-                }
-            }
-        }
-        
-        function previousStep() {
-            if (currentStep > 1) {
-                currentStep--;
-                showStep(currentStep);
-            }
-        }
-        
-        function showStep(step) {
-            // Hide all steps
-            for (let i = 1; i <= totalSteps; i++) {
-                const stepElement = document.getElementById(`step${i}`);
-                if (stepElement) {
-                    stepElement.classList.remove('active');
-                }
-            }
-            
-            // Show current step
-            const currentStepElement = document.getElementById(`step${step}`);
-            if (currentStepElement) {
-                currentStepElement.classList.add('active');
-            }
-            
-            updateProgressIndicator();
-            updateNavigationButtons();
-            
-            // Load step-specific data
-            loadStepData(step);
-        }
-        
-        function updateProgressIndicator() {
-            const progress = Math.round((currentStep / totalSteps) * 100);
-            document.getElementById('progressPercentage').textContent = `${progress}%`;
-            
-            // Update step indicators
-            for (let i = 1; i <= totalSteps; i++) {
-                const indicator = document.querySelector(`[data-step="${i}"]`);
-                const line = document.getElementById(`line${i}`);
-                
-                if (indicator) {
-                    indicator.className = 'step-indicator';
-                    if (i < currentStep) {
-                        indicator.classList.add('completed');
-                    } else if (i === currentStep) {
-                        indicator.classList.add('active');
-                    } else {
-                        indicator.classList.add('inactive');
-                    }
-                }
-                
-                if (line && i < currentStep) {
-                    line.classList.add('completed');
-                } else if (line) {
-                    line.classList.remove('completed');
-                }
-            }
-        }
-        
-        function updateNavigationButtons() {
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const nextBtnText = document.getElementById('nextBtnText');
-            
-            if (prevBtn) {
-                prevBtn.disabled = currentStep === 1;
-            }
-            
-            if (nextBtnText) {
-                if (currentStep === totalSteps) {
-                    nextBtnText.textContent = 'إنشاء المشروع';
-                } else {
-                    nextBtnText.textContent = 'التالي';
-                }
-            }
-        }
-        
-        function validateCurrentStep() {
-            const step = currentStep;
-            
-            switch(step) {
-                case 1:
-                    return validateStep1();
-                case 2:
-                    return validateStep2();
-                case 3:
-                    return validateStep3();
-                case 4:
-                    return validateStep4();
-                case 5:
-                    return validateStep5();
-                default:
-                    return true;
-            }
-        }
-        
-        function validateStep1() {
-            const projectName = document.getElementById('projectName').value;
-            const projectType = document.getElementById('projectType').value;
-            const projectDescription = document.getElementById('projectDescription').value;
-            const projectCity = document.getElementById('projectCity').value;
-            
-            if (!projectName || !projectType || !projectDescription || !projectCity) {
-                alert('يرجى ملء جميع الحقول المطلوبة في معلومات المشروع الأساسية.');
-                return false;
-            }
-            
-            return true;
-        }
-        
-        function validateStep2() {
-            const clientName = document.getElementById('clientName').value;
-            const clientType = document.getElementById('clientType').value;
-            const clientPhone = document.getElementById('clientPhone').value;
-            const clientId = document.getElementById('clientId').value;
-            
-            if (!clientName || !clientType || !clientPhone || !clientId) {
-                alert('يرجى ملء جميع الحقول المطلوبة في بيانات العميل.');
-                return false;
-            }
-            
-            // Validate phone number format
-            if (!/^05\d{8}$/.test(clientPhone)) {
-                alert('يرجى إدخال رقم هاتف صحيح (يبدأ بـ 05 ويتكون من 10 أرقام).');
-                return false;
-            }
-            
-            return true;
-        }
-        
-        function validateStep3() {
-            // Step 3 is mostly optional, but we can validate file types if files are uploaded
-            return true;
-        }
-        
-        function validateStep4() {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            
-            if (!startDate || !endDate) {
-                alert('يرجى تحديد تاريخ البداية والنهاية للمشروع.');
-                return false;
-            }
-            
-            if (new Date(startDate) >= new Date(endDate)) {
-                alert('يجب أن يكون تاريخ النهاية بعد تاريخ البداية.');
-                return false;
-            }
-            
-            return true;
-        }
-        
-        function validateStep5() {
-            // Check if at least a project manager is selected
-            const selectedManager = document.querySelector('input[name="projectManager"]:checked');
-            if (!selectedManager) {
-                alert('يرجى تعيين مدير مشروع.');
-                return false;
-            }
-            
-            return true;
-        }
-        
-        function saveCurrentStepData() {
-            switch(currentStep) {
-                case 1:
-                    projectData.name = document.getElementById('projectName').value;
-                    projectData.type = document.getElementById('projectType').value;
-                    projectData.description = document.getElementById('projectDescription').value;
-                    projectData.city = document.getElementById('projectCity').value;
-                    projectData.district = document.getElementById('projectDistrict').value;
-                    projectData.address = document.getElementById('projectAddress').value;
-                    break;
-                
-                case 2:
-                    projectData.client = {
-                        name: document.getElementById('clientName').value,
-                        type: document.getElementById('clientType').value,
-                        phone: document.getElementById('clientPhone').value,
-                        email: document.getElementById('clientEmail').value,
-                        id: document.getElementById('clientId').value,
-                        taxNumber: document.getElementById('clientTaxNumber').value,
-                        address: document.getElementById('clientAddress').value
-                    };
-                    break;
-                
-                case 3:
-                    projectData.specifications = {
-                        totalArea: document.getElementById('totalArea').value,
-                        builtArea: document.getElementById('builtArea').value,
-                        floorsCount: document.getElementById('floorsCount').value,
-                        unitsCount: document.getElementById('unitsCount').value,
-                        foundationType: document.getElementById('foundationType').value,
-                        structureType: document.getElementById('structureType').value,
-                        wallType: document.getElementById('wallType').value,
-                        roofType: document.getElementById('roofType').value,
-                        specialRequirements: document.getElementById('specialRequirements').value
-                    };
-                    break;
-                
-                case 4:
-                    projectData.timeline = {
-                        startDate: document.getElementById('startDate').value,
-                        endDate: document.getElementById('endDate').value,
-                        duration: document.getElementById('projectDuration').textContent
-                    };
-                    projectData.budget = {
-                        materials: parseFloat(document.getElementById('materialsCost').value) || 0,
-                        labor: parseFloat(document.getElementById('laborCost').value) || 0,
-                        equipment: parseFloat(document.getElementById('equipmentCost').value) || 0,
-                        additional: parseFloat(document.getElementById('additionalCost').value) || 0,
-                        profitMargin: parseFloat(document.getElementById('profitMargin').value) || 0,
-                        total: document.getElementById('totalCost').textContent,
-                        advancePayment: parseFloat(document.getElementById('advancePayment').value) || 0,
-                        paymentTerms: document.getElementById('paymentTerms').value
-                    };
-                    break;
-                
-                case 5:
-                    const selectedManager = document.querySelector('input[name="projectManager"]:checked');
-                    const selectedEngineers = Array.from(document.querySelectorAll('input[name="engineers"]:checked')).map(cb => cb.value);
-                    const selectedSupervisors = Array.from(document.querySelectorAll('input[name="supervisors"]:checked')).map(cb => cb.value);
-                    
-                    projectData.team = {
-                        manager: selectedManager ? selectedManager.value : null,
-                        engineers: selectedEngineers,
-                        supervisors: selectedSupervisors
-                    };
-                    break;
-            }
-        }
-        
-        function loadStepData(step) {
-            if (step === 5) {
-                updateProjectSummary();
-            }
-        }
-        
-        function calculateProjectDuration() {
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const durationElement = document.getElementById('projectDuration');
-            
-            if (startDate && endDate) {
-                const start = new Date(startDate);
-                const end = new Date(endDate);
-                const diffTime = Math.abs(end - start);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
-                if (durationElement) {
-                    durationElement.textContent = `${diffDays} يوم`;
-                }
-                
-                // Generate default phases based on duration
-                generateDefaultPhases(diffDays);
-            }
-        }
-        
-        function updateTotalCost() {
-            const materials = parseFloat(document.getElementById('materialsCost').value) || 0;
-            const labor = parseFloat(document.getElementById('laborCost').value) || 0;
-            const equipment = parseFloat(document.getElementById('equipmentCost').value) || 0;
-            const additional = parseFloat(document.getElementById('additionalCost').value) || 0;
-            const profitMargin = parseFloat(document.getElementById('profitMargin').value) || 0;
-            
-            const subtotal = materials + labor + equipment + additional;
-            const profit = subtotal * (profitMargin / 100);
-            const total = subtotal + profit;
-            
-            document.getElementById('totalCost').textContent = `${total.toLocaleString('ar-SA')} ريال`;
-            
-            // Calculate cost per meter
-            const totalArea = parseFloat(document.getElementById('totalArea').value) || 0;
-            if (totalArea > 0) {
-                const costPerMeter = total / totalArea;
-                document.getElementById('costPerMeter').textContent = `${costPerMeter.toLocaleString('ar-SA')} ريال/م²`;
-            }
-        }
-        
-        function applyCostTemplate(template) {
-            const totalArea = parseFloat(document.getElementById('totalArea').value) || 500; // Default area
-            
-            let rates = {};
-            switch(template) {
-                case 'economy':
-                    rates = { materials: 800, labor: 400, equipment: 100, additional: 100 };
-                    break;
-                case 'standard':
-                    rates = { materials: 1200, labor: 600, equipment: 150, additional: 150 };
-                    break;
-                case 'premium':
-                    rates = { materials: 1800, labor: 800, equipment: 200, additional: 200 };
-                    break;
-            }
-            
-            document.getElementById('materialsCost').value = Math.round(totalArea * rates.materials);
-            document.getElementById('laborCost').value = Math.round(totalArea * rates.labor);
-            document.getElementById('equipmentCost').value = Math.round(totalArea * rates.equipment);
-            document.getElementById('additionalCost').value = Math.round(totalArea * rates.additional);
-            
-            updateTotalCost();
-        }
-        
-        function loadTeamMembers() {
-            // Load project managers
-            const managersContainer = document.getElementById('projectManagers');
-            if (managersContainer) {
-                teamMembers.managers.forEach(manager => {
-                    const card = createTeamMemberCard(manager, 'projectManager');
-                    managersContainer.appendChild(card);
-                });
-            }
-            
-            // Load engineers
-            const engineersContainer = document.getElementById('engineers');
-            if (engineersContainer) {
-                teamMembers.engineers.forEach(engineer => {
-                    const card = createTeamMemberCard(engineer, 'engineers');
-                    engineersContainer.appendChild(card);
-                });
-            }
-            
-            // Load supervisors
-            const supervisorsContainer = document.getElementById('supervisors');
-            if (supervisorsContainer) {
-                teamMembers.supervisors.forEach(supervisor => {
-                    const card = createTeamMemberCard(supervisor, 'supervisors');
-                    supervisorsContainer.appendChild(card);
-                });
-            }
-        }
-        
-        function createTeamMemberCard(member, inputName) {
-            const card = document.createElement('div');
-            const inputType = inputName === 'projectManager' ? 'radio' : 'checkbox';
-            
-            card.className = 'team-member-card';
-            card.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <input type="${inputType}" id="${member.id}" name="${inputName}" value="${member.id}" class="text-primary">
-                    <img src="${member.avatar}" alt="${member.name}" class="w-10 h-10 rounded-full object-cover">
-                    <div class="flex-1">
-                        <h6 class="font-medium text-text-primary text-sm">${member.name}</h6>
-                        <p class="text-xs text-text-secondary">${member.position}</p>
-                        <p class="text-xs text-success">${member.experience}</p>
-                    </div>
-                </div>
-            `;
-            
-            // Add click handler to select the member
-            card.addEventListener('click', function() {
-                const input = card.querySelector('input');
-                if (inputType === 'radio') {
-                    // Deselect all other radio buttons in the same group
-                    document.querySelectorAll(`input[name="${inputName}"]`).forEach(radio => {
-                        radio.closest('.team-member-card').classList.remove('selected');
-                        radio.checked = false;
-                    });
-                }
-                
-                input.checked = !input.checked;
-                card.classList.toggle('selected', input.checked);
-            });
-            
-            return card;
-        }
-        
-        function generateEquipmentList() {
-            const equipmentContainer = document.getElementById('equipmentList');
-            const materialsContainer = document.getElementById('materialsList');
-            
-            if (equipmentContainer) {
-                const equipment = [
-                    'خلاطة خرسانة', 'رافعة شوكية', 'حفار صغير', 'منشار كهربائي', 
-                    'أدوات لحام', 'مولد كهربائي', 'ضاغط هواء', 'أدوات قياس'
-                ];
-                
-                equipment.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center';
-                    div.innerHTML = `
-                        <input type="checkbox" id="eq_${item}" class="ml-2" />
-                        <label for="eq_${item}" class="text-sm">${item}</label>
-                    `;
-                    equipmentContainer.appendChild(div);
-                });
-            }
-            
-            if (materialsContainer) {
-                const materials = [
-                    'أسمنت', 'حديد تسليح', 'رمل', 'حصى', 'طوب/بلوك', 
-                    'أسلاك كهربائية', 'مواسير سباكة', 'بلاط وسيراميك'
-                ];
-                
-                materials.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center';
-                    div.innerHTML = `
-                        <input type="checkbox" id="mat_${item}" class="ml-2" />
-                        <label for="mat_${item}" class="text-sm">${item}</label>
-                    `;
-                    materialsContainer.appendChild(div);
-                });
-            }
-        }
-        
-        function generateDefaultPhases(duration = 180) {
-            const phasesContainer = document.getElementById('projectPhases');
-            if (!phasesContainer) return;
-            
-            phasesContainer.innerHTML = '';
-            
-            const defaultPhases = [
-                { name: 'التخطيط والتصاميم', duration: Math.round(duration * 0.15) },
-                { name: 'الحفر والأساسات', duration: Math.round(duration * 0.25) },
-                { name: 'الهيكل الخرساني', duration: Math.round(duration * 0.25) },
-                { name: 'الأعمال الكهربائية والسباكة', duration: Math.round(duration * 0.15) },
-                { name: 'التشطيبات والدهانات', duration: Math.round(duration * 0.20) }
-            ];
-            
-            defaultPhases.forEach((phase, index) => {
-                addPhaseElement(phase.name, phase.duration, index);
-            });
-        }
-        
-        function addPhase() {
-            const phaseName = prompt('اسم المرحلة:');
-            const phaseDuration = prompt('مدة المرحلة (بالأيام):');
-            
-            if (phaseName && phaseDuration) {
-                const phasesContainer = document.getElementById('projectPhases');
-                const phaseCount = phasesContainer.children.length;
-                addPhaseElement(phaseName, parseInt(phaseDuration), phaseCount);
-            }
-        }
-        
-        function addPhaseElement(name, duration, index) {
-            const phasesContainer = document.getElementById('projectPhases');
-            const phaseDiv = document.createElement('div');
-            phaseDiv.className = 'timeline-item p-4 bg-white rounded-lg border border-border';
-            phaseDiv.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h6 class="font-medium text-text-primary">${name}</h6>
-                        <p class="text-sm text-text-secondary">${duration} يوم</p>
-                    </div>
-                    <button type="button" onclick="removePhase(this)" class="text-error hover:text-error-600 text-sm">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            phasesContainer.appendChild(phaseDiv);
-        }
-        
-        function removePhase(button) {
-            if (confirm('هل أنت متأكد من حذف هذه المرحلة؟')) {
-                button.closest('.timeline-item').remove();
-            }
-        }
-        
-        function setupFileUpload() {
-            const dropZone = document.getElementById('fileDropZone');
-            const fileInput = document.getElementById('fileInput');
-            
-            if (dropZone && fileInput) {
-                // Drag and drop events
-                dropZone.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    dropZone.classList.add('dragover');
-                });
-                
-                dropZone.addEventListener('dragleave', function(e) {
-                    e.preventDefault();
-                    dropZone.classList.remove('dragover');
-                });
-                
-                dropZone.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    dropZone.classList.remove('dragover');
-                    handleFiles(e.dataTransfer.files);
-                });
-                
-                // File input change
-                fileInput.addEventListener('change', function(e) {
-                    handleFiles(e.target.files);
-                });
-            }
-        }
-        
-        function handleFiles(files) {
-            const uploadedFilesContainer = document.getElementById('uploadedFiles');
-            const maxFiles = 10;
-            
-            if (files.length > maxFiles) {
-                alert(`يمكن رفع حد أقصى ${maxFiles} ملفات`);
-                return;
-            }
-            
-            Array.from(files).forEach(file => {
-                if (file.size > 10 * 1024 * 1024) { // 10MB limit
-                    alert(`الملف ${file.name} كبير جداً (الحد الأقصى 10 ميجا)`);
-                    return;
-                }
-                
-                const fileDiv = document.createElement('div');
-                fileDiv.className = 'flex items-center justify-between p-3 bg-secondary-50 rounded-lg border border-secondary-200';
-                fileDiv.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-file text-primary"></i>
-                        <div>
-                            <p class="text-sm font-medium text-text-primary">${file.name}</p>
-                            <p class="text-xs text-text-secondary">${(file.size / 1024).toFixed(1)} KB</p>
-                        </div>
-                    </div>
-                    <button type="button" onclick="removeFile(this)" class="text-error hover:text-error-600">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                uploadedFilesContainer.appendChild(fileDiv);
-            });
-        }
-        
-        function removeFile(button) {
-            button.closest('div').remove();
-        }
-        
-        function handleClientSearch() {
-            const searchTerm = document.getElementById('clientSearch').value;
-            const suggestionsContainer = document.getElementById('clientSuggestions');
-            
-            if (searchTerm.length > 2) {
-                // Mock client data - in real app, this would be an API call
-                const mockClients = [
-                    { name: 'محمد العبدالله', phone: '0501234567', type: 'individual' },
-                    { name: 'شركة الأندلس للاستثمار', phone: '0507654321', type: 'company' },
-                    { name: 'فهد الخالدي', phone: '0509876543', type: 'individual' }
-                ];
-                
-                const matches = mockClients.filter(client => 
-                    client.name.includes(searchTerm) || client.phone.includes(searchTerm)
-                );
-                
-                if (matches.length > 0) {
-                    suggestionsContainer.innerHTML = matches.map(client => `
-                        <div class="p-3 border-b border-border cursor-pointer hover:bg-secondary-50" onclick="selectClient('${client.name}', '${client.phone}', '${client.type}')">
-                            <div class="font-medium">${client.name}</div>
-                            <div class="text-sm text-text-secondary">${client.phone}</div>
-                        </div>
-                    `).join('');
-                    suggestionsContainer.classList.remove('hidden');
-                } else {
-                    suggestionsContainer.classList.add('hidden');
-                }
-            } else {
-                suggestionsContainer.classList.add('hidden');
-            }
-        }
-        
-        function selectClient(name, phone, type) {
-            document.getElementById('clientName').value = name;
-            document.getElementById('clientPhone').value = phone;
-            document.getElementById('clientType').value = type;
-            document.getElementById('clientSuggestions').classList.add('hidden');
-            document.getElementById('clientSearch').value = '';
-        }
-        
-        function selectTemplate(template, element) {
-            selectedProjectTemplate = template;
 
-            document.querySelectorAll('.project-template-card').forEach(card => {
-                card.classList.remove('border-primary', 'bg-primary-50', 'shadow-lg');
-            });
+    <template id="previewTemplate">
+        <div class="border border-border rounded-xl px-4 py-3">
+            <div class="flex items-center justify-between text-xs text-text-secondary">
+                <span>المعرف المرجعي</span>
+                <strong class="text-text-primary" data-field="id">-</strong>
+            </div>
+            <div class="mt-3">
+                <h3 class="text-lg font-bold text-text-primary" data-field="name">-</h3>
+                <p class="text-xs text-text-secondary" data-field="client">-</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3 mt-4 text-xs text-text-secondary">
+                <div>الحالة: <strong class="text-text-primary" data-field="status">-</strong></div>
+                <div>المرحلة: <strong class="text-text-primary" data-field="stage">-</strong></div>
+                <div>القيمة التقديرية: <strong class="text-text-primary" data-field="contractValue">-</strong></div>
+                <div>بداية التنفيذ: <strong class="text-text-primary" data-field="startDate">-</strong></div>
+            </div>
+            <div class="mt-4 text-xs text-text-secondary">
+                <div>مدير المشروع: <strong class="text-text-primary" data-field="manager">-</strong></div>
+                <div>الموقع: <strong class="text-text-primary" data-field="location">-</strong></div>
+            </div>
+            <div class="mt-4 text-xs text-text-secondary" data-field="tags">-</div>
+        </div>
+    </template>
 
-            if (element) {
-                element.classList.add('border-primary', 'bg-primary-50', 'shadow-lg');
-            }
-
-            const projectType = document.getElementById('projectType');
-            if (template === 'villa') {
-                if (projectType.value === '') projectType.value = 'residential_villa';
-            } else if (template === 'commercial') {
-                if (projectType.value === '') projectType.value = 'commercial';
-            }
-        }
-        
-        function updateProjectSummary() {
-            const summaryContainer = document.getElementById('projectSummary');
-            if (!summaryContainer) return;
-            
-            const projectName = document.getElementById('projectName').value;
-            const clientName = document.getElementById('clientName').value;
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
-            const totalCost = document.getElementById('totalCost').textContent;
-            
-            summaryContainer.innerHTML = `
-                <div class="flex justify-between"><span>اسم المشروع:</span><span class="font-medium">${projectName}</span></div>
-                <div class="flex justify-between"><span>العميل:</span><span class="font-medium">${clientName}</span></div>
-                <div class="flex justify-between"><span>تاريخ البداية:</span><span class="font-medium">${startDate}</span></div>
-                <div class="flex justify-between"><span>تاريخ النهاية:</span><span class="font-medium">${endDate}</span></div>
-                <div class="flex justify-between"><span>إجمالي التكلفة:</span><span class="font-medium text-success">${totalCost}</span></div>
-            `;
-        }
-        
-        function saveDraft() {
-            saveCurrentStepData();
-            
-            // Save to localStorage as draft
-            const draftData = {
-                ...projectData,
-                savedAt: new Date().toISOString(),
-                currentStep: currentStep
-            };
-            
-            localStorage.setItem('contractorProProjectDraft', JSON.stringify(draftData));
-            
-            // Show success message
-            alert('تم حفظ المشروع كمسودة بنجاح!');
-        }
-        
-        function createProject() {
-            saveCurrentStepData();
-
-            try {
-                gatherWizardData();
-            } catch (error) {
-                const message = error && error.message ? error.message : 'تعذر إنشاء المشروع، يرجى التحقق من البيانات المدخلة';
-                if (typeof showToast === 'function') {
-                    showToast(message, false);
-                } else {
-                    alert(message);
-                }
-            }
-        }
-        
-        function goBack() {
-            if (confirm('هل أنت متأكد من الخروج؟ سيتم فقدان البيانات غير المحفوظة.')) {
-                window.location.href = 'main_dashboard.html';
-            }
-        }
-        
-        // Auto-save functionality
-        setInterval(() => {
-            if (currentStep > 1) {
-                saveDraft();
-            }
-        }, 300000); // Auto-save every 5 minutes
-    </script>
-
-
-<script>
-(() => {
-  const STORAGE_KEY = 'contractorPro.projects';
-  const LEGACY_KEY = 'projects';
-  const CITY_LABELS = {
-    riyadh: 'الرياض',
-    jeddah: 'جدة',
-    dammam: 'الدمام',
-    mecca: 'مكة المكرمة',
-    medina: 'المدينة المنورة',
-    khobar: 'الخبر',
-    tabuk: 'تبوك',
-    abha: 'أبها'
-  };
-
-  function resolveCityLabel(value, fallback = '') {
-    if (!value) return fallback || '';
-    return CITY_LABELS[value] || fallback || value;
-  }
-
-  function getProjects(){
-    let parsed = [];
-    try {
-      parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    } catch (error) {
-      parsed = [];
-    }
-
-    if ((!Array.isArray(parsed) || !parsed.length) && localStorage.getItem(LEGACY_KEY)) {
-      try {
-        parsed = JSON.parse(localStorage.getItem(LEGACY_KEY) || '[]');
-      } catch (error) {
-        parsed = [];
-      }
-    }
-
-    return Array.isArray(parsed) ? parsed : [];
-  }
-  function saveProjects(arr){
-    const serialized = JSON.stringify(arr);
-    localStorage.setItem(STORAGE_KEY, serialized);
-    localStorage.setItem(LEGACY_KEY, serialized);
-  }
-
-  function collectField(id){
-    const el = document.getElementById(id);
-    if (!el) return undefined;
-    if (el.type === 'number') return Number(el.value || 0);
-    return (el.value || '').trim();
-  }
-
-  function collectSelectValueWithLabel(id) {
-    const el = document.getElementById(id);
-    if (!el) return { value: '', label: '' };
-    const value = (el.value || '').trim();
-    const label = el.options?.[el.selectedIndex]?.textContent?.trim() || value;
-    return { value, label };
-  }
-
-  function validate(project){
-    const requiredText = {
-      'projectName': 'اسم المشروع',
-      'projectType': 'نوع المشروع',
-      'projectDescription': 'وصف المشروع',
-      'projectCity': 'المدينة',
-      'clientName': 'اسم العميل',
-      'clientPhone': 'رقم الهاتف',
-      'clientId': 'رقم الهوية / السجل'
-    };
-    const missing = [];
-    Object.keys(requiredText).forEach(id => {
-      const el = document.getElementById(id);
-      const val = el ? (el.value || '').trim() : '';
-      if (!val) {
-        missing.append?.(requiredText[id]) ?? missing.push(requiredText[id]);
-        markInvalid(el);
-      } else {
-        markValid(el);
-      }
-    });
-    // Saudi phone (basic) 05xxxxxxxx
-    const phoneEl = document.getElementById('clientPhone');
-    const phone = (phoneEl && phoneEl.value || '').trim();
-    if (phone && !/^0?5\d{8}$/.test(phone)) {
-      markInvalid(phoneEl);
-      missing.push('رقم الهاتف (صيغة سعودية)');
-    }
-    if (missing.length) {
-      throw new Error('الحقول المطلوبة: ' + missing.join('، '));
-    }
-  }
-
-  function markInvalid(el){
-    if(!el) return;
-    el.classList.add('ring-2','ring-error');
-    el.addEventListener('input', () => el.classList.remove('ring-2','ring-error'), { once: true });
-  }
-  function markValid(el){
-    if(!el) return;
-    el.classList.remove('ring-2','ring-error');
-  }
-
-  function parseNumberFromText(text){
-    if(!text) return 0;
-    const normalized = text.replace(/[^\d.,-]/g, '').replace(/,/g, '');
-    const value = Number(normalized);
-    return Number.isFinite(value) ? value : 0;
-  }
-
-  function parseDuration(text){
-    if(!text) return 0;
-    const match = text.match(/\d+/);
-    return match ? Number(match[0]) : 0;
-  }
-
-  function extractPhases(){
-    const phasesContainer = document.getElementById('projectPhases');
-    if(!phasesContainer) return [];
-
-    return Array.from(phasesContainer.querySelectorAll('.timeline-item')).map((item, index) => {
-      const name = item.querySelector('h6')?.textContent?.trim() || `مرحلة ${index + 1}`;
-      const durationText = item.querySelector('p')?.textContent || '';
-      const duration = parseDuration(durationText);
-      return {
-        id: `phase-${Date.now()}-${index}`,
-        name,
-        durationDays: Number.isFinite(Number(duration)) ? Number(duration) : 0,
-        order: index + 1,
-        progressPercent: 0,
-        status: 'planned',
-        dependencies: [],
-        priority: 'medium'
-      };
-    });
-  }
-
-  function schedulePhases(phases, projectId, projectStart){
-    if (!Array.isArray(phases) || !phases.length) return [];
-
-    let cursor = null;
-    if (projectStart) {
-      const start = new Date(projectStart);
-      cursor = Number.isNaN(start.getTime()) ? null : start;
-    }
-
-    return phases.map((phase, index) => {
-      const duration = Math.max(0, Number(phase.durationDays) || 0);
-      const normalized = {
-        id: phase.id || `phase-${projectId}-${index + 1}`,
-        projectId,
-        name: phase.name || `مرحلة ${index + 1}`,
-        description: phase.description || '',
-        order: Number.isFinite(Number(phase.order)) ? Number(phase.order) : index + 1,
-        durationDays: duration,
-        progressPercent: Number(phase.progressPercent) || 0,
-        status: phase.status || 'planned',
-        assignee: phase.assignee || '',
-        dependencies: Array.isArray(phase.dependencies) ? phase.dependencies : [],
-        priority: phase.priority || 'medium',
-        createdAt: new Date().toISOString()
-      };
-
-      if (cursor) {
-        const start = new Date(cursor);
-        normalized.startDate = start.toISOString().split('T')[0];
-
-        const span = duration > 0 ? duration - 1 : 0;
-        const end = new Date(cursor);
-        if (span > 0) {
-          end.setDate(end.getDate() + span);
-        }
-        normalized.endDate = end.toISOString().split('T')[0];
-
-        if (duration > 0) {
-          cursor.setDate(cursor.getDate() + duration);
-        }
-      }
-
-      return normalized;
-    });
-  }
-
-  function persistPhases(projectId, phases){
-    const storageKeys = ['project_phases_all', 'phases'];
-    storageKeys.forEach(key => {
-      let stored = [];
-      try {
-        stored = JSON.parse(localStorage.getItem(key) || '[]');
-      } catch (error) {
-        stored = [];
-      }
-      const filtered = Array.isArray(stored) ? stored.filter(item => item.projectId !== projectId) : [];
-      localStorage.setItem(key, JSON.stringify([...filtered, ...phases]));
-    });
-    appendPhaseLogs(projectId, phases);
-  }
-
-  function appendPhaseLogs(projectId, phases){
-    if (!Array.isArray(phases) || !phases.length) return;
-    let logs = [];
-    try {
-      logs = JSON.parse(localStorage.getItem('phases_logs') || '[]');
-    } catch (error) {
-      logs = [];
-    }
-
-    const timestamp = new Date().toISOString();
-    const newLogs = phases.map(phase => ({
-      id: `phase-log-${phase.id}`,
-      timestamp,
-      type: 'create',
-      phaseId: phase.id,
-      phaseName: phase.name,
-      before: null,
-      after: phase,
-      actor: 'معالج إنشاء المشروع',
-      projectId,
-      description: `تم إنشاء المرحلة "${phase.name}" ضمن المشروع الجديد`
-    }));
-
-    const merged = [...newLogs, ...(Array.isArray(logs) ? logs : [])].slice(0, 500);
-    localStorage.setItem('phases_logs', JSON.stringify(merged));
-  }
-
-  function resolveTeamMember(group, id){
-    if(!id) return null;
-    const list = teamMembers[group] || [];
-    return list.find(member => member.id === id) || null;
-  }
-
-  function gatherWizardData(){
-    const projectId = 'PRJ-' + Date.now();
-    const projectTypeSelection = collectSelectValueWithLabel('projectType');
-    const startDate = collectField('startDate') || collectField('projectStartDate');
-    const endDate = collectField('endDate') || collectField('projectEndDate');
-    let durationDays = parseDuration(document.getElementById('projectDuration')?.textContent || '');
-
-    if ((!durationDays || Number.isNaN(durationDays)) && startDate && endDate) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const diff = end - start;
-      if (!Number.isNaN(diff) && diff > 0) {
-        durationDays = Math.max(1, Math.round(diff / (1000 * 60 * 60 * 24)));
-      }
-    }
-
-    const phases = extractPhases();
-    if ((!durationDays || Number.isNaN(durationDays)) && phases.length) {
-      durationDays = phases.reduce((sum, phase) => sum + (Number(phase.durationDays) || 0), 0);
-    }
-
-    const scheduledPhases = schedulePhases(phases, projectId, startDate);
-
-    const materialsCost = parseFloat(document.getElementById('materialsCost')?.value || 0);
-    const laborCost = parseFloat(document.getElementById('laborCost')?.value || 0);
-    const equipmentCost = parseFloat(document.getElementById('equipmentCost')?.value || 0);
-    const additionalCost = parseFloat(document.getElementById('additionalCost')?.value || 0);
-    const profitMargin = parseFloat(document.getElementById('profitMargin')?.value || 0);
-    const totalCostText = document.getElementById('totalCost')?.textContent || '';
-    const contractValue = parseNumberFromText(totalCostText);
-
-    const managerSelection = document.querySelector('input[name="projectManager"]:checked')?.value || null;
-    const engineerSelections = Array.from(document.querySelectorAll('input[name="engineers"]:checked')).map(cb => cb.value);
-    const supervisorSelections = Array.from(document.querySelectorAll('input[name="supervisors"]:checked')).map(cb => cb.value);
-
-    const managerInfo = resolveTeamMember('managers', managerSelection);
-    const engineerInfo = engineerSelections.map(id => resolveTeamMember('engineers', id)).filter(Boolean);
-    const supervisorInfo = supervisorSelections.map(id => resolveTeamMember('supervisors', id)).filter(Boolean);
-
-    const equipmentSelections = Array.from(document.querySelectorAll('#equipmentList input:checked')).map(el => el.nextElementSibling?.textContent?.trim()).filter(Boolean);
-    const materialsSelections = Array.from(document.querySelectorAll('#materialsList input:checked')).map(el => el.nextElementSibling?.textContent?.trim()).filter(Boolean);
-    const subcontractorSelections = Array.from(document.querySelectorAll('#step5 input[type="checkbox"]:checked'))
-      .filter(el => !el.closest('#equipmentList') && !el.closest('#materialsList'))
-      .map(el => el.nextElementSibling?.textContent?.trim())
-      .filter(Boolean);
-
-    const uploadedFiles = Array.from(document.querySelectorAll('#uploadedFiles .flex.items-center.justify-between')).map(container => {
-      const name = container.querySelector('p.text-sm')?.textContent?.trim();
-      const size = container.querySelector('p.text-xs')?.textContent?.trim();
-      return name ? { name, size } : null;
-    }).filter(Boolean);
-
-    const clientInfo = {
-      name: collectField('clientName'),
-      type: collectField('clientType'),
-      phone: collectField('clientPhone'),
-      email: collectField('clientEmail'),
-      id: collectField('clientId'),
-      tax: collectField('clientTaxNumber'),
-      address: collectField('clientAddress')
-    };
-
-    const citySelection = collectSelectValueWithLabel('projectCity');
-    const resolvedCityLabel = resolveCityLabel(citySelection.value, citySelection.label);
-
-    const templateLabels = {
-      villa: 'قالب فيلا سكنية',
-      commercial: 'قالب مبنى تجاري',
-      custom: 'تكوين مخصص'
-    };
-    const templateLabel = selectedProjectTemplate ? (templateLabels[selectedProjectTemplate] || 'تكوين مخصص') : '';
-
-    const paymentTermsValue = collectField('paymentTerms');
-    const paymentTermsLabelMap = {
-      lumpsum: 'دفعة واحدة',
-      '2payments': 'دفعتان',
-      '3payments': '3 دفعات',
-      '4payments': '4 دفعات',
-      monthly: 'دفعات شهرية',
-      milestone: 'حسب مراحل الإنجاز'
-    };
-    const paymentTermsLabel = paymentTermsValue ? (paymentTermsLabelMap[paymentTermsValue] || paymentTermsValue) : '';
-
-    let paymentsCount = null;
-    if (paymentTermsValue) {
-      const match = paymentTermsValue.match(/(\d+)/);
-      if (match) {
-        paymentsCount = Number(match[1]);
-      } else if (paymentTermsValue === 'lumpsum') {
-        paymentsCount = 1;
-      }
-    }
-
-    const project = {
-      id: projectId,
-      code: '#' + projectId,
-      name: collectField('projectName'),
-      type: projectTypeSelection.value,
-      typeLabel: projectTypeSelection.label,
-      description: collectField('projectDescription'),
-      template: selectedProjectTemplate,
-      templateLabel,
-      location: {
-        city: resolvedCityLabel,
-        cityCode: citySelection.value,
-        district: collectField('projectDistrict'),
-        address: collectField('projectAddress')
-      },
-      client: clientInfo,
-      clientName: clientInfo.name,
-      specs: {
-        totalArea: collectField('totalArea'),
-        builtArea: collectField('builtArea'),
-        floorsCount: collectField('floorsCount'),
-        unitsCount: collectField('unitsCount'),
-        foundationType: collectField('foundationType'),
-        structureType: collectField('structureType'),
-        wallType: collectField('wallType'),
-        roofType: collectField('roofType'),
-        specialRequirements: collectField('specialRequirements')
-      },
-      timeline: {
-        startDate,
-        endDate,
-        durationDays: durationDays || 0
-      },
-      startDate,
-      endDate,
-      durationDays: durationDays || 0,
-      budget: {
-        materials: materialsCost,
-        labor: laborCost,
-        equipment: equipmentCost,
-        additional: additionalCost,
-        profitMargin,
-        contractValue,
-        currency: 'SAR',
-        advancePayment: parseFloat(document.getElementById('advancePayment')?.value || 0),
-        paymentTerms: paymentTermsValue,
-        paymentTermsLabel,
-        paymentsCount
-      },
-      value: contractValue,
-      status: 'active',
-      progress: 0,
-      team: {
-        manager: managerInfo,
-        engineers: engineerInfo,
-        supervisors: supervisorInfo
-      },
-      equipment: equipmentSelections,
-      materials: materialsSelections,
-      subcontractors: subcontractorSelections,
-      phases: scheduledPhases,
-      attachments: uploadedFiles,
-      expenses: [],
-      subcontracts: [],
-      payments: [],
-      createdAt: new Date().toISOString()
-    };
-
-    validate(project);
-    const arr = getProjects();
-    arr.push(project);
-    saveProjects(arr);
-    if (scheduledPhases.length) {
-      persistPhases(projectId, scheduledPhases);
-    }
-    window.location.href = 'projects_management_center.html?created=' + encodeURIComponent(project.id);
-  }
-
-  function showToast(msg, ok=false){
-    const t = document.createElement('div');
-    t.textContent = msg;
-    t.className = 'fixed bottom-6 right-6 ' + (ok ? 'bg-success' : 'bg-error') + ' text-white px-4 py-3 rounded-lg shadow-modal z-[9999]';
-    document.body.appendChild(t);
-    setTimeout(()=> t.remove(), 3000);
-  }
-
-  function mountFinishButton(){
-    if (document.getElementById('integrationFinishButton')) return;
-    const btn = document.createElement('button');
-    btn.id = 'integrationFinishButton';
-    btn.type = 'button';
-    btn.className = 'fixed bottom-6 left-6 bg-primary text-white rounded-xl px-6 py-3 shadow-modal hover:bg-primary-600 z-[9999]';
-    btn.innerHTML = '<i class="fas fa-check-circle ml-2"></i> إنهاء المعالج';
-    btn.onclick = () => {
-      try {
-        gatherWizardData();
-      } catch(e) {
-        showToast(e.message || 'تحقق من الحقول');
-      }
-    };
-    document.body.appendChild(btn);
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    mountFinishButton();
-  });
-
-  // Expose a function so you can manually bind to an existing "إنهاء" button if present
-  window.saveProjectAndExit = function(){
-    try { gatherWizardData(); } catch(e){ showToast(e.message); }
-  };
-
-  // Provide a simple "back" handler if the header back button calls goBack()
-  window.goBack = window.goBack || function(){
-    history.length > 1 ? history.back() : (window.location.href = 'projects_management_center.html');
-  };
-})();
-</script>
-<!-- END INJECT -->
-
-<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
-    <script src="../js/session.js" data-login-path="../login.html"></script>
+    <script type="module" src="../Projects/assets/js/project-wizard.js"></script>
 </body>
 </html>
