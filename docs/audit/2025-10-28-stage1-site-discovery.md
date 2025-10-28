@@ -20,7 +20,7 @@
 
 ### 3.2 لوحات HTML التراثية (Static Legacy Dashboards)
 تم تصنيف 18 صفحة فرعية إلى خمس حزم وظيفية، مع روابط داخلية موثقة في ملف خريطة الموقع المحدث (`docs/site-map.json`). أمثلة:
-- **المشاريع**: `Projects/projects_management_center.html`, `projects_hub.html`, `Projects/project_creation_wizard.html` تقدم قوائم ومخططات للمشاريع.【F:pages/Projects/projects_management_center.html†L1-L200】
+- **المشاريع**: `projects_management_center.html`, `projects_hub.html`, `project_creation_wizard.html` تقدم قوائم ومخططات للمشاريع.【F:pages/projects_management_center.html†L1-L40】
 - **المالية**: صفحات الفواتير والمراكز المالية تضم عناصر بطاقات ورسوم بيانية لـ Chart.js.【F:pages/financial_management_center.html†L1-L34】
 - **الموارد البشرية**: نماذج إضافة الموظفين والملفات الشخصية توفر حقولاً تفصيلية للمعلومات الوظيفية.【F:pages/add_employee.html†L1-L38】
 
