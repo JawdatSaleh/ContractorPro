@@ -9,97 +9,159 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   </head>
   <body data-page="project-payments">
-    <div class="projects-content" style="max-width: 1200px; margin: 0 auto; padding: 48px 24px;">
-      <header class="layout-header">
-        <div>
-          <nav class="breadcrumb" data-breadcrumb>
-            <a href="../projects_management_center.html" class="breadcrumb-item">المشاريع</a>
-            <span class="breadcrumb-divider">/</span>
-            <span class="breadcrumb-item">دفعات المشروع</span>
+    <div class="projects-shell">
+      <aside class="projects-sidebar fade-in">
+        <div class="projects-sidebar__logo">
+          <div class="projects-sidebar__logo-icon">
+            <i class="fas fa-building"></i>
+          </div>
+          <div>
+            <strong>ContractorPro</strong>
+            <p>إدارة المشاريع المتكاملة</p>
+          </div>
+        </div>
+        <nav>
+          <a href="../../pages/main_dashboard.html">
+            <i class="fas fa-gauge"></i>
+            <span>لوحة القيادة</span>
+          </a>
+          <a href="../projects_management_center.html" class="active">
+            <i class="fas fa-city"></i>
+            <span>إدارة المشاريع</span>
+          </a>
+          <a href="../../pages/financial_management_center.html">
+            <i class="fas fa-sack-dollar"></i>
+            <span>المركز المالي</span>
+          </a>
+          <a href="../../pages/human_resources_center.html">
+            <i class="fas fa-users"></i>
+            <span>الموارد البشرية</span>
+          </a>
+        </nav>
+      </aside>
+
+      <main class="projects-content projects-content--canvas fade-in">
+        <div class="project-page-bar">
+          <header class="projects-header projects-header--compact">
+            <div>
+              <nav class="breadcrumb" data-breadcrumb>
+                <a href="../projects_management_center.html" class="breadcrumb-item">المشاريع</a>
+                <span class="breadcrumb-divider">/</span>
+                <span class="breadcrumb-item">دفعات المشروع</span>
+              </nav>
+              <h1>إدارة التدفقات النقدية والدفعات</h1>
+              <p class="text-muted">راقب مواعيد الدفعات وحالة التحصيل بدقة عالية.</p>
+            </div>
+            <div class="projects-actions">
+              <button class="btn btn-light" data-edit-project>
+                <i class="fas fa-pen"></i>
+                تعديل معلومات المشروع
+              </button>
+              <button class="btn btn-outline" onclick="window.location.href='../projects_management_center.html'">
+                <i class="fas fa-arrow-right"></i>
+                العودة للمشاريع
+              </button>
+            </div>
+          </header>
+          <nav class="project-sticky-nav" data-project-nav>
+            <a class="project-nav__link" data-nav="overview" href="#">
+              <i class="fas fa-circle-info"></i>
+              <span>المعلومات</span>
+            </a>
+            <a class="project-nav__link" data-nav="phases" href="#">
+              <i class="fas fa-layer-group"></i>
+              <span>مراحل التنفيذ</span>
+            </a>
+            <a class="project-nav__link" data-nav="expenses" href="#">
+              <i class="fas fa-wallet"></i>
+              <span>المصاريف</span>
+            </a>
+            <a class="project-nav__link" data-nav="payments" href="#">
+              <i class="fas fa-money-check"></i>
+              <span>الدفعات</span>
+            </a>
+            <a class="project-nav__link" data-nav="reports" href="#">
+              <i class="fas fa-file-lines"></i>
+              <span>التقارير</span>
+            </a>
           </nav>
-          <h1>إدارة الدفعات والتحصيل</h1>
-          <p class="text-muted">تابع حالة الدفعات وجدولها الزمني مع تنبيهات للمتأخر.</p>
         </div>
-        <div class="projects-actions">
-          <button class="btn btn-light" data-edit-project>
-            <i class="fas fa-pen"></i>
-            تعديل معلومات المشروع
-          </button>
-          <button class="btn btn-outline" onclick="window.location.href='../projects_management_center.html'">
-            <i class="fas fa-arrow-right"></i>
-            العودة للمشاريع
-          </button>
+
+        <div class="project-canvas">
+          <section class="project-summary fade-in" data-project-summary>
+            <article class="project-summary__card">
+              <h3>القيمة التعاقدية</h3>
+              <strong data-project-contract>—</strong>
+              <span>المتحصل حتى الآن: <strong data-payments-paid>—</strong></span>
+              <span>عدد الدفعات: <strong data-payments-count>0</strong></span>
+            </article>
+            <article class="project-summary__card">
+              <h3>مراقبة التحصيل</h3>
+              <strong data-project-progress>0%</strong>
+              <span>المبالغ المجدولة: <strong data-payments-total>—</strong></span>
+              <span>دفعات متأخرة: <strong data-payments-overdue>0</strong></span>
+            </article>
+            <article class="project-summary__card">
+              <h3>الجدول الزمني</h3>
+              <strong data-project-period>—</strong>
+              <div class="progress-bar">
+                <div data-project-progress-bar style="width: 0%"></div>
+              </div>
+            </article>
+          </section>
+
+          <section class="section-card fade-in">
+            <header>
+              <div>
+                <h2>خط الدفعات</h2>
+                <p class="text-muted">تتبع حالات الدفع عبر الزمن</p>
+              </div>
+            </header>
+            <div data-payments-list></div>
+          </section>
+
+          <section class="section-card fade-in">
+            <header>
+              <div>
+                <h2>إضافة دفعة جديدة</h2>
+                <p class="text-muted">سيتم تحديث نسب التحصيل تلقائياً</p>
+              </div>
+            </header>
+            <form id="paymentForm">
+              <div class="form-grid">
+                <label>
+                  عنوان الدفعة
+                  <input type="text" name="title" required />
+                </label>
+                <label>
+                  قيمة الدفعة
+                  <input type="number" name="amount" min="0" step="0.01" required />
+                </label>
+                <label>
+                  تاريخ الاستحقاق
+                  <input type="date" name="dueDate" required />
+                </label>
+                <label>
+                  الحالة
+                  <select name="status">
+                    <option value="scheduled">مجدولة</option>
+                    <option value="paid">مدفوعة</option>
+                    <option value="overdue">متأخرة</option>
+                  </select>
+                </label>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-plus"></i>
+                  إضافة الدفعة
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <footer class="footer">© 2024 ContractorPro</footer>
         </div>
-      </header>
-
-      <section class="project-summary fade-in" data-project-summary>
-        <article class="project-summary__card">
-          <h3>القيمة التعاقدية</h3>
-          <strong data-project-contract>—</strong>
-          <span>نسبة الإنجاز: <strong data-project-progress>0%</strong></span>
-        </article>
-        <article class="project-summary__card">
-          <h3>إجمالي الدفعات المجدولة</h3>
-          <strong data-payments-total>0</strong>
-          <span>عدد الدفعات: <strong data-payments-count>0</strong></span>
-        </article>
-        <article class="project-summary__card">
-          <h3>المدفوع والمتأخر</h3>
-          <span>مدفوع: <strong data-payments-paid>0</strong></span>
-          <span>متأخر: <strong data-payments-overdue>0</strong></span>
-        </article>
-      </section>
-
-      <section class="section-card fade-in">
-        <header>
-          <div>
-            <h2>الدفعات</h2>
-            <p class="text-muted">جدول زمني بحسب تاريخ الاستحقاق</p>
-          </div>
-        </header>
-        <div data-payments-list></div>
-      </section>
-
-      <section class="section-card fade-in">
-        <header>
-          <div>
-            <h2>إضافة دفعة</h2>
-            <p class="text-muted">قم بتحديد الحالة لتحصل على تنبيهات دقيقة</p>
-          </div>
-        </header>
-        <form id="paymentForm">
-          <div class="form-grid">
-            <label>
-              عنوان الدفعة
-              <input type="text" name="title" required />
-            </label>
-            <label>
-              مبلغ الدفعة (ريال)
-              <input type="number" name="amount" min="0" step="500" required />
-            </label>
-            <label>
-              تاريخ الاستحقاق
-              <input type="date" name="dueDate" required />
-            </label>
-            <label>
-              الحالة
-              <select name="status">
-                <option value="scheduled">مجدولة</option>
-                <option value="paid">مدفوعة</option>
-                <option value="overdue">متأخرة</option>
-              </select>
-            </label>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-plus"></i>
-              حفظ الدفعة
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <footer class="footer">© 2024 ContractorPro</footer>
+      </main>
     </div>
 
     <script type="module" src="../js/main.js"></script>

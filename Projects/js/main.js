@@ -15,6 +15,7 @@ import {
   bindFormSubmit,
   safeNumber,
   buildBreadcrumb,
+  calculateDuration,
 } from './utils.js';
 
 const page = document.body.dataset.page;
@@ -55,35 +56,57 @@ function projectStatusBadge(status) {
 
 function buildProjectCard(project) {
   const expenses = formatCurrency(project.totalExpenses || 0);
-  const revenue = formatCurrency(project.revenue || project.contractValue || 0);
-  const profitability = formatCurrency(project.profitability || (project.revenue || 0) - (project.totalExpenses || 0));
+  const revenueValue = project.revenue || project.contractValue || 0;
+  const revenue = formatCurrency(revenueValue);
+  const profitabilityValue = project.profitability || revenueValue - (project.totalExpenses || 0);
+  const profitability = formatCurrency(profitabilityValue);
+  const payments = formatCurrency(project.totalPayments || 0);
+  const periodLabel = `${formatDate(project.startDate)} - ${formatDate(project.endDate)}`;
   return `
     <article class="project-card" data-project-id="${project.id}">
       <div class="project-card__hero">
         <img data-src="${project.cover || '../assets/default-project.svg'}" alt="${project.name}" class="project-card__image" />
         <div class="project-card__status">${projectStatusBadge(project.status)}</div>
         <div class="project-card__progress">
+          <i class="fas fa-chart-line"></i>
           <span>${formatPercent(project.progress || 0)}</span>
-          <div class="progress-bar"><div style="width:${project.progress || 0}%"></div></div>
         </div>
       </div>
       <div class="project-card__content">
-        <header>
-          <h3>${project.name}</h3>
-          <p class="project-card__client"><i class="fas fa-user-tie"></i> ${project.clientName}</p>
-          <p class="project-card__location"><i class="fas fa-map-marker-alt"></i> ${project.location || '—'}</p>
+        <header class="project-card__header">
+          <div>
+            <h3>${project.name}</h3>
+            <p class="project-card__client"><i class="fas fa-user-tie"></i> ${project.clientName}</p>
+          </div>
+          <div class="project-card__contract">
+            <span>القيمة التعاقدية</span>
+            <strong>${revenue}</strong>
+          </div>
         </header>
+        <div class="project-card__meta">
+          <span><i class="fas fa-map-marker-alt"></i>${project.location || '—'}</span>
+          <span><i class="fas fa-calendar"></i>${periodLabel}</span>
+        </div>
         <dl class="project-card__stats">
-          <div><dt>القيمة</dt><dd>${revenue}</dd></div>
           <div><dt>المصروفات</dt><dd>${expenses}</dd></div>
+          <div><dt>المدفوعات</dt><dd>${payments}</dd></div>
           <div><dt>الربحية</dt><dd>${profitability}</dd></div>
         </dl>
-        <footer class="project-card__actions">
-          <button class="btn btn-light" data-action="view-info">عرض المعلومات</button>
-          <button class="btn btn-light" data-action="view-phases">المراحل</button>
-          <button class="btn btn-light" data-action="view-expenses">المصاريف</button>
-          <button class="btn btn-light" data-action="view-payments">الدفعات</button>
-          <button class="btn btn-light" data-action="view-reports">التقارير</button>
+        <div class="project-card__timeline">
+          <div class="project-card__timeline-head">
+            <span>شريط التقدم</span>
+            <strong>${formatPercent(project.progress || 0)}</strong>
+          </div>
+          <div class="progress-bar progress-bar--accent"><div style="width:${project.progress || 0}%"></div></div>
+        </div>
+        <footer class="project-card__footer">
+          <div class="project-card__quick-actions">
+            <button class="btn btn-chip" data-action="view-info"><i class="fas fa-circle-info"></i> نظرة عامة</button>
+            <button class="btn btn-chip" data-action="view-phases"><i class="fas fa-layer-group"></i> المراحل</button>
+            <button class="btn btn-chip" data-action="view-expenses"><i class="fas fa-wallet"></i> المصاريف</button>
+            <button class="btn btn-chip" data-action="view-payments"><i class="fas fa-money-check"></i> الدفعات</button>
+            <button class="btn btn-chip" data-action="view-reports"><i class="fas fa-file-lines"></i> التقارير</button>
+          </div>
           <div class="project-card__menu">
             <button class="btn btn-icon" data-action="toggle-menu"><i class="fas fa-ellipsis-h"></i></button>
             <div class="project-card__dropdown">
@@ -110,11 +133,17 @@ async function renderProjectsGrid() {
 }
 
 function handleProjectAction(event) {
-  const button = event.target.closest('button');
-  if (!button) return;
   const card = event.target.closest('.project-card');
   if (!card) return;
   const projectId = card.dataset.projectId;
+  const button = event.target.closest('button');
+
+  if (!button) {
+    window.location.href = `pages/project_info.html?projectId=${projectId}`;
+    return;
+  }
+
+  event.stopPropagation();
   const action = button.dataset.action;
 
   if (action === 'toggle-menu') {
@@ -150,6 +179,24 @@ function handleProjectAction(event) {
       projectStore.create(copy).then(renderProjectsGrid);
     });
   }
+}
+
+function configureProjectNavigation(projectId, activeKey = 'overview') {
+  const nav = document.querySelector('[data-project-nav]');
+  if (!nav) return;
+  const routes = {
+    overview: `project_info.html?projectId=${projectId}`,
+    phases: `project_phases.html?projectId=${projectId}`,
+    expenses: `project_expenses.html?projectId=${projectId}`,
+    payments: `project_payments.html?projectId=${projectId}`,
+    reports: `project_reports.html?projectId=${projectId}`,
+  };
+
+  nav.querySelectorAll('[data-nav]').forEach((link) => {
+    const key = link.dataset.nav;
+    if (routes[key]) link.setAttribute('href', routes[key]);
+    link.classList.toggle('is-active', key === activeKey);
+  });
 }
 
 async function setupManagementPage() {
@@ -277,6 +324,50 @@ async function renderProjectSummary(projectId) {
 
   const progressBar = document.querySelector('[data-project-progress-bar]');
   if (progressBar) progressBar.style.width = `${project.progress || 0}%`;
+
+  const cashflowEl = document.querySelector('[data-insight-cashflow]');
+  if (cashflowEl) cashflowEl.textContent = formatCurrency(project.profitability || 0);
+
+  const contractValue = safeNumber(project.contractValue || project.revenue || 0);
+  const marginEl = document.querySelector('[data-insight-margin]');
+  if (marginEl) {
+    const marginPercent = contractValue ? ((safeNumber(project.profitability) / contractValue) * 100) : 0;
+    marginEl.textContent = formatPercent(marginPercent);
+  }
+
+  const outstandingEl = document.querySelector('[data-insight-outstanding]');
+  if (outstandingEl) {
+    const outstanding = contractValue - safeNumber(project.totalPayments || 0);
+    outstandingEl.textContent = formatCurrency(Math.max(0, outstanding));
+  }
+
+  const totalDays = calculateDuration(project.startDate, project.endDate);
+  const today = new Date();
+  const start = project.startDate ? new Date(project.startDate) : null;
+  let daysElapsed = 0;
+  if (start && !Number.isNaN(start)) {
+    daysElapsed = Math.max(0, Math.min(totalDays, Math.ceil((today - start) / (1000 * 60 * 60 * 24))));
+  }
+  const daysRemaining = Math.max(0, totalDays - daysElapsed);
+  const daysRemainingEl = document.querySelector('[data-insight-days-remaining]');
+  if (daysRemainingEl) {
+    daysRemainingEl.textContent = totalDays ? `${daysRemaining} يوم` : '—';
+  }
+  const daysTotalEl = document.querySelector('[data-insight-days-total]');
+  if (daysTotalEl) {
+    daysTotalEl.textContent = totalDays ? `إجمالي المدة ${totalDays} يوم` : 'مدة المشروع';
+  }
+
+  const phasesCountEl = document.querySelector('[data-insight-phases-count]');
+  const phasesProgressEl = document.querySelector('[data-insight-phases-progress]');
+  if (phasesCountEl || phasesProgressEl) {
+    const [phases, timeline] = await Promise.all([
+      phasesStore.all(projectId),
+      phasesStore.timeline(projectId),
+    ]);
+    if (phasesCountEl) phasesCountEl.textContent = `${phases.length} مرحلة`;
+    if (phasesProgressEl) phasesProgressEl.textContent = `متوسط التقدم ${formatPercent(timeline.overallProgress)}`;
+  }
 
   document.querySelectorAll('[data-edit-project]')?.forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -661,6 +752,7 @@ async function setupInfoPage() {
     { label: 'المشاريع', href: '../projects_management_center.html' },
     { label: 'معلومات المشروع', href: `project_info.html?projectId=${projectId}` },
   ]);
+  configureProjectNavigation(projectId, 'overview');
   await renderProjectSummary(projectId);
   await renderPayments(projectId);
   await renderExpenses(projectId);
@@ -677,6 +769,7 @@ async function setupPhasesPage() {
     { label: 'المشاريع', href: '../projects_management_center.html' },
     { label: 'مراحل المشروع', href: `project_phases.html?projectId=${projectId}` },
   ]);
+  configureProjectNavigation(projectId, 'phases');
   await renderProjectSummary(projectId);
   await renderPhases(projectId);
   handlePhasesForm(projectId);
@@ -690,6 +783,7 @@ async function setupExpensesPage() {
     { label: 'المشاريع', href: '../projects_management_center.html' },
     { label: 'مصاريف المشروع', href: `project_expenses.html?projectId=${projectId}` },
   ]);
+  configureProjectNavigation(projectId, 'expenses');
   await renderProjectSummary(projectId);
   await renderExpenses(projectId);
   handleExpensesForm(projectId);
@@ -703,6 +797,7 @@ async function setupPaymentsPage() {
     { label: 'المشاريع', href: '../projects_management_center.html' },
     { label: 'دفعات المشروع', href: `project_payments.html?projectId=${projectId}` },
   ]);
+  configureProjectNavigation(projectId, 'payments');
   await renderProjectSummary(projectId);
   await renderPayments(projectId);
   handlePaymentsForm(projectId);
@@ -716,6 +811,7 @@ async function setupReportsPage() {
     { label: 'المشاريع', href: '../projects_management_center.html' },
     { label: 'التقارير اليومية', href: `project_reports.html?projectId=${projectId}` },
   ]);
+  configureProjectNavigation(projectId, 'reports');
   await renderProjectSummary(projectId);
   await renderReports(projectId);
   handleReportsForm(projectId);
