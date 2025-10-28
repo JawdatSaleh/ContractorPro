@@ -1,0 +1,49 @@
+{
+  "expenses": [
+    {
+      "id": "expense-001",
+      "projectId": "project-001",
+      "title": "توريد خرسانة",
+      "category": "مواد",
+      "type": "expense",
+      "amount": 450000,
+      "date": "2024-02-01"
+    },
+    {
+      "id": "expense-002",
+      "projectId": "project-001",
+      "title": "تعاقد مقاول فرعي",
+      "category": "مقاول باطن",
+      "type": "expense",
+      "amount": 320000,
+      "date": "2024-03-15"
+    },
+    {
+      "id": "expense-003",
+      "projectId": "project-002",
+      "title": "توريد أجهزة تصوير",
+      "category": "معدات طبية",
+      "type": "expense",
+      "amount": 820000,
+      "date": "2024-01-22"
+    },
+    {
+      "id": "expense-004",
+      "projectId": "project-002",
+      "title": "دفعة استشارية",
+      "category": "استشارات",
+      "type": "expense",
+      "amount": 210000,
+      "date": "2023-11-12"
+    },
+    {
+      "id": "expense-005",
+      "projectId": "project-001",
+      "title": "دفعة من العميل",
+      "category": "دفعات",
+      "type": "revenue",
+      "amount": 900000,
+      "date": "2024-04-10"
+    }
+  ]
+}

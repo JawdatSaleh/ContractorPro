@@ -1,0 +1,64 @@
+{
+  "phases": [
+    {
+      "id": "phase-001",
+      "projectId": "project-001",
+      "name": "الأعمال التحضيرية",
+      "description": "مسح الموقع وتجهيز الأساسات",
+      "startDate": "2024-01-15",
+      "endDate": "2024-02-28",
+      "progress": 100,
+      "duration": 45
+    },
+    {
+      "id": "phase-002",
+      "projectId": "project-001",
+      "name": "الهيكل الخرساني",
+      "description": "تنفيذ الأعمدة والأسقف",
+      "startDate": "2024-03-01",
+      "endDate": "2024-05-30",
+      "progress": 60,
+      "duration": 90
+    },
+    {
+      "id": "phase-003",
+      "projectId": "project-001",
+      "name": "التشطيبات",
+      "description": "أعمال التشطيبات الداخلية والخارجية",
+      "startDate": "2024-06-01",
+      "endDate": "2024-09-30",
+      "progress": 25,
+      "duration": 120
+    },
+    {
+      "id": "phase-004",
+      "projectId": "project-002",
+      "name": "توسعة مبنى العمليات",
+      "description": "إنشاء هيكل المبنى الجديد",
+      "startDate": "2023-09-10",
+      "endDate": "2024-02-15",
+      "progress": 90,
+      "duration": 160
+    },
+    {
+      "id": "phase-005",
+      "projectId": "project-002",
+      "name": "التجهيزات الطبية",
+      "description": "توريد وتركيب الأجهزة",
+      "startDate": "2024-02-20",
+      "endDate": "2024-10-30",
+      "progress": 35,
+      "duration": 180
+    },
+    {
+      "id": "phase-006",
+      "projectId": "project-003",
+      "name": "التخطيط البيئي",
+      "description": "دراسات الأثر البيئي ومسارات المشاة",
+      "startDate": "2024-02-10",
+      "endDate": "2024-04-25",
+      "progress": 80,
+      "duration": 70
+    }
+  ]
+}
