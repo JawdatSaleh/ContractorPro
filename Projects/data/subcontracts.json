@@ -1,0 +1,40 @@
+{
+  "subcontracts": [
+    {
+      "id": "subcontract-001",
+      "projectId": "project-001",
+      "contractorName": "شركة النور للمقاولات",
+      "contractTitle": "أعمال الهيكل الخرساني",
+      "value": 380000,
+      "paidAmount": 210000,
+      "startDate": "2024-01-10",
+      "endDate": "2024-06-30",
+      "status": "active",
+      "notes": "يشمل التوريد والتنفيذ للمستودعات الرئيسية"
+    },
+    {
+      "id": "subcontract-002",
+      "projectId": "project-001",
+      "contractorName": "مؤسسة النخبة الكهربائية",
+      "contractTitle": "أنظمة الكهرباء الذكية",
+      "value": 145000,
+      "paidAmount": 95000,
+      "startDate": "2024-02-18",
+      "endDate": "2024-05-25",
+      "status": "pending",
+      "notes": "بانتظار اعتماد التصميم النهائي"
+    },
+    {
+      "id": "subcontract-003",
+      "projectId": "project-003",
+      "contractorName": "شركة رؤية التصميم الداخلي",
+      "contractTitle": "تشطيبات المكاتب الإدارية",
+      "value": 265000,
+      "paidAmount": 185000,
+      "startDate": "2023-11-01",
+      "endDate": "2024-03-15",
+      "status": "completed",
+      "notes": "تم التسليم مع بعض التعديلات الطفيفة"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { projectStore } from './project_store.js';
 import { phasesStore } from './phases_store.js';
 import { expensesStore } from './expenses_store.js';
+import { subcontractsStore } from './subcontracts_store.js';
 import { paymentsStore } from './payments_store.js';
 import { reportsStore } from './reports_store.js';
 import {
@@ -15,10 +16,38 @@ import {
   bindFormSubmit,
   safeNumber,
   buildBreadcrumb,
+  percentage,
   calculateDuration,
 } from './utils.js';
 
 const page = document.body.dataset.page;
+
+const unifiedFinancialState = {
+  projectId: null,
+  expenses: [],
+  subcontracts: [],
+  expenseFilters: { category: '', paymentMethod: '', dateFrom: '', dateTo: '' },
+  expenseSearch: '',
+  expenseSort: { key: 'date', direction: 'desc' },
+  subcontractFilters: { contractor: '', status: '', startDate: '', endDate: '' },
+  subcontractSort: { key: 'startDate', direction: 'desc' },
+  timelineView: 'monthly',
+  charts: { monthlyComparison: null, expenseVsContracts: null, timeline: null },
+  editingExpenseId: null,
+  editingSubcontractId: null,
+};
+
+const paymentsUIState = {
+  projectId: null,
+  projectValue: 0,
+  payments: [],
+  filters: { type: '', status: '', period: '' },
+  sort: { key: 'dueDate', direction: 'asc' },
+  timelineView: 'monthly',
+  charts: {},
+  editingPaymentId: null,
+  csvInput: null,
+};
 
 function ensureProjectContext() {
   const { projectId } = parseQueryParams();
@@ -1155,13 +1184,16 @@ async function renderPhases(projectId) {
 }
 
 async function renderExpenses(projectId) {
-  const list = document.querySelector('[data-expenses-list]');
-  if (!list) return;
   const expenses = await expensesStore.all(projectId);
-  list.innerHTML = expenses.length
-    ? expenses
-        .map(
-          (item) => `
+  unifiedFinancialState.projectId = projectId;
+  unifiedFinancialState.expenses = expenses;
+
+  const legacyList = document.querySelector('[data-expenses-list]');
+  if (legacyList) {
+    legacyList.innerHTML = expenses.length
+      ? expenses
+          .map(
+            (item) => `
       <div class="expense-row" data-expense-id="${item.id}">
         <div>
           <h4>${item.title}</h4>
@@ -1173,9 +1205,10 @@ async function renderExpenses(projectId) {
           <button class="btn btn-text danger" data-action="delete-expense">حذف</button>
         </div>
       </div>`
-        )
-        .join('')
-    : '<div class="empty-state">لا توجد مصاريف حتى الآن.</div>';
+          )
+          .join('')
+      : '<div class="empty-state">لا توجد مصاريف حتى الآن.</div>';
+  }
 
   const totals = await expensesStore.totals(projectId);
   const expensesTotalEl = document.querySelector('[data-expenses-total]');
@@ -1183,12 +1216,560 @@ async function renderExpenses(projectId) {
 
   const expensesRevenueEl = document.querySelector('[data-expenses-revenue]');
   if (expensesRevenueEl) expensesRevenueEl.textContent = formatCurrency(totals.revenueTotal);
+
+  renderUnifiedExpensesUI(projectId);
+  return expenses;
+}
+
+function parseDateValue(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function expenseTotalWithVat(expense) {
+  const amount = safeNumber(expense.amount);
+  const vatPercent = safeNumber(expense.vatPercent);
+  return amount + (amount * vatPercent) / 100;
+}
+
+function normalizedString(value) {
+  return (value || '').toString().toLowerCase().trim();
+}
+
+function renderUnifiedExpensesUI(projectId) {
+  const section = document.getElementById('expenses-contracts-section');
+  if (!section) return;
+
+  unifiedFinancialState.projectId = projectId;
+  const { expenseFilters, expenseSearch, expenseSort } = unifiedFinancialState;
+  const expenses = unifiedFinancialState.expenses.filter((item) => item.type !== 'revenue');
+  const now = new Date();
+
+  const filtered = expenses.filter((expense) => {
+    if (expenseFilters.category && normalizedString(expense.category) !== normalizedString(expenseFilters.category)) {
+      return false;
+    }
+    if (
+      expenseFilters.paymentMethod &&
+      normalizedString(expense.paymentMethod) !== normalizedString(expenseFilters.paymentMethod)
+    ) {
+      return false;
+    }
+
+    const expenseDate = parseDateValue(expense.date);
+    const fromDate = parseDateValue(expenseFilters.dateFrom);
+    const toDate = parseDateValue(expenseFilters.dateTo);
+    if (fromDate && expenseDate && expenseDate < fromDate) return false;
+    if (toDate && expenseDate && expenseDate > toDate) return false;
+
+    if (expenseSearch) {
+      const haystack = [expense.title, expense.category, expense.paymentMethod, expense.notes]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      if (!haystack.includes(expenseSearch.toLowerCase())) return false;
+    }
+    return true;
+  });
+
+  const valueExtractors = {
+    category: (expense) => normalizedString(expense.category),
+    title: (expense) => normalizedString(expense.title),
+    date: (expense) => parseDateValue(expense.date)?.getTime() || 0,
+    amount: (expense) => safeNumber(expense.amount),
+    vatPercent: (expense) => safeNumber(expense.vatPercent),
+    totalWithVat: (expense) => expenseTotalWithVat(expense),
+    paymentMethod: (expense) => normalizedString(expense.paymentMethod),
+  };
+
+  const sorted = [...filtered].sort((a, b) => {
+    const extractor = valueExtractors[expenseSort.key] || valueExtractors.date;
+    const aValue = extractor(a);
+    const bValue = extractor(b);
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      return aValue.localeCompare(bValue, 'ar');
+    }
+    return aValue - bValue;
+  });
+  if (expenseSort.direction === 'desc') sorted.reverse();
+
+  const totalAmount = expenses.reduce((sum, item) => sum + safeNumber(item.amount), 0);
+  const monthlyAmount = expenses.reduce((sum, item) => {
+    const expenseDate = parseDateValue(item.date);
+    if (!expenseDate) return sum;
+    if (expenseDate.getMonth() === now.getMonth() && expenseDate.getFullYear() === now.getFullYear()) {
+      return sum + safeNumber(item.amount);
+    }
+    return sum;
+  }, 0);
+  const averageAmount = expenses.length ? totalAmount / expenses.length : 0;
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText('expensesTotalAmount', formatCurrency(totalAmount));
+  setText('expensesMonthlyAmount', formatCurrency(monthlyAmount));
+  setText('expensesCount', expenses.length.toString());
+  setText('expensesAverage', formatCurrency(averageAmount));
+
+  const tbody = document.getElementById('expensesTableBody');
+  if (tbody) {
+    tbody.innerHTML = sorted
+      .map((expense) => {
+        const vatPercent = safeNumber(expense.vatPercent);
+        const totalWithVat = expenseTotalWithVat(expense);
+        return `
+      <tr data-expense-id="${expense.id}">
+        <td>${expense.category || '—'}</td>
+        <td>${expense.title || '—'}</td>
+        <td class="text-center">${formatDate(expense.date)}</td>
+        <td class="text-center text-nowrap">${formatCurrency(expense.amount)}</td>
+        <td class="text-center">${vatPercent.toFixed(2)}</td>
+        <td class="text-center text-nowrap">${formatCurrency(totalWithVat)}</td>
+        <td class="text-center">${expense.paymentMethod || '—'}</td>
+        <td>${expense.notes || '—'}</td>
+        <td class="text-center">
+          <div class="table-actions">
+            <button type="button" data-expense-action="edit">تعديل</button>
+            <button type="button" class="table-actions__danger" data-expense-action="delete">حذف</button>
+          </div>
+        </td>
+      </tr>`;
+      })
+      .join('');
+  }
+
+  const emptyState = document.getElementById('expensesEmptyState');
+  if (emptyState) emptyState.classList.toggle('is-hidden', sorted.length > 0);
+
+  const categorySelect = document.getElementById('filterExpenseCategory');
+  if (categorySelect && categorySelect.value !== (expenseFilters.category || '')) {
+    categorySelect.value = expenseFilters.category || '';
+  }
+  const paymentSelect = document.getElementById('filterPaymentMethod');
+  if (paymentSelect && paymentSelect.value !== (expenseFilters.paymentMethod || '')) {
+    paymentSelect.value = expenseFilters.paymentMethod || '';
+  }
+  const fromInput = document.getElementById('filterDateFrom');
+  if (fromInput && fromInput.value !== (expenseFilters.dateFrom || '')) {
+    fromInput.value = expenseFilters.dateFrom || '';
+  }
+  const toInput = document.getElementById('filterDateTo');
+  if (toInput && toInput.value !== (expenseFilters.dateTo || '')) {
+    toInput.value = expenseFilters.dateTo || '';
+  }
+  const searchInput = document.getElementById('searchExpenses');
+  if (searchInput && searchInput.value !== expenseSearch) {
+    searchInput.value = expenseSearch;
+  }
+
+  renderCombinedAnalyticsUI();
+}
+
+async function renderSubcontracts(projectId) {
+  const subcontracts = await subcontractsStore.all(projectId);
+  unifiedFinancialState.subcontracts = subcontracts;
+  renderSubcontractsUI(projectId);
+}
+
+function translateContractStatus(status) {
+  switch (status) {
+    case 'completed':
+      return 'مكتمل';
+    case 'pending':
+      return 'معلق';
+    case 'cancelled':
+      return 'ملغي';
+    case 'active':
+    default:
+      return 'نشط';
+  }
+}
+
+function renderSubcontractsUI(projectId) {
+  const section = document.getElementById('subcontracts-main');
+  if (!section) return;
+
+  unifiedFinancialState.projectId = projectId;
+  const { subcontracts } = unifiedFinancialState;
+  const { contractor, status, startDate, endDate } = unifiedFinancialState.subcontractFilters;
+  const sortState = unifiedFinancialState.subcontractSort;
+
+  const totals = subcontracts.reduce(
+    (acc, item) => {
+      const value = safeNumber(item.value);
+      const paid = safeNumber(item.paidAmount);
+      acc.count += 1;
+      acc.totalValue += value;
+      acc.paidAmount += paid;
+      acc.remainingAmount += Math.max(0, value - paid);
+      return acc;
+    },
+    { count: 0, totalValue: 0, paidAmount: 0, remainingAmount: 0 }
+  );
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText('subcontractsCount', totals.count.toString());
+  setText('subcontractsTotalValue', formatCurrency(totals.totalValue));
+  setText('subcontractsPaidAmount', formatCurrency(totals.paidAmount));
+  setText('subcontractsRemainingAmount', formatCurrency(totals.remainingAmount));
+
+  const contractorSelect = document.getElementById('filterContractor');
+  if (contractorSelect) {
+    const uniqueContractors = Array.from(
+      new Set(subcontracts.map((item) => item.contractorName).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b, 'ar'));
+    contractorSelect.innerHTML = ['<option value>جميع المقاولين</option>', ...uniqueContractors.map((name) => `<option value="${name}">${name}</option>`)].join('');
+    contractorSelect.value = contractor || '';
+  }
+
+  const statusSelect = document.getElementById('filterContractStatus');
+  if (statusSelect) statusSelect.value = status || '';
+
+  const startInput = document.getElementById('filterContractStartDate');
+  if (startInput && startInput.value !== (startDate || '')) startInput.value = startDate || '';
+  const endInput = document.getElementById('filterContractEndDate');
+  if (endInput && endInput.value !== (endDate || '')) endInput.value = endDate || '';
+
+  let filtered = [...subcontracts];
+  if (contractor) {
+    filtered = filtered.filter((item) => normalizedString(item.contractorName) === normalizedString(contractor));
+  }
+  if (status) {
+    filtered = filtered.filter((item) => item.status === status);
+  }
+  const startBoundary = parseDateValue(startDate);
+  const endBoundary = parseDateValue(endDate);
+  if (startBoundary) {
+    filtered = filtered.filter((item) => {
+      const itemStart = parseDateValue(item.startDate);
+      return !itemStart || itemStart >= startBoundary;
+    });
+  }
+  if (endBoundary) {
+    filtered = filtered.filter((item) => {
+      const itemEnd = parseDateValue(item.endDate || item.startDate);
+      return !itemEnd || itemEnd <= endBoundary;
+    });
+  }
+
+  const valueExtractors = {
+    contractorName: (item) => normalizedString(item.contractorName),
+    contractTitle: (item) => normalizedString(item.contractTitle),
+    value: (item) => safeNumber(item.value),
+    startDate: (item) => parseDateValue(item.startDate)?.getTime() || 0,
+    endDate: (item) => parseDateValue(item.endDate)?.getTime() || 0,
+    paidAmount: (item) => safeNumber(item.paidAmount),
+    remainingAmount: (item) => Math.max(0, safeNumber(item.value) - safeNumber(item.paidAmount)),
+    status: (item) => normalizedString(item.status),
+  };
+
+  const sorted = filtered.sort((a, b) => {
+    const extractor = valueExtractors[sortState.key] || valueExtractors.startDate;
+    const aValue = extractor(a);
+    const bValue = extractor(b);
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      return aValue.localeCompare(bValue, 'ar');
+    }
+    return aValue - bValue;
+  });
+  if (sortState.direction === 'desc') sorted.reverse();
+
+  const tbody = document.getElementById('subcontractsTableBody');
+  if (tbody) {
+    tbody.innerHTML = sorted
+      .map((contract) => {
+        const remaining = Math.max(0, safeNumber(contract.value) - safeNumber(contract.paidAmount));
+        return `
+      <tr data-subcontract-id="${contract.id}">
+        <td>${contract.contractorName || '—'}</td>
+        <td>${contract.contractTitle || '—'}</td>
+        <td class="text-center text-nowrap">${formatCurrency(contract.value)}</td>
+        <td class="text-center">${formatDate(contract.startDate)}</td>
+        <td class="text-center">${formatDate(contract.endDate)}</td>
+        <td class="text-center text-nowrap">${formatCurrency(contract.paidAmount)}</td>
+        <td class="text-center text-nowrap">${formatCurrency(remaining)}</td>
+        <td class="text-center">${translateContractStatus(contract.status)}</td>
+        <td class="text-center">
+          <div class="table-actions">
+            <button type="button" data-subcontract-action="edit">تعديل</button>
+            <button type="button" class="table-actions__danger" data-subcontract-action="delete">حذف</button>
+          </div>
+        </td>
+      </tr>`;
+      })
+      .join('');
+  }
+
+  const emptyState = document.getElementById('subcontractsEmptyState');
+  if (emptyState) emptyState.classList.toggle('is-hidden', sorted.length > 0);
+
+  renderCombinedAnalyticsUI();
+}
+
+function aggregateByMonth(items, dateField, amountField) {
+  const buckets = new Map();
+  items.forEach((item) => {
+    const date = parseDateValue(item[dateField]);
+    if (!date) return;
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    buckets.set(key, (buckets.get(key) || 0) + safeNumber(item[amountField]));
+  });
+  return buckets;
+}
+
+function formatMonthKey(key) {
+  const [year, month] = key.split('-').map((part) => Number(part));
+  const date = new Date(year, month - 1, 1);
+  return date.toLocaleDateString('ar-SA', { month: 'short', year: 'numeric' });
+}
+
+function toQuarterKey(monthKey) {
+  const [year, month] = monthKey.split('-').map((part) => Number(part));
+  const quarter = Math.floor((month - 1) / 3) + 1;
+  return `${year}-Q${quarter}`;
+}
+
+function formatQuarterKey(key) {
+  const [yearPart, quarterPart] = key.split('-Q');
+  const labels = ['الأول', 'الثاني', 'الثالث', 'الرابع'];
+  const quarterIndex = Number(quarterPart) - 1;
+  const quarterLabel = labels[quarterIndex] || quarterPart;
+  return `الربع ${quarterLabel} ${yearPart}`;
+}
+
+function buildTimelineSeries(view, monthlyExpenses, monthlyContracts) {
+  if (view === 'quarterly') {
+    const expenseBuckets = new Map();
+    monthlyExpenses.forEach((value, key) => {
+      const quarterKey = toQuarterKey(key);
+      expenseBuckets.set(quarterKey, (expenseBuckets.get(quarterKey) || 0) + value);
+    });
+    const contractBuckets = new Map();
+    monthlyContracts.forEach((value, key) => {
+      const quarterKey = toQuarterKey(key);
+      contractBuckets.set(quarterKey, (contractBuckets.get(quarterKey) || 0) + value);
+    });
+    const keys = Array.from(new Set([...expenseBuckets.keys(), ...contractBuckets.keys()])).sort();
+    const limited = keys.slice(-4);
+    return {
+      labels: limited.map((key) => formatQuarterKey(key)),
+      expenses: limited.map((key) => expenseBuckets.get(key) || 0),
+      contracts: limited.map((key) => contractBuckets.get(key) || 0),
+    };
+  }
+
+  const keys = Array.from(new Set([...monthlyExpenses.keys(), ...monthlyContracts.keys()])).sort();
+  const limited = keys.slice(-6);
+  return {
+    labels: limited.map((key) => formatMonthKey(key)),
+    expenses: limited.map((key) => monthlyExpenses.get(key) || 0),
+    contracts: limited.map((key) => monthlyContracts.get(key) || 0),
+  };
+}
+
+function ensureChartInstance(chartKey, canvasId, configFactory, registry = unifiedFinancialState.charts) {
+  if (typeof Chart === 'undefined') return;
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const context = canvas.getContext('2d');
+  if (!context) return;
+  const config = typeof configFactory === 'function' ? configFactory(context) : configFactory;
+  if (!config) return;
+  if (registry[chartKey]) {
+    registry[chartKey].destroy();
+  }
+  registry[chartKey] = new Chart(context, config);
+}
+
+function updateMonthlyComparisonChart(labels, expensesData, contractsData) {
+  ensureChartInstance('monthlyComparison', 'monthlyComparisonChart', () => ({
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'المصاريف',
+          data: expensesData,
+          backgroundColor: 'rgba(239, 68, 68, 0.7)',
+          borderRadius: 8,
+        },
+        {
+          label: 'عقود الباطن',
+          data: contractsData,
+          backgroundColor: 'rgba(59, 130, 246, 0.7)',
+          borderRadius: 8,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { family: 'Tajawal, sans-serif' } },
+        },
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: '#f1f5f9' } },
+      },
+    },
+  }));
+}
+
+function updateExpenseVsContractsChart(expenseTotal, contractTotal) {
+  ensureChartInstance('expenseVsContracts', 'expenseVsContractsPieChart', () => ({
+    type: 'doughnut',
+    data: {
+      labels: ['المصاريف', 'عقود الباطن'],
+      datasets: [
+        {
+          data: [expenseTotal, contractTotal],
+          backgroundColor: ['rgba(239, 68, 68, 0.8)', 'rgba(59, 130, 246, 0.8)'],
+          borderWidth: 0,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { family: 'Tajawal, sans-serif' } },
+        },
+      },
+    },
+  }));
+}
+
+function updateTimelineChart(labels, expensesData, contractsData) {
+  ensureChartInstance('timeline', 'timelineChart', () => ({
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'المصاريف',
+          data: expensesData,
+          borderColor: 'rgba(239, 68, 68, 1)',
+          backgroundColor: 'rgba(239, 68, 68, 0.15)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 3,
+        },
+        {
+          label: 'عقود الباطن',
+          data: contractsData,
+          borderColor: 'rgba(59, 130, 246, 1)',
+          backgroundColor: 'rgba(59, 130, 246, 0.15)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 3,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { family: 'Tajawal, sans-serif' } },
+        },
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: '#f1f5f9' } },
+      },
+    },
+  }));
+}
+
+function renderCombinedAnalyticsUI() {
+  const analyticsSection = document.getElementById('combined-analytics');
+  if (!analyticsSection) return;
+
+  const expenses = unifiedFinancialState.expenses.filter((item) => item.type !== 'revenue');
+  const subcontracts = unifiedFinancialState.subcontracts;
+
+  const expensesTotal = expenses.reduce((sum, item) => sum + safeNumber(item.amount), 0);
+  const contractsTotal = subcontracts.reduce((sum, item) => sum + safeNumber(item.value), 0);
+  const contractsPaid = subcontracts.reduce((sum, item) => sum + safeNumber(item.paidAmount), 0);
+  const ratioValue = expensesTotal ? (contractsTotal / expensesTotal) * 100 : 0;
+  const totalSpend = expensesTotal + contractsPaid;
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText('combinedExpensesTotal', formatCurrency(expensesTotal));
+  setText('combinedContractsTotal', formatCurrency(contractsTotal));
+  setText('combinedRatio', formatPercent(ratioValue));
+  setText('combinedTotalSpend', formatCurrency(totalSpend));
+
+  const monthlyExpenses = aggregateByMonth(expenses, 'date', 'amount');
+  const monthlyContracts = aggregateByMonth(subcontracts, 'startDate', 'value');
+  const monthKeys = Array.from(new Set([...monthlyExpenses.keys(), ...monthlyContracts.keys()])).sort();
+  const limitedMonthKeys = monthKeys.slice(-6);
+  const monthlyLabels = limitedMonthKeys.map((key) => formatMonthKey(key));
+  const monthlyExpenseSeries = limitedMonthKeys.map((key) => monthlyExpenses.get(key) || 0);
+  const monthlyContractSeries = limitedMonthKeys.map((key) => monthlyContracts.get(key) || 0);
+
+  updateMonthlyComparisonChart(monthlyLabels, monthlyExpenseSeries, monthlyContractSeries);
+  updateExpenseVsContractsChart(expensesTotal, contractsTotal);
+
+  const timeline = buildTimelineSeries(unifiedFinancialState.timelineView, monthlyExpenses, monthlyContracts);
+  updateTimelineChart(timeline.labels, timeline.expenses, timeline.contracts);
+
+  analyticsSection.querySelectorAll('[data-timeline-view]').forEach((button) => {
+    const isActive = button.dataset.timelineView === unifiedFinancialState.timelineView;
+    button.classList.toggle('btn-secondary', isActive);
+    button.classList.toggle('btn-ghost', !isActive);
+  });
 }
 
 async function renderPayments(projectId) {
+  const [payments, project] = await Promise.all([
+    paymentsStore.all(projectId),
+    projectStore.getById(projectId),
+  ]);
+
+  paymentsUIState.projectId = projectId;
+  paymentsUIState.payments = payments;
+  paymentsUIState.projectValue = safeNumber(project?.contractValue || project?.budget || project?.revenue || 0);
+
+  renderLegacyPaymentsList(payments);
+  renderPaymentsDashboardUI();
+
+  const totals = await paymentsStore.totals(projectId);
+  const paymentsTotalEl = document.querySelector('[data-payments-total]');
+  if (paymentsTotalEl) paymentsTotalEl.textContent = formatCurrency(totals.totalScheduled);
+
+  const paymentsPaidEl = document.querySelector('[data-payments-paid]');
+  if (paymentsPaidEl) paymentsPaidEl.textContent = formatCurrency(totals.totalPaid);
+
+  const paymentsOverdueEl = document.querySelector('[data-payments-overdue]');
+  if (paymentsOverdueEl) paymentsOverdueEl.textContent = totals.overdue;
+  const paymentsCountEl = document.querySelector('[data-payments-count]');
+  if (paymentsCountEl) paymentsCountEl.textContent = totals.count;
+
+  return payments;
+}
+
+function renderLegacyPaymentsList(payments) {
   const list = document.querySelector('[data-payments-list]');
   if (!list) return;
-  const payments = await paymentsStore.all(projectId);
   list.innerHTML = payments.length
     ? payments
         .map(
@@ -1196,7 +1777,7 @@ async function renderPayments(projectId) {
       <div class="payment-card" data-payment-id="${item.id}">
         <div class="payment-card__header">
           <h4>${item.title}</h4>
-          <span class="badge badge-outline">${item.status === 'paid' ? 'مدفوعة' : item.status === 'overdue' ? 'متأخرة' : 'مجدولة'}</span>
+          <span class="badge badge-outline">${getPaymentStatusLabel(item.status)}</span>
         </div>
         <div class="payment-card__meta">
           <span><i class="fas fa-calendar"></i> ${formatDate(item.dueDate)}</span>
@@ -1210,18 +1791,699 @@ async function renderPayments(projectId) {
         )
         .join('')
     : '<div class="empty-state">لا توجد دفعات مسجلة.</div>';
+}
 
+function renderPaymentsDashboardUI() {
+  const section = document.getElementById('payments-management-section');
+  if (!section) return;
+
+  const filtered = getFilteredPayments();
+  const sorted = sortPaymentsByState(filtered);
+  const overallMetrics = computePaymentMetrics(paymentsUIState.payments);
+  const filteredMetrics = computePaymentMetrics(filtered);
+
+  renderPaymentsKPIs(overallMetrics);
+  renderPaymentsProgress(overallMetrics);
+  renderPaymentsTable(sorted, overallMetrics);
+  updatePaymentsTimelineButtons();
+  renderPaymentsTimeline(sorted);
+  updatePaymentsCharts(filtered, filteredMetrics);
+}
+
+function getFilteredPayments() {
+  const { filters, payments } = paymentsUIState;
+  return payments.filter((payment) => {
+    const type = normalizePaymentType(payment);
+    const status = payment.status || 'scheduled';
+    if (filters.type && filters.type !== type) return false;
+    if (filters.status && filters.status !== status) return false;
+    if (filters.period && !matchesPaymentPeriod(payment, filters.period)) return false;
+    return true;
+  });
+}
+
+function sortPaymentsByState(payments) {
+  const { sort } = paymentsUIState;
+  const sorted = [...payments];
+  sorted.sort((a, b) => {
+    const aValue = getPaymentSortValue(a, sort.key);
+    const bValue = getPaymentSortValue(b, sort.key);
+    if (aValue < bValue) return sort.direction === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sort.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return sorted;
+}
+
+function getPaymentSortValue(payment, key) {
+  switch (key) {
+    case 'paymentNumber':
+      return normalizedString(payment.paymentNumber || payment.id);
+    case 'party':
+      return normalizedString(payment.party);
+    case 'dueDate': {
+      const date = parseDateValue(getPaymentDateValue(payment));
+      return date ? date.getTime() : 0;
+    }
+    case 'status':
+      return normalizedString(payment.status || 'scheduled');
+    case 'amount':
+    default:
+      return safeNumber(payment.amount);
+  }
+}
+
+function matchesPaymentPeriod(payment, period) {
+  const date = parseDateValue(getPaymentDateValue(payment));
+  if (!date) return false;
+  const now = new Date();
+  if (period === 'this-month') {
+    return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+  }
+  if (period === 'this-year') {
+    return date.getFullYear() === now.getFullYear();
+  }
+  if (period === 'this-quarter') {
+    const currentQuarter = Math.floor(now.getMonth() / 3);
+    const paymentQuarter = Math.floor(date.getMonth() / 3);
+    return date.getFullYear() === now.getFullYear() && paymentQuarter === currentQuarter;
+  }
+  return true;
+}
+
+function getPaymentDateValue(payment) {
+  return payment.dueDate || payment.paidAt || payment.createdAt;
+}
+
+function normalizePaymentType(payment) {
+  return (payment.type || 'incoming').toLowerCase() === 'outgoing' ? 'outgoing' : 'incoming';
+}
+
+function computePaymentMetrics(payments) {
+  const metrics = {
+    incomingTotal: 0,
+    incomingPaid: 0,
+    incomingPending: 0,
+    outgoingTotal: 0,
+    totalPaid: 0,
+    statusTotals: { paid: 0, scheduled: 0, overdue: 0 },
+  };
+
+  payments.forEach((payment) => {
+    const amount = safeNumber(payment.amount);
+    const status = payment.status || 'scheduled';
+    const type = normalizePaymentType(payment);
+    metrics.statusTotals[status] = (metrics.statusTotals[status] || 0) + amount;
+    if (status === 'paid') {
+      metrics.totalPaid += amount;
+    }
+    if (type === 'incoming') {
+      metrics.incomingTotal += amount;
+      if (status === 'paid') {
+        metrics.incomingPaid += amount;
+      }
+    } else {
+      metrics.outgoingTotal += amount;
+    }
+  });
+
+  metrics.incomingPending = Math.max(metrics.incomingTotal - metrics.incomingPaid, 0);
+  const targetAmount = paymentsUIState.projectValue || metrics.incomingTotal;
+  metrics.targetAmount = targetAmount;
+  metrics.remainingToTarget = Math.max(targetAmount - metrics.incomingPaid, 0);
+  metrics.collectionRatio = metrics.incomingTotal ? percentage(metrics.incomingPaid, metrics.incomingTotal) : 0;
+  metrics.progressPercent = targetAmount ? percentage(metrics.incomingPaid, targetAmount) : 0;
+  return metrics;
+}
+
+function renderPaymentsKPIs(metrics) {
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText('kpiReceivedPaymentsTotal', formatCurrency(metrics.incomingPaid));
+  setText('kpiRemainingPayments', formatCurrency(metrics.incomingPending));
+  setText('kpiSubcontractorPayments', formatCurrency(metrics.outgoingTotal));
+  setText('kpiCollectionRatio', formatPercent(metrics.collectionRatio));
+}
+
+function renderPaymentsProgress(metrics) {
+  const percentLabel = formatPercent(metrics.progressPercent);
+  const percentValue = `${metrics.progressPercent}%`;
+  const percentEl = document.getElementById('financialProgressPercent');
+  if (percentEl) percentEl.textContent = percentLabel;
+  const barEl = document.getElementById('financialProgressBar');
+  if (barEl) barEl.style.width = percentValue;
+  const barText = document.getElementById('financialProgressText');
+  if (barText) barText.textContent = percentLabel;
+  const totalValueEl = document.getElementById('totalProjectValue');
+  if (totalValueEl) totalValueEl.textContent = formatCurrency(metrics.targetAmount);
+  const collectedEl = document.getElementById('collectedAmount');
+  if (collectedEl) collectedEl.textContent = formatCurrency(metrics.incomingPaid);
+  const remainingEl = document.getElementById('remainingCollectionAmount');
+  if (remainingEl) remainingEl.textContent = formatCurrency(metrics.remainingToTarget);
+}
+
+function getPaymentStatusLabel(status) {
+  switch (status) {
+    case 'paid':
+      return 'مستلمة';
+    case 'overdue':
+      return 'متأخرة';
+    default:
+      return 'مستحقة';
+  }
+}
+
+function getPaymentStatusBadge(status) {
+  const label = getPaymentStatusLabel(status);
+  if (status === 'paid') {
+    return '<span class="badge badge-success">' + label + '</span>';
+  }
+  if (status === 'overdue') {
+    return '<span class="badge badge-danger">' + label + '</span>';
+  }
+  return '<span class="badge badge-warning">' + label + '</span>';
+}
+
+function renderPaymentsTable(payments, metrics) {
+  const body = document.getElementById('paymentsTableBody');
+  const emptyState = document.getElementById('paymentsEmptyState');
+  if (!body) return;
+
+  if (!payments.length) {
+    body.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('is-hidden');
+    return;
+  }
+
+  if (emptyState) emptyState.classList.add('is-hidden');
+  const targetAmount = metrics.targetAmount || 0;
+
+  body.innerHTML = payments
+    .map((payment) => {
+      const paymentNumber = payment.paymentNumber || payment.id;
+      const party = payment.party || '—';
+      const paymentDate = formatDate(getPaymentDateValue(payment));
+      const amount = formatCurrency(payment.amount);
+      const statusBadge = getPaymentStatusBadge(payment.status || 'scheduled');
+      const percent = targetAmount ? formatPercent(percentage(safeNumber(payment.amount), targetAmount)) : '0%';
+      const attachment = payment.attachmentUrl
+        ? `<a href="${payment.attachmentUrl}" target="_blank" rel="noopener" class="text-link">عرض</a>`
+        : '—';
+      const notes = [];
+      if (payment.notes) notes.push(`<div>${payment.notes}</div>`);
+      if (payment.paymentMethod) {
+        notes.push(`<div class="table-subtext text-muted">وسيلة الدفع: ${payment.paymentMethod}</div>`);
+      }
+      const notesCell = notes.length ? notes.join('') : '—';
+      const type = normalizePaymentType(payment);
+      const typeBadgeLabel = type === 'incoming' ? 'من العميل' : 'لمقاول باطن';
+      const typeBadge = `<span class="badge ${type === 'incoming' ? 'badge-success' : 'badge-primary'}">${typeBadgeLabel}</span>`;
+      const actions = [
+        '<button type="button" data-payment-action="edit">تعديل</button>',
+        payment.status === 'paid'
+          ? ''
+          : '<button type="button" data-payment-action="mark-paid">تحصيل</button>',
+        '<button type="button" class="table-actions__danger" data-payment-action="delete">حذف</button>',
+      ].filter(Boolean);
+
+      return `
+      <tr data-payment-id="${payment.id}">
+        <td>${paymentNumber}</td>
+        <td>
+          <div>${party}</div>
+          <div class="table-subtext text-muted">${typeBadge}</div>
+        </td>
+        <td class="text-center">${paymentDate}</td>
+        <td class="text-center text-nowrap">${amount}</td>
+        <td class="text-center">${statusBadge}</td>
+        <td class="text-center">${percent}</td>
+        <td class="text-center">${attachment}</td>
+        <td>${notesCell}</td>
+        <td class="text-center">
+          <div class="table-actions">${actions.join('')}</div>
+        </td>
+      </tr>`;
+    })
+    .join('');
+}
+
+function paymentStatusColor(status) {
+  if (status === 'paid') return 'var(--success)';
+  if (status === 'overdue') return 'var(--danger)';
+  return 'var(--warning)';
+}
+
+function renderPaymentsTimeline(payments) {
+  const container = document.getElementById('paymentsTimeline');
+  if (!container) return;
+  if (!payments.length) {
+    container.innerHTML = '<div class="text-center text-muted">لا توجد دفعات ضمن المرشحات الحالية.</div>';
+    return;
+  }
+
+  const view = paymentsUIState.timelineView;
+  const groups = new Map();
+
+  payments.forEach((payment) => {
+    const date = parseDateValue(getPaymentDateValue(payment));
+    if (!date) return;
+    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const key = view === 'quarterly' ? toQuarterKey(monthKey) : monthKey;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(payment);
+  });
+
+  const sortedKeys = Array.from(groups.keys()).sort();
+  const limit = view === 'quarterly' ? 4 : 6;
+  const visibleKeys = sortedKeys.slice(-limit);
+
+  container.innerHTML = visibleKeys
+    .map((key) => {
+      const paymentsInGroup = groups.get(key) || [];
+      paymentsInGroup.sort((a, b) => getPaymentSortValue(a, 'dueDate') - getPaymentSortValue(b, 'dueDate'));
+      const groupTotal = paymentsInGroup.reduce((sum, payment) => sum + safeNumber(payment.amount), 0);
+      const label = view === 'quarterly' ? formatQuarterKey(key) : formatMonthKey(key);
+      const items = paymentsInGroup
+        .map((payment) => {
+          const status = payment.status || 'scheduled';
+          const dotColor = paymentStatusColor(status);
+          return `
+        <div class="timeline-item">
+          <div class="timeline-item__meta">
+            <span class="timeline-item__dot" style="background:${dotColor};"></span>
+            <div class="timeline-item__details">
+              <p>${payment.title || payment.paymentNumber || 'دفعة'}</p>
+              <p class="table-subtext text-muted">${formatDate(getPaymentDateValue(payment))} · ${payment.party || '—'}</p>
+            </div>
+          </div>
+          <div class="timeline-item__amount">${formatCurrency(payment.amount)}</div>
+        </div>`;
+        })
+        .join('');
+      return `
+      <article class="timeline-group">
+        <div class="timeline-group__header">
+          <div>
+            <h4>${label}</h4>
+            <span class="table-subtext text-muted">إجمالي المجموعة ${formatCurrency(groupTotal)}</span>
+          </div>
+        </div>
+        <div class="timeline-stack">${items}</div>
+      </article>`;
+    })
+    .join('');
+}
+
+function updatePaymentsCharts(payments, metrics) {
+  const monthlyBuckets = aggregateByMonth(payments, 'dueDate', 'amount');
+  const monthKeys = Array.from(monthlyBuckets.keys()).sort();
+  const limitedKeys = monthKeys.slice(-6);
+  const labels = limitedKeys.map((key) => formatMonthKey(key));
+  const values = limitedKeys.map((key) => monthlyBuckets.get(key) || 0);
+
+  ensureChartInstance(
+    'paymentsMonthly',
+    'monthlyPaymentsChart',
+    () => ({
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'قيمة الدفعات',
+            data: values,
+            backgroundColor: 'rgba(59, 130, 246, 0.75)',
+            borderRadius: 8,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: { color: '#f1f5f9' } },
+        },
+      },
+    }),
+    paymentsUIState.charts
+  );
+
+  const statusOrder = ['paid', 'scheduled', 'overdue'];
+  const statusLabels = statusOrder.map((status) => getPaymentStatusLabel(status));
+  const statusData = statusOrder.map((status) => metrics.statusTotals[status] || 0);
+
+  ensureChartInstance(
+    'paymentsStatus',
+    'paymentStatusChart',
+    () => ({
+      type: 'doughnut',
+      data: {
+        labels: statusLabels,
+        datasets: [
+          {
+            data: statusData,
+            backgroundColor: ['rgba(34, 197, 94, 0.85)', 'rgba(250, 204, 21, 0.85)', 'rgba(239, 68, 68, 0.85)'],
+            borderWidth: 0,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { family: 'Tajawal, sans-serif' } },
+          },
+        },
+      },
+    }),
+    paymentsUIState.charts
+  );
+}
+
+function applyPaymentFilters() {
+  const typeSelect = document.getElementById('filterPaymentType');
+  const statusSelect = document.getElementById('filterPaymentStatus');
+  const periodSelect = document.getElementById('filterPaymentPeriod');
+  paymentsUIState.filters = {
+    type: typeSelect?.value || '',
+    status: statusSelect?.value || '',
+    period: periodSelect?.value || '',
+  };
+  renderPaymentsDashboardUI();
+}
+
+function clearPaymentFilters() {
+  paymentsUIState.filters = { type: '', status: '', period: '' };
+  const typeSelect = document.getElementById('filterPaymentType');
+  const statusSelect = document.getElementById('filterPaymentStatus');
+  const periodSelect = document.getElementById('filterPaymentPeriod');
+  if (typeSelect) typeSelect.value = '';
+  if (statusSelect) statusSelect.value = '';
+  if (periodSelect) periodSelect.value = '';
+  renderPaymentsDashboardUI();
+}
+
+function sortPaymentTable(key) {
+  if (paymentsUIState.sort.key === key) {
+    paymentsUIState.sort.direction = paymentsUIState.sort.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    paymentsUIState.sort.key = key;
+    paymentsUIState.sort.direction = key === 'amount' || key === 'dueDate' ? 'desc' : 'asc';
+  }
+  renderPaymentsDashboardUI();
+}
+
+function updatePaymentsTimelineButtons() {
+  const buttons = document.querySelectorAll('[data-payments-timeline]');
+  buttons.forEach((button) => {
+    const isActive = button.dataset.paymentsTimeline === paymentsUIState.timelineView;
+    button.classList.toggle('btn-secondary', isActive);
+    button.classList.toggle('btn-ghost', !isActive);
+  });
+}
+
+function switchPaymentsTimelineView(view) {
+  paymentsUIState.timelineView = view;
+  updatePaymentsTimelineButtons();
+  renderPaymentsTimeline(sortPaymentsByState(getFilteredPayments()));
+}
+
+function refreshPaymentsTimeline() {
+  renderPaymentsTimeline(sortPaymentsByState(getFilteredPayments()));
+  createToast('تم تحديث التحليل الزمني للدفعات', 'success');
+}
+
+function exportFinancialReport() {
+  createToast('ميزة تصدير التقرير قيد التطوير حالياً', 'warning');
+}
+
+function openAddPaymentModal(payment = null) {
+  const modal = document.getElementById('paymentModal');
+  const form = document.getElementById('paymentModalForm');
+  const titleEl = document.getElementById('paymentModalTitle');
+  if (!modal || !form) return;
+
+  form.reset();
+  paymentsUIState.editingPaymentId = payment?.id || null;
+  if (titleEl) titleEl.textContent = payment ? 'تعديل الدفعة' : 'إضافة دفعة';
+
+  if (payment) {
+    if (form.paymentNumber) form.paymentNumber.value = payment.paymentNumber || '';
+    if (form.title) form.title.value = payment.title || '';
+    if (form.party) form.party.value = payment.party || '';
+    if (form.type) form.type.value = normalizePaymentType(payment);
+    if (form.amount) form.amount.value = safeNumber(payment.amount);
+    if (form.dueDate) form.dueDate.value = payment.dueDate ? payment.dueDate.slice(0, 10) : '';
+    if (form.status) form.status.value = payment.status || 'scheduled';
+    if (form.paymentMethod) form.paymentMethod.value = payment.paymentMethod || 'تحويل بنكي';
+    if (form.attachmentUrl) form.attachmentUrl.value = payment.attachmentUrl || '';
+    if (form.notes) form.notes.value = payment.notes || '';
+  }
+
+  showModal(modal);
+}
+
+function closePaymentModal() {
+  paymentsUIState.editingPaymentId = null;
+  const modal = document.getElementById('paymentModal');
+  const form = document.getElementById('paymentModalForm');
+  if (form) form.reset();
+  hideModal(modal);
+}
+
+function bindPaymentModalForm(projectId) {
+  const form = document.getElementById('paymentModalForm');
+  if (!form || form.dataset.bound) return;
+  form.dataset.bound = 'true';
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const payload = {
+      paymentNumber: formData.get('paymentNumber')?.toString().trim() || '',
+      title: formData.get('title')?.toString().trim() || 'دفعة',
+      party: formData.get('party')?.toString().trim() || '',
+      type: mapPaymentTypeValue(formData.get('type')),
+      amount: safeNumber(formData.get('amount')),
+      dueDate: formData.get('dueDate')?.toString() || '',
+      status: mapPaymentStatusValue(formData.get('status')),
+      paymentMethod: formData.get('paymentMethod')?.toString().trim() || 'تحويل بنكي',
+      attachmentUrl: formData.get('attachmentUrl')?.toString().trim() || '',
+      notes: formData.get('notes')?.toString().trim() || '',
+    };
+
+    if (paymentsUIState.editingPaymentId) {
+      await paymentsStore.update(projectId, paymentsUIState.editingPaymentId, payload);
+      createToast('تم تحديث بيانات الدفعة', 'success');
+    } else {
+      await paymentsStore.create(projectId, payload);
+      createToast('تمت إضافة الدفعة بنجاح', 'success');
+    }
+
+    closePaymentModal();
+    await renderPayments(projectId);
+    const totals = await paymentsStore.totals(projectId);
+    const expenses = await expensesStore.totals(projectId);
+    await projectStore.updateFinancials(projectId, {
+      expensesTotal: expenses.expensesTotal,
+      paymentsTotal: totals.totalPaid,
+      revenue: expenses.revenueTotal,
+    });
+    await renderProjectSummary(projectId);
+  });
+}
+
+function bindPaymentsTableActions(projectId) {
+  const tableBody = document.getElementById('paymentsTableBody');
+  if (!tableBody || tableBody.dataset.bound) return;
+  tableBody.dataset.bound = 'true';
+  tableBody.addEventListener('click', async (event) => {
+    const actionButton = event.target.closest('button[data-payment-action]');
+    if (!actionButton) return;
+    const row = actionButton.closest('tr[data-payment-id]');
+    if (!row) return;
+    const paymentId = row.dataset.paymentId;
+    const action = actionButton.dataset.paymentAction;
+
+    if (action === 'edit') {
+      const payment = paymentsUIState.payments.find((item) => item.id === paymentId);
+      if (!payment) return;
+      openAddPaymentModal(payment);
+      return;
+    }
+
+    if (action === 'mark-paid') {
+      await paymentsStore.update(projectId, paymentId, { status: 'paid', paidAt: new Date().toISOString() });
+      createToast('تم تحديد الدفعة كمستلمة', 'success');
+    }
+
+    if (action === 'delete') {
+      if (!confirm('هل ترغب في حذف هذه الدفعة؟')) return;
+      await paymentsStore.remove(projectId, paymentId);
+      createToast('تم حذف الدفعة بنجاح', 'success');
+    }
+
+    await renderPayments(projectId);
+    const totals = await paymentsStore.totals(projectId);
+    const expenses = await expensesStore.totals(projectId);
+    await projectStore.updateFinancials(projectId, {
+      expensesTotal: expenses.expensesTotal,
+      paymentsTotal: totals.totalPaid,
+      revenue: expenses.revenueTotal,
+    });
+    await renderProjectSummary(projectId);
+  });
+}
+
+function importPaymentsCSV() {
+  const { projectId } = paymentsUIState;
+  if (!projectId) {
+    createToast('لم يتم تحديد مشروع نشط', 'warning');
+    return;
+  }
+
+  if (!paymentsUIState.csvInput) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv,text/csv';
+    input.classList.add('hidden');
+    input.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        await importPaymentsFromCSVText(projectId, text);
+        createToast('تم استيراد الدفعات من الملف', 'success');
+      } catch (error) {
+        console.error(error);
+        if (error?.message === 'no-records') {
+          createToast('لم يتم العثور على بيانات صالحة في الملف', 'warning');
+        } else {
+          createToast('تعذر استيراد الملف. يرجى التحقق من الصيغة.', 'error');
+        }
+      } finally {
+        event.target.value = '';
+      }
+    });
+    document.body.appendChild(input);
+    paymentsUIState.csvInput = input;
+  }
+
+  paymentsUIState.csvInput.value = '';
+  paymentsUIState.csvInput.click();
+}
+
+async function importPaymentsFromCSVText(projectId, csvText) {
+  const rows = csvText
+    .split(/\r?\n/)
+    .map((row) => row.trim())
+    .filter(Boolean);
+  if (rows.length <= 1) {
+    throw new Error('no-records');
+  }
+
+  const headers = parseCSVLine(rows[0]).map((header) => normalizedString(header).replace(/\s+/g, ''));
+
+  const created = [];
+  for (let i = 1; i < rows.length; i += 1) {
+    const values = parseCSVLine(rows[i]);
+    if (!values.some((value) => value && value.trim())) continue;
+
+    const getValue = (key, fallbackKey) => {
+      const normalizedKey = normalizedString(key).replace(/\s+/g, '');
+      const normalizedFallback = fallbackKey ? normalizedString(fallbackKey).replace(/\s+/g, '') : '';
+      const index = headers.indexOf(normalizedKey);
+      const fallbackIndex = fallbackKey ? headers.indexOf(normalizedFallback) : -1;
+      const valueIndex = index !== -1 ? index : fallbackIndex;
+      if (valueIndex === -1) return '';
+      return values[valueIndex]?.trim() || '';
+    };
+
+    const payload = {
+      paymentNumber: getValue('paymentnumber', 'رقم الدفعة'),
+      title: getValue('title', 'العنوان') || 'دفعة',
+      party: getValue('party', 'الجهة'),
+      type: mapPaymentTypeValue(getValue('type', 'النوع')),
+      amount: safeNumber(getValue('amount', 'القيمة')),
+      dueDate: getValue('duedate', 'تاريخ الاستحقاق'),
+      status: mapPaymentStatusValue(getValue('status', 'الحالة')),
+      paymentMethod: getValue('paymentmethod', 'وسيلة الدفع') || 'تحويل بنكي',
+      notes: getValue('notes', 'ملاحظات'),
+      attachmentUrl: getValue('attachment', 'المرفق'),
+    };
+
+    if (!payload.amount && !payload.title) continue;
+
+    await paymentsStore.create(projectId, payload);
+    created.push(payload);
+  }
+
+  if (!created.length) {
+    throw new Error('no-records');
+  }
+
+  await renderPayments(projectId);
   const totals = await paymentsStore.totals(projectId);
-  const paymentsTotalEl = document.querySelector('[data-payments-total]');
-  if (paymentsTotalEl) paymentsTotalEl.textContent = formatCurrency(totals.totalScheduled);
+  const expenses = await expensesStore.totals(projectId);
+  await projectStore.updateFinancials(projectId, {
+    expensesTotal: expenses.expensesTotal,
+    paymentsTotal: totals.totalPaid,
+    revenue: expenses.revenueTotal,
+  });
+  await renderProjectSummary(projectId);
+}
 
-  const paymentsPaidEl = document.querySelector('[data-payments-paid]');
-  if (paymentsPaidEl) paymentsPaidEl.textContent = formatCurrency(totals.totalPaid);
+function parseCSVLine(line) {
+  const values = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      values.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  values.push(current.trim());
+  return values;
+}
 
-  const paymentsOverdueEl = document.querySelector('[data-payments-overdue]');
-  if (paymentsOverdueEl) paymentsOverdueEl.textContent = totals.overdue;
-  const paymentsCountEl = document.querySelector('[data-payments-count]');
-  if (paymentsCountEl) paymentsCountEl.textContent = totals.count;
+function mapPaymentStatusValue(value) {
+  const normalized = normalizedString(value);
+  if (!normalized) return 'scheduled';
+  if (
+    normalized.includes('paid') ||
+    normalized.includes('استلم') ||
+    normalized.includes('مدفوع') ||
+    normalized.includes('received')
+  )
+    return 'paid';
+  if (normalized.includes('overdue') || normalized.includes('متأخ')) return 'overdue';
+  if (normalized.includes('pending') || normalized.includes('معلق')) return 'scheduled';
+  return 'scheduled';
+}
+
+function mapPaymentTypeValue(value) {
+  const normalized = normalizedString(value);
+  if (normalized.includes('out') || normalized.includes('باطن') || normalized.includes('مقاول')) return 'outgoing';
+  return 'incoming';
 }
 
 async function renderReports(projectId) {
@@ -1300,31 +2562,191 @@ function bindPhaseActions(projectId) {
 }
 
 function bindExpensesActions(projectId) {
-  const container = document.querySelector('[data-expenses-list]');
-  if (!container || container.dataset.bound) return;
-  container.dataset.bound = 'true';
-  container.addEventListener('click', async (event) => {
-    const actionButton = event.target.closest('button[data-action]');
-    if (!actionButton) return;
-    const row = actionButton.closest('[data-expense-id]');
-    if (!row) return;
-    const { action } = actionButton.dataset;
-    const expenseId = row.dataset.expenseId;
+  const legacyContainer = document.querySelector('[data-expenses-list]');
+  if (legacyContainer && !legacyContainer.dataset.bound) {
+    legacyContainer.dataset.bound = 'true';
+    legacyContainer.addEventListener('click', async (event) => {
+      const actionButton = event.target.closest('button[data-action]');
+      if (!actionButton) return;
+      const row = actionButton.closest('[data-expense-id]');
+      if (!row) return;
+      const { action } = actionButton.dataset;
+      const expenseId = row.dataset.expenseId;
 
-    if (action === 'delete-expense') {
-      if (!confirm('هل ترغب في حذف هذا السجل المالي؟')) return;
-      await expensesStore.remove(projectId, expenseId);
+      if (action === 'delete-expense') {
+        if (!confirm('هل ترغب في حذف هذا السجل المالي؟')) return;
+        await expensesStore.remove(projectId, expenseId);
+      }
+
+      if (action === 'edit-expense') {
+        const expenses = await expensesStore.all(projectId);
+        const current = expenses.find((expense) => expense.id === expenseId);
+        if (!current) return;
+        const newAmount = Number(prompt('قيمة المبلغ', current.amount ?? 0));
+        if (Number.isNaN(newAmount)) return;
+        await expensesStore.update(projectId, expenseId, { amount: newAmount });
+      }
+
+      await renderExpenses(projectId);
+      const totals = await expensesStore.totals(projectId);
+      const payments = await paymentsStore.totals(projectId);
+      await projectStore.updateFinancials(projectId, {
+        expensesTotal: totals.expensesTotal,
+        paymentsTotal: payments.totalPaid,
+        revenue: totals.revenueTotal,
+      });
+      await renderProjectSummary(projectId);
+    });
+  }
+
+  const tableBody = document.getElementById('expensesTableBody');
+  if (tableBody && !tableBody.dataset.bound) {
+    tableBody.dataset.bound = 'true';
+    tableBody.addEventListener('click', async (event) => {
+      const actionButton = event.target.closest('button[data-expense-action]');
+      if (!actionButton) return;
+      const row = actionButton.closest('tr[data-expense-id]');
+      if (!row) return;
+      const expenseId = row.dataset.expenseId;
+      const action = actionButton.dataset.expenseAction;
+
+      if (action === 'delete') {
+        if (!confirm('هل ترغب في حذف هذا السجل المالي؟')) return;
+        await expensesStore.remove(projectId, expenseId);
+        await renderExpenses(projectId);
+        const totals = await expensesStore.totals(projectId);
+        const payments = await paymentsStore.totals(projectId);
+        await projectStore.updateFinancials(projectId, {
+          expensesTotal: totals.expensesTotal,
+          paymentsTotal: payments.totalPaid,
+          revenue: totals.revenueTotal,
+        });
+        await renderProjectSummary(projectId);
+        createToast('تم حذف المصروف', 'success');
+        return;
+      }
+
+      if (action === 'edit') {
+        const expenses = await expensesStore.all(projectId);
+        const current = expenses.find((expense) => expense.id === expenseId);
+        if (!current) return;
+        unifiedFinancialState.editingExpenseId = expenseId;
+        openAddExpenseModal(current);
+      }
+    });
+  }
+
+  const searchInput = document.getElementById('searchExpenses');
+  if (searchInput && !searchInput.dataset.bound) {
+    searchInput.dataset.bound = 'true';
+    searchInput.addEventListener('input', (event) => {
+      unifiedFinancialState.expenseSearch = event.target.value.trim();
+      renderUnifiedExpensesUI(projectId);
+    });
+  }
+}
+
+function bindSubcontractActions(projectId) {
+  const tableBody = document.getElementById('subcontractsTableBody');
+  if (tableBody && !tableBody.dataset.bound) {
+    tableBody.dataset.bound = 'true';
+    tableBody.addEventListener('click', async (event) => {
+      const actionButton = event.target.closest('button[data-subcontract-action]');
+      if (!actionButton) return;
+      const row = actionButton.closest('tr[data-subcontract-id]');
+      if (!row) return;
+      const subcontractId = row.dataset.subcontractId;
+      const action = actionButton.dataset.subcontractAction;
+
+      if (action === 'delete') {
+        if (!confirm('هل ترغب في حذف عقد الباطن هذا؟')) return;
+        await subcontractsStore.remove(projectId, subcontractId);
+        await renderSubcontracts(projectId);
+        createToast('تم حذف عقد الباطن', 'success');
+        return;
+      }
+
+      if (action === 'edit') {
+        const contracts = await subcontractsStore.all(projectId);
+        const current = contracts.find((contract) => contract.id === subcontractId);
+        if (!current) return;
+        unifiedFinancialState.editingSubcontractId = subcontractId;
+        openAddSubcontractModal(current);
+      }
+    });
+  }
+}
+
+function showModal(modal) {
+  if (!modal) return;
+  modal.classList.add('is-visible');
+  modal.classList.remove('is-hidden');
+}
+
+function hideModal(modal) {
+  if (!modal) return;
+  modal.classList.remove('is-visible');
+  modal.classList.add('is-hidden');
+}
+
+function openAddExpenseModal(expense = null) {
+  const modal = document.getElementById('expenseModal');
+  const form = document.getElementById('expenseModalForm');
+  const titleEl = document.getElementById('expenseModalTitle');
+  if (!modal || !form) return;
+
+  form.reset();
+  unifiedFinancialState.editingExpenseId = expense?.id || null;
+  if (titleEl) titleEl.textContent = expense ? 'تعديل مصروف' : 'إضافة مصروف';
+
+  if (expense) {
+    form.category.value = expense.category || '';
+    form.title.value = expense.title || '';
+    form.date.value = expense.date ? expense.date.slice(0, 10) : '';
+    form.amount.value = safeNumber(expense.amount);
+    form.vatPercent.value = expense.vatPercent ?? '';
+    form.paymentMethod.value = expense.paymentMethod || 'نقدي';
+    form.notes.value = expense.notes || '';
+  }
+
+  showModal(modal);
+}
+
+function closeExpenseModal() {
+  unifiedFinancialState.editingExpenseId = null;
+  const modal = document.getElementById('expenseModal');
+  const form = document.getElementById('expenseModalForm');
+  if (form) form.reset();
+  hideModal(modal);
+}
+
+function bindExpenseModalForm(projectId) {
+  const form = document.getElementById('expenseModalForm');
+  if (!form || form.dataset.bound) return;
+  form.dataset.bound = 'true';
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const payload = {
+      category: formData.get('category')?.toString().trim() || 'عام',
+      title: formData.get('title')?.toString().trim() || 'مصروف',
+      date: formData.get('date'),
+      amount: safeNumber(formData.get('amount')), 
+      vatPercent: safeNumber(formData.get('vatPercent')), 
+      paymentMethod: formData.get('paymentMethod')?.toString().trim() || 'نقدي',
+      notes: formData.get('notes')?.toString().trim() || '',
+      type: 'expense',
+    };
+
+    if (unifiedFinancialState.editingExpenseId) {
+      await expensesStore.update(projectId, unifiedFinancialState.editingExpenseId, payload);
+      createToast('تم تحديث المصروف بنجاح', 'success');
+    } else {
+      await expensesStore.create(projectId, payload);
+      createToast('تمت إضافة المصروف بنجاح', 'success');
     }
 
-    if (action === 'edit-expense') {
-      const expenses = await expensesStore.all(projectId);
-      const current = expenses.find((expense) => expense.id === expenseId);
-      if (!current) return;
-      const newAmount = Number(prompt('قيمة المبلغ', current.amount ?? 0));
-      if (Number.isNaN(newAmount)) return;
-      await expensesStore.update(projectId, expenseId, { amount: newAmount });
-    }
-
+    closeExpenseModal();
     await renderExpenses(projectId);
     const totals = await expensesStore.totals(projectId);
     const payments = await paymentsStore.totals(projectId);
@@ -1335,6 +2757,196 @@ function bindExpensesActions(projectId) {
     });
     await renderProjectSummary(projectId);
   });
+}
+
+function openAddSubcontractModal(contract = null) {
+  const modal = document.getElementById('subcontractModal');
+  const form = document.getElementById('subcontractModalForm');
+  const titleEl = document.getElementById('subcontractModalTitle');
+  if (!modal || !form) return;
+
+  form.reset();
+  unifiedFinancialState.editingSubcontractId = contract?.id || null;
+  if (titleEl) titleEl.textContent = contract ? 'تعديل عقد باطن' : 'إضافة عقد باطن';
+
+  if (contract) {
+    form.contractorName.value = contract.contractorName || '';
+    form.contractTitle.value = contract.contractTitle || '';
+    form.startDate.value = contract.startDate ? contract.startDate.slice(0, 10) : '';
+    form.endDate.value = contract.endDate ? contract.endDate.slice(0, 10) : '';
+    form.value.value = safeNumber(contract.value);
+    form.paidAmount.value = safeNumber(contract.paidAmount);
+    form.status.value = contract.status || 'active';
+    form.notes.value = contract.notes || '';
+  }
+
+  showModal(modal);
+}
+
+function closeSubcontractModal() {
+  unifiedFinancialState.editingSubcontractId = null;
+  const modal = document.getElementById('subcontractModal');
+  const form = document.getElementById('subcontractModalForm');
+  if (form) form.reset();
+  hideModal(modal);
+}
+
+function bindSubcontractModalForm(projectId) {
+  const form = document.getElementById('subcontractModalForm');
+  if (!form || form.dataset.bound) return;
+  form.dataset.bound = 'true';
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const payload = {
+      contractorName: formData.get('contractorName')?.toString().trim() || '',
+      contractTitle: formData.get('contractTitle')?.toString().trim() || '',
+      startDate: formData.get('startDate'),
+      endDate: formData.get('endDate') || '',
+      value: safeNumber(formData.get('value')),
+      paidAmount: safeNumber(formData.get('paidAmount')),
+      status: formData.get('status')?.toString() || 'active',
+      notes: formData.get('notes')?.toString().trim() || '',
+    };
+
+    if (unifiedFinancialState.editingSubcontractId) {
+      await subcontractsStore.update(projectId, unifiedFinancialState.editingSubcontractId, payload);
+      createToast('تم تحديث عقد الباطن', 'success');
+    } else {
+      await subcontractsStore.create(projectId, payload);
+      createToast('تم إنشاء عقد الباطن', 'success');
+    }
+
+    closeSubcontractModal();
+    await renderSubcontracts(projectId);
+  });
+}
+
+function applyExpenseFilters() {
+  const category = document.getElementById('filterExpenseCategory')?.value || '';
+  const paymentMethod = document.getElementById('filterPaymentMethod')?.value || '';
+  const dateFrom = document.getElementById('filterDateFrom')?.value || '';
+  const dateTo = document.getElementById('filterDateTo')?.value || '';
+  unifiedFinancialState.expenseFilters = { category, paymentMethod, dateFrom, dateTo };
+  renderUnifiedExpensesUI(unifiedFinancialState.projectId);
+}
+
+function clearExpenseFilters() {
+  unifiedFinancialState.expenseFilters = { category: '', paymentMethod: '', dateFrom: '', dateTo: '' };
+  const category = document.getElementById('filterExpenseCategory');
+  const payment = document.getElementById('filterPaymentMethod');
+  const dateFrom = document.getElementById('filterDateFrom');
+  const dateTo = document.getElementById('filterDateTo');
+  if (category) category.value = '';
+  if (payment) payment.value = '';
+  if (dateFrom) dateFrom.value = '';
+  if (dateTo) dateTo.value = '';
+  renderUnifiedExpensesUI(unifiedFinancialState.projectId);
+}
+
+function sortExpenseTable(key) {
+  if (unifiedFinancialState.expenseSort.key === key) {
+    unifiedFinancialState.expenseSort.direction = unifiedFinancialState.expenseSort.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    unifiedFinancialState.expenseSort.key = key;
+    unifiedFinancialState.expenseSort.direction = 'asc';
+  }
+  renderUnifiedExpensesUI(unifiedFinancialState.projectId);
+}
+
+function applySubcontractFilters() {
+  const contractor = document.getElementById('filterContractor')?.value || '';
+  const status = document.getElementById('filterContractStatus')?.value || '';
+  const startDate = document.getElementById('filterContractStartDate')?.value || '';
+  const endDate = document.getElementById('filterContractEndDate')?.value || '';
+  unifiedFinancialState.subcontractFilters = { contractor, status, startDate, endDate };
+  renderSubcontractsUI(unifiedFinancialState.projectId);
+}
+
+function clearSubcontractFilters() {
+  unifiedFinancialState.subcontractFilters = { contractor: '', status: '', startDate: '', endDate: '' };
+  const contractor = document.getElementById('filterContractor');
+  const status = document.getElementById('filterContractStatus');
+  const startDate = document.getElementById('filterContractStartDate');
+  const endDate = document.getElementById('filterContractEndDate');
+  if (contractor) contractor.value = '';
+  if (status) status.value = '';
+  if (startDate) startDate.value = '';
+  if (endDate) endDate.value = '';
+  renderSubcontractsUI(unifiedFinancialState.projectId);
+}
+
+function sortSubcontractTable(key) {
+  if (unifiedFinancialState.subcontractSort.key === key) {
+    unifiedFinancialState.subcontractSort.direction =
+      unifiedFinancialState.subcontractSort.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    unifiedFinancialState.subcontractSort.key = key;
+    unifiedFinancialState.subcontractSort.direction = 'asc';
+  }
+  renderSubcontractsUI(unifiedFinancialState.projectId);
+}
+
+function switchUnifiedSubTab(subtabId) {
+  const section = document.getElementById('expenses-contracts-section');
+  if (!section) return;
+  section.querySelectorAll('.unified-subtab-content').forEach((content) => {
+    content.classList.toggle('is-hidden', content.id !== subtabId);
+  });
+  section.querySelectorAll('[data-subtab]').forEach((button) => {
+    const isActive = button.dataset.subtab === subtabId;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+}
+
+function switchTimelineView(view) {
+  unifiedFinancialState.timelineView = view;
+  renderCombinedAnalyticsUI();
+}
+
+function exportUnifiedData() {
+  const projectId = unifiedFinancialState.projectId || 'project';
+  const expenses = unifiedFinancialState.expenses.filter((item) => item.type !== 'revenue');
+  const subcontracts = unifiedFinancialState.subcontracts;
+  if (!expenses.length && !subcontracts.length) {
+    createToast('لا توجد بيانات للتصدير حالياً', 'warning');
+    return;
+  }
+
+  const rows = [
+    ['نوع السجل', 'التاريخ', 'البيان', 'القيمة', 'وسيلة الدفع / الحالة', 'ملاحظات'],
+    ...expenses.map((expense) => [
+      'مصروف',
+      formatDate(expense.date),
+      expense.title || expense.category || 'مصروف',
+      formatCurrency(expense.amount),
+      expense.paymentMethod || '—',
+      expense.notes || '',
+    ]),
+    ...subcontracts.map((contract) => [
+      'عقد باطن',
+      formatDate(contract.startDate),
+      contract.contractTitle || contract.contractorName || 'عقد',
+      formatCurrency(contract.value),
+      translateContractStatus(contract.status),
+      contract.notes || '',
+    ]),
+  ];
+
+  const csvContent = rows
+    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${projectId}-financial-export.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  createToast('تم تصدير البيانات بنجاح', 'success');
 }
 
 function bindPaymentsActions(projectId) {
@@ -1444,30 +3056,6 @@ function handleExpensesForm(projectId) {
   });
 }
 
-function handlePaymentsForm(projectId) {
-  const form = document.querySelector('#paymentForm');
-  if (!form) return;
-  bindFormSubmit(form, async (formData) => {
-    const payload = {
-      title: getFormValue(formData, 'title'),
-      amount: safeNumber(getFormValue(formData, 'amount')),
-      dueDate: getFormValue(formData, 'dueDate'),
-      status: getFormValue(formData, 'status'),
-    };
-    await paymentsStore.create(projectId, payload);
-    await renderPayments(projectId);
-    const totals = await paymentsStore.totals(projectId);
-    const expenses = await expensesStore.totals(projectId);
-    await projectStore.updateFinancials(projectId, {
-      expensesTotal: expenses.expensesTotal,
-      paymentsTotal: totals.totalPaid,
-      revenue: expenses.revenueTotal,
-    });
-    await renderProjectSummary(projectId);
-    createToast('تمت إضافة الدفعة بنجاح');
-  });
-}
-
 function handleReportsForm(projectId) {
   const form = document.querySelector('#reportForm');
   if (!form) return;
@@ -1529,13 +3117,20 @@ async function setupExpensesPage() {
   configureProjectNavigation(projectId, 'expenses');
   await renderProjectSummary(projectId);
   await renderExpenses(projectId);
-  handleExpensesForm(projectId);
+  await renderSubcontracts(projectId);
   bindExpensesActions(projectId);
+  bindSubcontractActions(projectId);
+  bindExpenseModalForm(projectId);
+  bindSubcontractModalForm(projectId);
 }
 
 async function setupPaymentsPage() {
   const projectId = ensureProjectContext();
   if (!projectId) return;
+  paymentsUIState.filters = { type: '', status: '', period: '' };
+  paymentsUIState.sort = { key: 'dueDate', direction: 'asc' };
+  paymentsUIState.timelineView = 'monthly';
+  paymentsUIState.charts = {};
   buildBreadcrumb([
     { label: 'المشاريع', href: '../projects_management_center.html' },
     { label: 'دفعات المشروع', href: `project_payments.html?projectId=${projectId}` },
@@ -1543,8 +3138,10 @@ async function setupPaymentsPage() {
   configureProjectNavigation(projectId, 'payments');
   await renderProjectSummary(projectId);
   await renderPayments(projectId);
-  handlePaymentsForm(projectId);
   bindPaymentsActions(projectId);
+  bindPaymentsTableActions(projectId);
+  bindPaymentModalForm(projectId);
+  switchPaymentsTimelineView(paymentsUIState.timelineView);
 }
 
 async function setupReportsPage() {
@@ -1574,6 +3171,31 @@ const pageInitializers = {
 if (pageInitializers[page]) {
   pageInitializers[page]();
 }
+
+Object.assign(window, {
+  openAddExpenseModal,
+  closeExpenseModal,
+  openAddSubcontractModal,
+  closeSubcontractModal,
+  applyExpenseFilters,
+  clearExpenseFilters,
+  sortExpenseTable,
+  applySubcontractFilters,
+  clearSubcontractFilters,
+  sortSubcontractTable,
+  switchUnifiedSubTab,
+  switchTimelineView,
+  exportUnifiedData,
+  openAddPaymentModal,
+  closePaymentModal,
+  applyPaymentFilters,
+  clearPaymentFilters,
+  sortPaymentTable,
+  switchPaymentsTimelineView,
+  refreshPaymentsTimeline,
+  exportFinancialReport,
+  importPaymentsCSV,
+});
 
 window.contractorpro = window.contractorpro || {};
 window.contractorpro.projectsMain = { renderProjectsGrid };

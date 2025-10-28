@@ -49,8 +49,8 @@
                 <span class="breadcrumb-divider">/</span>
                 <span class="breadcrumb-item">دفعات المشروع</span>
               </nav>
-              <h1>إدارة التدفقات النقدية والدفعات</h1>
-              <p class="text-muted">راقب مواعيد الدفعات وحالة التحصيل بدقة عالية.</p>
+              <h1>دفعات المشروع والتحصيل المالي</h1>
+              <p class="text-muted">إدارة كاملة للدفعات الواردة والصادرة مع مؤشرات شاملة للتحصيل.</p>
             </div>
             <div class="projects-actions">
               <button class="btn btn-light" data-edit-project>
@@ -110,58 +110,308 @@
             </article>
           </section>
 
-          <section class="section-card fade-in">
-            <header>
+          <section class="section-card fade-in" id="payments-management-section">
+            <div class="section-toolbar">
               <div>
-                <h2>خط الدفعات</h2>
-                <p class="text-muted">تتبع حالات الدفع عبر الزمن</p>
+                <h2>دفعات المشروع</h2>
+                <p class="text-muted">تحكم في أنواع الدفعات المختلفة، حالات التحصيل، ونسب الإنجاز المالي.</p>
               </div>
-            </header>
+              <div class="section-toolbar__actions">
+                <button class="btn btn-primary" type="button" onclick="openAddPaymentModal()" id="btnAddPayment">
+                  <i class="fas fa-plus"></i>
+                  إضافة دفعة جديدة
+                </button>
+                <button class="btn btn-secondary" type="button" onclick="importPaymentsCSV()" id="btnImportCSV">
+                  <i class="fas fa-upload"></i>
+                  استيراد من ملف CSV
+                </button>
+              </div>
+            </div>
+
+            <div class="filters-bar">
+              <div class="filter-group">
+                <label for="filterPaymentType">نوع الدفعة</label>
+                <select id="filterPaymentType">
+                  <option value>الكل</option>
+                  <option value="incoming">من العميل</option>
+                  <option value="outgoing">لمقاول باطن</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="filterPaymentStatus">الحالة</label>
+                <select id="filterPaymentStatus">
+                  <option value>كل الحالات</option>
+                  <option value="received">مستلمة</option>
+                  <option value="pending">مستحقة</option>
+                  <option value="overdue">متأخرة</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="filterPaymentPeriod">الفترة الزمنية</label>
+                <select id="filterPaymentPeriod">
+                  <option value>جميع الفترات</option>
+                  <option value="this-month">هذا الشهر</option>
+                  <option value="this-quarter">هذا الربع</option>
+                  <option value="this-year">هذا العام</option>
+                </select>
+              </div>
+              <div class="filter-group" style="min-width: auto;">
+                <button class="btn btn-primary" type="button" onclick="applyPaymentFilters()">تطبيق الفلاتر</button>
+              </div>
+              <div class="filter-group" style="min-width: auto;">
+                <button class="btn btn-ghost" type="button" onclick="clearPaymentFilters()">مسح الفلاتر</button>
+              </div>
+            </div>
+
+            <div class="kpi-grid">
+              <article class="kpi-card">
+                <div class="kpi-card__icon"><i class="fas fa-money-bill"></i></div>
+                <span class="text-muted">إجمالي الدفعات المستلمة</span>
+                <strong id="kpiReceivedPaymentsTotal">0 ريال</strong>
+              </article>
+              <article class="kpi-card">
+                <div class="kpi-card__icon"><i class="fas fa-clock"></i></div>
+                <span class="text-muted">الدفعات المتبقية</span>
+                <strong id="kpiRemainingPayments">0 ريال</strong>
+              </article>
+              <article class="kpi-card">
+                <div class="kpi-card__icon"><i class="fas fa-handshake"></i></div>
+                <span class="text-muted">دفعات عقود الباطن</span>
+                <strong id="kpiSubcontractorPayments">0 ريال</strong>
+              </article>
+              <article class="kpi-card">
+                <div class="kpi-card__icon"><i class="fas fa-chart-pie"></i></div>
+                <span class="text-muted">نسبة التحصيل</span>
+                <strong id="kpiCollectionRatio">0%</strong>
+              </article>
+            </div>
+
+            <div class="table-wrapper">
+              <table id="tblPayments">
+                <thead>
+                  <tr>
+                    <th>
+                      <button type="button" onclick="sortPaymentTable('paymentNumber')">
+                        <span>رقم الدفعة</span>
+                        <i class="fas fa-sort"></i>
+                      </button>
+                    </th>
+                    <th>
+                      <button type="button" onclick="sortPaymentTable('party')">
+                        <span>الجهة</span>
+                        <i class="fas fa-sort"></i>
+                      </button>
+                    </th>
+                    <th class="text-center">
+                      <button type="button" onclick="sortPaymentTable('dueDate')">
+                        <span>التاريخ</span>
+                        <i class="fas fa-sort"></i>
+                      </button>
+                    </th>
+                    <th class="text-center">
+                      <button type="button" onclick="sortPaymentTable('amount')">
+                        <span>المبلغ</span>
+                        <i class="fas fa-sort"></i>
+                      </button>
+                    </th>
+                    <th class="text-center">
+                      <button type="button" onclick="sortPaymentTable('status')">
+                        <span>الحالة</span>
+                        <i class="fas fa-sort"></i>
+                      </button>
+                    </th>
+                    <th class="text-center">نسبة من الإجمالي</th>
+                    <th class="text-center">مرفق</th>
+                    <th>ملاحظات</th>
+                    <th class="text-center">الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody id="paymentsTableBody"></tbody>
+              </table>
+            </div>
+            <div id="paymentsEmptyState" class="empty-hint is-hidden">لا توجد دفعات مطابقة للمعايير الحالية.</div>
+
+            <div class="timeline-card">
+              <div class="section-toolbar" style="margin-bottom: 16px;">
+                <div>
+                  <h3>التحليل الزمني للدفعات</h3>
+                  <p class="text-muted">راقب التدفقات المالية حسب الفترة الزمنية.</p>
+                </div>
+                <div class="timeline-controls">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-payments-timeline="monthly"
+                    onclick="switchPaymentsTimelineView('monthly')"
+                  >
+                    شهري
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-ghost"
+                    data-payments-timeline="quarterly"
+                    onclick="switchPaymentsTimelineView('quarterly')"
+                  >
+                    ربع سنوي
+                  </button>
+                  <button type="button" class="btn btn-ghost" onclick="refreshPaymentsTimeline()" aria-label="تحديث المخطط">
+                    <i class="fas fa-sync"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="table-wrapper" style="border: 1px dashed rgba(148, 163, 184, 0.4); background: var(--surface-alt);">
+                <div id="paymentsTimeline" style="min-height: 200px; padding: 24px;"></div>
+              </div>
+              <div class="timeline-legend">
+                <span class="legend-item">
+                  <span class="legend-dot" style="background: rgba(34, 197, 94, 0.9);"></span>
+                  مستلمة
+                </span>
+                <span class="legend-item">
+                  <span class="legend-dot" style="background: rgba(234, 179, 8, 0.9);"></span>
+                  مستحقة قريباً
+                </span>
+                <span class="legend-item">
+                  <span class="legend-dot" style="background: rgba(239, 68, 68, 0.9);"></span>
+                  متأخرة
+                </span>
+              </div>
+            </div>
+
+            <div class="charts-grid">
+              <div class="chart-card">
+                <h3>مجموع الدفعات الشهرية</h3>
+                <canvas id="monthlyPaymentsChart" width="400" height="280"></canvas>
+              </div>
+              <div class="chart-card">
+                <h3>توزيع حالة الدفعات</h3>
+                <canvas id="paymentStatusChart" width="400" height="280"></canvas>
+              </div>
+            </div>
+
+            <div class="progress-card">
+              <div class="section-toolbar" style="margin: 0;">
+                <div>
+                  <h3>نسبة الإنجاز المالي للمشروع</h3>
+                  <p class="text-muted">قياس التقدم في تحصيل قيمة العقد الإجمالية.</p>
+                </div>
+                <span id="financialProgressPercent" class="text-muted text-nowrap">0%</span>
+              </div>
+              <div class="progress-bar">
+                <div id="financialProgressBar" style="width: 0%">
+                  <span id="financialProgressText" class="text-nowrap" style="color: #fff; padding-inline: 12px;">0%</span>
+                </div>
+              </div>
+              <div class="progress-card__stats">
+                <div>
+                  <span class="text-muted">القيمة الإجمالية</span>
+                  <strong id="totalProjectValue">0 ريال</strong>
+                </div>
+                <div>
+                  <span class="text-muted">المبلغ المحصل</span>
+                  <strong id="collectedAmount">0 ريال</strong>
+                </div>
+                <div>
+                  <span class="text-muted">المبلغ المتبقي</span>
+                  <strong id="remainingCollectionAmount">0 ريال</strong>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section-card fade-in is-hidden" aria-hidden="true">
             <div data-payments-list></div>
           </section>
 
-          <section class="section-card fade-in">
-            <header>
+          <section class="section-card fade-in" id="financial-analysis" hidden>
+            <div class="section-toolbar">
               <div>
-                <h2>إضافة دفعة جديدة</h2>
-                <p class="text-muted">سيتم تحديث نسب التحصيل تلقائياً</p>
+                <h2>التحليل المالي</h2>
+                <p class="text-muted">سيتم تطوير التحليل المالي المتقدم قريباً.</p>
               </div>
-            </header>
-            <form id="paymentForm">
-              <div class="form-grid">
-                <label>
-                  عنوان الدفعة
-                  <input type="text" name="title" required />
-                </label>
-                <label>
-                  قيمة الدفعة
-                  <input type="number" name="amount" min="0" step="0.01" required />
-                </label>
-                <label>
-                  تاريخ الاستحقاق
-                  <input type="date" name="dueDate" required />
-                </label>
-                <label>
-                  الحالة
-                  <select name="status">
-                    <option value="scheduled">مجدولة</option>
-                    <option value="paid">مدفوعة</option>
-                    <option value="overdue">متأخرة</option>
-                  </select>
-                </label>
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-plus"></i>
-                  إضافة الدفعة
-                </button>
-              </div>
-            </form>
+              <button class="btn btn-secondary" type="button" onclick="exportFinancialReport()">
+                <i class="fas fa-download"></i>
+                تصدير التقرير
+              </button>
+            </div>
+            <div class="empty-state">سيتم تطوير التحليل المالي قريباً.</div>
           </section>
 
           <footer class="footer">© 2024 ContractorPro</footer>
         </div>
       </main>
+    </div>
+
+    <div
+      id="paymentModal"
+      class="modal-backdrop is-hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="paymentModalTitle"
+    >
+      <div class="modal">
+        <div class="modal__header">
+          <h3 id="paymentModalTitle">إضافة دفعة</h3>
+          <button type="button" class="modal__close" onclick="closePaymentModal()" aria-label="إغلاق">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="paymentModalForm" class="modal__body">
+          <div class="form-grid">
+            <label>
+              رقم الدفعة
+              <input type="text" name="paymentNumber" placeholder="مثل دفعة #1" />
+            </label>
+            <label>
+              العنوان
+              <input type="text" name="title" placeholder="دفعة مقدمة" required />
+            </label>
+            <label>
+              الجهة
+              <input type="text" name="party" placeholder="اسم العميل أو المقاول" />
+            </label>
+            <label>
+              نوع الدفعة
+              <select name="type">
+                <option value="incoming">من العميل</option>
+                <option value="outgoing">لمقاول باطن</option>
+              </select>
+            </label>
+            <label>
+              المبلغ (ريال)
+              <input type="number" name="amount" min="0" step="0.01" required />
+            </label>
+            <label>
+              تاريخ الاستحقاق
+              <input type="date" name="dueDate" required />
+            </label>
+            <label>
+              الحالة
+              <select name="status">
+                <option value="scheduled">مستحقة</option>
+                <option value="paid">مستلمة</option>
+                <option value="overdue">متأخرة</option>
+              </select>
+            </label>
+          </div>
+          <label>
+            وسيلة الدفع
+            <input type="text" name="paymentMethod" placeholder="تحويل بنكي، نقدي..." />
+          </label>
+          <label>
+            رابط المرفق
+            <input type="url" name="attachmentUrl" placeholder="https://" />
+          </label>
+          <label>
+            ملاحظات إضافية
+            <textarea name="notes" placeholder="تفاصيل أو شروط الدفع"></textarea>
+          </label>
+          <div class="modal__actions">
+            <button type="button" class="btn btn-ghost" onclick="closePaymentModal()">إلغاء</button>
+            <button type="submit" class="btn btn-primary">حفظ الدفعة</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <script type="module" src="../js/main.js"></script>
