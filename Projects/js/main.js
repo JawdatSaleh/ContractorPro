@@ -16,6 +16,7 @@ import {
   bindFormSubmit,
   safeNumber,
   buildBreadcrumb,
+  percentage,
   calculateDuration,
 } from './utils.js';
 
@@ -34,6 +35,18 @@ const unifiedFinancialState = {
   charts: { monthlyComparison: null, expenseVsContracts: null, timeline: null },
   editingExpenseId: null,
   editingSubcontractId: null,
+};
+
+const paymentsUIState = {
+  projectId: null,
+  projectValue: 0,
+  payments: [],
+  filters: { type: '', status: '', period: '' },
+  sort: { key: 'dueDate', direction: 'asc' },
+  timelineView: 'monthly',
+  charts: {},
+  editingPaymentId: null,
+  csvInput: null,
 };
 
 function ensureProjectContext() {
@@ -1562,7 +1575,7 @@ function buildTimelineSeries(view, monthlyExpenses, monthlyContracts) {
   };
 }
 
-function ensureChartInstance(chartKey, canvasId, configFactory) {
+function ensureChartInstance(chartKey, canvasId, configFactory, registry = unifiedFinancialState.charts) {
   if (typeof Chart === 'undefined') return;
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
@@ -1570,10 +1583,10 @@ function ensureChartInstance(chartKey, canvasId, configFactory) {
   if (!context) return;
   const config = typeof configFactory === 'function' ? configFactory(context) : configFactory;
   if (!config) return;
-  if (unifiedFinancialState.charts[chartKey]) {
-    unifiedFinancialState.charts[chartKey].destroy();
+  if (registry[chartKey]) {
+    registry[chartKey].destroy();
   }
-  unifiedFinancialState.charts[chartKey] = new Chart(context, config);
+  registry[chartKey] = new Chart(context, config);
 }
 
 function updateMonthlyComparisonChart(labels, expensesData, contractsData) {
@@ -1721,9 +1734,36 @@ function renderCombinedAnalyticsUI() {
 }
 
 async function renderPayments(projectId) {
+  const [payments, project] = await Promise.all([
+    paymentsStore.all(projectId),
+    projectStore.getById(projectId),
+  ]);
+
+  paymentsUIState.projectId = projectId;
+  paymentsUIState.payments = payments;
+  paymentsUIState.projectValue = safeNumber(project?.contractValue || project?.budget || project?.revenue || 0);
+
+  renderLegacyPaymentsList(payments);
+  renderPaymentsDashboardUI();
+
+  const totals = await paymentsStore.totals(projectId);
+  const paymentsTotalEl = document.querySelector('[data-payments-total]');
+  if (paymentsTotalEl) paymentsTotalEl.textContent = formatCurrency(totals.totalScheduled);
+
+  const paymentsPaidEl = document.querySelector('[data-payments-paid]');
+  if (paymentsPaidEl) paymentsPaidEl.textContent = formatCurrency(totals.totalPaid);
+
+  const paymentsOverdueEl = document.querySelector('[data-payments-overdue]');
+  if (paymentsOverdueEl) paymentsOverdueEl.textContent = totals.overdue;
+  const paymentsCountEl = document.querySelector('[data-payments-count]');
+  if (paymentsCountEl) paymentsCountEl.textContent = totals.count;
+
+  return payments;
+}
+
+function renderLegacyPaymentsList(payments) {
   const list = document.querySelector('[data-payments-list]');
   if (!list) return;
-  const payments = await paymentsStore.all(projectId);
   list.innerHTML = payments.length
     ? payments
         .map(
@@ -1731,7 +1771,7 @@ async function renderPayments(projectId) {
       <div class="payment-card" data-payment-id="${item.id}">
         <div class="payment-card__header">
           <h4>${item.title}</h4>
-          <span class="badge badge-outline">${item.status === 'paid' ? 'مدفوعة' : item.status === 'overdue' ? 'متأخرة' : 'مجدولة'}</span>
+          <span class="badge badge-outline">${getPaymentStatusLabel(item.status)}</span>
         </div>
         <div class="payment-card__meta">
           <span><i class="fas fa-calendar"></i> ${formatDate(item.dueDate)}</span>
@@ -1745,18 +1785,699 @@ async function renderPayments(projectId) {
         )
         .join('')
     : '<div class="empty-state">لا توجد دفعات مسجلة.</div>';
+}
 
+function renderPaymentsDashboardUI() {
+  const section = document.getElementById('payments-management-section');
+  if (!section) return;
+
+  const filtered = getFilteredPayments();
+  const sorted = sortPaymentsByState(filtered);
+  const overallMetrics = computePaymentMetrics(paymentsUIState.payments);
+  const filteredMetrics = computePaymentMetrics(filtered);
+
+  renderPaymentsKPIs(overallMetrics);
+  renderPaymentsProgress(overallMetrics);
+  renderPaymentsTable(sorted, overallMetrics);
+  renderPaymentsTimeline(sorted);
+  updatePaymentsCharts(filtered, filteredMetrics);
+}
+
+function getFilteredPayments() {
+  const { filters, payments } = paymentsUIState;
+  return payments.filter((payment) => {
+    const type = normalizePaymentType(payment);
+    const status = payment.status || 'scheduled';
+    if (filters.type && filters.type !== type) return false;
+    if (filters.status && filters.status !== status) return false;
+    if (filters.period && !matchesPaymentPeriod(payment, filters.period)) return false;
+    return true;
+  });
+}
+
+function sortPaymentsByState(payments) {
+  const { sort } = paymentsUIState;
+  const sorted = [...payments];
+  sorted.sort((a, b) => {
+    const aValue = getPaymentSortValue(a, sort.key);
+    const bValue = getPaymentSortValue(b, sort.key);
+    if (aValue < bValue) return sort.direction === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sort.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return sorted;
+}
+
+function getPaymentSortValue(payment, key) {
+  switch (key) {
+    case 'paymentNumber':
+      return normalizedString(payment.paymentNumber || payment.id);
+    case 'party':
+      return normalizedString(payment.party);
+    case 'dueDate': {
+      const date = parseDateValue(getPaymentDateValue(payment));
+      return date ? date.getTime() : 0;
+    }
+    case 'status':
+      return normalizedString(payment.status || 'scheduled');
+    case 'amount':
+    default:
+      return safeNumber(payment.amount);
+  }
+}
+
+function matchesPaymentPeriod(payment, period) {
+  const date = parseDateValue(getPaymentDateValue(payment));
+  if (!date) return false;
+  const now = new Date();
+  if (period === 'this-month') {
+    return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+  }
+  if (period === 'this-year') {
+    return date.getFullYear() === now.getFullYear();
+  }
+  if (period === 'this-quarter') {
+    const currentQuarter = Math.floor(now.getMonth() / 3);
+    const paymentQuarter = Math.floor(date.getMonth() / 3);
+    return date.getFullYear() === now.getFullYear() && paymentQuarter === currentQuarter;
+  }
+  return true;
+}
+
+function getPaymentDateValue(payment) {
+  return payment.dueDate || payment.paidAt || payment.createdAt;
+}
+
+function normalizePaymentType(payment) {
+  return (payment.type || 'incoming').toLowerCase() === 'outgoing' ? 'outgoing' : 'incoming';
+}
+
+function computePaymentMetrics(payments) {
+  const metrics = {
+    incomingTotal: 0,
+    incomingPaid: 0,
+    incomingPending: 0,
+    outgoingTotal: 0,
+    totalPaid: 0,
+    statusTotals: { paid: 0, scheduled: 0, overdue: 0 },
+  };
+
+  payments.forEach((payment) => {
+    const amount = safeNumber(payment.amount);
+    const status = payment.status || 'scheduled';
+    const type = normalizePaymentType(payment);
+    metrics.statusTotals[status] = (metrics.statusTotals[status] || 0) + amount;
+    if (status === 'paid') {
+      metrics.totalPaid += amount;
+    }
+    if (type === 'incoming') {
+      metrics.incomingTotal += amount;
+      if (status === 'paid') {
+        metrics.incomingPaid += amount;
+      }
+    } else {
+      metrics.outgoingTotal += amount;
+    }
+  });
+
+  metrics.incomingPending = Math.max(metrics.incomingTotal - metrics.incomingPaid, 0);
+  const targetAmount = paymentsUIState.projectValue || metrics.incomingTotal;
+  metrics.targetAmount = targetAmount;
+  metrics.remainingToTarget = Math.max(targetAmount - metrics.incomingPaid, 0);
+  metrics.collectionRatio = metrics.incomingTotal ? percentage(metrics.incomingPaid, metrics.incomingTotal) : 0;
+  metrics.progressPercent = targetAmount ? percentage(metrics.incomingPaid, targetAmount) : 0;
+  return metrics;
+}
+
+function renderPaymentsKPIs(metrics) {
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText('kpiReceivedPaymentsTotal', formatCurrency(metrics.incomingPaid));
+  setText('kpiRemainingPayments', formatCurrency(metrics.incomingPending));
+  setText('kpiSubcontractorPayments', formatCurrency(metrics.outgoingTotal));
+  setText('kpiCollectionRatio', formatPercent(metrics.collectionRatio));
+}
+
+function renderPaymentsProgress(metrics) {
+  const percentLabel = formatPercent(metrics.progressPercent);
+  const percentValue = `${metrics.progressPercent}%`;
+  const percentEl = document.getElementById('financialProgressPercent');
+  if (percentEl) percentEl.textContent = percentLabel;
+  const barEl = document.getElementById('financialProgressBar');
+  if (barEl) barEl.style.width = percentValue;
+  const barText = document.getElementById('financialProgressText');
+  if (barText) barText.textContent = percentLabel;
+  const totalValueEl = document.getElementById('totalProjectValue');
+  if (totalValueEl) totalValueEl.textContent = formatCurrency(metrics.targetAmount);
+  const collectedEl = document.getElementById('collectedAmount');
+  if (collectedEl) collectedEl.textContent = formatCurrency(metrics.incomingPaid);
+  const remainingEl = document.getElementById('remainingCollectionAmount');
+  if (remainingEl) remainingEl.textContent = formatCurrency(metrics.remainingToTarget);
+}
+
+function getPaymentStatusLabel(status) {
+  switch (status) {
+    case 'paid':
+      return 'مستلمة';
+    case 'overdue':
+      return 'متأخرة';
+    default:
+      return 'مستحقة';
+  }
+}
+
+function getPaymentStatusBadge(status) {
+  const label = getPaymentStatusLabel(status);
+  const baseClass = 'px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center justify-center border';
+  if (status === 'paid') {
+    return `<span class="${baseClass} bg-success-100 text-success border-success-200">${label}</span>`;
+  }
+  if (status === 'overdue') {
+    return `<span class="${baseClass} bg-error-100 text-error border-error-200">${label}</span>`;
+  }
+  return `<span class="${baseClass} bg-warning-100 text-warning border-warning-200">${label}</span>`;
+}
+
+function renderPaymentsTable(payments, metrics) {
+  const body = document.getElementById('paymentsTableBody');
+  const emptyState = document.getElementById('paymentsEmptyState');
+  if (!body) return;
+
+  if (!payments.length) {
+    body.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    return;
+  }
+
+  if (emptyState) emptyState.classList.add('hidden');
+  const targetAmount = metrics.targetAmount || 0;
+
+  body.innerHTML = payments
+    .map((payment) => {
+      const paymentNumber = payment.paymentNumber || payment.id;
+      const party = payment.party || '—';
+      const paymentDate = formatDate(getPaymentDateValue(payment));
+      const amount = formatCurrency(payment.amount);
+      const statusBadge = getPaymentStatusBadge(payment.status || 'scheduled');
+      const percent = targetAmount ? formatPercent(percentage(safeNumber(payment.amount), targetAmount)) : '0%';
+      const attachment = payment.attachmentUrl
+        ? `<a href="${payment.attachmentUrl}" target="_blank" rel="noopener" class="text-primary hover:underline">عرض</a>`
+        : '—';
+      const notes = [];
+      if (payment.notes) notes.push(`<p>${payment.notes}</p>`);
+      if (payment.paymentMethod) {
+        notes.push(`<p class="text-xs text-text-secondary">وسيلة الدفع: ${payment.paymentMethod}</p>`);
+      }
+      const notesCell = notes.length ? notes.join('') : '—';
+      const type = normalizePaymentType(payment);
+      const typeBadgeClass =
+        type === 'incoming'
+          ? 'bg-success-100 text-success border-success-200'
+          : 'bg-primary-100 text-primary border-primary-200';
+      const typeBadgeLabel = type === 'incoming' ? 'من العميل' : 'لمقاول باطن';
+      const typeBadge = `<span class="px-2 py-0.5 rounded-full text-xs border ${typeBadgeClass}">${typeBadgeLabel}</span>`;
+      const actions = [
+        `<button type="button" class="text-primary hover:underline" data-payment-action="edit">تعديل</button>`,
+        payment.status === 'paid'
+          ? ''
+          : `<button type="button" class="text-success hover:underline" data-payment-action="mark-paid">تحصيل</button>`,
+        `<button type="button" class="text-error hover:underline" data-payment-action="delete">حذف</button>`,
+      ]
+        .filter(Boolean)
+        .join('<span class="text-border">|</span>');
+
+      return `
+      <tr data-payment-id="${payment.id}" class="hover:bg-secondary-50 transition-colors">
+        <td class="text-right p-4 border-b border-border text-sm font-medium text-text-primary">${paymentNumber}</td>
+        <td class="text-right p-4 border-b border-border text-sm text-text-primary">
+          <div class="flex flex-col items-end gap-1">
+            <span>${party}</span>
+            ${typeBadge}
+          </div>
+        </td>
+        <td class="text-center p-4 border-b border-border text-sm text-text-secondary">${paymentDate}</td>
+        <td class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary">${amount}</td>
+        <td class="text-center p-4 border-b border-border">${statusBadge}</td>
+        <td class="text-center p-4 border-b border-border text-sm text-text-secondary">${percent}</td>
+        <td class="text-center p-4 border-b border-border text-sm">${attachment}</td>
+        <td class="text-right p-4 border-b border-border text-sm text-text-primary">${notesCell}</td>
+        <td class="text-center p-4 border-b border-border text-sm">
+          <div class="flex items-center justify-center gap-3">${actions}</div>
+        </td>
+      </tr>`;
+    })
+    .join('');
+}
+
+function paymentStatusColor(status) {
+  if (status === 'paid') return 'bg-success';
+  if (status === 'overdue') return 'bg-error';
+  return 'bg-warning';
+}
+
+function renderPaymentsTimeline(payments) {
+  const container = document.getElementById('paymentsTimeline');
+  if (!container) return;
+  if (!payments.length) {
+    container.innerHTML = '<div class="text-center text-text-secondary">لا توجد دفعات ضمن المرشحات الحالية.</div>';
+    return;
+  }
+
+  const view = paymentsUIState.timelineView;
+  const groups = new Map();
+
+  payments.forEach((payment) => {
+    const date = parseDateValue(getPaymentDateValue(payment));
+    if (!date) return;
+    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const key = view === 'quarterly' ? toQuarterKey(monthKey) : monthKey;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(payment);
+  });
+
+  const sortedKeys = Array.from(groups.keys()).sort();
+  const limit = view === 'quarterly' ? 4 : 6;
+  const visibleKeys = sortedKeys.slice(-limit);
+
+  container.innerHTML = visibleKeys
+    .map((key) => {
+      const paymentsInGroup = groups.get(key) || [];
+      paymentsInGroup.sort((a, b) => getPaymentSortValue(a, 'dueDate') - getPaymentSortValue(b, 'dueDate'));
+      const groupTotal = paymentsInGroup.reduce((sum, payment) => sum + safeNumber(payment.amount), 0);
+      const label = view === 'quarterly' ? formatQuarterKey(key) : formatMonthKey(key);
+      const items = paymentsInGroup
+        .map((payment) => {
+          const status = payment.status || 'scheduled';
+          const color = paymentStatusColor(status);
+          return `
+        <div class="flex items-center justify-between bg-secondary-50 rounded-lg px-4 py-3 mb-2">
+          <div class="flex items-center gap-3">
+            <span class="w-3 h-3 rounded-full ${color}"></span>
+            <div>
+              <p class="text-sm font-medium text-text-primary">${payment.title || payment.paymentNumber || 'دفعة'}</p>
+              <p class="text-xs text-text-secondary">${formatDate(getPaymentDateValue(payment))} · ${payment.party || '—'}</p>
+            </div>
+          </div>
+          <span class="text-sm font-semibold text-text-primary">${formatCurrency(payment.amount)}</span>
+        </div>`;
+        })
+        .join('');
+      return `
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <h5 class="text-sm font-semibold text-text-primary">${label}</h5>
+          <span class="text-xs text-text-secondary">إجمالي ${formatCurrency(groupTotal)}</span>
+        </div>
+        ${items}
+      </div>`;
+    })
+    .join('');
+}
+
+function updatePaymentsCharts(payments, metrics) {
+  const monthlyBuckets = aggregateByMonth(payments, 'dueDate', 'amount');
+  const monthKeys = Array.from(monthlyBuckets.keys()).sort();
+  const limitedKeys = monthKeys.slice(-6);
+  const labels = limitedKeys.map((key) => formatMonthKey(key));
+  const values = limitedKeys.map((key) => monthlyBuckets.get(key) || 0);
+
+  ensureChartInstance(
+    'paymentsMonthly',
+    'monthlyPaymentsChart',
+    () => ({
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'قيمة الدفعات',
+            data: values,
+            backgroundColor: 'rgba(59, 130, 246, 0.75)',
+            borderRadius: 8,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: { color: '#f1f5f9' } },
+        },
+      },
+    }),
+    paymentsUIState.charts
+  );
+
+  const statusOrder = ['paid', 'scheduled', 'overdue'];
+  const statusLabels = statusOrder.map((status) => getPaymentStatusLabel(status));
+  const statusData = statusOrder.map((status) => metrics.statusTotals[status] || 0);
+
+  ensureChartInstance(
+    'paymentsStatus',
+    'paymentStatusChart',
+    () => ({
+      type: 'doughnut',
+      data: {
+        labels: statusLabels,
+        datasets: [
+          {
+            data: statusData,
+            backgroundColor: ['rgba(34, 197, 94, 0.85)', 'rgba(250, 204, 21, 0.85)', 'rgba(239, 68, 68, 0.85)'],
+            borderWidth: 0,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { family: 'Tajawal, sans-serif' } },
+          },
+        },
+      },
+    }),
+    paymentsUIState.charts
+  );
+}
+
+function applyPaymentFilters() {
+  const typeSelect = document.getElementById('filterPaymentType');
+  const statusSelect = document.getElementById('filterPaymentStatus');
+  const periodSelect = document.getElementById('filterPaymentPeriod');
+  paymentsUIState.filters = {
+    type: typeSelect?.value || '',
+    status: statusSelect?.value || '',
+    period: periodSelect?.value || '',
+  };
+  renderPaymentsDashboardUI();
+}
+
+function clearPaymentFilters() {
+  paymentsUIState.filters = { type: '', status: '', period: '' };
+  const typeSelect = document.getElementById('filterPaymentType');
+  const statusSelect = document.getElementById('filterPaymentStatus');
+  const periodSelect = document.getElementById('filterPaymentPeriod');
+  if (typeSelect) typeSelect.value = '';
+  if (statusSelect) statusSelect.value = '';
+  if (periodSelect) periodSelect.value = '';
+  renderPaymentsDashboardUI();
+}
+
+function sortPaymentTable(key) {
+  if (paymentsUIState.sort.key === key) {
+    paymentsUIState.sort.direction = paymentsUIState.sort.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    paymentsUIState.sort.key = key;
+    paymentsUIState.sort.direction = key === 'amount' || key === 'dueDate' ? 'desc' : 'asc';
+  }
+  renderPaymentsDashboardUI();
+}
+
+function switchPaymentsTimelineView(view) {
+  paymentsUIState.timelineView = view;
+  const buttons = document.querySelectorAll('[data-payments-timeline]');
+  buttons.forEach((button) => {
+    const isActive = button.dataset.paymentsTimeline === view;
+    button.classList.toggle('bg-primary', isActive);
+    button.classList.toggle('text-white', isActive);
+    button.classList.toggle('bg-secondary-200', !isActive);
+    button.classList.toggle('text-text-primary', !isActive);
+  });
+  renderPaymentsTimeline(sortPaymentsByState(getFilteredPayments()));
+}
+
+function refreshPaymentsTimeline() {
+  renderPaymentsTimeline(sortPaymentsByState(getFilteredPayments()));
+  createToast('تم تحديث التحليل الزمني للدفعات', 'success');
+}
+
+function openAddPaymentModal(payment = null) {
+  const modal = document.getElementById('paymentModal');
+  const form = document.getElementById('paymentModalForm');
+  const titleEl = document.getElementById('paymentModalTitle');
+  if (!modal || !form) return;
+
+  form.reset();
+  paymentsUIState.editingPaymentId = payment?.id || null;
+  if (titleEl) titleEl.textContent = payment ? 'تعديل الدفعة' : 'إضافة دفعة';
+
+  if (payment) {
+    if (form.paymentNumber) form.paymentNumber.value = payment.paymentNumber || '';
+    if (form.title) form.title.value = payment.title || '';
+    if (form.party) form.party.value = payment.party || '';
+    if (form.type) form.type.value = normalizePaymentType(payment);
+    if (form.amount) form.amount.value = safeNumber(payment.amount);
+    if (form.dueDate) form.dueDate.value = payment.dueDate ? payment.dueDate.slice(0, 10) : '';
+    if (form.status) form.status.value = payment.status || 'scheduled';
+    if (form.paymentMethod) form.paymentMethod.value = payment.paymentMethod || 'تحويل بنكي';
+    if (form.attachmentUrl) form.attachmentUrl.value = payment.attachmentUrl || '';
+    if (form.notes) form.notes.value = payment.notes || '';
+  }
+
+  showModal(modal);
+}
+
+function closePaymentModal() {
+  paymentsUIState.editingPaymentId = null;
+  const modal = document.getElementById('paymentModal');
+  const form = document.getElementById('paymentModalForm');
+  if (form) form.reset();
+  hideModal(modal);
+}
+
+function bindPaymentModalForm(projectId) {
+  const form = document.getElementById('paymentModalForm');
+  if (!form || form.dataset.bound) return;
+  form.dataset.bound = 'true';
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const payload = {
+      paymentNumber: formData.get('paymentNumber')?.toString().trim() || '',
+      title: formData.get('title')?.toString().trim() || 'دفعة',
+      party: formData.get('party')?.toString().trim() || '',
+      type: mapPaymentTypeValue(formData.get('type')),
+      amount: safeNumber(formData.get('amount')),
+      dueDate: formData.get('dueDate')?.toString() || '',
+      status: mapPaymentStatusValue(formData.get('status')),
+      paymentMethod: formData.get('paymentMethod')?.toString().trim() || 'تحويل بنكي',
+      attachmentUrl: formData.get('attachmentUrl')?.toString().trim() || '',
+      notes: formData.get('notes')?.toString().trim() || '',
+    };
+
+    if (paymentsUIState.editingPaymentId) {
+      await paymentsStore.update(projectId, paymentsUIState.editingPaymentId, payload);
+      createToast('تم تحديث بيانات الدفعة', 'success');
+    } else {
+      await paymentsStore.create(projectId, payload);
+      createToast('تمت إضافة الدفعة بنجاح', 'success');
+    }
+
+    closePaymentModal();
+    await renderPayments(projectId);
+    const totals = await paymentsStore.totals(projectId);
+    const expenses = await expensesStore.totals(projectId);
+    await projectStore.updateFinancials(projectId, {
+      expensesTotal: expenses.expensesTotal,
+      paymentsTotal: totals.totalPaid,
+      revenue: expenses.revenueTotal,
+    });
+    await renderProjectSummary(projectId);
+  });
+}
+
+function bindPaymentsTableActions(projectId) {
+  const tableBody = document.getElementById('paymentsTableBody');
+  if (!tableBody || tableBody.dataset.bound) return;
+  tableBody.dataset.bound = 'true';
+  tableBody.addEventListener('click', async (event) => {
+    const actionButton = event.target.closest('button[data-payment-action]');
+    if (!actionButton) return;
+    const row = actionButton.closest('tr[data-payment-id]');
+    if (!row) return;
+    const paymentId = row.dataset.paymentId;
+    const action = actionButton.dataset.paymentAction;
+
+    if (action === 'edit') {
+      const payment = paymentsUIState.payments.find((item) => item.id === paymentId);
+      if (!payment) return;
+      openAddPaymentModal(payment);
+      return;
+    }
+
+    if (action === 'mark-paid') {
+      await paymentsStore.update(projectId, paymentId, { status: 'paid', paidAt: new Date().toISOString() });
+      createToast('تم تحديد الدفعة كمستلمة', 'success');
+    }
+
+    if (action === 'delete') {
+      if (!confirm('هل ترغب في حذف هذه الدفعة؟')) return;
+      await paymentsStore.remove(projectId, paymentId);
+      createToast('تم حذف الدفعة بنجاح', 'success');
+    }
+
+    await renderPayments(projectId);
+    const totals = await paymentsStore.totals(projectId);
+    const expenses = await expensesStore.totals(projectId);
+    await projectStore.updateFinancials(projectId, {
+      expensesTotal: expenses.expensesTotal,
+      paymentsTotal: totals.totalPaid,
+      revenue: expenses.revenueTotal,
+    });
+    await renderProjectSummary(projectId);
+  });
+}
+
+function importPaymentsCSV() {
+  const { projectId } = paymentsUIState;
+  if (!projectId) {
+    createToast('لم يتم تحديد مشروع نشط', 'warning');
+    return;
+  }
+
+  if (!paymentsUIState.csvInput) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv,text/csv';
+    input.classList.add('hidden');
+    input.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        await importPaymentsFromCSVText(projectId, text);
+        createToast('تم استيراد الدفعات من الملف', 'success');
+      } catch (error) {
+        console.error(error);
+        if (error?.message === 'no-records') {
+          createToast('لم يتم العثور على بيانات صالحة في الملف', 'warning');
+        } else {
+          createToast('تعذر استيراد الملف. يرجى التحقق من الصيغة.', 'error');
+        }
+      } finally {
+        event.target.value = '';
+      }
+    });
+    document.body.appendChild(input);
+    paymentsUIState.csvInput = input;
+  }
+
+  paymentsUIState.csvInput.value = '';
+  paymentsUIState.csvInput.click();
+}
+
+async function importPaymentsFromCSVText(projectId, csvText) {
+  const rows = csvText
+    .split(/\r?\n/)
+    .map((row) => row.trim())
+    .filter(Boolean);
+  if (rows.length <= 1) {
+    throw new Error('no-records');
+  }
+
+  const headers = parseCSVLine(rows[0]).map((header) => normalizedString(header).replace(/\s+/g, ''));
+
+  const created = [];
+  for (let i = 1; i < rows.length; i += 1) {
+    const values = parseCSVLine(rows[i]);
+    if (!values.some((value) => value && value.trim())) continue;
+
+    const getValue = (key, fallbackKey) => {
+      const normalizedKey = normalizedString(key).replace(/\s+/g, '');
+      const normalizedFallback = fallbackKey ? normalizedString(fallbackKey).replace(/\s+/g, '') : '';
+      const index = headers.indexOf(normalizedKey);
+      const fallbackIndex = fallbackKey ? headers.indexOf(normalizedFallback) : -1;
+      const valueIndex = index !== -1 ? index : fallbackIndex;
+      if (valueIndex === -1) return '';
+      return values[valueIndex]?.trim() || '';
+    };
+
+    const payload = {
+      paymentNumber: getValue('paymentnumber', 'رقم الدفعة'),
+      title: getValue('title', 'العنوان') || 'دفعة',
+      party: getValue('party', 'الجهة'),
+      type: mapPaymentTypeValue(getValue('type', 'النوع')),
+      amount: safeNumber(getValue('amount', 'القيمة')),
+      dueDate: getValue('duedate', 'تاريخ الاستحقاق'),
+      status: mapPaymentStatusValue(getValue('status', 'الحالة')),
+      paymentMethod: getValue('paymentmethod', 'وسيلة الدفع') || 'تحويل بنكي',
+      notes: getValue('notes', 'ملاحظات'),
+      attachmentUrl: getValue('attachment', 'المرفق'),
+    };
+
+    if (!payload.amount && !payload.title) continue;
+
+    await paymentsStore.create(projectId, payload);
+    created.push(payload);
+  }
+
+  if (!created.length) {
+    throw new Error('no-records');
+  }
+
+  await renderPayments(projectId);
   const totals = await paymentsStore.totals(projectId);
-  const paymentsTotalEl = document.querySelector('[data-payments-total]');
-  if (paymentsTotalEl) paymentsTotalEl.textContent = formatCurrency(totals.totalScheduled);
+  const expenses = await expensesStore.totals(projectId);
+  await projectStore.updateFinancials(projectId, {
+    expensesTotal: expenses.expensesTotal,
+    paymentsTotal: totals.totalPaid,
+    revenue: expenses.revenueTotal,
+  });
+  await renderProjectSummary(projectId);
+}
 
-  const paymentsPaidEl = document.querySelector('[data-payments-paid]');
-  if (paymentsPaidEl) paymentsPaidEl.textContent = formatCurrency(totals.totalPaid);
+function parseCSVLine(line) {
+  const values = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      values.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  values.push(current.trim());
+  return values;
+}
 
-  const paymentsOverdueEl = document.querySelector('[data-payments-overdue]');
-  if (paymentsOverdueEl) paymentsOverdueEl.textContent = totals.overdue;
-  const paymentsCountEl = document.querySelector('[data-payments-count]');
-  if (paymentsCountEl) paymentsCountEl.textContent = totals.count;
+function mapPaymentStatusValue(value) {
+  const normalized = normalizedString(value);
+  if (!normalized) return 'scheduled';
+  if (
+    normalized.includes('paid') ||
+    normalized.includes('استلم') ||
+    normalized.includes('مدفوع') ||
+    normalized.includes('received')
+  )
+    return 'paid';
+  if (normalized.includes('overdue') || normalized.includes('متأخ')) return 'overdue';
+  if (normalized.includes('pending') || normalized.includes('معلق')) return 'scheduled';
+  return 'scheduled';
+}
+
+function mapPaymentTypeValue(value) {
+  const normalized = normalizedString(value);
+  if (normalized.includes('out') || normalized.includes('باطن') || normalized.includes('مقاول')) return 'outgoing';
+  return 'incoming';
 }
 
 async function renderReports(projectId) {
@@ -2335,30 +3056,6 @@ function handleExpensesForm(projectId) {
   });
 }
 
-function handlePaymentsForm(projectId) {
-  const form = document.querySelector('#paymentForm');
-  if (!form) return;
-  bindFormSubmit(form, async (formData) => {
-    const payload = {
-      title: getFormValue(formData, 'title'),
-      amount: safeNumber(getFormValue(formData, 'amount')),
-      dueDate: getFormValue(formData, 'dueDate'),
-      status: getFormValue(formData, 'status'),
-    };
-    await paymentsStore.create(projectId, payload);
-    await renderPayments(projectId);
-    const totals = await paymentsStore.totals(projectId);
-    const expenses = await expensesStore.totals(projectId);
-    await projectStore.updateFinancials(projectId, {
-      expensesTotal: expenses.expensesTotal,
-      paymentsTotal: totals.totalPaid,
-      revenue: expenses.revenueTotal,
-    });
-    await renderProjectSummary(projectId);
-    createToast('تمت إضافة الدفعة بنجاح');
-  });
-}
-
 function handleReportsForm(projectId) {
   const form = document.querySelector('#reportForm');
   if (!form) return;
@@ -2430,6 +3127,10 @@ async function setupExpensesPage() {
 async function setupPaymentsPage() {
   const projectId = ensureProjectContext();
   if (!projectId) return;
+  paymentsUIState.filters = { type: '', status: '', period: '' };
+  paymentsUIState.sort = { key: 'dueDate', direction: 'asc' };
+  paymentsUIState.timelineView = 'monthly';
+  paymentsUIState.charts = {};
   buildBreadcrumb([
     { label: 'المشاريع', href: '../projects_management_center.html' },
     { label: 'دفعات المشروع', href: `project_payments.html?projectId=${projectId}` },
@@ -2437,8 +3138,10 @@ async function setupPaymentsPage() {
   configureProjectNavigation(projectId, 'payments');
   await renderProjectSummary(projectId);
   await renderPayments(projectId);
-  handlePaymentsForm(projectId);
   bindPaymentsActions(projectId);
+  bindPaymentsTableActions(projectId);
+  bindPaymentModalForm(projectId);
+  switchPaymentsTimelineView(paymentsUIState.timelineView);
 }
 
 async function setupReportsPage() {
@@ -2483,6 +3186,14 @@ Object.assign(window, {
   switchUnifiedSubTab,
   switchTimelineView,
   exportUnifiedData,
+  openAddPaymentModal,
+  closePaymentModal,
+  applyPaymentFilters,
+  clearPaymentFilters,
+  sortPaymentTable,
+  switchPaymentsTimelineView,
+  refreshPaymentsTimeline,
+  importPaymentsCSV,
 });
 
 window.contractorpro = window.contractorpro || {};

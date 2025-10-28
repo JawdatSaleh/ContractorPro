@@ -50,13 +50,22 @@ class PaymentsStore {
 
   async create(projectId, payload) {
     await this.ensureReady();
-    const payment = {
-      id: generateId('payment'),
-      projectId,
-      status: 'scheduled',
-      amount: 0,
-      ...payload,
-    };
+    const existing = this.payments[projectId] || [];
+    const nextSequence = existing.length + 1;
+    const defaultNumber = `PAY-${String(nextSequence).padStart(3, '0')}`;
+    const now = new Date().toISOString();
+      const payment = {
+        id: generateId('payment'),
+        projectId,
+        status: 'scheduled',
+        amount: 0,
+        type: 'incoming',
+        paymentNumber: defaultNumber,
+        paymentMethod: 'تحويل بنكي',
+        party: '',
+        createdAt: now,
+        ...payload,
+      };
     this.payments[projectId] = this.payments[projectId] || [];
     this.payments[projectId].push(payment);
     this._persist();
