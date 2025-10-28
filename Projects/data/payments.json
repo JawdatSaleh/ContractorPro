@@ -1,0 +1,36 @@
+{
+  "payments": [
+    {
+      "id": "payment-001",
+      "projectId": "project-001",
+      "title": "دفعة مقدمة",
+      "amount": 750000,
+      "dueDate": "2024-01-05",
+      "status": "paid"
+    },
+    {
+      "id": "payment-002",
+      "projectId": "project-001",
+      "title": "دفعة المرحلة الثانية",
+      "amount": 800000,
+      "dueDate": "2024-05-15",
+      "status": "scheduled"
+    },
+    {
+      "id": "payment-003",
+      "projectId": "project-002",
+      "title": "دفعة اعتماد التصاميم",
+      "amount": 1200000,
+      "dueDate": "2023-10-01",
+      "status": "paid"
+    },
+    {
+      "id": "payment-004",
+      "projectId": "project-002",
+      "title": "دفعة الأعمال الإنشائية",
+      "amount": 1650000,
+      "dueDate": "2024-04-20",
+      "status": "overdue"
+    }
+  ]
+}

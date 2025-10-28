@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>معالج إنشاء/تعديل مشروع | ContractorPro</title>
+    <link rel="stylesheet" href="css/projects.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  </head>
+  <body data-page="project-wizard">
+    <div class="projects-content" style="max-width: 1080px; margin: 0 auto; padding: 48px 24px;">
+      <div class="layout-header">
+        <div>
+          <nav class="breadcrumb" data-breadcrumb>
+            <a href="projects_management_center.html" class="breadcrumb-item">المشاريع</a>
+            <span class="breadcrumb-divider">/</span>
+            <span class="breadcrumb-item">معالج المشروع</span>
+          </nav>
+          <h1 data-wizard-title>إنشاء مشروع جديد</h1>
+          <p class="text-muted">املأ بيانات المشروع الأساسية والمالية لتتم مزامنته تلقائياً مع باقي صفحات النظام.</p>
+        </div>
+        <div class="projects-actions">
+          <button class="btn btn-outline" onclick="history.back()">
+            <i class="fas fa-arrow-right"></i>
+            العودة
+          </button>
+        </div>
+      </div>
+
+      <section class="section-card fade-in">
+        <header>
+          <div>
+            <h2>المعلومات الأساسية</h2>
+            <p class="text-muted">اسم المشروع، العميل، والموقع</p>
+          </div>
+        </header>
+        <form id="projectForm">
+          <div class="form-grid">
+            <label>
+              اسم المشروع
+              <input type="text" name="name" placeholder="مثال: مشروع توسعة المستشفى" required />
+            </label>
+            <label>
+              اسم العميل
+              <input type="text" name="clientName" placeholder="اسم الجهة المالكة" required />
+            </label>
+            <label>
+              مدير المشروع
+              <input type="text" name="manager" placeholder="اسم مدير المشروع" />
+            </label>
+            <label>
+              موقع المشروع
+              <input type="text" name="location" placeholder="المدينة - الحي" />
+            </label>
+            <label>
+              قيمة العقد (ريال)
+              <input type="number" name="contractValue" min="0" step="1000" placeholder="0" />
+            </label>
+            <label>
+              الميزانية المعتمدة (ريال)
+              <input type="number" name="budget" min="0" step="1000" placeholder="0" />
+            </label>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              تاريخ البدء
+              <input type="date" name="startDate" />
+            </label>
+            <label>
+              تاريخ الانتهاء المتوقع
+              <input type="date" name="endDate" />
+            </label>
+            <label>
+              حالة المشروع
+              <select name="status">
+                <option value="active">نشط</option>
+                <option value="completed">مكتمل</option>
+                <option value="on-hold">متوقف</option>
+                <option value="cancelled">ملغي</option>
+              </select>
+            </label>
+            <label>
+              رابط صورة الغلاف
+              <input type="url" name="cover" placeholder="https://" />
+            </label>
+          </div>
+
+          <label>
+            وصف المشروع
+            <textarea name="description" placeholder="تفاصيل موجزة عن نطاق العمل"></textarea>
+          </label>
+
+          <div class="form-actions">
+            <button type="reset" class="btn btn-light">
+              <i class="fas fa-rotate-left"></i>
+              إعادة تعيين
+            </button>
+            <button type="submit" class="btn btn-primary" data-wizard-submit>
+              <i class="fas fa-floppy-disk"></i>
+              حفظ
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="section-card fade-in">
+        <header>
+          <div>
+            <h2>نصائح لإدارة فعالة</h2>
+            <p class="text-muted">قم بإضافة المراحل والمصاريف بعد حفظ المشروع لضمان احتساب المؤشرات الرئيسية.</p>
+          </div>
+        </header>
+        <ul>
+          <li>يمكنك العودة لاحقاً لتعديل أي معلومة عبر نفس المعالج.</li>
+          <li>عند تحديث المصاريف أو الدفعات ستنعكس التغييرات مباشرة على لوحة المشاريع.</li>
+          <li>استخدم صفحات المراحل والتقارير لإضافة تفاصيل دقيقة عن التنفيذ اليومي.</li>
+        </ul>
+      </section>
+
+      <footer class="footer">© 2024 ContractorPro</footer>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

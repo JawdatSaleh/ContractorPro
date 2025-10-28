@@ -1,0 +1,119 @@
+@media (max-width: 1200px) {
+  .projects-shell {
+    flex-direction: column;
+  }
+
+  .projects-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .projects-sidebar nav {
+    grid-auto-flow: column;
+    overflow-x: auto;
+  }
+
+  .projects-content {
+    padding: 24px;
+  }
+
+  .projects-content--canvas {
+    padding: 0;
+  }
+
+  .project-page-bar {
+    padding: 24px 24px 12px;
+  }
+
+  .project-canvas {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 900px) {
+  .projects-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .projects-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .project-card__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-card__quick-actions,
+  .project-card__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .project-nav__link {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .project-card__menu {
+    align-self: flex-end;
+  }
+
+  .phase-row,
+  .expense-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .payment-card__meta {
+    flex-direction: column;
+  }
+
+  .report-card footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .projects-sidebar {
+    padding: 20px 16px;
+  }
+
+  .projects-header h1 {
+    font-size: 26px;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .insight-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-banner {
+    padding: 20px;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 15px;
+  }
+}
