@@ -8,7 +8,11 @@ export const paginationQuery = z.object({
 export const employeeFilterQuery = z.object({
   projectId: z.string().optional(),
   departmentId: z.string().optional(),
-  q: z.string().optional()
+  department: z.string().optional(),
+  q: z.string().optional(),
+  search: z.string().optional(),
+  status: z.string().optional(),
+  roleKey: z.string().optional()
 });
 
 export const createPayrollBatchSchema = z.object({

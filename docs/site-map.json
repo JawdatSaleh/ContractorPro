@@ -1,75 +1,255 @@
 {
-  "baseUrl": "https://contractorpro.sa/",
-  "publicPages": [
+  "generatedAt": "2025-10-28T05:07:45Z",
+  "applications": {
+    "publicHtml": [
+      {
+        "url": "/index.html",
+        "source": "index.html",
+        "description": "شاشة تمهيدية تعرض شعار ContractorPro مع إعادة توجيه آلي إلى صفحة تسجيل الدخول",
+        "linksTo": ["/login.html"],
+        "notes": ["يتضمن تضمينًا لبرمجيات Rocket لاستحضار عناصر واجهة"]
+      },
+      {
+        "url": "/login.html",
+        "source": "login.html",
+        "description": "واجهة تسجيل دخول عربية بالكامل مع بيانات دخول تجريبية وتخزين جلسة محلي",
+        "linksTo": ["/pages/main_dashboard.html", "/pages/about.html", "/pages/contact.html", "/pages/faq.html", "/pages/privacy-policy.html"]
+      }
+    ],
+    "securedLegacyHtml": [
+      {
+        "category": "لوحات التحكم العامة",
+        "pages": [
+          { "url": "/pages/main_dashboard.html", "source": "pages/main_dashboard.html", "summary": "لوحة رئيسية ذات قائمة جانبية وروابط لمراكز المشاريع، المالية، الموارد البشرية" },
+          { "url": "/pages/navigation_system_audit_testing_center.html", "source": "pages/navigation_system_audit_testing_center.html", "summary": "مركز اختبار الملاحة يحتوي على قوائم إجراءات وحالات تنقل" },
+          { "url": "/pages/html_implementation_dashboard.html", "source": "pages/html_implementation_dashboard.html", "summary": "لوحة متابعة تنفيذ HTML مع بطاقات مؤشرات" },
+          { "url": "/pages/notifications.html", "source": "pages/notifications.html", "summary": "مركز تنبيهات يعرِض إشعارات فورية ومحفوظة" },
+          { "url": "/pages/settings.html", "source": "pages/settings.html", "summary": "إعدادات عامة للحساب وإدارة الأذونات" }
+        ]
+      },
+      {
+        "category": "المشاريع",
+        "pages": [
+          { "url": "/pages/projects_management_center.html", "source": "pages/projects_management_center.html", "summary": "مركز إدارة المشاريع مع قوائم وخرائط زمنية" },
+          { "url": "/pages/projects_hub.html", "source": "pages/projects_hub.html", "summary": "مستودع مشاريع بمؤشرات حالة" },
+          { "url": "/pages/project_creation_wizard.html", "source": "pages/project_creation_wizard.html", "summary": "معالج متعدد الخطوات لإنشاء مشروع" }
+        ]
+      },
+      {
+        "category": "المالية",
+        "pages": [
+          { "url": "/pages/financial_management_center.html", "source": "pages/financial_management_center.html", "summary": "مركز إدارة مالية مع بطاقات تحصيل وصرف" },
+          { "url": "/pages/financial_operations_dashboard.html", "source": "pages/financial_operations_dashboard.html", "summary": "لوحة عمليات مالية" },
+          { "url": "/pages/financial_center.html", "source": "pages/financial_center.html", "summary": "مؤشرات مالية مع رسوم" },
+          { "url": "/pages/comprehensive_invoice_management_hub.html", "source": "pages/comprehensive_invoice_management_hub.html", "summary": "نظام متكامل لإدارة الفواتير" },
+          { "url": "/pages/advanced_invoice_creation_portal.html", "source": "pages/advanced_invoice_creation_portal.html", "summary": "بوابة إنشاء فواتير متقدمة" },
+          { "url": "/pages/advanced_quotation_invoice_designer.html", "source": "pages/advanced_quotation_invoice_designer.html", "summary": "مصمم عروض أسعار وفواتير" }
+        ]
+      },
+      {
+        "category": "الموارد البشرية",
+        "pages": [
+          { "url": "/pages/human_resources_center.html", "source": "pages/human_resources_center.html", "summary": "مركز موارد بشرية شامل" },
+          { "url": "/pages/add_employee.html", "source": "pages/add_employee.html", "summary": "نموذج إضافة موظف" },
+          { "url": "/pages/employee_profile.html", "source": "pages/employee_profile.html", "summary": "ملف تفصيلي للموظف" },
+          { "url": "/pages/user_profile.html", "source": "pages/user_profile.html", "summary": "ملف المستخدم" }
+        ]
+      },
+      {
+        "category": "الجمهور والدعم",
+        "pages": [
+          { "url": "/pages/about.html", "source": "pages/about.html", "summary": "نبذة عن الشركة" },
+          { "url": "/pages/contact.html", "source": "pages/contact.html", "summary": "نموذج تواصل" },
+          { "url": "/pages/faq.html", "source": "pages/faq.html", "summary": "الأسئلة الشائعة" },
+          { "url": "/pages/privacy-policy.html", "source": "pages/privacy-policy.html", "summary": "سياسة الخصوصية" }
+        ]
+      }
+    ],
+    "spa": {
+      "entryPoint": "apps/web/src/main.tsx",
+      "layout": "apps/web/src/App.tsx",
+      "baseRoute": "/",
+      "routes": [
+        {
+          "path": "/employees",
+          "component": "EmployeesPage",
+          "source": "apps/web/src/pages/Employees/index.tsx",
+          "uiPieces": ["EmployeeTable", "RoleBadge"],
+          "apiDependencies": ["GET /api/employees"],
+          "notes": "يعرض قائمة الموظفين مع مرشحات مستندة إلى Zustand"
+        },
+        {
+          "path": "/employees/new",
+          "component": "EmployeeCreatePage",
+          "source": "apps/web/src/pages/Employees/new.tsx",
+          "uiPieces": ["EmployeeForm"],
+          "apiDependencies": ["GET /api/iam/roles", "GET /api/iam/permissions", "POST /api/employees"],
+          "notes": "يعيد استخدام نموذج الموظفين لإنشاء سجل جديد"
+        },
+        {
+          "path": "/employees/:id",
+          "component": "EmployeeDetailsPage",
+          "source": "apps/web/src/pages/Employees/[id].tsx",
+          "uiPieces": ["EmployeeProfile"],
+          "apiDependencies": ["GET /api/employees/:id", "GET /api/employees/:id/finance", "GET /api/employees/:id/contracts", "GET /api/employees/:id/advances", "GET /api/employees/:id/loans", "GET /api/employees/:id/expenses"],
+          "notes": "يعرض ملف الموظف مع تبويبات مالية" 
+        },
+        {
+          "path": "/employees/:id/edit",
+          "component": "EmployeeEditPage",
+          "source": "apps/web/src/pages/Employees/edit.tsx",
+          "uiPieces": ["EmployeeForm"],
+          "apiDependencies": ["GET /api/employees/:id", "PUT /api/employees/:id", "GET /api/iam/roles", "GET /api/iam/permissions"],
+          "notes": "تعديل بيانات موظف موجود"
+        },
+        {
+          "path": "/contracts",
+          "component": "ContractsBoard",
+          "source": "apps/web/src/features/employees/ContractsBoard.tsx",
+          "uiPieces": ["ContractsTimeline"],
+          "apiDependencies": ["GET /api/contracts?employeeId="]
+        },
+        {
+          "path": "/attendance",
+          "component": "AttendancePage",
+          "source": "apps/web/src/features/attendance/AttendancePage.tsx",
+          "apiDependencies": ["GET /api/attendance", "POST /api/attendance/bulk"],
+          "notes": "استخدام React Query لتحميل السجلات اليومية"
+        },
+        {
+          "path": "/leaves",
+          "component": "LeavesPage",
+          "source": "apps/web/src/features/leaves/LeavesPage.tsx",
+          "apiDependencies": ["GET /api/leaves", "POST /api/leaves", "PATCH /api/leaves/:id/approve"]
+        },
+        {
+          "path": "/finance/advances",
+          "component": "AdvancesLoansPage",
+          "source": "apps/web/src/features/finance/advances-loans/AdvancesLoansPage.tsx",
+          "apiDependencies": ["GET /api/advances", "GET /api/loans", "PATCH /api/advances/:id/approve", "PATCH /api/loans/:id/settle"]
+        },
+        {
+          "path": "/payroll",
+          "component": "PayrollPage",
+          "source": "apps/web/src/features/payroll/PayrollPage.tsx",
+          "apiDependencies": ["GET /api/payroll/batches", "POST /api/payroll/batches", "POST /api/payroll/batches/:id/calculate", "POST /api/payroll/batches/:id/post"]
+        },
+        {
+          "path": "/reports",
+          "component": "ReportsPage",
+          "source": "apps/web/src/features/reports/ReportsPage.tsx",
+          "apiDependencies": ["GET /api/reports/cost-centers"]
+        },
+        {
+          "path": "/rbac",
+          "component": "RolesPermissionsPage",
+          "source": "apps/web/src/features/rbac/RolesPermissionsPage.tsx",
+          "apiDependencies": ["GET /api/iam/roles", "GET /api/iam/permissions", "POST /api/iam/roles/:id/permissions"]
+        },
+        {
+          "path": "/activity",
+          "component": "ActivityCenterPage",
+          "source": "apps/web/src/features/activity/ActivityCenterPage.tsx",
+          "apiDependencies": ["GET /api/activity/logs", "GET /api/activity/analytics", "POST /api/activity/snapshots"]
+        }
+      ]
+    }
+  },
+  "apiServices": [
     {
-      "path": "index.html",
-      "description": "شاشة تمهيدية مع إعادة توجيه آلية إلى صفحة تسجيل الدخول"
+      "group": "المصادقة والهوية",
+      "source": "apps/api/src/iam/routes.ts",
+      "endpoints": [
+        { "method": "POST", "path": "/api/auth/login", "description": "تسجيل الدخول وتوليد JSON Web Token", "models": ["User", "Role", "Permission"] },
+        { "method": "GET", "path": "/api/auth/profile", "description": "جلب الملف الشخصي للمستخدم الحالي", "models": ["User", "Role", "Permission"] },
+        { "method": "GET", "path": "/api/iam/users", "description": "قائمة المستخدمين مع الأدوار", "models": ["User", "Role"] },
+        { "method": "POST", "path": "/api/iam/roles", "description": "إنشاء دور جديد", "models": ["Role"] },
+        { "method": "POST", "path": "/api/iam/roles/:id/permissions", "description": "تحديث صلاحيات الدور", "models": ["Role", "Permission"] },
+        { "method": "GET", "path": "/api/iam/roles", "description": "استرجاع كافة الأدوار", "models": ["Role"] },
+        { "method": "GET", "path": "/api/iam/permissions", "description": "استرجاع كافة الصلاحيات", "models": ["Permission"] }
+      ]
     },
     {
-      "path": "login.html",
-      "description": "صفحة تسجيل الدخول مع بيانات تجريبية وخيارات دعم"
+      "group": "الموارد البشرية",
+      "source": "apps/api/src/hr/routes.ts",
+      "endpoints": [
+        { "method": "GET", "path": "/api/employees", "description": "قائمة الموظفين مع الترشيحات", "models": ["Employee", "Department", "Project"] },
+        { "method": "GET", "path": "/api/employees/:id", "description": "ملف موظف محدد", "models": ["Employee", "Contract", "Department", "Project"] },
+        { "method": "POST", "path": "/api/employees/:id/contracts", "description": "إنشاء عقد جديد لموظف", "models": ["Contract"] },
+        { "method": "POST", "path": "/api/attendance/bulk", "description": "استيراد جماعي لسجلات الحضور", "models": ["Attendance"] },
+        { "method": "GET", "path": "/api/attendance", "description": "جلب سجلات الحضور مع نطاق تاريخ", "models": ["Attendance"] },
+        { "method": "POST", "path": "/api/leaves", "description": "إنشاء طلب إجازة", "models": ["Leave"] },
+        { "method": "PATCH", "path": "/api/leaves/:id/approve", "description": "اعتماد أو رفض طلب إجازة", "models": ["Leave"] },
+        { "method": "GET", "path": "/api/contracts", "description": "سجلات العقود مع بيانات الموظفين", "models": ["Contract", "Employee"] },
+        { "method": "GET", "path": "/api/leaves", "description": "سجلات الإجازات للمستخدم أو للإدارة", "models": ["Leave"] }
+      ]
     },
     {
-      "path": "pages/about.html",
-      "description": "تعريف تفصيلي بالشركة، القيم، والروابط الرئيسية"
+      "group": "المالية",
+      "source": "apps/api/src/finance/routes.ts",
+      "endpoints": [
+        { "method": "POST", "path": "/api/payroll/batches", "description": "إنشاء دفعة رواتب جديدة", "models": ["PayrollBatch"] },
+        { "method": "POST", "path": "/api/payroll/batches/:id/calculate", "description": "حساب عناصر الدفعة بناءً على الموظفين", "models": ["PayrollItem", "Employee"] },
+        { "method": "POST", "path": "/api/payroll/batches/:id/post", "description": "ترحيل دفعة الرواتب إلى القيود", "models": ["PayrollBatch", "Journal", "JournalEntry"] },
+        { "method": "GET", "path": "/api/payroll/batches/:id/journal", "description": "عرض القيد المحاسبي الناتج عن الدفعة", "models": ["Journal", "JournalEntry"] },
+        { "method": "POST", "path": "/api/advances", "description": "إنشاء طلب سلفة", "models": ["Advance"] },
+        { "method": "PATCH", "path": "/api/advances/:id/approve", "description": "اعتماد أو رفض سلفة", "models": ["Advance", "User"] },
+        { "method": "POST", "path": "/api/loans", "description": "إنشاء قرض موظف", "models": ["Loan"] },
+        { "method": "PATCH", "path": "/api/loans/:id/settle", "description": "تسوية قرض", "models": ["Loan"] },
+        { "method": "GET", "path": "/api/advances", "description": "عرض كافة السلف مع مرشح الدور", "models": ["Advance"] },
+        { "method": "GET", "path": "/api/loans", "description": "عرض كافة القروض مع مراعاة الصلاحيات", "models": ["Loan"] },
+        { "method": "GET", "path": "/api/payroll/batches", "description": "قائمة دفعات الرواتب", "models": ["PayrollBatch"] },
+        { "method": "GET", "path": "/api/reports/cost-centers", "description": "تجميع صافي الرواتب حسب مراكز التكلفة", "models": ["PayrollItem"] }
+      ]
     },
     {
-      "path": "pages/contact.html",
-      "description": "نموذج تواصل تفاعلي مع تخزين محلي للطلبات"
-    },
-    {
-      "path": "pages/faq.html",
-      "description": "مركز مساعدة بأسئلة شائعة وروابط تحميل"
-    },
-    {
-      "path": "pages/privacy-policy.html",
-      "description": "سياسة الخصوصية والالتزام بحماية البيانات"
+      "group": "سجلات النشاط",
+      "source": "apps/api/src/activity/routes.ts",
+      "endpoints": [
+        { "method": "GET", "path": "/api/activity/logs", "description": "إرجاع سجلات النشاط مع ترشيح وترقيم", "models": ["ActivityLog"] },
+        { "method": "GET", "path": "/api/activity/analytics", "description": "إحصاءات النشاط حسب الكيان والإجراء", "models": ["ActivityLog"] },
+        { "method": "POST", "path": "/api/activity/snapshots", "description": "إنشاء نسخة أرشيفية لسجلات النشاط", "models": ["ActivityLog"] }
+      ]
     }
   ],
-  "secureSections": [
-    {
-      "name": "لوحة التحكم الرئيسية",
-      "entries": [
-        "pages/main_dashboard.html",
-        "pages/projects_management_center.html",
-        "pages/project_creation_wizard.html",
-        "pages/projects_hub.html"
-      ]
-    },
-    {
-      "name": "الإدارة المالية",
-      "entries": [
-        "pages/financial_management_center.html",
-        "pages/financial_operations_dashboard.html",
-        "pages/financial_center.html",
-        "pages/comprehensive_invoice_management_hub.html",
-        "pages/advanced_invoice_creation_portal.html",
-        "pages/advanced_quotation_invoice_designer.html"
-      ]
-    },
-    {
-      "name": "الموارد البشرية",
-      "entries": [
-        "pages/human_resources_center.html",
-        "pages/add_employee.html",
-        "pages/employee_profile.html",
-        "pages/user_profile.html"
-      ]
-    },
-    {
-      "name": "المتابعة والجودة",
-      "entries": [
-        "pages/navigation_system_audit_testing_center.html",
-        "pages/html_implementation_dashboard.html",
-        "pages/notifications.html",
-        "pages/authentication_main_dashboard.html"
-      ]
-    },
-    {
-      "name": "الإعدادات",
-      "entries": [
-        "pages/settings.html"
-      ]
-    }
-  ]
+  "dataModels": [
+    { "name": "User", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "email", "phone", "passwordHash", "status", "lastLoginAt"], "relations": ["roles", "employee", "activityLogs", "auditLogs"] },
+    { "name": "Role", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "key", "nameAr", "description"], "relations": ["users", "permissions"] },
+    { "name": "Permission", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "key", "nameAr"], "relations": ["roles"] },
+    { "name": "UserRole", "source": "apps/api/prisma/schema.prisma", "fields": ["userId", "roleId"], "relations": ["user", "role"] },
+    { "name": "RolePermission", "source": "apps/api/prisma/schema.prisma", "fields": ["roleId", "permissionId"], "relations": ["role", "permission"] },
+    { "name": "Department", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "nameAr", "costCenterCode"], "relations": ["employees"] },
+    { "name": "Project", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "code", "nameAr", "costCenterCode"], "relations": ["employees", "expenses"] },
+    { "name": "Employee", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "userId", "code", "fullName", "status", "departmentId", "projectId", "monthlyBasic", "allowancesJson"], "relations": ["department", "project", "contracts", "attendance", "leaves", "payrollItems", "advances", "loans", "expenses"] },
+    { "name": "Contract", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "employeeId", "type", "startDate", "endDate", "basicSalary", "currency"], "relations": ["employee"] },
+    { "name": "Attendance", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "employeeId", "day", "checkIn", "checkOut", "status"], "relations": ["employee"] },
+    { "name": "Leave", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "employeeId", "type", "startDate", "endDate", "status", "approvedBy", "notes"], "relations": ["employee"] },
+    { "name": "PayrollBatch", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "month", "year", "status", "postedJournalId"], "relations": ["items", "journal"] },
+    { "name": "PayrollItem", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "batchId", "employeeId", "earningsJson", "deductionsJson", "gross", "net", "costCenter"], "relations": ["batch", "employee"] },
+    { "name": "Advance", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "employeeId", "requestDate", "amount", "currency", "status", "approvedBy", "repaymentMonths"], "relations": ["employee", "approver"] },
+    { "name": "Loan", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "employeeId", "principal", "remaining", "installment", "startMonth", "status"], "relations": ["employee"] },
+    { "name": "Expense", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "projectId", "employeeId", "category", "amount", "currency", "date", "costCenter", "reference"], "relations": ["project", "employee"] },
+    { "name": "Journal", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "date", "description", "status"], "relations": ["entries", "payrollBatch"] },
+    { "name": "JournalEntry", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "journalId", "accountCode", "debit", "credit", "costCenter", "ref"], "relations": ["journal"] },
+    { "name": "AuditLog", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "actorUserId", "action", "entity", "entityId", "beforeJson", "afterJson", "at"], "relations": ["actor"] },
+    { "name": "ActivityLog", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "userId", "actionType", "entityType", "entityId", "description", "metadata", "ipAddress", "userAgent", "createdAt"], "relations": ["user"] },
+    { "name": "v_employee_public", "source": "apps/api/prisma/schema.prisma", "fields": ["id", "fullName", "jobTitle", "department", "project"], "relations": [] }
+  ],
+  "frontendApiExpectations": [
+    { "endpoint": "POST /api/employees", "usedBy": "EmployeeForm.createEmployee", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "PUT /api/employees/:id", "usedBy": "EmployeeForm.updateEmployee", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/employees/:id/finance", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/employees/:id/contracts", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/employees/:id/advances", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/employees/:id/loans", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/employees/:id/expenses", "usedBy": "useEmployeeStore.fetchEmployeeProfile", "source": "apps/web/src/api/employees.ts", "status": "implemented" },
+    { "endpoint": "GET /api/payroll?employeeId=", "usedBy": "fetchPayrollByEmployee", "source": "apps/web/src/api/finance.ts", "status": "implemented" },
+    { "endpoint": "GET /api/expenses?employeeId=", "usedBy": "fetchExpensesByEmployee", "source": "apps/web/src/api/finance.ts", "status": "implemented" },
+    { "endpoint": "GET /api/contracts?employeeId=", "usedBy": "fetchContractsByEmployee", "source": "apps/web/src/api/contracts.ts", "status": "partial-backend-support" }
+  ],
+  "assets": {
+    "sharedStyles": ["css/main.css", "styles.css", "apps/web/src/index.css"],
+    "scripts": ["script.js", "public/dhws-data-injector.js"],
+    "external": ["https://static.rocket.new/rocket-web.js", "https://static.rocket.new/rocket-shot.js", "https://cdn.jsdelivr.net/npm/chart.js", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"]
+  }
 }
