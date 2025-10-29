@@ -18,9 +18,24 @@ import {
   buildBreadcrumb,
   percentage,
   calculateDuration,
+  readFromStorage,
+  writeToStorage,
+  removeFromStorage,
+  average,
 } from './utils.js';
 
 const page = document.body.dataset.page;
+
+const phasesUIState = {
+  projectId: null,
+  phases: [],
+  filters: { status: '', assignee: '', period: '' },
+  sort: { key: 'startDate', direction: 'asc' },
+  ganttScale: 1,
+  logs: [],
+  csvInput: null,
+  editingPhaseId: null,
+};
 
 const unifiedFinancialState = {
   projectId: null,
@@ -1148,39 +1163,742 @@ async function renderProjectSummary(projectId) {
   });
 }
 
-async function renderPhases(projectId) {
-  const list = document.querySelector('[data-phases-list]');
-  if (!list) return;
-  const phases = await phasesStore.all(projectId);
-  list.innerHTML = phases.length
-    ? phases
-        .map(
-          (phase) => `
-      <div class="phase-row" data-phase-id="${phase.id}">
-        <div class="phase-row__info">
-          <h4>${phase.name}</h4>
-          <p>${phase.description || ''}</p>
-          <span>${formatDate(phase.startDate)} → ${formatDate(phase.endDate)}</span>
-        </div>
-        <div class="phase-row__meta">
-          <span>${formatPercent(phase.progress || 0)}</span>
-          <div class="progress-bar"><div style="width:${phase.progress || 0}%"></div></div>
-          <button class="btn btn-light" data-action="edit-phase">تعديل</button>
-          <button class="btn btn-text danger" data-action="delete-phase">حذف</button>
-        </div>
-      </div>`
-        )
-        .join('')
-    : '<div class="empty-state">لا توجد مراحل مسجلة.</div>';
+const STATUS_LABELS = {
+  planned: 'مخططة',
+  in_progress: 'جارية',
+  delayed: 'متأخرة',
+  done: 'منتهية',
+};
 
-  const { totalDuration, overallProgress } = await phasesStore.timeline(projectId);
+const STATUS_COLORS = {
+  planned: '#2563eb',
+  in_progress: '#0ea5e9',
+  delayed: '#f97316',
+  done: '#22c55e',
+};
+
+const STATUS_ORDER = ['planned', 'in_progress', 'delayed', 'done'];
+
+function normalizePhaseDependencies(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+  return String(value)
+    .split(/[\n,]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function inferPhaseStatus(phase) {
+  if (phase.status && STATUS_ORDER.includes(phase.status)) return phase.status;
+  const progress = Number(phase.progress) || 0;
+  if (progress >= 100) return 'done';
+  const today = new Date();
+  const start = phase.startDateObj;
+  const end = phase.endDateObj;
+  if (end && today > end && progress < 100) return 'delayed';
+  if (start && today < start) return 'planned';
+  return 'in_progress';
+}
+
+function phaseStatusLabel(status) {
+  return STATUS_LABELS[status] || 'غير محددة';
+}
+
+function phaseStatusClass(status) {
+  const normalized = STATUS_ORDER.includes(status) ? status : 'planned';
+  return `phase-status phase-status--${normalized}`;
+}
+
+function enrichPhase(phase) {
+  const startDateObj = phase.startDate ? new Date(phase.startDate) : null;
+  const endDateObj = phase.endDate ? new Date(phase.endDate) : null;
+  const durationDays = phase.duration || calculateDuration(phase.startDate, phase.endDate) || 0;
+  const progress = Math.max(0, Math.min(100, safeNumber(phase.progress)));
+  const status = inferPhaseStatus({ ...phase, startDateObj, endDateObj, progress });
+  const dependencies = normalizePhaseDependencies(phase.dependencies);
+  const assignee = phase.assignee ? String(phase.assignee).trim() : '';
+  return {
+    ...phase,
+    startDateObj,
+    endDateObj,
+    durationDays,
+    progress,
+    status,
+    dependencies,
+    assignee,
+  };
+}
+
+function getPeriodRange(periodKey) {
+  if (!periodKey) return null;
+  const now = new Date();
+  const start = new Date(now);
+  start.setHours(0, 0, 0, 0);
+  let end = new Date(start);
+
+  if (periodKey === 'this-week') {
+    const day = start.getDay();
+    start.setDate(start.getDate() - day);
+    end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+    return { start, end };
+  }
+
+  if (periodKey === 'this-month') {
+    start.setDate(1);
+    end = new Date(start);
+    end.setMonth(start.getMonth() + 1);
+    end.setDate(0);
+    end.setHours(23, 59, 59, 999);
+    return { start, end };
+  }
+
+  if (periodKey === 'next-month') {
+    start.setDate(1);
+    start.setMonth(start.getMonth() + 1);
+    end = new Date(start);
+    end.setMonth(start.getMonth() + 1);
+    end.setDate(0);
+    end.setHours(23, 59, 59, 999);
+    return { start, end };
+  }
+
+  return null;
+}
+
+function phaseMatchesFilters(phase) {
+  const { filters } = phasesUIState;
+  if (filters.status && phase.status !== filters.status) return false;
+  if (filters.assignee && phase.assignee !== filters.assignee) return false;
+  if (filters.period) {
+    const range = getPeriodRange(filters.period);
+    if (!range) return true;
+    const phaseStart = phase.startDateObj || phase.endDateObj;
+    const phaseEnd = phase.endDateObj || phase.startDateObj;
+    if (!phaseStart || !phaseEnd) return false;
+    if (phaseEnd < range.start || phaseStart > range.end) return false;
+  }
+  return true;
+}
+
+function sortPhasesList(phases) {
+  const { key, direction } = phasesUIState.sort;
+  const factor = direction === 'desc' ? -1 : 1;
+  const sorted = [...phases].sort((a, b) => {
+    let value = 0;
+    if (key === 'name' || key === 'assignee') {
+      value = a[key].localeCompare(b[key], 'ar');
+    } else if (key === 'status') {
+      value = STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status);
+    } else if (key === 'progress' || key === 'durationDays') {
+      value = safeNumber(a[key]) - safeNumber(b[key]);
+    } else if (key === 'startDate' || key === 'endDate') {
+      const aDate = key === 'startDate' ? a.startDateObj : a.endDateObj;
+      const bDate = key === 'startDate' ? b.startDateObj : b.endDateObj;
+      value = (aDate?.getTime() || 0) - (bDate?.getTime() || 0);
+    } else {
+      value = a.name.localeCompare(b.name, 'ar');
+    }
+    return value * factor;
+  });
+  return sorted;
+}
+
+function getVisiblePhases() {
+  return sortPhasesList(phasesUIState.phases.filter((phase) => phaseMatchesFilters(phase)));
+}
+
+function updateAssigneeFilterOptions() {
+  const select = document.getElementById('filterAssignee');
+  if (!select) return;
+  const currentValue = phasesUIState.filters.assignee || '';
+  const options = [''];
+  phasesUIState.phases.forEach((phase) => {
+    if (phase.assignee && !options.includes(phase.assignee)) {
+      options.push(phase.assignee);
+    }
+  });
+  select.innerHTML = ['<option value="">جميع المسؤولين</option>']
+    .concat(options.filter(Boolean).map((name) => `<option value="${name}">${name}</option>`))
+    .join('');
+  select.value = currentValue;
+}
+
+function renderPhaseTable() {
+  const tbody = document.getElementById('phasesTableBody');
+  if (!tbody) return;
+  const phases = getVisiblePhases();
+  if (!phases.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="9">لا توجد مراحل مطابقة للفلاتر الحالية.</td></tr>';
+  } else {
+    tbody.innerHTML = phases
+      .map(
+        (phase) => `
+        <tr data-phase-id="${phase.id}">
+          <td>
+            <div>
+              <strong>${phase.name}</strong>
+              <div class="text-muted">${phase.description || '—'}</div>
+            </div>
+          </td>
+          <td>${formatDate(phase.startDate)}</td>
+          <td>${formatDate(phase.endDate)}</td>
+          <td>${phase.durationDays}</td>
+          <td>
+            <div>
+              <div>${formatPercent(phase.progress)}</div>
+              <div class="progress-bar"><div style="width:${phase.progress}%"></div></div>
+            </div>
+          </td>
+          <td><span class="${phaseStatusClass(phase.status)}">${phaseStatusLabel(phase.status)}</span></td>
+          <td>${phase.assignee || '—'}</td>
+          <td>${phase.dependencies.length ? phase.dependencies.join('<br>') : '—'}</td>
+          <td>
+            <div class="phase-actions">
+              <button class="btn btn-light" data-action="edit-phase">تعديل</button>
+              <button class="btn btn-text danger" data-action="delete-phase">حذف</button>
+            </div>
+          </td>
+        </tr>`
+      )
+      .join('');
+  }
+
+  document
+    .querySelectorAll('#tblPhases thead th[data-sort]')
+    .forEach((th) => {
+      const isActive = th.dataset.sort === phasesUIState.sort.key;
+      th.classList.toggle('is-sorted', isActive);
+      th.dataset.direction = isActive ? phasesUIState.sort.direction : '';
+    });
+}
+
+function getStatusColor(status) {
+  return STATUS_COLORS[status] || '#475569';
+}
+
+function renderGanttChart() {
+  const container = document.getElementById('ganttContainer');
+  if (!container) return;
+  const phases = getVisiblePhases();
+  if (!phases.length) {
+    container.innerHTML = '<div class="empty-state">لا توجد مراحل لعرضها.</div>';
+    return;
+  }
+  const valid = phases.filter((phase) => phase.startDateObj && phase.endDateObj);
+  if (!valid.length) {
+    container.innerHTML = '<div class="empty-state">الرجاء تحديد تواريخ البدء والانتهاء لكل مرحلة.</div>';
+    return;
+  }
+  const minDate = new Date(Math.min(...valid.map((phase) => phase.startDateObj.getTime())));
+  const maxDate = new Date(Math.max(...valid.map((phase) => phase.endDateObj.getTime())));
+  const totalDays = Math.max(1, Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24)) + 1);
+  const pixelsPerDay = 18 * phasesUIState.ganttScale;
+  const chartWidth = Math.max(container.clientWidth, totalDays * pixelsPerDay + 200);
+
+  const rows = phases
+    .map((phase) => {
+      const start = phase.startDateObj || minDate;
+      const end = phase.endDateObj || start;
+      const offsetDays = Math.max(0, Math.round((start - minDate) / (1000 * 60 * 60 * 24)));
+      const duration = Math.max(1, phase.durationDays || Math.round((end - start) / (1000 * 60 * 60 * 24)) || 1);
+      const offset = offsetDays * pixelsPerDay;
+      const width = duration * pixelsPerDay;
+      return `
+        <div class="phase-gantt__row">
+          <div>
+            <strong>${phase.name}</strong>
+            <div class="text-muted">${formatDate(phase.startDate)} → ${formatDate(phase.endDate)}</div>
+          </div>
+          <div class="phase-gantt__bar-wrapper">
+            <div class="phase-gantt__bar" style="width:${width}px; inset-inline-start:${offset}px; background:${getStatusColor(
+              phase.status,
+            )}" data-progress="${formatPercent(phase.progress)}"></div>
+          </div>
+        </div>`;
+    })
+    .join('');
+
+  container.innerHTML = `<div class="phase-gantt__grid" style="min-width:${chartWidth}px">${rows}</div>`;
+}
+
+function generateWeeklySeries(phases) {
+  if (!phases.length) return [];
+  const now = new Date();
+  const weekStart = new Date(now);
+  const day = weekStart.getDay();
+  weekStart.setDate(weekStart.getDate() - day);
+  weekStart.setHours(0, 0, 0, 0);
+  const series = [];
+  for (let index = 5; index >= 0; index -= 1) {
+    const start = new Date(weekStart);
+    start.setDate(start.getDate() - index * 7);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    const relevant = phases.filter((phase) => phase.endDateObj && phase.endDateObj <= end);
+    const value = relevant.length ? Math.round(average(relevant.map((item) => item.progress))) : 0;
+    const label = new Intl.DateTimeFormat('ar-SA', { month: 'short', day: 'numeric' }).format(end);
+    series.push({ label, value });
+  }
+  return series;
+}
+
+function drawLineChart(canvas, data) {
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+  if (!data.length) {
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '14px Tajawal';
+    ctx.textAlign = 'center';
+    ctx.fillText('لا تتوفر بيانات لعرضها', width / 2, height / 2);
+    return;
+  }
+  const padding = 32;
+  const maxValue = Math.max(100, ...data.map((point) => point.value));
+  const stepX = data.length > 1 ? (width - padding * 2) / (data.length - 1) : 0;
+
+  ctx.beginPath();
+  data.forEach((point, index) => {
+    const x = padding + stepX * index;
+    const y = height - padding - (point.value / maxValue) * (height - padding * 2);
+    if (index === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  });
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#2563eb';
+  ctx.stroke();
+
+  ctx.lineTo(padding + stepX * (data.length - 1), height - padding);
+  ctx.lineTo(padding, height - padding);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(37, 99, 235, 0.12)';
+  ctx.fill();
+
+  ctx.fillStyle = '#2563eb';
+  ctx.font = '12px Tajawal';
+  ctx.textAlign = 'center';
+  data.forEach((point, index) => {
+    const x = padding + stepX * index;
+    const y = height - padding - (point.value / maxValue) * (height - padding * 2);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillText(`${point.value}%`, x, y - 10);
+    ctx.fillStyle = '#475569';
+    ctx.fillText(point.label, x, height - padding + 18);
+    ctx.fillStyle = '#2563eb';
+  });
+}
+
+function drawBarChart(canvas, data) {
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width;
+  const height = canvas.height;
+  ctx.clearRect(0, 0, width, height);
+  if (!data.length) {
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '14px Tajawal';
+    ctx.textAlign = 'center';
+    ctx.fillText('لا تتوفر بيانات لعرضها', width / 2, height / 2);
+    return;
+  }
+  const padding = 32;
+  const barWidth = (width - padding * 2) / data.length - 12;
+  const maxValue = Math.max(1, ...data.map((point) => point.value));
+  ctx.font = '12px Tajawal';
+  data.forEach((point, index) => {
+    const x = padding + index * (barWidth + 12);
+    const barHeight = ((height - padding * 2) * point.value) / maxValue;
+    const y = height - padding - barHeight;
+    ctx.fillStyle = point.color;
+    ctx.fillRect(x, y, barWidth, barHeight);
+    ctx.fillStyle = '#1f2937';
+    ctx.fillText(point.label, x + barWidth / 2, height - padding + 18);
+    ctx.fillText(point.value.toString(), x + barWidth / 2, y - 6);
+  });
+}
+
+async function renderPhaseAnalytics() {
+  const { projectId, phases } = phasesUIState;
+  const totalPhasesEl = document.getElementById('totalPhases');
+  if (totalPhasesEl) totalPhasesEl.textContent = phases.length;
+
+  const statusCount = phases.reduce(
+    (acc, phase) => ({ ...acc, [phase.status]: (acc[phase.status] || 0) + 1 }),
+    {},
+  );
+  const inProgressEl = document.getElementById('inProgressPhases');
+  if (inProgressEl) inProgressEl.textContent = statusCount.in_progress || 0;
+  const delayedEl = document.getElementById('delayedPhases');
+  if (delayedEl) delayedEl.textContent = statusCount.delayed || 0;
+  const completedEl = document.getElementById('completedPhases');
+  if (completedEl) completedEl.textContent = statusCount.done || 0;
+
+  const timeline = projectId ? await phasesStore.timeline(projectId) : { totalDuration: 0, completedDuration: 0, overallProgress: 0 };
   const phasesDurationEl = document.querySelector('[data-phases-duration]');
-  if (phasesDurationEl) phasesDurationEl.textContent = `${totalDuration} يوم`;
-
+  if (phasesDurationEl) phasesDurationEl.textContent = `${timeline.totalDuration || 0} يوم`;
   const phasesProgressEl = document.querySelector('[data-phases-progress]');
-  if (phasesProgressEl) phasesProgressEl.textContent = formatPercent(overallProgress);
+  if (phasesProgressEl) phasesProgressEl.textContent = formatPercent(timeline.overallProgress || 0);
   const timelineBar = document.querySelector('[data-phases-progress-bar]');
-  if (timelineBar) timelineBar.style.width = `${overallProgress}%`;
+  if (timelineBar) timelineBar.style.width = `${timeline.overallProgress || 0}%`;
+
+  const overallProgressEl = document.getElementById('overallProgressPercent');
+  if (overallProgressEl) overallProgressEl.textContent = formatPercent(timeline.overallProgress || 0);
+  const overallProgressBar = document.getElementById('overallProgressBar');
+  if (overallProgressBar) overallProgressBar.style.width = `${timeline.overallProgress || 0}%`;
+
+  const completedDurationEl = document.getElementById('completedDuration');
+  if (completedDurationEl) completedDurationEl.textContent = `${Math.round(timeline.completedDuration || 0)} يوم`;
+  const totalDurationEl = document.getElementById('totalDuration');
+  if (totalDurationEl) totalDurationEl.textContent = `${Math.round(timeline.totalDuration || 0)} يوم`;
+  const remainingDurationEl = document.getElementById('remainingDuration');
+  if (remainingDurationEl) {
+    const remaining = Math.max(0, Math.round((timeline.totalDuration || 0) - (timeline.completedDuration || 0)));
+    remainingDurationEl.textContent = `${remaining} يوم`;
+  }
+
+  const weeklySeries = generateWeeklySeries(phases);
+  drawLineChart(document.getElementById('weeklyProgressChart'), weeklySeries);
+
+  const statusData = STATUS_ORDER.map((status) => ({
+    label: phaseStatusLabel(status),
+    value: statusCount[status] || 0,
+    color: getStatusColor(status),
+  }));
+  drawBarChart(document.getElementById('phaseStatusChart'), statusData);
+}
+
+function phaseLogsStorageKey(projectId) {
+  return `phase-logs:${projectId}`;
+}
+
+function loadPhaseLogs(projectId) {
+  if (!projectId) return;
+  const stored = readFromStorage(phaseLogsStorageKey(projectId), []);
+  phasesUIState.logs = Array.isArray(stored)
+    ? stored
+        .map((entry) => ({ ...entry }))
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    : [];
+}
+
+function savePhaseLogs(projectId) {
+  if (!projectId) return;
+  writeToStorage(phaseLogsStorageKey(projectId), phasesUIState.logs.slice(0, 200));
+}
+
+function formatDateTime(value) {
+  try {
+    return new Intl.DateTimeFormat('ar-SA', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
+  } catch (error) {
+    return value;
+  }
+}
+
+function renderPhaseLogs() {
+  const alertsContainer = document.getElementById('alertsContainer');
+  if (alertsContainer) {
+    const alerts = phasesUIState.phases
+      .filter((phase) => phase.status === 'delayed' || (phase.status === 'in_progress' && phase.progress < 40))
+      .slice(0, 5)
+      .map(
+        (phase) => `
+        <div class="phase-alert">
+          <strong>${phase.name}</strong>
+          <span>الحالة الحالية: ${phaseStatusLabel(phase.status)}</span>
+          <span>نسبة التقدم ${formatPercent(phase.progress)} · تاريخ التسليم ${formatDate(phase.endDate)}</span>
+        </div>`
+      );
+    alertsContainer.innerHTML = alerts.length ? alerts.join('') : '<div class="phase-alert">لا توجد تنبيهات حالياً.</div>';
+  }
+
+  const logsTableBody = document.getElementById('logsTableBody');
+  if (logsTableBody) {
+    if (!phasesUIState.logs.length) {
+      logsTableBody.innerHTML = '<tr class="empty-row"><td colspan="5">لا توجد سجلات بعد.</td></tr>';
+    } else {
+      logsTableBody.innerHTML = phasesUIState.logs
+        .slice(0, 100)
+        .map(
+          (log) => `
+          <tr>
+            <td><time datetime="${log.timestamp}">${formatDateTime(log.timestamp)}</time></td>
+            <td>${log.user || 'النظام'}</td>
+            <td>${log.action}</td>
+            <td>${log.phaseName || '—'}</td>
+            <td>${log.details || '—'}</td>
+          </tr>`
+        )
+        .join('');
+    }
+  }
+}
+
+function pushPhaseLog(entry) {
+  const { projectId } = phasesUIState;
+  if (!projectId) return;
+  const log = {
+    id: entry.id || `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    timestamp: entry.timestamp || new Date().toISOString(),
+    user: entry.user || 'مدير المشروع',
+    action: entry.action || 'تحديث مرحلة',
+    phaseName: entry.phaseName || '—',
+    details: entry.details || '',
+  };
+  phasesUIState.logs = [log, ...phasesUIState.logs].slice(0, 200);
+  savePhaseLogs(projectId);
+  renderPhaseLogs();
+}
+
+function resetPhaseForm(form) {
+  form.reset();
+  if (form.elements.status) form.elements.status.value = 'planned';
+  if (form.elements.progress) form.elements.progress.value = form.elements.progress.defaultValue || 0;
+}
+
+async function renderPhases(projectId) {
+  const projectChanged = phasesUIState.projectId !== projectId;
+  phasesUIState.projectId = projectId;
+  if (projectChanged) {
+    loadPhaseLogs(projectId);
+  }
+  const phases = await phasesStore.all(projectId);
+  phasesUIState.phases = phases.map(enrichPhase);
+  updateAssigneeFilterOptions();
+  renderPhaseTable();
+  renderGanttChart();
+  await renderPhaseAnalytics();
+  renderPhaseLogs();
+}
+
+function applyPhaseFilters() {
+  const statusEl = document.getElementById('filterStatus');
+  const assigneeEl = document.getElementById('filterAssignee');
+  const periodEl = document.getElementById('filterPeriod');
+  phasesUIState.filters = {
+    status: statusEl ? statusEl.value : '',
+    assignee: assigneeEl ? assigneeEl.value : '',
+    period: periodEl ? periodEl.value : '',
+  };
+  renderPhaseTable();
+  renderGanttChart();
+}
+
+function clearPhaseFilters() {
+  phasesUIState.filters = { status: '', assignee: '', period: '' };
+  ['filterStatus', 'filterAssignee', 'filterPeriod'].forEach((id) => {
+    const element = document.getElementById(id);
+    if (element) element.value = '';
+  });
+  renderPhaseTable();
+  renderGanttChart();
+}
+
+function sortPhaseTable(key) {
+  if (phasesUIState.sort.key === key) {
+    phasesUIState.sort.direction = phasesUIState.sort.direction === 'asc' ? 'desc' : 'asc';
+  } else {
+    phasesUIState.sort.key = key;
+    phasesUIState.sort.direction = key === 'progress' || key === 'durationDays' ? 'desc' : 'asc';
+  }
+  renderPhaseTable();
+  renderGanttChart();
+}
+
+function zoomGanttIn() {
+  phasesUIState.ganttScale = Math.min(3, phasesUIState.ganttScale + 0.25);
+  renderGanttChart();
+}
+
+function zoomGanttOut() {
+  phasesUIState.ganttScale = Math.max(0.5, phasesUIState.ganttScale - 0.25);
+  renderGanttChart();
+}
+
+function refreshGantt() {
+  renderGanttChart();
+}
+
+function switchPhaseSubTab(subtabId) {
+  document.querySelectorAll('.phase-subtab-button').forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.subtab === subtabId);
+  });
+  document.querySelectorAll('.phase-subtab-content').forEach((content) => {
+    content.classList.toggle('is-hidden', content.id !== subtabId);
+  });
+}
+
+function openAddPhaseModal(phaseId = null) {
+  const modal = document.getElementById('phaseModal');
+  const form = document.getElementById('phaseForm');
+  if (!modal || !form) return;
+  const titleEl = modal.querySelector('[data-phase-modal-title]');
+  const submitLabel = modal.querySelector('[data-phase-submit-label]');
+  resetPhaseForm(form);
+  phasesUIState.editingPhaseId = phaseId;
+
+  if (phaseId) {
+    const phase = phasesUIState.phases.find((item) => item.id === phaseId);
+    if (phase) {
+      if (form.elements.name) form.elements.name.value = phase.name || '';
+      if (form.elements.startDate) form.elements.startDate.value = phase.startDate || '';
+      if (form.elements.endDate) form.elements.endDate.value = phase.endDate || '';
+      if (form.elements.progress) form.elements.progress.value = phase.progress;
+      if (form.elements.status) form.elements.status.value = phase.status || 'planned';
+      if (form.elements.assignee) form.elements.assignee.value = phase.assignee || '';
+      if (form.elements.description) form.elements.description.value = phase.description || '';
+      if (form.elements.dependencies)
+        form.elements.dependencies.value = phase.dependencies.join('\n');
+    }
+    if (titleEl) titleEl.textContent = 'تعديل المرحلة';
+    if (submitLabel) submitLabel.textContent = 'حفظ المرحلة';
+  } else {
+    if (titleEl) titleEl.textContent = 'إضافة مرحلة جديدة';
+    if (submitLabel) submitLabel.textContent = 'إضافة المرحلة';
+  }
+
+  modal.classList.add('is-visible');
+}
+
+function closePhaseModal() {
+  const modal = document.getElementById('phaseModal');
+  const form = document.getElementById('phaseForm');
+  if (form) resetPhaseForm(form);
+  phasesUIState.editingPhaseId = null;
+  modal?.classList.remove('is-visible');
+}
+
+function downloadFile(filename, content, type = 'text/csv') {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => {
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, 0);
+}
+
+async function importPhasesCSV() {
+  const { projectId } = phasesUIState;
+  if (!projectId) return;
+  if (!phasesUIState.csvInput) {
+    const input = document.getElementById('phaseCsvInput');
+    if (!input) return;
+    phasesUIState.csvInput = input;
+    input.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const rows = text
+          .split(/\r?\n/)
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .map((line) => {
+            const cells = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i += 1) {
+              const char = line[i];
+              if (char === '"') {
+                inQuotes = !inQuotes;
+              } else if (char === ',' && !inQuotes) {
+                cells.push(current.trim());
+                current = '';
+              } else {
+                current += char;
+              }
+            }
+            if (current !== '') cells.push(current.trim());
+            return cells;
+          });
+        if (!rows.length) {
+          createToast('ملف CSV فارغ', 'error');
+          return;
+        }
+        const header = rows[0].map((cell) => cell.toLowerCase());
+        const isHeader = header.some((cell) => ['name', 'startdate', 'start_date', 'اسم المرحلة'].includes(cell));
+        const dataRows = isHeader ? rows.slice(1) : rows;
+        let created = 0;
+        for (const cells of dataRows) {
+          const record = isHeader
+            ? Object.fromEntries(header.map((key, index) => [key, cells[index] || '']))
+            : {};
+          const name = record.name || record['اسم المرحلة'] || cells[0];
+          if (!name) continue;
+          const startDate = record.startdate || record.start_date || record['start date'] || cells[1] || '';
+          const endDate = record.enddate || record.end_date || record['end date'] || cells[2] || '';
+          const progress = safeNumber(record.progress || cells[3] || 0);
+          const status = (record.status || cells[4] || '').trim();
+          const assignee = record.assignee || cells[5] || '';
+          const dependencies = normalizePhaseDependencies(record.dependencies || cells[6] || '');
+          const description = record.description || cells[7] || '';
+          await phasesStore.create(projectId, {
+            name,
+            startDate,
+            endDate,
+            progress,
+            status,
+            assignee,
+            dependencies,
+            description,
+          });
+          pushPhaseLog({ action: 'استيراد مرحلة', phaseName: name, details: 'تم الاستيراد من ملف CSV' });
+          created += 1;
+        }
+        if (created) {
+          createToast(`تم استيراد ${created} مرحلة بنجاح`);
+          await renderPhases(projectId);
+          await renderProjectSummary(projectId);
+        } else {
+          createToast('لم يتم العثور على سجلات صالحة للاستيراد', 'error');
+        }
+      } catch (error) {
+        console.error('فشل استيراد مراحل من CSV', error);
+        createToast('تعذر استيراد الملف. يرجى التحقق من التنسيق.', 'error');
+      } finally {
+        event.target.value = '';
+      }
+    });
+  }
+  phasesUIState.csvInput.value = '';
+  phasesUIState.csvInput.click();
+}
+
+function exportLogs() {
+  const { projectId, logs } = phasesUIState;
+  if (!projectId || !logs.length) {
+    createToast('لا توجد سجلات لتصديرها', 'error');
+    return;
+  }
+  const header = ['timestamp', 'user', 'action', 'phase', 'details'];
+  const rows = logs.map((log) => [log.timestamp, log.user, log.action, log.phaseName, log.details]);
+  const csv = [header.join(','), ...rows.map((row) => row.map((cell) => `"${(cell || '').replace(/"/g, '""')}"`).join(','))].join('\n');
+  downloadFile(`phase-logs-${projectId}.csv`, csv);
+}
+
+function clearLogs() {
+  const { projectId } = phasesUIState;
+  if (!projectId) return;
+  if (!confirm('هل أنت متأكد من مسح السجل؟')) return;
+  phasesUIState.logs = [];
+  removeFromStorage(phaseLogsStorageKey(projectId));
+  renderPhaseLogs();
+  createToast('تم مسح سجل المراحل بنجاح');
 }
 
 async function renderExpenses(projectId) {
@@ -2529,35 +3247,32 @@ async function renderReports(projectId) {
 }
 
 function bindPhaseActions(projectId) {
-  const container = document.querySelector('[data-phases-list]');
-  if (!container || container.dataset.bound) return;
-  container.dataset.bound = 'true';
-  container.addEventListener('click', async (event) => {
+  const tableBody = document.getElementById('phasesTableBody');
+  if (!tableBody || tableBody.dataset.bound) return;
+  tableBody.dataset.bound = 'true';
+  tableBody.addEventListener('click', async (event) => {
     const actionButton = event.target.closest('button[data-action]');
     if (!actionButton) return;
-    const row = actionButton.closest('[data-phase-id]');
+    const row = actionButton.closest('tr[data-phase-id]');
     if (!row) return;
     const { action } = actionButton.dataset;
     const phaseId = row.dataset.phaseId;
 
     if (action === 'delete-phase') {
+      const phase = phasesUIState.phases.find((item) => item.id === phaseId);
       if (!confirm('هل ترغب في حذف هذه المرحلة؟')) return;
       await phasesStore.remove(projectId, phaseId);
+      await phasesStore.completion(projectId).then((progress) => projectStore.updateProgress(projectId, progress));
+      pushPhaseLog({ action: 'حذف مرحلة', phaseName: phase?.name, details: 'تم حذف المرحلة من خطة التنفيذ' });
+      createToast('تم حذف المرحلة بنجاح', 'success');
+      await renderPhases(projectId);
+      await renderProjectSummary(projectId);
+      return;
     }
 
     if (action === 'edit-phase') {
-      const phases = await phasesStore.all(projectId);
-      const current = phases.find((phase) => phase.id === phaseId);
-      if (!current) return;
-      const newProgress = Number(prompt('نسبة الإنجاز الحالية', current.progress ?? 0));
-      if (Number.isNaN(newProgress)) return;
-      await phasesStore.update(projectId, phaseId, { progress: Math.max(0, Math.min(100, newProgress)) });
+      openAddPhaseModal(phaseId);
     }
-
-    const progress = await phasesStore.completion(projectId);
-    await projectStore.updateProgress(projectId, progress);
-    await renderPhases(projectId);
-    await renderProjectSummary(projectId);
   });
 }
 
@@ -3021,13 +3736,31 @@ function handlePhasesForm(projectId) {
       description: getFormValue(formData, 'description'),
       startDate: getFormValue(formData, 'startDate'),
       endDate: getFormValue(formData, 'endDate'),
-      progress: safeNumber(getFormValue(formData, 'progress')),
+      progress: Math.max(0, Math.min(100, safeNumber(getFormValue(formData, 'progress')))),
+      status: getFormValue(formData, 'status'),
+      assignee: getFormValue(formData, 'assignee'),
+      dependencies: normalizePhaseDependencies(getFormValue(formData, 'dependencies')),
     };
-    await phasesStore.create(projectId, payload);
-    await phasesStore.completion(projectId).then((progress) => projectStore.updateProgress(projectId, progress));
+    if (phasesUIState.editingPhaseId) {
+      const phaseId = phasesUIState.editingPhaseId;
+      const current = phasesUIState.phases.find((phase) => phase.id === phaseId);
+      await phasesStore.update(projectId, phaseId, payload);
+      await phasesStore.completion(projectId).then((progress) => projectStore.updateProgress(projectId, progress));
+      pushPhaseLog({
+        action: 'تعديل مرحلة',
+        phaseName: payload.name || current?.name,
+        details: 'تم تحديث تفاصيل المرحلة',
+      });
+      createToast('تم تحديث بيانات المرحلة', 'success');
+    } else {
+      const created = await phasesStore.create(projectId, payload);
+      await phasesStore.completion(projectId).then((progress) => projectStore.updateProgress(projectId, progress));
+      pushPhaseLog({ action: 'إضافة مرحلة', phaseName: created.name, details: 'تم إنشاء مرحلة جديدة' });
+      createToast('تمت إضافة المرحلة بنجاح');
+    }
+    closePhaseModal();
     await renderPhases(projectId);
     await renderProjectSummary(projectId);
-    createToast('تمت إضافة المرحلة بنجاح');
   });
 }
 
@@ -3096,6 +3829,11 @@ async function setupInfoPage() {
 async function setupPhasesPage() {
   const projectId = ensureProjectContext();
   if (!projectId) return;
+  phasesUIState.filters = { status: '', assignee: '', period: '' };
+  phasesUIState.sort = { key: 'startDate', direction: 'asc' };
+  phasesUIState.ganttScale = 1;
+  phasesUIState.editingPhaseId = null;
+  phasesUIState.csvInput = null;
   buildBreadcrumb([
     { label: 'المشاريع', href: '../projects_management_center.html' },
     { label: 'مراحل المشروع', href: `project_phases.html?projectId=${projectId}` },
@@ -3103,6 +3841,10 @@ async function setupPhasesPage() {
   configureProjectNavigation(projectId, 'phases');
   await renderProjectSummary(projectId);
   await renderPhases(projectId);
+  ['filterStatus', 'filterAssignee', 'filterPeriod'].forEach((id) => {
+    const element = document.getElementById(id);
+    if (element) element.value = '';
+  });
   handlePhasesForm(projectId);
   bindPhaseActions(projectId);
 }
@@ -3173,6 +3915,18 @@ if (pageInitializers[page]) {
 }
 
 Object.assign(window, {
+  openAddPhaseModal,
+  closePhaseModal,
+  applyPhaseFilters,
+  clearPhaseFilters,
+  sortPhaseTable,
+  switchPhaseSubTab,
+  zoomGanttIn,
+  zoomGanttOut,
+  refreshGantt,
+  importPhasesCSV,
+  exportLogs,
+  clearLogs,
   openAddExpenseModal,
   closeExpenseModal,
   openAddSubcontractModal,

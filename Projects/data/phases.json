@@ -8,7 +8,10 @@
       "startDate": "2024-01-15",
       "endDate": "2024-02-28",
       "progress": 100,
-      "duration": 45
+      "duration": 45,
+      "status": "done",
+      "assignee": "أحمد علي",
+      "dependencies": []
     },
     {
       "id": "phase-002",
@@ -18,7 +21,10 @@
       "startDate": "2024-03-01",
       "endDate": "2024-05-30",
       "progress": 60,
-      "duration": 90
+      "duration": 90,
+      "status": "in_progress",
+      "assignee": "فاطمة محمد",
+      "dependencies": ["الأعمال التحضيرية"]
     },
     {
       "id": "phase-003",
@@ -28,7 +34,10 @@
       "startDate": "2024-06-01",
       "endDate": "2024-09-30",
       "progress": 25,
-      "duration": 120
+      "duration": 120,
+      "status": "planned",
+      "assignee": "سارة العتيبي",
+      "dependencies": ["الهيكل الخرساني"]
     },
     {
       "id": "phase-004",
@@ -38,7 +47,10 @@
       "startDate": "2023-09-10",
       "endDate": "2024-02-15",
       "progress": 90,
-      "duration": 160
+      "duration": 160,
+      "status": "in_progress",
+      "assignee": "عبدالله سعد",
+      "dependencies": []
     },
     {
       "id": "phase-005",
@@ -48,7 +60,10 @@
       "startDate": "2024-02-20",
       "endDate": "2024-10-30",
       "progress": 35,
-      "duration": 180
+      "duration": 180,
+      "status": "in_progress",
+      "assignee": "لمياء الشهراني",
+      "dependencies": ["توسعة مبنى العمليات"]
     },
     {
       "id": "phase-006",
@@ -58,7 +73,10 @@
       "startDate": "2024-02-10",
       "endDate": "2024-04-25",
       "progress": 80,
-      "duration": 70
+      "duration": 70,
+      "status": "in_progress",
+      "assignee": "نواف التركي",
+      "dependencies": []
     }
   ]
 }
