@@ -1323,18 +1323,18 @@ function renderUnifiedExpensesUI(projectId) {
         const totalWithVat = expenseTotalWithVat(expense);
         return `
       <tr data-expense-id="${expense.id}">
-        <td class="text-right p-4 border-b border-border text-sm">${expense.category || '—'}</td>
-        <td class="text-right p-4 border-b border-border text-sm">${expense.title || '—'}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${formatDate(expense.date)}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${formatCurrency(expense.amount)}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${vatPercent.toFixed(2)}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${formatCurrency(totalWithVat)}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${expense.paymentMethod || '—'}</td>
-        <td class="text-right p-4 border-b border-border text-sm">${expense.notes || '—'}</td>
-        <td class="text-center p-4 border-b border-border text-sm">
-          <div class="flex items-center justify-center gap-2">
-            <button type="button" class="btn btn-text" data-expense-action="edit">تعديل</button>
-            <button type="button" class="btn btn-text danger" data-expense-action="delete">حذف</button>
+        <td>${expense.category || '—'}</td>
+        <td>${expense.title || '—'}</td>
+        <td class="text-center">${formatDate(expense.date)}</td>
+        <td class="text-center text-nowrap">${formatCurrency(expense.amount)}</td>
+        <td class="text-center">${vatPercent.toFixed(2)}</td>
+        <td class="text-center text-nowrap">${formatCurrency(totalWithVat)}</td>
+        <td class="text-center">${expense.paymentMethod || '—'}</td>
+        <td>${expense.notes || '—'}</td>
+        <td class="text-center">
+          <div class="table-actions">
+            <button type="button" data-expense-action="edit">تعديل</button>
+            <button type="button" class="table-actions__danger" data-expense-action="delete">حذف</button>
           </div>
         </td>
       </tr>`;
@@ -1343,7 +1343,7 @@ function renderUnifiedExpensesUI(projectId) {
   }
 
   const emptyState = document.getElementById('expensesEmptyState');
-  if (emptyState) emptyState.classList.toggle('hidden', sorted.length > 0);
+  if (emptyState) emptyState.classList.toggle('is-hidden', sorted.length > 0);
 
   const categorySelect = document.getElementById('filterExpenseCategory');
   if (categorySelect && categorySelect.value !== (expenseFilters.category || '')) {
@@ -1489,18 +1489,18 @@ function renderSubcontractsUI(projectId) {
         const remaining = Math.max(0, safeNumber(contract.value) - safeNumber(contract.paidAmount));
         return `
       <tr data-subcontract-id="${contract.id}">
-        <td class="text-right p-4 border-b border-border text-sm">${contract.contractorName || '—'}</td>
-        <td class="text-right p-4 border-b border-border text-sm">${contract.contractTitle || '—'}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${formatCurrency(contract.value)}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${formatDate(contract.startDate)}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${formatDate(contract.endDate)}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${formatCurrency(contract.paidAmount)}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${formatCurrency(remaining)}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${translateContractStatus(contract.status)}</td>
-        <td class="text-center p-4 border-b border-border text-sm">
-          <div class="flex items-center justify-center gap-2">
-            <button type="button" class="btn btn-text" data-subcontract-action="edit">تعديل</button>
-            <button type="button" class="btn btn-text danger" data-subcontract-action="delete">حذف</button>
+        <td>${contract.contractorName || '—'}</td>
+        <td>${contract.contractTitle || '—'}</td>
+        <td class="text-center text-nowrap">${formatCurrency(contract.value)}</td>
+        <td class="text-center">${formatDate(contract.startDate)}</td>
+        <td class="text-center">${formatDate(contract.endDate)}</td>
+        <td class="text-center text-nowrap">${formatCurrency(contract.paidAmount)}</td>
+        <td class="text-center text-nowrap">${formatCurrency(remaining)}</td>
+        <td class="text-center">${translateContractStatus(contract.status)}</td>
+        <td class="text-center">
+          <div class="table-actions">
+            <button type="button" data-subcontract-action="edit">تعديل</button>
+            <button type="button" class="table-actions__danger" data-subcontract-action="delete">حذف</button>
           </div>
         </td>
       </tr>`;
@@ -1509,7 +1509,7 @@ function renderSubcontractsUI(projectId) {
   }
 
   const emptyState = document.getElementById('subcontractsEmptyState');
-  if (emptyState) emptyState.classList.toggle('hidden', sorted.length > 0);
+  if (emptyState) emptyState.classList.toggle('is-hidden', sorted.length > 0);
 
   renderCombinedAnalyticsUI();
 }
@@ -1731,6 +1731,12 @@ function renderCombinedAnalyticsUI() {
 
   const timeline = buildTimelineSeries(unifiedFinancialState.timelineView, monthlyExpenses, monthlyContracts);
   updateTimelineChart(timeline.labels, timeline.expenses, timeline.contracts);
+
+  analyticsSection.querySelectorAll('[data-timeline-view]').forEach((button) => {
+    const isActive = button.dataset.timelineView === unifiedFinancialState.timelineView;
+    button.classList.toggle('btn-secondary', isActive);
+    button.classList.toggle('btn-ghost', !isActive);
+  });
 }
 
 async function renderPayments(projectId) {
@@ -1799,6 +1805,7 @@ function renderPaymentsDashboardUI() {
   renderPaymentsKPIs(overallMetrics);
   renderPaymentsProgress(overallMetrics);
   renderPaymentsTable(sorted, overallMetrics);
+  updatePaymentsTimelineButtons();
   renderPaymentsTimeline(sorted);
   updatePaymentsCharts(filtered, filteredMetrics);
 }
@@ -1951,14 +1958,13 @@ function getPaymentStatusLabel(status) {
 
 function getPaymentStatusBadge(status) {
   const label = getPaymentStatusLabel(status);
-  const baseClass = 'px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center justify-center border';
   if (status === 'paid') {
-    return `<span class="${baseClass} bg-success-100 text-success border-success-200">${label}</span>`;
+    return '<span class="badge badge-success">' + label + '</span>';
   }
   if (status === 'overdue') {
-    return `<span class="${baseClass} bg-error-100 text-error border-error-200">${label}</span>`;
+    return '<span class="badge badge-danger">' + label + '</span>';
   }
-  return `<span class="${baseClass} bg-warning-100 text-warning border-warning-200">${label}</span>`;
+  return '<span class="badge badge-warning">' + label + '</span>';
 }
 
 function renderPaymentsTable(payments, metrics) {
@@ -1968,11 +1974,11 @@ function renderPaymentsTable(payments, metrics) {
 
   if (!payments.length) {
     body.innerHTML = '';
-    if (emptyState) emptyState.classList.remove('hidden');
+    if (emptyState) emptyState.classList.remove('is-hidden');
     return;
   }
 
-  if (emptyState) emptyState.classList.add('hidden');
+  if (emptyState) emptyState.classList.add('is-hidden');
   const targetAmount = metrics.targetAmount || 0;
 
   body.innerHTML = payments
@@ -1984,48 +1990,40 @@ function renderPaymentsTable(payments, metrics) {
       const statusBadge = getPaymentStatusBadge(payment.status || 'scheduled');
       const percent = targetAmount ? formatPercent(percentage(safeNumber(payment.amount), targetAmount)) : '0%';
       const attachment = payment.attachmentUrl
-        ? `<a href="${payment.attachmentUrl}" target="_blank" rel="noopener" class="text-primary hover:underline">عرض</a>`
+        ? `<a href="${payment.attachmentUrl}" target="_blank" rel="noopener" class="text-link">عرض</a>`
         : '—';
       const notes = [];
-      if (payment.notes) notes.push(`<p>${payment.notes}</p>`);
+      if (payment.notes) notes.push(`<div>${payment.notes}</div>`);
       if (payment.paymentMethod) {
-        notes.push(`<p class="text-xs text-text-secondary">وسيلة الدفع: ${payment.paymentMethod}</p>`);
+        notes.push(`<div class="table-subtext text-muted">وسيلة الدفع: ${payment.paymentMethod}</div>`);
       }
       const notesCell = notes.length ? notes.join('') : '—';
       const type = normalizePaymentType(payment);
-      const typeBadgeClass =
-        type === 'incoming'
-          ? 'bg-success-100 text-success border-success-200'
-          : 'bg-primary-100 text-primary border-primary-200';
       const typeBadgeLabel = type === 'incoming' ? 'من العميل' : 'لمقاول باطن';
-      const typeBadge = `<span class="px-2 py-0.5 rounded-full text-xs border ${typeBadgeClass}">${typeBadgeLabel}</span>`;
+      const typeBadge = `<span class="badge ${type === 'incoming' ? 'badge-success' : 'badge-primary'}">${typeBadgeLabel}</span>`;
       const actions = [
-        `<button type="button" class="text-primary hover:underline" data-payment-action="edit">تعديل</button>`,
+        '<button type="button" data-payment-action="edit">تعديل</button>',
         payment.status === 'paid'
           ? ''
-          : `<button type="button" class="text-success hover:underline" data-payment-action="mark-paid">تحصيل</button>`,
-        `<button type="button" class="text-error hover:underline" data-payment-action="delete">حذف</button>`,
-      ]
-        .filter(Boolean)
-        .join('<span class="text-border">|</span>');
+          : '<button type="button" data-payment-action="mark-paid">تحصيل</button>',
+        '<button type="button" class="table-actions__danger" data-payment-action="delete">حذف</button>',
+      ].filter(Boolean);
 
       return `
-      <tr data-payment-id="${payment.id}" class="hover:bg-secondary-50 transition-colors">
-        <td class="text-right p-4 border-b border-border text-sm font-medium text-text-primary">${paymentNumber}</td>
-        <td class="text-right p-4 border-b border-border text-sm text-text-primary">
-          <div class="flex flex-col items-end gap-1">
-            <span>${party}</span>
-            ${typeBadge}
-          </div>
+      <tr data-payment-id="${payment.id}">
+        <td>${paymentNumber}</td>
+        <td>
+          <div>${party}</div>
+          <div class="table-subtext text-muted">${typeBadge}</div>
         </td>
-        <td class="text-center p-4 border-b border-border text-sm text-text-secondary">${paymentDate}</td>
-        <td class="text-center p-4 border-b border-border text-sm font-semibold text-text-primary">${amount}</td>
-        <td class="text-center p-4 border-b border-border">${statusBadge}</td>
-        <td class="text-center p-4 border-b border-border text-sm text-text-secondary">${percent}</td>
-        <td class="text-center p-4 border-b border-border text-sm">${attachment}</td>
-        <td class="text-right p-4 border-b border-border text-sm text-text-primary">${notesCell}</td>
-        <td class="text-center p-4 border-b border-border text-sm">
-          <div class="flex items-center justify-center gap-3">${actions}</div>
+        <td class="text-center">${paymentDate}</td>
+        <td class="text-center text-nowrap">${amount}</td>
+        <td class="text-center">${statusBadge}</td>
+        <td class="text-center">${percent}</td>
+        <td class="text-center">${attachment}</td>
+        <td>${notesCell}</td>
+        <td class="text-center">
+          <div class="table-actions">${actions.join('')}</div>
         </td>
       </tr>`;
     })
@@ -2033,16 +2031,16 @@ function renderPaymentsTable(payments, metrics) {
 }
 
 function paymentStatusColor(status) {
-  if (status === 'paid') return 'bg-success';
-  if (status === 'overdue') return 'bg-error';
-  return 'bg-warning';
+  if (status === 'paid') return 'var(--success)';
+  if (status === 'overdue') return 'var(--danger)';
+  return 'var(--warning)';
 }
 
 function renderPaymentsTimeline(payments) {
   const container = document.getElementById('paymentsTimeline');
   if (!container) return;
   if (!payments.length) {
-    container.innerHTML = '<div class="text-center text-text-secondary">لا توجد دفعات ضمن المرشحات الحالية.</div>';
+    container.innerHTML = '<div class="text-center text-muted">لا توجد دفعات ضمن المرشحات الحالية.</div>';
     return;
   }
 
@@ -2071,28 +2069,30 @@ function renderPaymentsTimeline(payments) {
       const items = paymentsInGroup
         .map((payment) => {
           const status = payment.status || 'scheduled';
-          const color = paymentStatusColor(status);
+          const dotColor = paymentStatusColor(status);
           return `
-        <div class="flex items-center justify-between bg-secondary-50 rounded-lg px-4 py-3 mb-2">
-          <div class="flex items-center gap-3">
-            <span class="w-3 h-3 rounded-full ${color}"></span>
-            <div>
-              <p class="text-sm font-medium text-text-primary">${payment.title || payment.paymentNumber || 'دفعة'}</p>
-              <p class="text-xs text-text-secondary">${formatDate(getPaymentDateValue(payment))} · ${payment.party || '—'}</p>
+        <div class="timeline-item">
+          <div class="timeline-item__meta">
+            <span class="timeline-item__dot" style="background:${dotColor};"></span>
+            <div class="timeline-item__details">
+              <p>${payment.title || payment.paymentNumber || 'دفعة'}</p>
+              <p class="table-subtext text-muted">${formatDate(getPaymentDateValue(payment))} · ${payment.party || '—'}</p>
             </div>
           </div>
-          <span class="text-sm font-semibold text-text-primary">${formatCurrency(payment.amount)}</span>
+          <div class="timeline-item__amount">${formatCurrency(payment.amount)}</div>
         </div>`;
         })
         .join('');
       return `
-      <div class="mb-4">
-        <div class="flex items-center justify-between mb-2">
-          <h5 class="text-sm font-semibold text-text-primary">${label}</h5>
-          <span class="text-xs text-text-secondary">إجمالي ${formatCurrency(groupTotal)}</span>
+      <article class="timeline-group">
+        <div class="timeline-group__header">
+          <div>
+            <h4>${label}</h4>
+            <span class="table-subtext text-muted">إجمالي المجموعة ${formatCurrency(groupTotal)}</span>
+          </div>
         </div>
-        ${items}
-      </div>`;
+        <div class="timeline-stack">${items}</div>
+      </article>`;
     })
     .join('');
 }
@@ -2202,22 +2202,28 @@ function sortPaymentTable(key) {
   renderPaymentsDashboardUI();
 }
 
-function switchPaymentsTimelineView(view) {
-  paymentsUIState.timelineView = view;
+function updatePaymentsTimelineButtons() {
   const buttons = document.querySelectorAll('[data-payments-timeline]');
   buttons.forEach((button) => {
-    const isActive = button.dataset.paymentsTimeline === view;
-    button.classList.toggle('bg-primary', isActive);
-    button.classList.toggle('text-white', isActive);
-    button.classList.toggle('bg-secondary-200', !isActive);
-    button.classList.toggle('text-text-primary', !isActive);
+    const isActive = button.dataset.paymentsTimeline === paymentsUIState.timelineView;
+    button.classList.toggle('btn-secondary', isActive);
+    button.classList.toggle('btn-ghost', !isActive);
   });
+}
+
+function switchPaymentsTimelineView(view) {
+  paymentsUIState.timelineView = view;
+  updatePaymentsTimelineButtons();
   renderPaymentsTimeline(sortPaymentsByState(getFilteredPayments()));
 }
 
 function refreshPaymentsTimeline() {
   renderPaymentsTimeline(sortPaymentsByState(getFilteredPayments()));
   createToast('تم تحديث التحليل الزمني للدفعات', 'success');
+}
+
+function exportFinancialReport() {
+  createToast('ميزة تصدير التقرير قيد التطوير حالياً', 'warning');
 }
 
 function openAddPaymentModal(payment = null) {
@@ -2673,14 +2679,14 @@ function bindSubcontractActions(projectId) {
 
 function showModal(modal) {
   if (!modal) return;
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
+  modal.classList.add('is-visible');
+  modal.classList.remove('is-hidden');
 }
 
 function hideModal(modal) {
   if (!modal) return;
-  modal.classList.add('hidden');
-  modal.classList.remove('flex');
+  modal.classList.remove('is-visible');
+  modal.classList.add('is-hidden');
 }
 
 function openAddExpenseModal(expense = null) {
@@ -2885,18 +2891,12 @@ function switchUnifiedSubTab(subtabId) {
   const section = document.getElementById('expenses-contracts-section');
   if (!section) return;
   section.querySelectorAll('.unified-subtab-content').forEach((content) => {
-    content.classList.toggle('hidden', content.id !== subtabId);
+    content.classList.toggle('is-hidden', content.id !== subtabId);
   });
-  section.querySelectorAll('.unified-subtab-button').forEach((button) => {
+  section.querySelectorAll('[data-subtab]').forEach((button) => {
     const isActive = button.dataset.subtab === subtabId;
-    button.classList.toggle('active', isActive);
-    if (isActive) {
-      button.classList.add('border-primary', 'text-primary');
-      button.classList.remove('border-transparent', 'text-text-secondary');
-    } else {
-      button.classList.remove('border-primary', 'text-primary');
-      button.classList.add('border-transparent', 'text-text-secondary');
-    }
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-selected', isActive ? 'true' : 'false');
   });
 }
 
@@ -3193,6 +3193,7 @@ Object.assign(window, {
   sortPaymentTable,
   switchPaymentsTimelineView,
   refreshPaymentsTimeline,
+  exportFinancialReport,
   importPaymentsCSV,
 });
 
