@@ -12,6 +12,29 @@ import {
 const STORAGE_KEY = 'phases';
 const DATA_URL = new URL('../data/phases.json', import.meta.url);
 
+const VALID_STATUSES = new Set(['planned', 'in_progress', 'delayed', 'done']);
+
+function normalizeDependencies(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+  return String(value)
+    .split(/[,\n]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeStatus(value) {
+  if (!value) return null;
+  const normalized = String(value).trim();
+  return VALID_STATUSES.has(normalized) ? normalized : null;
+}
+
+function normalizeAssignee(value) {
+  return value ? String(value).trim() : '';
+}
+
 class PhasesStore {
   constructor() {
     this.ready = this.init();
@@ -59,6 +82,9 @@ class PhasesStore {
       ...payload,
     };
     phase.duration = payload.duration || calculateDuration(payload.startDate, payload.endDate);
+    phase.dependencies = normalizeDependencies(phase.dependencies);
+    phase.status = normalizeStatus(phase.status);
+    phase.assignee = normalizeAssignee(phase.assignee);
     this.phases[projectId] = this.phases[projectId] || [];
     this.phases[projectId].push(phase);
     this._persist();
@@ -70,11 +96,14 @@ class PhasesStore {
     this.phases[projectId] = this.phases[projectId] || [];
     const index = this.phases[projectId].findIndex((phase) => phase.id === phaseId);
     if (index === -1) throw new Error('لم يتم العثور على المرحلة');
-    this.phases[projectId][index] = { ...this.phases[projectId][index], ...updates };
-    const current = this.phases[projectId][index];
-    current.duration = current.duration || calculateDuration(current.startDate, current.endDate);
+    const merged = { ...this.phases[projectId][index], ...updates };
+    merged.duration = calculateDuration(merged.startDate, merged.endDate) || merged.duration || 0;
+    merged.dependencies = normalizeDependencies(merged.dependencies);
+    merged.status = normalizeStatus(merged.status) || merged.status || null;
+    merged.assignee = normalizeAssignee(merged.assignee);
+    this.phases[projectId][index] = merged;
     this._persist();
-    return this.phases[projectId][index];
+    return merged;
   }
 
   async remove(projectId, phaseId) {

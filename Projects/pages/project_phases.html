@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/responsive.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   </head>
-  <body data-page="project-phases">
+  <body class="projects-module" data-page="project-phases">
     <div class="projects-shell">
       <aside class="projects-sidebar fade-in">
         <div class="projects-sidebar__logo">
@@ -110,54 +110,326 @@
             </article>
           </section>
 
-          <section class="section-card fade-in">
-            <header>
-              <div>
-                <h2>المراحل الحالية</h2>
-                <p class="text-muted">ترتيب تلقائي حسب الجدول الزمني</p>
+          <section class="section-card fade-in phases-module" data-phase-module>
+            <div class="phases-toolbar">
+              <div class="phases-toolbar__intro">
+                <h3>نظام إدارة مراحل المشروع</h3>
+                <p class="text-muted">تحكم شامل في المراحل، المؤشرات، والسجل التنفيذي.</p>
               </div>
-            </header>
-            <div data-phases-list></div>
-          </section>
-
-          <section class="section-card fade-in">
-            <header>
-              <div>
-                <h2>إضافة مرحلة جديدة</h2>
-                <p class="text-muted">سيتم تحديث مخطط التقدم فور الحفظ</p>
-              </div>
-            </header>
-            <form id="phaseForm">
-              <div class="form-grid">
-                <label>
-                  اسم المرحلة
-                  <input type="text" name="name" required />
-                </label>
-                <label>
-                  تاريخ البدء
-                  <input type="date" name="startDate" required />
-                </label>
-                <label>
-                  تاريخ الانتهاء
-                  <input type="date" name="endDate" required />
-                </label>
-                <label>
-                  نسبة الإنجاز
-                  <input type="number" name="progress" min="0" max="100" step="5" value="0" />
-                </label>
-              </div>
-              <label>
-                الوصف
-                <textarea name="description" placeholder="تفاصيل العمل في هذه المرحلة"></textarea>
-              </label>
-              <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
+              <div class="phases-toolbar__actions">
+                <button class="btn btn-primary" onclick="openAddPhaseModal()" id="btnAddPhase">
                   <i class="fas fa-plus"></i>
-                  إضافة المرحلة
+                  <span>إضافة مرحلة</span>
+                </button>
+                <button class="btn btn-outline" onclick="importPhasesCSV()" id="btnBulkImport">
+                  <i class="fas fa-upload"></i>
+                  <span>استيراد CSV</span>
                 </button>
               </div>
-            </form>
+            </div>
+
+            <div class="phase-subtabs">
+              <nav>
+                <button class="phase-subtab-button is-active" data-subtab="phases-main" onclick="switchPhaseSubTab('phases-main')">
+                  المراحل
+                </button>
+                <button class="phase-subtab-button" data-subtab="phases-analytics" onclick="switchPhaseSubTab('phases-analytics')">
+                  التقدم والمؤشرات
+                </button>
+                <button class="phase-subtab-button" data-subtab="phases-logs" onclick="switchPhaseSubTab('phases-logs')">
+                  السجل والتنبيهات
+                </button>
+              </nav>
+            </div>
+
+            <div id="phases-main" class="phase-subtab-content">
+              <div class="phase-filters">
+                <div class="phase-filter">
+                  <label for="filterStatus">الحالة</label>
+                  <select id="filterStatus">
+                    <option value="">جميع الحالات</option>
+                    <option value="planned">مخططة</option>
+                    <option value="in_progress">جارية</option>
+                    <option value="delayed">متأخرة</option>
+                    <option value="done">منتهية</option>
+                  </select>
+                </div>
+                <div class="phase-filter">
+                  <label for="filterAssignee">المسؤول</label>
+                  <select id="filterAssignee">
+                    <option value="">جميع المسؤولين</option>
+                  </select>
+                </div>
+                <div class="phase-filter">
+                  <label for="filterPeriod">الفترة</label>
+                  <select id="filterPeriod">
+                    <option value="">جميع الفترات</option>
+                    <option value="this-week">هذا الأسبوع</option>
+                    <option value="this-month">هذا الشهر</option>
+                    <option value="next-month">الشهر القادم</option>
+                  </select>
+                </div>
+                <div class="phase-filters__actions">
+                  <button class="btn btn-primary" type="button" onclick="applyPhaseFilters()">تطبيق الفلاتر</button>
+                  <button class="btn btn-light" type="button" onclick="clearPhaseFilters()">مسح الفلاتر</button>
+                </div>
+              </div>
+
+              <div class="phase-highlights">
+                <article class="phase-highlight">
+                  <div class="phase-highlight__icon phase-highlight__icon--total">
+                    <i class="fas fa-diagram-project"></i>
+                  </div>
+                  <div class="phase-highlight__meta">
+                    <span>إجمالي المراحل</span>
+                    <strong id="phaseSummaryTotal">0</strong>
+                  </div>
+                </article>
+                <article class="phase-highlight">
+                  <div class="phase-highlight__icon phase-highlight__icon--active">
+                    <i class="fas fa-play"></i>
+                  </div>
+                  <div class="phase-highlight__meta">
+                    <span>مراحل قيد التنفيذ</span>
+                    <strong id="phaseSummaryActive">0</strong>
+                  </div>
+                </article>
+                <article class="phase-highlight">
+                  <div class="phase-highlight__icon phase-highlight__icon--delayed">
+                    <i class="fas fa-exclamation-triangle"></i>
+                  </div>
+                  <div class="phase-highlight__meta">
+                    <span>مراحل متأخرة</span>
+                    <strong id="phaseSummaryDelayed">0</strong>
+                  </div>
+                </article>
+                <article class="phase-highlight">
+                  <div class="phase-highlight__icon phase-highlight__icon--progress">
+                    <i class="fas fa-chart-line"></i>
+                  </div>
+                  <div class="phase-highlight__meta">
+                    <span>متوسط التقدم</span>
+                    <strong id="phaseSummaryProgress">0%</strong>
+                  </div>
+                </article>
+              </div>
+
+              <div class="phase-table-wrapper">
+                <table id="tblPhases">
+                  <thead>
+                    <tr>
+                      <th data-sort="name" onclick="sortPhaseTable('name')">اسم المرحلة</th>
+                      <th data-sort="startDate" onclick="sortPhaseTable('startDate')">البداية</th>
+                      <th data-sort="endDate" onclick="sortPhaseTable('endDate')">النهاية</th>
+                      <th data-sort="durationDays" onclick="sortPhaseTable('durationDays')">المدة (أيام)</th>
+                      <th data-sort="progress" onclick="sortPhaseTable('progress')">% التقدم</th>
+                      <th data-sort="status" onclick="sortPhaseTable('status')">الحالة</th>
+                      <th data-sort="assignee" onclick="sortPhaseTable('assignee')">المسؤول</th>
+                      <th>الاعتماديات</th>
+                      <th class="text-center">إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody id="phasesTableBody">
+                    <tr class="empty-row">
+                      <td colspan="9">لا توجد مراحل مسجلة بعد.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="phase-gantt">
+                <div class="phase-gantt__header">
+                  <h4>مخطط جانت</h4>
+                  <div class="phase-gantt__actions">
+                    <button class="btn btn-light btn-icon" type="button" onclick="zoomGanttIn()" title="تكبير">
+                      <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="btn btn-light btn-icon" type="button" onclick="zoomGanttOut()" title="تصغير">
+                      <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button class="btn btn-outline" type="button" onclick="refreshGantt()" title="تحديث المخطط">
+                      <i class="fas fa-sync"></i>
+                    </button>
+                  </div>
+                </div>
+                <div id="ganttContainer" class="phase-gantt__canvas"></div>
+                <p class="phase-gantt__hint">
+                  <i class="fas fa-info-circle"></i>
+                  استخدم خيارات التعديل لتحديث تاريخ البدء أو الانتهاء ومتابعة الاعتماديات.
+                </p>
+              </div>
+            </div>
+
+            <div id="phases-analytics" class="phase-subtab-content is-hidden">
+              <div class="phase-analytics__grid">
+                <article class="phase-analytics__card phase-analytics__card--primary">
+                  <div>
+                    <p>إجمالي المراحل</p>
+                    <strong id="totalPhases">0</strong>
+                  </div>
+                  <span class="phase-analytics__icon"><i class="fas fa-list"></i></span>
+                </article>
+                <article class="phase-analytics__card phase-analytics__card--warning">
+                  <div>
+                    <p>المراحل الجارية</p>
+                    <strong id="inProgressPhases">0</strong>
+                  </div>
+                  <span class="phase-analytics__icon"><i class="fas fa-play"></i></span>
+                </article>
+                <article class="phase-analytics__card phase-analytics__card--danger">
+                  <div>
+                    <p>المراحل المتأخرة</p>
+                    <strong id="delayedPhases">0</strong>
+                  </div>
+                  <span class="phase-analytics__icon"><i class="fas fa-exclamation-triangle"></i></span>
+                </article>
+                <article class="phase-analytics__card phase-analytics__card--success">
+                  <div>
+                    <p>المراحل المكتملة</p>
+                    <strong id="completedPhases">0</strong>
+                  </div>
+                  <span class="phase-analytics__icon"><i class="fas fa-check-circle"></i></span>
+                </article>
+              </div>
+
+              <div class="phase-progress">
+                <header>
+                  <h4>التقدم الإجمالي للمشروع</h4>
+                  <span id="overallProgressPercent">0%</span>
+                </header>
+                <div class="phase-progress__bar">
+                  <div id="overallProgressBar" style="width: 0%"></div>
+                </div>
+                <div class="phase-progress__meta">
+                  <div>
+                    <p>المدة الإجمالية</p>
+                    <strong id="totalDuration">0 يوم</strong>
+                  </div>
+                  <div>
+                    <p>المدة المنجزة</p>
+                    <strong id="completedDuration">0 يوم</strong>
+                  </div>
+                  <div>
+                    <p>المدة المتبقية</p>
+                    <strong id="remainingDuration">0 يوم</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="phase-charts">
+                <div class="phase-chart">
+                  <h4>التقدم الأسبوعي</h4>
+                  <canvas id="weeklyProgressChart" width="400" height="200"></canvas>
+                </div>
+                <div class="phase-chart">
+                  <h4>توزيع حالة المراحل</h4>
+                  <canvas id="phaseStatusChart" width="400" height="200"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div id="phases-logs" class="phase-subtab-content is-hidden">
+              <div class="phase-log-actions">
+                <h4>سجل العمليات والتنبيهات</h4>
+                <div class="phase-log-actions__buttons">
+                  <button class="btn btn-outline" type="button" onclick="exportLogs()">
+                    <i class="fas fa-download"></i>
+                    <span>تصدير السجل</span>
+                  </button>
+                  <button class="btn btn-danger" type="button" onclick="clearLogs()">
+                    <i class="fas fa-trash"></i>
+                    <span>مسح السجل</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="phase-alerts">
+                <h5><i class="fas fa-bell"></i> التنبيهات الحالية</h5>
+                <div id="alertsContainer" class="phase-alerts__list"></div>
+              </div>
+
+              <div class="phase-logs-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>التاريخ والوقت</th>
+                      <th>المستخدم</th>
+                      <th>الإجراء</th>
+                      <th>المرحلة</th>
+                      <th>التفاصيل</th>
+                    </tr>
+                  </thead>
+                  <tbody id="logsTableBody">
+                    <tr class="empty-row">
+                      <td colspan="5">لا توجد سجلات بعد.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <input type="file" id="phaseCsvInput" class="visually-hidden" accept=".csv" />
           </section>
+
+          <div class="modal-backdrop" id="phaseModal">
+            <div class="modal">
+              <div class="modal__header">
+                <h3 data-phase-modal-title>إضافة مرحلة جديدة</h3>
+                <button class="modal__close" type="button" onclick="closePhaseModal()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <form id="phaseForm">
+                <div class="modal__body">
+                  <div class="form-grid">
+                    <label>
+                      اسم المرحلة
+                      <input type="text" name="name" required />
+                    </label>
+                    <label>
+                      تاريخ البدء
+                      <input type="date" name="startDate" required />
+                    </label>
+                    <label>
+                      تاريخ الانتهاء
+                      <input type="date" name="endDate" required />
+                    </label>
+                    <label>
+                      نسبة الإنجاز
+                      <input type="number" name="progress" min="0" max="100" step="5" value="0" />
+                    </label>
+                    <label>
+                      الحالة
+                      <select name="status">
+                        <option value="planned">مخططة</option>
+                        <option value="in_progress">جارية</option>
+                        <option value="delayed">متأخرة</option>
+                        <option value="done">منتهية</option>
+                      </select>
+                    </label>
+                    <label>
+                      المسؤول
+                      <input type="text" name="assignee" placeholder="اسم المسؤول المباشر" />
+                    </label>
+                  </div>
+                  <label>
+                    الاعتماديات
+                    <textarea name="dependencies" placeholder="حدد الاعتماديات مفصولة بفواصل أو بأسطر جديدة"></textarea>
+                  </label>
+                  <label>
+                    الوصف
+                    <textarea name="description" placeholder="تفاصيل العمل في هذه المرحلة"></textarea>
+                  </label>
+                </div>
+                <div class="modal__actions">
+                  <button class="btn btn-light" type="button" onclick="closePhaseModal()">إلغاء</button>
+                  <button class="btn btn-primary" type="submit">
+                    <span data-phase-submit-label>إضافة المرحلة</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
 
           <footer class="footer">© 2024 ContractorPro</footer>
         </div>
