@@ -1077,6 +1077,497 @@ a {
   font-size: 20px;
 }
 
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.phases-module {
+  display: grid;
+  gap: 24px;
+}
+
+.phases-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.phases-toolbar__intro h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.phases-toolbar__intro p {
+  margin: 4px 0 0;
+}
+
+.phases-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.phase-subtabs nav {
+  display: inline-flex;
+  gap: 8px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+  padding-bottom: 8px;
+}
+
+.phase-subtab-button {
+  border: none;
+  background: transparent;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.phase-subtab-button:hover {
+  color: var(--primary);
+}
+
+.phase-subtab-button.is-active {
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
+}
+
+.phase-subtab-content {
+  display: grid;
+  gap: 24px;
+}
+
+.phase-subtab-content.is-hidden {
+  display: none;
+}
+
+.phase-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: rgba(226, 232, 240, 0.35);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  align-items: flex-end;
+}
+
+.phase-filter {
+  display: grid;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.phase-filters__actions {
+  display: flex;
+  gap: 12px;
+}
+
+.phase-table-wrapper {
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #fff;
+}
+
+.phase-table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.phase-table-wrapper th,
+.phase-table-wrapper td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  font-size: 14px;
+  text-align: center;
+}
+
+.phase-table-wrapper th {
+  background: rgba(226, 232, 240, 0.35);
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.phase-table-wrapper th:hover {
+  background: rgba(226, 232, 240, 0.65);
+  color: var(--text-primary);
+}
+
+.phase-table-wrapper th.is-sorted {
+  color: var(--text-primary);
+}
+
+.phase-table-wrapper th[data-direction='asc']::after,
+.phase-table-wrapper th[data-direction='desc']::after {
+  margin-inline-start: 6px;
+  font-size: 10px;
+  color: inherit;
+}
+
+.phase-table-wrapper th[data-direction='asc']::after {
+  content: '▲';
+}
+
+.phase-table-wrapper th[data-direction='desc']::after {
+  content: '▼';
+}
+
+.phase-table-wrapper td:first-child,
+.phase-table-wrapper th:first-child {
+  text-align: start;
+}
+
+.phase-table-wrapper tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.phase-table-wrapper .empty-row td {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.phase-actions {
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.phase-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.phase-status--planned {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--primary);
+}
+
+.phase-status--in_progress {
+  background: rgba(14, 165, 233, 0.16);
+  color: rgba(14, 165, 233, 1);
+}
+
+.phase-status--delayed {
+  background: rgba(249, 115, 22, 0.16);
+  color: rgba(217, 119, 6, 1);
+}
+
+.phase-status--done {
+  background: rgba(16, 185, 129, 0.16);
+  color: rgba(5, 150, 105, 1);
+}
+
+.phase-gantt {
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: var(--radius-md);
+  background: #fff;
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.phase-gantt__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.phase-gantt__actions {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.phase-gantt__canvas {
+  min-height: 240px;
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow-x: auto;
+  padding: 16px;
+  background: rgba(248, 250, 252, 0.6);
+}
+
+.phase-gantt__grid {
+  min-width: 100%;
+}
+
+.phase-gantt__row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.phase-gantt__bar-wrapper {
+  position: relative;
+  height: 32px;
+  background: rgba(226, 232, 240, 0.5);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.phase-gantt__bar {
+  position: absolute;
+  inset-block: 0;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-inline-end: 12px;
+  font-size: 12px;
+  color: #fff;
+  font-weight: 600;
+  transition: width 0.3s ease;
+}
+
+.phase-gantt__bar::after {
+  content: attr(data-progress);
+}
+
+.phase-gantt__hint {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.phase-analytics__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.phase-analytics__card {
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-primary);
+  background: rgba(226, 232, 240, 0.45);
+}
+
+.phase-analytics__card p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.phase-analytics__card strong {
+  font-size: 26px;
+}
+
+.phase-analytics__card--primary {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.phase-analytics__card--warning {
+  background: rgba(251, 191, 36, 0.14);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.phase-analytics__card--danger {
+  background: rgba(248, 113, 113, 0.14);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+.phase-analytics__card--success {
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.phase-analytics__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--primary);
+  font-size: 20px;
+}
+
+.phase-progress {
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  background: #fff;
+  display: grid;
+  gap: 16px;
+}
+
+.phase-progress header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.phase-progress__bar {
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(226, 232, 240, 0.8);
+  overflow: hidden;
+}
+
+.phase-progress__bar div {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), rgba(16, 185, 129, 1));
+  transition: width 0.4s ease;
+}
+
+.phase-progress__meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.phase-progress__meta p {
+  margin: 0 0 4px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.phase-progress__meta strong {
+  font-size: 16px;
+}
+
+.phase-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.phase-chart {
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  background: #fff;
+  display: grid;
+  gap: 12px;
+}
+
+.phase-chart h4 {
+  margin: 0;
+}
+
+.phase-log-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.phase-log-actions__buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.phase-alerts {
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  background: rgba(253, 230, 138, 0.2);
+  display: grid;
+  gap: 16px;
+}
+
+.phase-alerts h5 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(217, 119, 6, 1);
+}
+
+.phase-alerts__list {
+  display: grid;
+  gap: 12px;
+}
+
+.phase-alert {
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  background: #fff8e6;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  display: grid;
+  gap: 6px;
+}
+
+.phase-alert strong {
+  color: rgba(217, 119, 6, 1);
+}
+
+.phase-logs-table {
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #fff;
+}
+
+.phase-logs-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.phase-logs-table th,
+.phase-logs-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+  font-size: 14px;
+}
+
+.phase-logs-table th {
+  background: rgba(226, 232, 240, 0.35);
+  text-align: start;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.phase-logs-table td {
+  color: var(--text-primary);
+}
+
+.phase-logs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.phase-logs-table .empty-row td {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.phase-logs-table time {
+  font-family: 'Tajawal', system-ui, sans-serif;
+}
+
 .progress-bar {
   height: 8px;
   background: var(--surface-alt);
