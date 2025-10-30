@@ -115,81 +115,93 @@ async function renderSummaryCards(projectsOverride = null) {
 function projectStatusBadge(status) {
   switch (status) {
     case 'completed':
-      return '<span class="badge badge-success">مكتمل</span>';
+      return '<span class="status-pill status-pill--success">مكتمل</span>';
     case 'on-hold':
-      return '<span class="badge badge-warning">متوقف</span>';
+      return '<span class="status-pill status-pill--warning">متوقف</span>';
     case 'cancelled':
-      return '<span class="badge badge-danger">ملغي</span>';
+      return '<span class="status-pill status-pill--danger">ملغي</span>';
     default:
-      return '<span class="badge badge-success">نشط</span>';
+      return '<span class="status-pill status-pill--active">نشط</span>';
   }
 }
 
 function buildProjectCard(project) {
   const expenses = formatCurrency(project.totalExpenses || 0);
-  const revenueValue = project.revenue || project.contractValue || 0;
+  const revenueValue = project.revenue || project.contractValue || project.budget?.contractValue || 0;
   const revenue = formatCurrency(revenueValue);
   const profitabilityValue = project.profitability || revenueValue - (project.totalExpenses || 0);
   const profitability = formatCurrency(profitabilityValue);
   const payments = formatCurrency(project.totalPayments || 0);
   const periodLabel = `${formatDate(project.startDate)} - ${formatDate(project.endDate)}`;
+  const locationLabel = normalizeLocationLabel(project);
   return `
-    <article class="project-card" data-project-id="${project.id}">
-      <div class="project-card__hero">
-        <img data-src="${project.cover || '../assets/default-project.svg'}" alt="${project.name}" class="project-card__image" />
-        <div class="project-card__status">${projectStatusBadge(project.status)}</div>
-        <div class="project-card__progress">
-          <i class="fas fa-chart-line"></i>
+    <article class="project-card project-card--modern" data-project-id="${project.id}">
+      <div class="project-card__header">
+        <div>
+          ${projectStatusBadge(project.status)}
+          <h3>${project.name}</h3>
+          <p class="project-card__client"><i class="fas fa-user-tie"></i> ${project.clientName || '—'}</p>
+        </div>
+        <div class="project-card__progress-circle">
           <span>${formatPercent(project.progress || 0)}</span>
+          <small>نسبة الإنجاز</small>
         </div>
       </div>
-      <div class="project-card__content">
-        <header class="project-card__header">
-          <div>
-            <h3>${project.name}</h3>
-            <p class="project-card__client"><i class="fas fa-user-tie"></i> ${project.clientName}</p>
-          </div>
-          <div class="project-card__contract">
+      <div class="project-card__body">
+        <div class="project-card__meta">
+          <span><i class="fas fa-map-marker-alt"></i>${locationLabel}</span>
+          <span><i class="fas fa-calendar"></i>${periodLabel}</span>
+        </div>
+        <div class="project-card__grid">
+          <div class="project-card__metric">
             <span>القيمة التعاقدية</span>
             <strong>${revenue}</strong>
           </div>
-        </header>
-        <div class="project-card__meta">
-          <span><i class="fas fa-map-marker-alt"></i>${project.location || '—'}</span>
-          <span><i class="fas fa-calendar"></i>${periodLabel}</span>
-        </div>
-        <dl class="project-card__stats">
-          <div><dt>المصروفات</dt><dd>${expenses}</dd></div>
-          <div><dt>المدفوعات</dt><dd>${payments}</dd></div>
-          <div><dt>الربحية</dt><dd>${profitability}</dd></div>
-        </dl>
-        <div class="project-card__timeline">
-          <div class="project-card__timeline-head">
-            <span>شريط التقدم</span>
-            <strong>${formatPercent(project.progress || 0)}</strong>
+          <div class="project-card__metric">
+            <span>المصاريف</span>
+            <strong>${expenses}</strong>
           </div>
-          <div class="progress-bar progress-bar--accent"><div style="width:${project.progress || 0}%"></div></div>
+          <div class="project-card__metric">
+            <span>المدفوعات</span>
+            <strong>${payments}</strong>
+          </div>
+          <div class="project-card__metric">
+            <span>الربحية</span>
+            <strong>${profitability}</strong>
+          </div>
         </div>
-        <footer class="project-card__footer">
-          <div class="project-card__quick-actions">
-            <button class="btn btn-chip" data-action="view-info"><i class="fas fa-circle-info"></i> نظرة عامة</button>
-            <button class="btn btn-chip" data-action="view-phases"><i class="fas fa-layer-group"></i> المراحل</button>
-            <button class="btn btn-chip" data-action="view-expenses"><i class="fas fa-wallet"></i> المصاريف</button>
-            <button class="btn btn-chip" data-action="view-payments"><i class="fas fa-money-check"></i> الدفعات</button>
-            <button class="btn btn-chip" data-action="view-reports"><i class="fas fa-file-lines"></i> التقارير</button>
+        <div class="project-card__footer">
+          <div class="project-card__actions">
+            <button class="project-card__chip" data-action="view-info"><i class="fas fa-circle-info"></i> نظرة عامة</button>
+            <button class="project-card__chip" data-action="view-phases"><i class="fas fa-layer-group"></i> المراحل</button>
+            <button class="project-card__chip" data-action="view-expenses"><i class="fas fa-wallet"></i> المصاريف</button>
+            <button class="project-card__chip" data-action="view-payments"><i class="fas fa-money-check"></i> الدفعات</button>
+            <button class="project-card__chip" data-action="view-reports"><i class="fas fa-file-lines"></i> التقارير</button>
           </div>
           <div class="project-card__menu">
-            <button class="btn btn-icon" data-action="toggle-menu"><i class="fas fa-ellipsis-h"></i></button>
+            <button class="project-card__icon" data-action="toggle-menu"><i class="fas fa-ellipsis-h"></i></button>
             <div class="project-card__dropdown">
               <button data-action="edit"><i class="fas fa-pen"></i> تعديل</button>
               <button data-action="duplicate"><i class="fas fa-copy"></i> استنساخ</button>
               <button data-action="delete" class="danger"><i class="fas fa-trash"></i> حذف</button>
             </div>
           </div>
-        </footer>
+        </div>
       </div>
     </article>
   `;
+}
+
+function normalizeLocationLabel(project) {
+  if (!project) return '—';
+  if (typeof project.location === 'string' && project.location) {
+    return project.location;
+  }
+  const location = project.location || {};
+  const parts = [location.cityLabel || location.city, location.district, location.address]
+    .map((value) => (value || '').trim())
+    .filter(Boolean);
+  return parts.length ? parts.join(' - ') : '—';
 }
 
 function updateProjectsGridSummary(projects) {
@@ -524,7 +536,7 @@ function legacyApplyFilters(projects) {
       if (timeline !== 'all' && legacyComputeTimelineBucket(project) !== timeline) return false;
       if (search) {
         const term = search.toLowerCase();
-        const searchable = [project.id, project.name, project.clientName, project.location, project.manager]
+        const searchable = [project.id, project.name, project.clientName, normalizeLocationLabel(project), project.manager]
           .filter(Boolean)
           .join(' ')
           .toLowerCase();
@@ -608,7 +620,7 @@ function legacyRenderProjectsTable(projects) {
       <td>
         <div class="flex flex-col gap-1 text-sm">
           <span class="font-medium text-text-primary">${project.clientName || 'غير محدد'}</span>
-          <span class="text-xs text-text-secondary">${project.location || 'غير محدد'}</span>
+          <span class="text-xs text-text-secondary">${normalizeLocationLabel(project)}</span>
         </div>
       </td>
       <td>
@@ -811,7 +823,7 @@ function legacySelectProject(projectId) {
   const detailClient = legacySelectors.detailClient();
   if (detailClient) detailClient.textContent = `${project.clientName || 'غير محدد'} · ${project.manager || '—'}`;
   const detailLocation = legacySelectors.detailLocation();
-  if (detailLocation) detailLocation.textContent = project.location || '—';
+  if (detailLocation) detailLocation.textContent = normalizeLocationLabel(project);
 
   const detailDeliverables = legacySelectors.detailDeliverables();
   if (detailDeliverables) detailDeliverables.innerHTML = legacyRenderDeliverables(project.deliverables);
@@ -1243,17 +1255,26 @@ async function renderProjectSummary(projectId) {
   const statusEl = document.querySelector('[data-project-status]');
   if (statusEl) statusEl.innerHTML = projectStatusBadge(project.status);
 
+  const typePill = document.getElementById('projectTypePill');
+  if (typePill) typePill.textContent = project.typeLabel || project.type || 'نوع المشروع';
+
+  const descriptionEl = document.querySelector('[data-project-description]');
+  if (descriptionEl) descriptionEl.textContent = project.description || 'لم يتم إدخال وصف تفصيلي للمشروع.';
+
   const periodEl = document.querySelector('[data-project-period]');
   if (periodEl) periodEl.textContent = `${formatDate(project.startDate)} - ${formatDate(project.endDate)}`;
 
   const locationEl = document.querySelector('[data-project-location]');
-  if (locationEl) locationEl.textContent = project.location || '—';
+  if (locationEl) locationEl.textContent = normalizeLocationLabel(project);
 
   const managerEl = document.querySelector('[data-project-manager]');
-  if (managerEl) managerEl.textContent = project.manager || '—';
+  if (managerEl) managerEl.textContent = project.manager || project.team?.manager?.name || '—';
 
   const contractEl = document.querySelector('[data-project-contract]');
-  if (contractEl) contractEl.textContent = formatCurrency(project.contractValue || project.revenue || 0);
+  if (contractEl) {
+    const contractValue = project.contractValue || project.revenue || project.budget?.contractValue || project.value || 0;
+    contractEl.textContent = formatCurrency(contractValue);
+  }
 
   const expensesEl = document.querySelector('[data-project-expenses]');
   if (expensesEl) expensesEl.textContent = formatCurrency(project.totalExpenses || 0);
