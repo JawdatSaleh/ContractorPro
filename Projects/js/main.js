@@ -1,6 +1,7 @@
 import { projectStore } from './project_store.js';
 import { phasesStore } from './phases_store.js';
 import { expensesStore } from './expenses_store.js';
+import { categoriesStore } from './categories_store.js';
 import { subcontractsStore } from './subcontracts_store.js';
 import { paymentsStore } from './payments_store.js';
 import { reportsStore } from './reports_store.js';
@@ -64,6 +65,11 @@ const paymentsUIState = {
   csvInput: null,
 };
 
+const categoriesUIState = {
+  categories: [],
+  editingId: null,
+};
+
 function ensureProjectContext() {
   const { projectId } = parseQueryParams();
   if (!projectId) {
@@ -73,16 +79,37 @@ function ensureProjectContext() {
   return projectId;
 }
 
-async function renderSummaryCards() {
-  const summary = await projectStore.summarize();
+async function renderSummaryCards(projectsOverride = null) {
+  let summary;
+  if (Array.isArray(projectsOverride)) {
+    const totalValue = projectsOverride.reduce(
+      (total, project) =>
+        total +
+        safeNumber(
+          project.revenue ?? project.contractValue ?? project.budget ?? project.totalValue ?? 0
+        ),
+      0
+    );
+    summary = {
+      totalProjects: projectsOverride.length,
+      activeCount: projectsOverride.filter((project) => project.status === 'active').length,
+      completedCount: projectsOverride.filter((project) => project.status === 'completed').length,
+      totalValue,
+      totalValueFormatted: formatCurrency(totalValue || 0),
+    };
+  } else {
+    summary = await projectStore.summarize();
+  }
+
   const totalProjectsEl = document.querySelector('[data-total-projects]');
   const activeProjectsEl = document.querySelector('[data-active-projects]');
   const totalValueEl = document.querySelector('[data-total-value]');
   const completedProjectsEl = document.querySelector('[data-completed-projects]');
-  if (totalProjectsEl) totalProjectsEl.textContent = summary.totalProjects;
-  if (activeProjectsEl) activeProjectsEl.textContent = summary.activeCount;
-  if (totalValueEl) totalValueEl.textContent = summary.totalValueFormatted;
-  if (completedProjectsEl) completedProjectsEl.textContent = summary.completedCount;
+
+  if (totalProjectsEl) totalProjectsEl.textContent = summary.totalProjects ?? 0;
+  if (activeProjectsEl) activeProjectsEl.textContent = summary.activeCount ?? 0;
+  if (totalValueEl) totalValueEl.textContent = summary.totalValueFormatted || formatCurrency(summary.totalValue || 0);
+  if (completedProjectsEl) completedProjectsEl.textContent = summary.completedCount ?? 0;
 }
 
 function projectStatusBadge(status) {
@@ -165,15 +192,134 @@ function buildProjectCard(project) {
   `;
 }
 
+function updateProjectsGridSummary(projects) {
+  const container = document.getElementById('projectsGridSummary');
+  if (!container) return;
+
+  const setText = (id, value) => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+  };
+
+  const hideSummary = !projects.length;
+  container.classList.toggle('hidden', hideSummary);
+
+  if (!projects.length) {
+    setText('projectsGridSummaryCount', '0');
+    setText('projectsGridSummaryContract', formatCurrency(0));
+    setText('projectsGridSummaryExpenses', formatCurrency(0));
+    setText('projectsGridSummaryProfit', formatCurrency(0));
+    setText('projectsGridSummaryProgress', formatPercent(0));
+    setText('projectsGridSummaryActive', '0');
+    setText('projectsGridSummaryCompleted', '0');
+    return;
+  }
+
+  const totals = projects.reduce(
+    (acc, project) => {
+      const contractValue = safeNumber(
+        project.contractValue ?? project.revenue ?? project.budget ?? project.totalValue ?? 0
+      );
+      const expensesValue = safeNumber(project.totalExpenses ?? project.expensesTotal ?? 0);
+      const revenueValue = safeNumber(project.revenue ?? contractValue);
+      const profitability =
+        project.profitability != null
+          ? safeNumber(project.profitability)
+          : revenueValue - expensesValue;
+
+      acc.contract += contractValue;
+      acc.expenses += expensesValue;
+      acc.profit += profitability;
+      acc.progress += safeNumber(project.progress ?? 0);
+      if (project.status === 'active') acc.active += 1;
+      if (project.status === 'completed') acc.completed += 1;
+      return acc;
+    },
+    { contract: 0, expenses: 0, profit: 0, progress: 0, active: 0, completed: 0 }
+  );
+
+  const averageProgress = projects.length ? totals.progress / projects.length : 0;
+
+  setText('projectsGridSummaryCount', projects.length.toString());
+  setText('projectsGridSummaryContract', formatCurrency(totals.contract));
+  setText('projectsGridSummaryExpenses', formatCurrency(totals.expenses));
+  setText('projectsGridSummaryProfit', formatCurrency(totals.profit));
+  setText('projectsGridSummaryProgress', formatPercent(averageProgress));
+  setText('projectsGridSummaryActive', totals.active.toString());
+  setText('projectsGridSummaryCompleted', totals.completed.toString());
+}
+
 async function renderProjectsGrid() {
   const grid = document.querySelector('[data-projects-grid]');
   if (!grid) return;
+  const emptyState = document.getElementById('projectsEmptyState');
+  const countEl = document.getElementById('projectsCount');
+
   const projects = await projectStore.getAll();
-  grid.innerHTML = projects.length
-    ? projects.map((project) => buildProjectCard(project)).join('')
-    : '<div class="empty-state">لا توجد مشاريع حالياً. ابدأ بإنشاء مشروع جديد.</div>';
+  legacyProjectsCache = projects;
+  legacyHydrateManagers(projects);
+
+  const filtered = legacyApplyFilters(projects);
+  if (countEl) countEl.textContent = filtered.length.toString();
+
+  updateProjectsGridSummary(filtered);
+  await renderSummaryCards(filtered);
+
+  if (!filtered.length) {
+    grid.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    return;
+  }
+
+  if (emptyState) emptyState.classList.add('hidden');
+  grid.innerHTML = filtered.map((project) => buildProjectCard(project)).join('');
   const observer = lazyImageObserver();
   grid.querySelectorAll('img[data-src]').forEach((img) => observer.observe(img));
+}
+
+function bindProjectsGridFilters() {
+  if (!document.querySelector('[data-projects-grid]')) return;
+
+  const filterHandlers = [
+    ['statusFilter', 'status'],
+    ['riskFilter', 'risk'],
+    ['managerFilter', 'manager'],
+    ['timelineFilter', 'timeline'],
+  ];
+
+  filterHandlers.forEach(([selector, key]) => {
+    const element = legacySelectors[selector]?.();
+    if (element && !element.dataset.gridBound) {
+      element.dataset.gridBound = 'true';
+      element.addEventListener('change', (event) => {
+        legacyState.filters[key] = event.target.value;
+        renderProjectsGrid();
+      });
+    }
+  });
+
+  const searchInput = legacySelectors.projectSearch?.();
+  if (searchInput && !searchInput.dataset.gridBound) {
+    searchInput.dataset.gridBound = 'true';
+    searchInput.addEventListener('input', (event) => {
+      legacyState.filters.search = event.target.value;
+      renderProjectsGrid();
+    });
+  }
+
+  const resetButton = legacySelectors.resetFiltersBtn?.();
+  if (resetButton && !resetButton.dataset.gridBound) {
+    resetButton.dataset.gridBound = 'true';
+    resetButton.addEventListener('click', () => {
+      legacyState.filters = { status: 'all', risk: 'all', manager: 'all', timeline: 'all', search: '' };
+      filterHandlers.forEach(([selector]) => {
+        const element = legacySelectors[selector]?.();
+        if (element) element.value = 'all';
+      });
+      if (searchInput) searchInput.value = '';
+      renderProjectsGrid();
+    });
+  }
 }
 
 function handleProjectAction(event) {
@@ -356,6 +502,16 @@ function legacyHydrateManagers(projects) {
       option.textContent = manager;
       select.appendChild(option);
     });
+  const current = legacyState?.filters?.manager;
+  if (current && current !== 'all') {
+    const hasOption = Array.from(select.options).some((option) => option.value === current);
+    if (hasOption) {
+      select.value = current;
+    } else {
+      legacyState.filters.manager = 'all';
+      select.value = 'all';
+    }
+  }
 }
 
 function legacyApplyFilters(projects) {
@@ -987,15 +1143,14 @@ async function setupLegacyManagementPage() {
 async function setupManagementPage() {
   const handled = await setupLegacyManagementPage();
   if (handled) return;
-  await renderSummaryCards();
   await renderProjectsGrid();
+  bindProjectsGridFilters();
   document.querySelector('[data-projects-grid]')?.addEventListener('click', handleProjectAction);
   document.querySelector('[data-create-project]')?.addEventListener('click', () => {
     window.location.href = 'project_creation_wizard.html';
   });
 
   onDataEvent('projects-updated', () => {
-    renderSummaryCards();
     renderProjectsGrid();
   });
 
@@ -1367,6 +1522,26 @@ function renderPhaseTable() {
       .join('');
   }
 
+  const totals = phases.reduce(
+    (acc, phase) => {
+      acc.count += 1;
+      acc.duration += safeNumber(phase.durationDays);
+      acc.progress += safeNumber(phase.progress);
+      if (phase.status === 'delayed') acc.delayed += 1;
+      return acc;
+    },
+    { count: 0, duration: 0, progress: 0, delayed: 0 }
+  );
+  const averageProgress = totals.count ? totals.progress / totals.count : 0;
+  const setFooterText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+  setFooterText('phasesTableTotalCount', totals.count.toLocaleString('ar-SA'));
+  setFooterText('phasesTableTotalDuration', `${totals.duration.toLocaleString('ar-SA')} يوم`);
+  setFooterText('phasesTableAverageProgress', `${averageProgress.toFixed(0)}%`);
+  setFooterText('phasesTableDelayedCount', totals.delayed.toLocaleString('ar-SA'));
+
   document
     .querySelectorAll('#tblPhases thead th[data-sort]')
     .forEach((th) => {
@@ -1606,10 +1781,12 @@ function formatDateTime(value) {
 }
 
 function renderPhaseLogs() {
+  const criticalPhases = phasesUIState.phases.filter(
+    (phase) => phase.status === 'delayed' || (phase.status === 'in_progress' && phase.progress < 40)
+  );
   const alertsContainer = document.getElementById('alertsContainer');
   if (alertsContainer) {
-    const alerts = phasesUIState.phases
-      .filter((phase) => phase.status === 'delayed' || (phase.status === 'in_progress' && phase.progress < 40))
+    const alerts = criticalPhases
       .slice(0, 5)
       .map(
         (phase) => `
@@ -1621,6 +1798,9 @@ function renderPhaseLogs() {
       );
     alertsContainer.innerHTML = alerts.length ? alerts.join('') : '<div class="phase-alert">لا توجد تنبيهات حالياً.</div>';
   }
+
+  const alertsCountEl = document.getElementById('phaseLogsAlerts');
+  if (alertsCountEl) alertsCountEl.textContent = criticalPhases.length.toString();
 
   const logsTableBody = document.getElementById('logsTableBody');
   if (logsTableBody) {
@@ -1640,6 +1820,15 @@ function renderPhaseLogs() {
           </tr>`
         )
         .join('');
+    }
+
+    const logsCountEl = document.getElementById('phaseLogsCount');
+    if (logsCountEl) logsCountEl.textContent = phasesUIState.logs.length.toString();
+
+    const latestLogEl = document.getElementById('phaseLogsLatest');
+    if (latestLogEl) {
+      const latestLog = phasesUIState.logs[0];
+      latestLogEl.textContent = latestLog ? formatDateTime(latestLog.timestamp) : '—';
     }
   }
 }
@@ -1955,6 +2144,274 @@ function normalizedString(value) {
   return (value || '').toString().toLowerCase().trim();
 }
 
+function normalizeCategoryName(name) {
+  return normalizedString(name || '');
+}
+
+function getCategoryMeta(name) {
+  const generalKey = normalizeCategoryName('مصروفات عامة');
+  const legacyGeneralKey = normalizeCategoryName('عام');
+  const normalized = normalizeCategoryName(name);
+  const effectiveKey = normalized && normalized !== legacyGeneralKey ? normalized : generalKey;
+  const category = categoriesUIState.categories.find(
+    (item) => normalizeCategoryName(item.name) === effectiveKey
+  );
+  if (category) {
+    return { ...category };
+  }
+  if (effectiveKey === generalKey) {
+    return { id: 'cat-general-fallback', name: 'مصروفات عامة', color: '#64748b', protected: true };
+  }
+  return { id: '', name: name || 'مصروفات عامة', color: '#94a3b8', protected: false };
+}
+
+function renderExpenseCategoryOptions() {
+  const fallback = { id: 'cat-general-fallback', name: 'مصروفات عامة', color: '#64748b', protected: true };
+  const categories = categoriesUIState.categories.length ? [...categoriesUIState.categories] : [fallback];
+  const seen = new Set(categories.map((category) => normalizeCategoryName(category.name)));
+  const extras = [];
+  unifiedFinancialState.expenses.forEach((expense) => {
+    const meta = getCategoryMeta(expense.category);
+    const key = normalizeCategoryName(meta.name);
+    if (!seen.has(key)) {
+      extras.push({ id: `dynamic-${key}`, name: meta.name, color: meta.color, protected: false });
+      seen.add(key);
+    }
+  });
+  const combined = [...categories, ...extras].sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+
+  const filterSelect = document.getElementById('filterExpenseCategory');
+  if (filterSelect) {
+    const current = unifiedFinancialState.expenseFilters.category || '';
+    filterSelect.innerHTML = ['<option value>جميع التصنيفات</option>']
+      .concat(combined.map((category) => `<option value="${category.name}">${category.name}</option>`))
+      .join('');
+    filterSelect.value = current || '';
+  }
+
+  const modalSelect = document.getElementById('expenseModalCategory');
+  if (modalSelect) {
+    const desired = modalSelect.dataset.selected || '';
+    modalSelect.innerHTML = combined
+      .map((category) => `<option value="${category.name}">${category.name}</option>`)
+      .join('');
+    if (desired && combined.some((category) => category.name === desired)) {
+      modalSelect.value = desired;
+    } else if (combined.length) {
+      modalSelect.value = combined[0].name;
+      modalSelect.dataset.selected = combined[0].name;
+    }
+  }
+}
+
+function renderCategoryManagerList() {
+  const list = document.getElementById('categoryManagerList');
+  const emptyState = document.getElementById('categoryManagerEmpty');
+  if (!list) return;
+
+  const usageMap = new Map();
+  const generalKey = normalizeCategoryName('مصروفات عامة');
+  const legacyGeneralKey = normalizeCategoryName('عام');
+  unifiedFinancialState.expenses.forEach((expense) => {
+    const rawName = expense.category || 'مصروفات عامة';
+    const normalized = normalizeCategoryName(rawName);
+    const effectiveKey = normalized && normalized !== legacyGeneralKey ? normalized : generalKey;
+    const displayName = effectiveKey === generalKey ? 'مصروفات عامة' : rawName;
+    const entry = usageMap.get(effectiveKey) || { name: displayName, count: 0 };
+    entry.count += 1;
+    usageMap.set(effectiveKey, entry);
+  });
+
+  const storedKeys = new Set(categoriesUIState.categories.map((category) => normalizeCategoryName(category.name)));
+  const storedItems = categoriesUIState.categories.map((category) => {
+    const key = normalizeCategoryName(category.name);
+    const usage = usageMap.get(key);
+    const countLabel = usage ? `${usage.count.toLocaleString('ar-SA')} عملية` : 'لا يوجد سجلات';
+    const tagMarkup = category.protected ? '<span class="category-manager__tag">افتراضي</span>' : '';
+    const deleteDisabled = category.protected ? ' disabled' : '';
+    return `
+      <li class="category-manager__item" data-category-id="${category.id}">
+        <span class="category-pill" style="--category-color:${category.color}">
+          <span class="category-pill__dot"></span>${category.name}
+        </span>
+        <div class="category-manager__meta"><span>${countLabel}</span>${tagMarkup}</div>
+        <div class="category-manager__actions">
+          <button type="button" data-category-action="edit">تعديل</button>
+          <button type="button" data-category-action="delete" class="danger"${deleteDisabled}>حذف</button>
+        </div>
+      </li>`;
+  });
+
+  const missingItems = [];
+  usageMap.forEach((usage, key) => {
+    if (!storedKeys.has(key)) {
+      missingItems.push(`
+        <li class="category-manager__item category-manager__item--missing" data-missing-name="${usage.name}">
+          <span class="category-pill" data-missing="true" style="--category-color:#94a3b8">
+            <span class="category-pill__dot"></span>${usage.name}
+          </span>
+          <div class="category-manager__meta">${usage.count.toLocaleString('ar-SA')} عملية</div>
+          <div class="category-manager__actions">
+            <button type="button" data-category-action="adopt">إضافة للتصنيفات</button>
+          </div>
+        </li>`);
+    }
+  });
+
+  const markup = [...storedItems, ...missingItems].join('');
+  list.innerHTML = markup;
+  if (emptyState) emptyState.classList.toggle('is-hidden', markup.length > 0);
+}
+
+function resetCategoryManagerForm() {
+  const form = document.getElementById('categoryManagerForm');
+  if (!form) return;
+  form.reset();
+  form.dataset.mode = 'create';
+  form.dataset.categoryId = '';
+  const title = document.getElementById('categoryManagerFormTitle');
+  if (title) title.textContent = 'إضافة تصنيف جديد';
+}
+
+function startCategoryEdit(categoryId) {
+  const form = document.getElementById('categoryManagerForm');
+  if (!form) return;
+  const category = categoriesUIState.categories.find((item) => item.id === categoryId);
+  if (!category) return;
+  form.dataset.mode = 'edit';
+  form.dataset.categoryId = category.id;
+  form.name.value = category.name;
+  form.color.value = category.color;
+  const title = document.getElementById('categoryManagerFormTitle');
+  if (title) title.textContent = 'تعديل التصنيف';
+}
+
+function openCategoryManager(categoryId = null, prefillName = null) {
+  const modal = document.getElementById('categoryManagerModal');
+  if (!modal) return;
+  resetCategoryManagerForm();
+  if (categoryId) {
+    startCategoryEdit(categoryId);
+  } else if (prefillName) {
+    const form = document.getElementById('categoryManagerForm');
+    if (form) {
+      form.name.value = prefillName;
+      form.dataset.mode = 'create';
+    }
+  }
+  showModal(modal);
+}
+
+function closeCategoryManager() {
+  const modal = document.getElementById('categoryManagerModal');
+  if (!modal) return;
+  hideModal(modal);
+  resetCategoryManagerForm();
+}
+
+async function deleteCategory(categoryId) {
+  const category = categoriesUIState.categories.find((item) => item.id === categoryId);
+  if (!category) return;
+  const normalized = normalizeCategoryName(category.name);
+  const isUsed = unifiedFinancialState.expenses.some(
+    (expense) => normalizeCategoryName(expense.category || 'مصروفات عامة') === normalized
+  );
+  if (isUsed) {
+    createToast('لا يمكن حذف التصنيف أثناء استخدامه في سجلات المصاريف', 'warning');
+    return;
+  }
+  try {
+    await categoriesStore.remove(categoryId);
+    createToast('تم حذف التصنيف بنجاح', 'success');
+    await loadExpenseCategories(true);
+  } catch (error) {
+    createToast(error?.message || 'تعذر حذف التصنيف', 'error');
+  }
+}
+
+function bindCategoryManagerControls() {
+  const manageButtons = document.querySelectorAll('[data-action="manage-expense-categories"]');
+  manageButtons.forEach((button) => {
+    if (button.dataset.bound) return;
+    button.dataset.bound = 'true';
+    button.addEventListener('click', () => openCategoryManager());
+  });
+
+  const modal = document.getElementById('categoryManagerModal');
+  if (modal && !modal.dataset.bound) {
+    modal.dataset.bound = 'true';
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        closeCategoryManager();
+      }
+    });
+  }
+
+  const list = document.getElementById('categoryManagerList');
+  if (list && !list.dataset.bound) {
+    list.dataset.bound = 'true';
+    list.addEventListener('click', (event) => {
+      const actionButton = event.target.closest('button[data-category-action]');
+      if (!actionButton) return;
+      const action = actionButton.dataset.categoryAction;
+      if (action === 'edit') {
+        const categoryId = actionButton.closest('[data-category-id]')?.dataset.categoryId;
+        if (categoryId) openCategoryManager(categoryId);
+        return;
+      }
+      if (action === 'delete') {
+        if (actionButton.disabled) return;
+        const categoryId = actionButton.closest('[data-category-id]')?.dataset.categoryId;
+        if (categoryId) deleteCategory(categoryId);
+        return;
+      }
+      if (action === 'adopt') {
+        const name = actionButton.closest('[data-missing-name]')?.dataset.missingName;
+        openCategoryManager(null, name || '');
+      }
+    });
+  }
+
+  const form = document.getElementById('categoryManagerForm');
+  if (form && !form.dataset.bound) {
+    form.dataset.bound = 'true';
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const name = formData.get('name')?.toString().trim();
+      const color = formData.get('color')?.toString() || '#6366f1';
+      if (!name) {
+        createToast('يرجى إدخال اسم التصنيف', 'error');
+        return;
+      }
+      try {
+        if (form.dataset.mode === 'edit' && form.dataset.categoryId) {
+          await categoriesStore.update(form.dataset.categoryId, { name, color });
+          createToast('تم تحديث التصنيف بنجاح', 'success');
+        } else {
+          await categoriesStore.create({ name, color });
+          createToast('تمت إضافة التصنيف بنجاح', 'success');
+        }
+        await loadExpenseCategories(true);
+        closeCategoryManager();
+      } catch (error) {
+        createToast(error?.message || 'تعذر حفظ التصنيف', 'error');
+      }
+    });
+  }
+}
+
+async function loadExpenseCategories(shouldRefresh = false) {
+  if (document.body.dataset.page !== 'project-expenses') return;
+  const categories = await categoriesStore.list();
+  categoriesUIState.categories = categories;
+  renderExpenseCategoryOptions();
+  renderCategoryManagerList();
+  if (shouldRefresh && unifiedFinancialState.projectId) {
+    renderUnifiedExpensesUI(unifiedFinancialState.projectId);
+  }
+}
+
 function renderUnifiedExpensesUI(projectId) {
   const section = document.getElementById('expenses-contracts-section');
   if (!section) return;
@@ -2033,15 +2490,39 @@ function renderUnifiedExpensesUI(projectId) {
   setText('expensesCount', expenses.length.toString());
   setText('expensesAverage', formatCurrency(averageAmount));
 
+  const categoryUsage = new Map();
+  const filteredTotals = { count: 0, amount: 0, vat: 0, total: 0 };
+
+  sorted.forEach((expense) => {
+    const amount = safeNumber(expense.amount);
+    const vatPercent = safeNumber(expense.vatPercent);
+    const vatValue = (amount * vatPercent) / 100;
+    filteredTotals.count += 1;
+    filteredTotals.amount += amount;
+    filteredTotals.vat += vatValue;
+    filteredTotals.total += amount + vatValue;
+    const meta = getCategoryMeta(expense.category);
+    const key = normalizeCategoryName(meta.name);
+    const entry = categoryUsage.get(key) || { name: meta.name, color: meta.color, count: 0, amount: 0 };
+    entry.count += 1;
+    entry.amount += amount;
+    categoryUsage.set(key, entry);
+  });
+
   const tbody = document.getElementById('expensesTableBody');
   if (tbody) {
     tbody.innerHTML = sorted
       .map((expense) => {
         const vatPercent = safeNumber(expense.vatPercent);
         const totalWithVat = expenseTotalWithVat(expense);
+        const meta = getCategoryMeta(expense.category);
         return `
       <tr data-expense-id="${expense.id}">
-        <td>${expense.category || '—'}</td>
+        <td>
+          <span class="category-pill" style="--category-color:${meta.color}">
+            <span class="category-pill__dot"></span>${meta.name}
+          </span>
+        </td>
         <td>${expense.title || '—'}</td>
         <td class="text-center">${formatDate(expense.date)}</td>
         <td class="text-center text-nowrap">${formatCurrency(expense.amount)}</td>
@@ -2059,6 +2540,47 @@ function renderUnifiedExpensesUI(projectId) {
       })
       .join('');
   }
+
+  const totalCountEl = document.getElementById('expensesTableTotalCount');
+  if (totalCountEl) totalCountEl.textContent = filteredTotals.count.toLocaleString('ar-SA');
+  const totalAmountEl = document.getElementById('expensesTableAmount');
+  if (totalAmountEl) totalAmountEl.textContent = formatCurrency(filteredTotals.amount);
+  const vatEl = document.getElementById('expensesTableVat');
+  if (vatEl) vatEl.textContent = formatCurrency(filteredTotals.vat);
+  const grandTotalEl = document.getElementById('expensesTableGrandTotal');
+  if (grandTotalEl) grandTotalEl.textContent = formatCurrency(filteredTotals.total);
+
+  const summaryList = document.getElementById('expenseCategorySummary');
+  const summaryEmpty = document.getElementById('expenseCategorySummaryEmpty');
+  if (summaryList) {
+    const summaryItems = Array.from(categoryUsage.values()).sort((a, b) => b.amount - a.amount);
+    if (summaryItems.length) {
+      summaryList.innerHTML = summaryItems
+        .map(
+          (item) => `
+        <li class="category-summary__item">
+          <div class="category-summary__item-info">
+            <span class="category-pill" style="--category-color:${item.color}">
+              <span class="category-pill__dot"></span>${item.name}
+            </span>
+            <span class="category-summary__item-meta">${item.count.toLocaleString('ar-SA')} عملية</span>
+          </div>
+          <div class="category-summary__item-value">${formatCurrency(item.amount)}</div>
+        </li>`
+        )
+        .join('');
+      if (summaryEmpty) summaryEmpty.classList.add('is-hidden');
+    } else {
+      summaryList.innerHTML = '';
+      if (summaryEmpty) summaryEmpty.classList.remove('is-hidden');
+    }
+    const totalLabel = document.getElementById('expenseCategorySummaryTotal');
+    if (totalLabel) {
+      totalLabel.textContent = `${filteredTotals.count.toLocaleString('ar-SA')} عملية`;
+    }
+  }
+
+  renderCategoryManagerList();
 
   const emptyState = document.getElementById('expensesEmptyState');
   if (emptyState) emptyState.classList.toggle('is-hidden', sorted.length > 0);
@@ -2225,6 +2747,27 @@ function renderSubcontractsUI(projectId) {
       })
       .join('');
   }
+
+  const filteredSummary = sorted.reduce(
+    (acc, contract) => {
+      const value = safeNumber(contract.value);
+      const paid = safeNumber(contract.paidAmount);
+      acc.count += 1;
+      acc.total += value;
+      acc.paid += paid;
+      acc.remaining += Math.max(0, value - paid);
+      return acc;
+    },
+    { count: 0, total: 0, paid: 0, remaining: 0 }
+  );
+  const setFooterValue = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+  setFooterValue('subcontractsTableCount', filteredSummary.count.toLocaleString('ar-SA'));
+  setFooterValue('subcontractsTableValue', formatCurrency(filteredSummary.total));
+  setFooterValue('subcontractsTablePaid', formatCurrency(filteredSummary.paid));
+  setFooterValue('subcontractsTableRemaining', formatCurrency(filteredSummary.remaining));
 
   const emptyState = document.getElementById('subcontractsEmptyState');
   if (emptyState) emptyState.classList.toggle('is-hidden', sorted.length > 0);
@@ -2746,6 +3289,28 @@ function renderPaymentsTable(payments, metrics) {
       </tr>`;
     })
     .join('');
+
+  const summary = payments.reduce(
+    (acc, payment) => {
+      const amount = safeNumber(payment.amount);
+      acc.count += 1;
+      acc.total += amount;
+      if ((payment.status || 'scheduled') === 'paid') {
+        acc.paid += amount;
+      }
+      return acc;
+    },
+    { count: 0, total: 0, paid: 0 }
+  );
+  const pending = Math.max(0, summary.total - summary.paid);
+  const setFooterValue = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+  setFooterValue('paymentsTableCount', summary.count.toLocaleString('ar-SA'));
+  setFooterValue('paymentsTableTotalAmount', formatCurrency(summary.total));
+  setFooterValue('paymentsTablePaidAmount', formatCurrency(summary.paid));
+  setFooterValue('paymentsTablePendingAmount', formatCurrency(pending));
 }
 
 function paymentStatusColor(status) {
@@ -3414,8 +3979,18 @@ function openAddExpenseModal(expense = null) {
   unifiedFinancialState.editingExpenseId = expense?.id || null;
   if (titleEl) titleEl.textContent = expense ? 'تعديل مصروف' : 'إضافة مصروف';
 
+  const categorySelect = document.getElementById('expenseModalCategory');
+  if (categorySelect) {
+    categorySelect.dataset.selected = expense?.category || '';
+    renderExpenseCategoryOptions();
+    if (expense?.category) {
+      categorySelect.value = expense.category;
+    }
+  } else {
+    renderExpenseCategoryOptions();
+  }
+
   if (expense) {
-    form.category.value = expense.category || '';
     form.title.value = expense.title || '';
     form.date.value = expense.date ? expense.date.slice(0, 10) : '';
     form.amount.value = safeNumber(expense.amount);
@@ -3439,11 +4014,18 @@ function bindExpenseModalForm(projectId) {
   const form = document.getElementById('expenseModalForm');
   if (!form || form.dataset.bound) return;
   form.dataset.bound = 'true';
+  const categorySelect = form.querySelector('#expenseModalCategory');
+  if (categorySelect && !categorySelect.dataset.bound) {
+    categorySelect.dataset.bound = 'true';
+    categorySelect.addEventListener('change', () => {
+      categorySelect.dataset.selected = categorySelect.value;
+    });
+  }
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     const formData = new FormData(form);
     const payload = {
-      category: formData.get('category')?.toString().trim() || 'عام',
+      category: formData.get('category')?.toString().trim() || 'مصروفات عامة',
       title: formData.get('title')?.toString().trim() || 'مصروف',
       date: formData.get('date'),
       amount: safeNumber(formData.get('amount')), 
@@ -3859,11 +4441,13 @@ async function setupExpensesPage() {
   configureProjectNavigation(projectId, 'expenses');
   await renderProjectSummary(projectId);
   await renderExpenses(projectId);
+  await loadExpenseCategories(true);
   await renderSubcontracts(projectId);
   bindExpensesActions(projectId);
   bindSubcontractActions(projectId);
   bindExpenseModalForm(projectId);
   bindSubcontractModalForm(projectId);
+  bindCategoryManagerControls();
 }
 
 async function setupPaymentsPage() {
@@ -3900,6 +4484,8 @@ async function setupReportsPage() {
   bindReportsActions(projectId);
 }
 
+onDataEvent('expense-categories-updated', () => loadExpenseCategories(true));
+
 const pageInitializers = {
   'projects-management': setupManagementPage,
   'project-wizard': setupWizardPage,
@@ -3929,6 +4515,9 @@ Object.assign(window, {
   clearLogs,
   openAddExpenseModal,
   closeExpenseModal,
+  openCategoryManager,
+  closeCategoryManager,
+  resetCategoryManagerForm,
   openAddSubcontractModal,
   closeSubcontractModal,
   applyExpenseFilters,

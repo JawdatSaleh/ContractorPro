@@ -188,12 +188,6 @@
                   <label for="filterExpenseCategory">التصنيف</label>
                   <select id="filterExpenseCategory">
                     <option value>جميع التصنيفات</option>
-                    <option value="مواد">مواد البناء</option>
-                    <option value="عمالة">العمالة</option>
-                    <option value="معدات">المعدات</option>
-                    <option value="نقل">النقل</option>
-                    <option value="ضيافة">الضيافة</option>
-                    <option value="لوجستيات">الخدمات اللوجستية</option>
                   </select>
                 </div>
                 <div class="filter-group">
@@ -224,6 +218,24 @@
               <div class="search-field">
                 <i class="fas fa-search"></i>
                 <input type="text" id="searchExpenses" placeholder="البحث في المصاريف..." />
+              </div>
+
+              <div class="category-summary" id="expenseCategorySummaryContainer">
+                <div class="category-summary__header">
+                  <div>
+                    <h3>تصنيف المصاريف</h3>
+                    <p class="text-muted">عرض سريع لأكثر التصنيفات إنفاقاً.</p>
+                  </div>
+                  <div class="category-summary__actions">
+                    <span id="expenseCategorySummaryTotal">0 عملية</span>
+                    <button type="button" class="btn btn-outline btn-sm" data-action="manage-expense-categories">
+                      <i class="fas fa-sliders"></i>
+                      <span>إدارة التصنيفات</span>
+                    </button>
+                  </div>
+                </div>
+                <ul id="expenseCategorySummary" class="category-summary__list"></ul>
+                <div id="expenseCategorySummaryEmpty" class="empty-hint">لم يتم تسجيل مصاريف بعد.</div>
               </div>
 
               <div class="table-wrapper">
@@ -277,6 +289,14 @@
                     </tr>
                   </thead>
                   <tbody id="expensesTableBody"></tbody>
+                  <tfoot>
+                    <tr class="table-summary">
+                      <td colspan="2">عدد السجلات: <strong id="expensesTableTotalCount">0</strong></td>
+                      <td colspan="2">صافي المبالغ: <strong id="expensesTableAmount">0 ريال</strong></td>
+                      <td colspan="2">قيمة الضريبة: <strong id="expensesTableVat">0 ريال</strong></td>
+                      <td colspan="3">الإجمالي مع الضريبة: <strong id="expensesTableGrandTotal">0 ريال</strong></td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
               <div id="expensesEmptyState" class="empty-hint is-hidden">لا توجد مصاريف مطابقة للمعايير الحالية.</div>
@@ -393,6 +413,14 @@
                     </tr>
                   </thead>
                   <tbody id="subcontractsTableBody"></tbody>
+                  <tfoot>
+                    <tr class="table-summary">
+                      <td colspan="2">عدد العقود: <strong id="subcontractsTableCount">0</strong></td>
+                      <td colspan="2">قيمة العقود: <strong id="subcontractsTableValue">0 ريال</strong></td>
+                      <td colspan="2">المبالغ المصروفة: <strong id="subcontractsTablePaid">0 ريال</strong></td>
+                      <td colspan="3">المتبقي: <strong id="subcontractsTableRemaining">0 ريال</strong></td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
               <div id="subcontractsEmptyState" class="empty-hint is-hidden">لا توجد عقود باطن مطابقة للمعايير الحالية.</div>
@@ -479,6 +507,48 @@
     </div>
 
     <div
+      id="categoryManagerModal"
+      class="modal-backdrop is-hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="categoryManagerTitle"
+    >
+      <div class="modal modal--wide">
+        <div class="modal__header">
+          <h3 id="categoryManagerTitle">إدارة تصنيفات المصاريف</h3>
+          <button type="button" class="modal__close" onclick="closeCategoryManager()" aria-label="إغلاق">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal__body modal__body--split">
+          <section class="category-manager">
+            <header class="category-manager__header">
+              <h4>التصنيفات الحالية</h4>
+              <p class="text-muted">تحكم بالتسميات والألوان المستخدمة لتمييز المصاريف.</p>
+            </header>
+            <ul id="categoryManagerList" class="category-manager__list"></ul>
+            <div id="categoryManagerEmpty" class="empty-hint is-hidden">لم يتم إنشاء أي تصنيف بعد.</div>
+          </section>
+          <form id="categoryManagerForm" class="category-manager__form">
+            <h4 id="categoryManagerFormTitle">إضافة تصنيف جديد</h4>
+            <label>
+              اسم التصنيف
+              <input type="text" name="name" required placeholder="مثل مواد، استشارات..." />
+            </label>
+            <label>
+              لون مميز
+              <input type="color" name="color" value="#6366f1" />
+            </label>
+            <div class="category-manager__form-actions">
+              <button type="button" class="btn btn-ghost" onclick="resetCategoryManagerForm()">تفريغ</button>
+              <button type="submit" class="btn btn-primary">حفظ التصنيف</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div
       id="expenseModal"
       class="modal-backdrop is-hidden"
       role="dialog"
@@ -496,7 +566,9 @@
           <div class="form-grid">
             <label>
               التصنيف
-              <input type="text" name="category" placeholder="مواد، عمالة، تشغيل..." />
+              <select name="category" id="expenseModalCategory" data-selected="">
+                <option value="مصروفات عامة">مصروفات عامة</option>
+              </select>
             </label>
             <label>
               البيان

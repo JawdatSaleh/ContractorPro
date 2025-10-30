@@ -52,7 +52,7 @@ class ExpensesStore {
     const expense = {
       id: generateId('expense'),
       projectId,
-      category: 'عام',
+      category: 'مصروفات عامة',
       type: 'expense',
       amount: 0,
       ...payload,
