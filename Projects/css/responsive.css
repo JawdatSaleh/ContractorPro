@@ -99,6 +99,10 @@
     grid-template-columns: 1fr;
   }
 
+  .projects-grid-summary {
+    grid-template-columns: 1fr;
+  }
+
   .project-summary {
     grid-template-columns: 1fr;
   }
