@@ -1728,6 +1728,8 @@ async function renderPhaseAnalytics() {
   const { projectId, phases } = phasesUIState;
   const totalPhasesEl = document.getElementById('totalPhases');
   if (totalPhasesEl) totalPhasesEl.textContent = phases.length;
+  const summaryTotalEl = document.getElementById('phaseSummaryTotal');
+  if (summaryTotalEl) summaryTotalEl.textContent = phases.length;
 
   const statusCount = phases.reduce(
     (acc, phase) => ({ ...acc, [phase.status]: (acc[phase.status] || 0) + 1 }),
@@ -1735,10 +1737,20 @@ async function renderPhaseAnalytics() {
   );
   const inProgressEl = document.getElementById('inProgressPhases');
   if (inProgressEl) inProgressEl.textContent = statusCount.in_progress || 0;
+  const summaryActiveEl = document.getElementById('phaseSummaryActive');
+  if (summaryActiveEl) summaryActiveEl.textContent = statusCount.in_progress || 0;
   const delayedEl = document.getElementById('delayedPhases');
   if (delayedEl) delayedEl.textContent = statusCount.delayed || 0;
+  const summaryDelayedEl = document.getElementById('phaseSummaryDelayed');
+  if (summaryDelayedEl) summaryDelayedEl.textContent = statusCount.delayed || 0;
   const completedEl = document.getElementById('completedPhases');
   if (completedEl) completedEl.textContent = statusCount.done || 0;
+
+  const summaryProgressEl = document.getElementById('phaseSummaryProgress');
+  if (summaryProgressEl) {
+    const meanProgress = phases.length ? Math.round(average(phases.map((phase) => phase.progress || 0))) : 0;
+    summaryProgressEl.textContent = formatPercent(meanProgress);
+  }
 
   const timeline = projectId ? await phasesStore.timeline(projectId) : { totalDuration: 0, completedDuration: 0, overallProgress: 0 };
   const phasesDurationEl = document.querySelector('[data-phases-duration]');
