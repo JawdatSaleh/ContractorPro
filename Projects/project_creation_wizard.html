@@ -3,126 +3,1602 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>معالج إنشاء المشروع - ContractorPro</title>
+    <link rel="stylesheet" href="../css/main.css" />
     <link rel="stylesheet" href="../css/theme.css" />
-    <title>معالج إنشاء/تعديل مشروع | ContractorPro</title>
     <link rel="stylesheet" href="css/projects.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <style>
+      body {
+        background: linear-gradient(135deg, #eff6ff 0%, #fdf2f8 35%, #f8fafc 100%);
+      }
+
+      .wizard-shell {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 32px 24px 96px;
+      }
+
+      .wizard-header {
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 24px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        padding: 24px 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+        backdrop-filter: blur(12px);
+      }
+
+      .wizard-header__title h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #1f2937;
+      }
+
+      .wizard-progress {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(37, 99, 235, 0.18));
+        padding: 18px 28px;
+        border-radius: 20px;
+        color: #1d4ed8;
+      }
+
+      .wizard-progress strong {
+        font-size: 1.8rem;
+        font-weight: 800;
+      }
+
+      .wizard-steps {
+        margin: 40px auto 32px;
+        padding: 24px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 16px;
+        box-shadow: 0 30px 70px rgba(15, 23, 42, 0.12);
+        backdrop-filter: blur(14px);
+      }
+
+      .wizard-step-indicator {
+        display: grid;
+        gap: 12px;
+        justify-items: center;
+      }
+
+      .wizard-step-indicator__bullet {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: rgba(226, 232, 240, 0.8);
+        color: #64748b;
+        transition: all 0.35s ease;
+        border: 2px solid transparent;
+      }
+
+      .wizard-step-indicator.active .wizard-step-indicator__bullet {
+        background: linear-gradient(135deg, #2563eb, #4338ca);
+        color: #fff;
+        transform: scale(1.08);
+        border-color: rgba(255, 255, 255, 0.65);
+        box-shadow: 0 16px 40px rgba(37, 99, 235, 0.28);
+      }
+
+      .wizard-step-indicator.completed .wizard-step-indicator__bullet {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.65);
+        box-shadow: 0 16px 40px rgba(16, 185, 129, 0.28);
+      }
+
+      .wizard-step-indicator span {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #1f2937;
+        text-align: center;
+        line-height: 1.5;
+      }
+
+      .wizard-card {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 28px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        box-shadow: 0 30px 70px rgba(15, 23, 42, 0.14);
+        overflow: hidden;
+        backdrop-filter: blur(14px);
+      }
+
+      .wizard-section {
+        display: none;
+        animation: fadeIn 0.45s ease;
+        padding: 48px 56px 56px;
+      }
+
+      .wizard-section.active {
+        display: block;
+      }
+
+      .wizard-section__title {
+        margin-bottom: 32px;
+        text-align: center;
+      }
+
+      .wizard-section__title h2 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1f2937;
+      }
+
+      .wizard-section__title p {
+        margin: 12px auto 0;
+        color: #64748b;
+        max-width: 480px;
+        font-size: 0.95rem;
+      }
+
+      .wizard-grid {
+        display: grid;
+        gap: 20px;
+      }
+
+      @media (min-width: 920px) {
+        .wizard-grid.two-columns {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .wizard-grid.three-columns {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .wizard-field {
+        display: grid;
+        gap: 10px;
+      }
+
+      .wizard-field label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .wizard-field input,
+      .wizard-field select,
+      .wizard-field textarea {
+        border-radius: 18px;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        background: rgba(248, 250, 252, 0.95);
+        padding: 12px 16px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: all 0.25s ease;
+      }
+
+      .wizard-field input:focus,
+      .wizard-field select:focus,
+      .wizard-field textarea:focus {
+        outline: none;
+        border-color: rgba(59, 130, 246, 0.7);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+        background: #fff;
+      }
+
+      .wizard-templates {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      }
+
+      .wizard-template {
+        border-radius: 20px;
+        border: 1px solid rgba(148, 163, 184, 0.32);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 18px 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .wizard-template:hover {
+        border-color: rgba(59, 130, 246, 0.55);
+        box-shadow: 0 18px 45px rgba(37, 99, 235, 0.16);
+        transform: translateY(-3px);
+      }
+
+      .wizard-template.selected {
+        border-color: transparent;
+        background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.2));
+        box-shadow: 0 22px 55px rgba(37, 99, 235, 0.22);
+      }
+
+      .wizard-template i {
+        display: block;
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+        color: #2563eb;
+      }
+
+      .wizard-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 32px;
+        border-top: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(14px);
+      }
+
+      .wizard-actions__buttons {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+      }
+
+      .wizard-actions button {
+        border-radius: 18px;
+        border: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        transition: all 0.25s ease;
+      }
+
+      .wizard-actions__prev {
+        background: rgba(226, 232, 240, 0.75);
+        color: #475569;
+      }
+
+      .wizard-actions__prev:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .wizard-actions__prev:not(:disabled):hover {
+        transform: translateX(4px);
+      }
+
+      .wizard-actions__draft {
+        background: rgba(251, 191, 36, 0.18);
+        color: #92400e;
+      }
+
+      .wizard-actions__draft:hover {
+        background: rgba(251, 191, 36, 0.28);
+      }
+
+      .wizard-actions__next {
+        background: linear-gradient(135deg, #2563eb, #4338ca);
+        color: #fff;
+        padding-inline: 28px;
+        box-shadow: 0 18px 45px rgba(37, 99, 235, 0.28);
+      }
+
+      .wizard-actions__next:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 22px 55px rgba(79, 70, 229, 0.32);
+      }
+
+      .wizard-summary {
+        background: rgba(59, 130, 246, 0.08);
+        border-radius: 20px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        padding: 20px 24px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .wizard-summary__row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.95rem;
+        color: #1f2937;
+      }
+
+      .wizard-summary__row strong {
+        color: #2563eb;
+      }
+
+      .wizard-team-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      @media (min-width: 720px) {
+        .wizard-team-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .wizard-team-card {
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 20px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.92);
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        transition: all 0.25s ease;
+        cursor: pointer;
+      }
+
+      .wizard-team-card:hover {
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
+      }
+
+      .wizard-team-card.selected {
+        border-color: transparent;
+        background: linear-gradient(145deg, rgba(34, 197, 94, 0.12), rgba(59, 130, 246, 0.12));
+        box-shadow: 0 20px 50px rgba(34, 197, 94, 0.25);
+      }
+
+      .wizard-team-card img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .wizard-pill-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .wizard-pill {
+        background: rgba(226, 232, 240, 0.8);
+        color: #1f2937;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.85rem;
+      }
+      .wizard-budget-box {
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(254, 243, 199, 0.68), rgba(252, 211, 77, 0.72));
+        padding: 24px;
+        display: grid;
+        gap: 18px;
+      }
+
+      .wizard-budget-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.95rem;
+        color: #92400e;
+      }
+
+      .wizard-budget-row input {
+        width: 140px;
+        text-align: left;
+      }
+
+      .wizard-cost-total {
+        background: #fff;
+        border-radius: 18px;
+        padding: 18px;
+        display: grid;
+        gap: 10px;
+        border-inline-start: 4px solid #16a34a;
+      }
+
+      .wizard-cost-total strong {
+        font-size: 1.6rem;
+        color: #047857;
+      }
+
+      .file-drop {
+        border: 2px dashed rgba(148, 163, 184, 0.45);
+        border-radius: 22px;
+        padding: 36px;
+        text-align: center;
+        background: rgba(248, 250, 252, 0.9);
+        transition: all 0.25s ease;
+        cursor: pointer;
+      }
+
+      .file-drop.dragover {
+        border-color: rgba(59, 130, 246, 0.6);
+        background: rgba(219, 234, 254, 0.8);
+        transform: translateY(-2px);
+        box-shadow: 0 18px 48px rgba(37, 99, 235, 0.18);
+      }
+
+      .file-list {
+        margin-top: 16px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .file-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        border-radius: 16px;
+        background: rgba(226, 232, 240, 0.6);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+      }
+
+      .phase-timeline {
+        display: grid;
+        gap: 14px;
+      }
+
+      .phase-item {
+        border-radius: 18px;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.92);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .phase-item strong {
+        color: #1f2937;
+      }
+
+      .phase-item button {
+        background: transparent;
+        border: none;
+        color: #ef4444;
+        cursor: pointer;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
   </head>
-  <body data-page="project-wizard">
-    <div class="projects-content" style="max-width: 1080px; margin: 0 auto; padding: 48px 24px;">
-      <div class="layout-header">
-        <div>
-          <nav class="breadcrumb" data-breadcrumb>
-            <a href="projects_management_center.html" class="breadcrumb-item">المشاريع</a>
-            <span class="breadcrumb-divider">/</span>
-            <span class="breadcrumb-item">معالج المشروع</span>
-          </nav>
-          <h1 data-wizard-title>إنشاء مشروع جديد</h1>
-          <p class="text-muted">املأ بيانات المشروع الأساسية والمالية لتتم مزامنته تلقائياً مع باقي صفحات النظام.</p>
+  <body>
+    <div class="wizard-shell">
+      <header class="wizard-header">
+        <div class="wizard-header__title">
+          <div class="wizard-pill-group">
+            <span class="wizard-pill"><i class="fas fa-magic"></i> معالج ذكي</span>
+            <span class="wizard-pill">مزامنة مباشرة مع بقية الصفحات</span>
+          </div>
+          <h1>معالج إنشاء مشروع احترافي</h1>
+          <p class="text-muted">
+            قم ببناء مشروع متكامل يبدأ من البيانات التعريفية وينتهي بتوزيع الفريق والخطة الزمنية، مع تجربة مرئية متسقة عبر النظام.
+          </p>
         </div>
-        <div class="projects-actions">
-          <button class="btn btn-outline" onclick="history.back()">
-            <i class="fas fa-arrow-right"></i>
-            العودة
-          </button>
+        <div class="wizard-progress">
+          <i class="fas fa-bullseye"></i>
+          <div>
+            <strong id="wizardProgressValue">20%</strong>
+            <div class="text-sm text-muted">نسبة إكمال المعالج</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="wizard-steps" id="wizardSteps">
+        <div class="wizard-step-indicator active" data-step="1">
+          <div class="wizard-step-indicator__bullet">1</div>
+          <span>تعريف المشروع</span>
+        </div>
+        <div class="wizard-step-indicator" data-step="2">
+          <div class="wizard-step-indicator__bullet">2</div>
+          <span>العميل والجهة المالكة</span>
+        </div>
+        <div class="wizard-step-indicator" data-step="3">
+          <div class="wizard-step-indicator__bullet">3</div>
+          <span>مواصفات التنفيذ</span>
+        </div>
+        <div class="wizard-step-indicator" data-step="4">
+          <div class="wizard-step-indicator__bullet">4</div>
+          <span>الجدول الزمني والميزانية</span>
+        </div>
+        <div class="wizard-step-indicator" data-step="5">
+          <div class="wizard-step-indicator__bullet">5</div>
+          <span>الفريق والملخص</span>
         </div>
       </div>
-
-      <section class="section-card fade-in">
-        <header>
-          <div>
-            <h2>المعلومات الأساسية</h2>
-            <p class="text-muted">اسم المشروع، العميل، والموقع</p>
+      <section class="wizard-card">
+        <div class="wizard-section active" data-step-content="1">
+          <div class="wizard-section__title">
+            <h2>المعلومات التعريفية</h2>
+            <p>حدد اسم المشروع، نوعه، وموقعه الجغرافي لإتاحة تتبعه وتحليله لاحقًا داخل المركز الرئيسي.</p>
           </div>
-        </header>
-        <form id="projectForm">
-          <div class="form-grid">
-            <label>
-              اسم المشروع
-              <input type="text" name="name" placeholder="مثال: مشروع توسعة المستشفى" required />
-            </label>
-            <label>
-              اسم العميل
-              <input type="text" name="clientName" placeholder="اسم الجهة المالكة" required />
-            </label>
-            <label>
-              مدير المشروع
-              <input type="text" name="manager" placeholder="اسم مدير المشروع" />
-            </label>
-            <label>
-              موقع المشروع
-              <input type="text" name="location" placeholder="المدينة - الحي" />
-            </label>
-            <label>
-              قيمة العقد (ريال)
-              <input type="number" name="contractValue" min="0" step="1000" placeholder="0" />
-            </label>
-            <label>
-              الميزانية المعتمدة (ريال)
-              <input type="number" name="budget" min="0" step="1000" placeholder="0" />
-            </label>
-          </div>
-
-          <div class="form-grid">
-            <label>
-              تاريخ البدء
-              <input type="date" name="startDate" />
-            </label>
-            <label>
-              تاريخ الانتهاء المتوقع
-              <input type="date" name="endDate" />
-            </label>
-            <label>
-              حالة المشروع
-              <select name="status">
-                <option value="active">نشط</option>
-                <option value="completed">مكتمل</option>
-                <option value="on-hold">متوقف</option>
-                <option value="cancelled">ملغي</option>
+          <div class="wizard-grid two-columns">
+            <div class="wizard-field">
+              <label><i class="fas fa-building"></i> اسم المشروع</label>
+              <input type="text" id="projectName" placeholder="مثال: مجمع فلل النخبة - الرياض" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-layer-group"></i> نوع المشروع</label>
+              <select id="projectType">
+                <option value="">اختر نوع المشروع</option>
+                <option value="residential_villa">فيلا سكنية</option>
+                <option value="residential_complex">مجمع سكني</option>
+                <option value="commercial">مبنى تجاري</option>
+                <option value="industrial">منشأة صناعية</option>
+                <option value="infrastructure">مشروع بنية تحتية</option>
+                <option value="renovation">ترميم وتطوير</option>
               </select>
-            </label>
-            <label>
-              رابط صورة الغلاف
-              <input type="url" name="cover" placeholder="https://" />
-            </label>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-map-pin"></i> المدينة</label>
+              <select id="projectCity">
+                <option value="">اختر المدينة</option>
+                <option value="riyadh">الرياض</option>
+                <option value="jeddah">جدة</option>
+                <option value="dammam">الدمام</option>
+                <option value="mecca">مكة المكرمة</option>
+                <option value="medina">المدينة المنورة</option>
+                <option value="khobar">الخبر</option>
+                <option value="tabuk">تبوك</option>
+                <option value="abha">أبها</option>
+              </select>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-city"></i> الحي / المنطقة</label>
+              <input type="text" id="projectDistrict" placeholder="حي النرجس" />
+            </div>
           </div>
+          <div class="wizard-grid">
+            <div class="wizard-field">
+              <label><i class="fas fa-road"></i> العنوان التفصيلي</label>
+              <input type="text" id="projectAddress" placeholder="شارع الملك سلمان - رقم القطعة 412" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-align-left"></i> وصف موجز للمشروع</label>
+              <textarea id="projectDescription" rows="4" placeholder="اكتب وصفًا يوضح نطاق العمل، الهدف، وأهم المخرجات المتوقعة."></textarea>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-star"></i> القالب الموصى به</label>
+              <div class="wizard-templates" id="templateCards">
+                <div class="wizard-template" data-template="villa">
+                  <i class="fas fa-home"></i>
+                  <strong>قالب الفلل السكنية</strong>
+                  <p class="text-muted">يشمل مراحل التخطيط، الهيكل، والتشطيبات الراقية.</p>
+                </div>
+                <div class="wizard-template" data-template="commercial">
+                  <i class="fas fa-building"></i>
+                  <strong>قالب المباني التجارية</strong>
+                  <p class="text-muted">متوازن بين الأعمال الإنشائية والأنظمة الميكانيكية.</p>
+                </div>
+                <div class="wizard-template" data-template="custom">
+                  <i class="fas fa-cog"></i>
+                  <strong>تكوين مخصص بالكامل</strong>
+                  <p class="text-muted">قم بتصميم مشروعك يدويًا حسب احتياجات العميل.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <label>
-            وصف المشروع
-            <textarea name="description" placeholder="تفاصيل موجزة عن نطاق العمل"></textarea>
-          </label>
+        <div class="wizard-section" data-step-content="2">
+          <div class="wizard-section__title">
+            <h2>بيانات العميل والمالك</h2>
+            <p>أدخل تفاصيل التواصل الرسمية، سيتم عرضها في بطاقة المشروع وصفحة المعلومات بشكل متناسق.</p>
+          </div>
+          <div class="wizard-grid two-columns">
+            <div class="wizard-field">
+              <label><i class="fas fa-user"></i> اسم العميل / الجهة المالكة</label>
+              <input type="text" id="clientName" placeholder="شركة الشرق للتطوير العقاري" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-briefcase"></i> نوع العميل</label>
+              <select id="clientType">
+                <option value="">حدد نوع العميل</option>
+                <option value="individual">فرد</option>
+                <option value="company">شركة</option>
+                <option value="government">جهة حكومية</option>
+              </select>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-phone"></i> رقم الاتصال المباشر</label>
+              <input type="tel" id="clientPhone" placeholder="05xxxxxxxx" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+              <input type="email" id="clientEmail" placeholder="client@company.sa" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-id-card"></i> الهوية / السجل التجاري</label>
+              <input type="text" id="clientId" placeholder="1010xxxxxxxx" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-file-invoice"></i> الرقم الضريبي</label>
+              <input type="text" id="clientTaxNumber" placeholder="3000000000" />
+            </div>
+          </div>
+          <div class="wizard-grid">
+            <div class="wizard-field">
+              <label><i class="fas fa-location-dot"></i> عنوان المراسلات</label>
+              <textarea id="clientAddress" rows="3" placeholder="الرياض - طريق الملك فهد - برج المقر الرئيسي"></textarea>
+            </div>
+          </div>
+        </div>
 
-          <div class="form-actions">
-            <button type="reset" class="btn btn-light">
-              <i class="fas fa-rotate-left"></i>
-              إعادة تعيين
+        <div class="wizard-section" data-step-content="3">
+          <div class="wizard-section__title">
+            <h2>المواصفات الفنية للمشروع</h2>
+            <p>تساعد البيانات التالية على تهيئة القوالب المالية والزمنية تلقائيًا في بقية صفحات إدارة المشروع.</p>
+          </div>
+          <div class="wizard-grid three-columns">
+            <div class="wizard-field">
+              <label><i class="fas fa-ruler-combined"></i> المساحة الإجمالية (م²)</label>
+              <input type="number" id="totalArea" min="0" placeholder="750" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-ruler"></i> المساحة المبنية (م²)</label>
+              <input type="number" id="builtArea" min="0" placeholder="520" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-building-columns"></i> عدد الطوابق</label>
+              <input type="number" id="floorsCount" min="1" placeholder="3" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-house"></i> عدد الوحدات</label>
+              <input type="number" id="unitsCount" min="0" placeholder="12" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-cubes"></i> نوع الأساسات</label>
+              <select id="foundationType">
+                <option value="">اختر الأساسات</option>
+                <option value="isolated">أساسات منفصلة</option>
+                <option value="strip">أساسات شريطية</option>
+                <option value="mat">حصيرة</option>
+                <option value="pile">خوازيق</option>
+              </select>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-tower-cell"></i> نوع الهيكل</label>
+              <select id="structureType">
+                <option value="">اختر نوع الهيكل</option>
+                <option value="concrete">خرسانة مسلحة</option>
+                <option value="steel">هيكل معدني</option>
+                <option value="mixed">مختلط</option>
+              </select>
+            </div>
+          </div>
+          <div class="wizard-grid">
+            <div class="wizard-field">
+              <label><i class="fas fa-brick"></i> نوع الجدران</label>
+              <select id="wallType">
+                <option value="">حدد نوع الجدران</option>
+                <option value="block">بلوك أسمنتي</option>
+                <option value="brick">طوب أحمر</option>
+                <option value="concrete">خرسانة</option>
+                <option value="prefab">جدران مسبقة الصنع</option>
+              </select>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-warehouse"></i> نوع الأسقف</label>
+              <select id="roofType">
+                <option value="">حدد نوع السقف</option>
+                <option value="flat">مسطح</option>
+                <option value="sloped">مائل</option>
+                <option value="metal">معدني</option>
+                <option value="tiles">قرميد</option>
+              </select>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-star"></i> ملاحظات خاصة</label>
+              <textarea id="specialRequirements" rows="3" placeholder="اشتراطات إضافية أو مواصفات خاصة يجب مراعاتها."></textarea>
+            </div>
+          </div>
+          <div class="wizard-grid">
+            <div class="wizard-field">
+              <label><i class="fas fa-file-upload"></i> المستندات والمرفقات</label>
+              <div class="file-drop" id="fileDrop">
+                <i class="fas fa-cloud-upload-alt fa-2x text-primary"></i>
+                <p>اسحب الملفات هنا أو انقر للاختيار. يدعم PDF، صور، DWG حتى 10 ملفات.</p>
+                <input type="file" id="fileInput" class="hidden" multiple accept=".pdf,.jpg,.jpeg,.png,.dwg" />
+              </div>
+              <div class="file-list" id="uploadedFiles"></div>
+            </div>
+          </div>
+        </div>
+        <div class="wizard-section" data-step-content="4">
+          <div class="wizard-section__title">
+            <h2>الجدولة والميزانية الذكية</h2>
+            <p>يتم استخدام هذه البيانات لتوليد بطاقات المشروع وتوزيع المراحل في صفحات المتابعة والتقارير.</p>
+          </div>
+          <div class="wizard-grid two-columns">
+            <div class="wizard-field">
+              <label><i class="fas fa-calendar-day"></i> تاريخ البدء</label>
+              <input type="date" id="startDate" />
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-calendar-check"></i> تاريخ الانتهاء المتوقع</label>
+              <input type="date" id="endDate" />
+            </div>
+          </div>
+          <div class="wizard-grid two-columns">
+            <div class="wizard-field">
+              <label><i class="fas fa-layer-group"></i> مراحل المشروع</label>
+              <div class="phase-timeline" id="phaseTimeline"></div>
+              <button type="button" id="addPhaseBtn" class="wizard-actions__draft" style="margin-top: 10px;">
+                <i class="fas fa-plus"></i>
+                إضافة مرحلة
+              </button>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-calculator"></i> توزيع الميزانية</label>
+              <div class="wizard-budget-box">
+                <div class="wizard-budget-row">
+                  <span>تكلفة المواد</span>
+                  <input type="number" id="materialsCost" min="0" placeholder="0" />
+                </div>
+                <div class="wizard-budget-row">
+                  <span>تكلفة العمالة</span>
+                  <input type="number" id="laborCost" min="0" placeholder="0" />
+                </div>
+                <div class="wizard-budget-row">
+                  <span>المعدات والتوريدات</span>
+                  <input type="number" id="equipmentCost" min="0" placeholder="0" />
+                </div>
+                <div class="wizard-budget-row">
+                  <span>تكاليف إضافية</span>
+                  <input type="number" id="additionalCost" min="0" placeholder="0" />
+                </div>
+                <div class="wizard-budget-row" style="border-top: 1px dashed rgba(249, 115, 22, 0.45); padding-top: 14px;">
+                  <span>هامش الربح (%)</span>
+                  <input type="number" id="profitMargin" min="0" max="100" value="15" />
+                </div>
+                <div class="wizard-cost-total">
+                  <div>إجمالي العقد</div>
+                  <strong id="totalCost">0 ريال</strong>
+                  <div class="text-sm text-muted">التكلفة لكل متر مربع: <span id="costPerMeter">0 ريال</span></div>
+                </div>
+                <div class="wizard-budget-row" style="margin-top: 10px;">
+                  <span>الدفعة المقدمة (%)</span>
+                  <input type="number" id="advancePayment" min="0" max="100" placeholder="10" />
+                </div>
+                <div class="wizard-field">
+                  <label>شروط الدفع</label>
+                  <select id="paymentTerms">
+                    <option value="">اختر آلية الدفعات</option>
+                    <option value="lumpsum">دفعة واحدة</option>
+                    <option value="2payments">دفعتان</option>
+                    <option value="3payments">ثلاث دفعات</option>
+                    <option value="4payments">أربع دفعات</option>
+                    <option value="monthly">دفعات شهرية</option>
+                    <option value="milestone">حسب مراحل الإنجاز</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="wizard-summary" style="margin-top: 28px;">
+            <div class="wizard-summary__row">
+              <span>مدة المشروع التقديرية</span>
+              <strong id="projectDuration">-- يوم</strong>
+            </div>
+            <div class="wizard-summary__row">
+              <span>المراحل المسجلة</span>
+              <strong id="phasesCountLabel">0 مرحلة</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-section" data-step-content="5">
+          <div class="wizard-section__title">
+            <h2>هيكلة الفريق والملخص العام</h2>
+            <p>قم بتعيين مدير المشروع والكوادر المساندة، ثم راجع الملخص قبل الحفظ والمزامنة.</p>
+          </div>
+          <div class="wizard-grid">
+            <div class="wizard-field">
+              <label><i class="fas fa-user-tie"></i> مدير المشروع</label>
+              <div class="wizard-team-grid" id="managerList"></div>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-helmet-safety"></i> المهندسون الرئيسيون</label>
+              <div class="wizard-team-grid" id="engineerList"></div>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-users"></i> المشرفون</label>
+              <div class="wizard-team-grid" id="supervisorList"></div>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-tools"></i> المعدات الأساسية</label>
+              <div class="wizard-pill-group" id="equipmentPills"></div>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-cubes"></i> المواد الرئيسية</label>
+              <div class="wizard-pill-group" id="materialsPills"></div>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-handshake"></i> مقاولون من الباطن</label>
+              <div class="wizard-pill-group" id="subcontractorPills"></div>
+            </div>
+            <div class="wizard-field">
+              <label><i class="fas fa-clipboard-list"></i> ملخص المشروع النهائي</label>
+              <div class="wizard-summary" id="projectSummary"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wizard-actions">
+          <button type="button" class="wizard-actions__prev" id="prevButton" disabled>
+            <i class="fas fa-arrow-right"></i>
+            السابق
+          </button>
+          <div class="wizard-actions__buttons">
+            <button type="button" class="wizard-actions__draft" id="draftButton">
+              <i class="fas fa-save"></i>
+              حفظ كمسودة
             </button>
-            <button type="submit" class="btn btn-primary" data-wizard-submit>
-              <i class="fas fa-floppy-disk"></i>
-              حفظ
+            <button type="button" class="wizard-actions__next" id="nextButton">
+              <span id="nextButtonLabel">التالي</span>
+              <i class="fas fa-arrow-left"></i>
             </button>
           </div>
-        </form>
+        </div>
       </section>
-
-      <section class="section-card fade-in">
-        <header>
-          <div>
-            <h2>نصائح لإدارة فعالة</h2>
-            <p class="text-muted">قم بإضافة المراحل والمصاريف بعد حفظ المشروع لضمان احتساب المؤشرات الرئيسية.</p>
-          </div>
-        </header>
-        <ul>
-          <li>يمكنك العودة لاحقاً لتعديل أي معلومة عبر نفس المعالج.</li>
-          <li>عند تحديث المصاريف أو الدفعات ستنعكس التغييرات مباشرة على لوحة المشاريع.</li>
-          <li>استخدم صفحات المراحل والتقارير لإضافة تفاصيل دقيقة عن التنفيذ اليومي.</li>
-        </ul>
-      </section>
-
-      <footer class="footer">© 2024 ContractorPro</footer>
     </div>
+    <script>
+      const STORAGE_KEY = 'projects';
+      const LEGACY_KEY = 'contractorPro.projects';
+      const PHASE_STORAGE_KEYS = ['project_phases_all', 'phases'];
+      const CITY_LABELS = {
+        riyadh: 'الرياض',
+        jeddah: 'جدة',
+        dammam: 'الدمام',
+        mecca: 'مكة المكرمة',
+        medina: 'المدينة المنورة',
+        khobar: 'الخبر',
+        tabuk: 'تبوك',
+        abha: 'أبها'
+      };
 
-    <script type="module" src="js/main.js"></script>
+      const teamDirectory = {
+        managers: [
+          { id: 'mgr1', name: 'أحمد المالك', position: 'مدير مشاريع أول', experience: '15 سنة', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=160' },
+          { id: 'mgr2', name: 'نورة العتيبي', position: 'مديرة مشاريع استراتيجية', experience: '12 سنة', avatar: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=160' }
+        ],
+        engineers: [
+          { id: 'eng1', name: 'سعد المطيري', position: 'مهندس مدني', experience: '8 سنوات', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=160' },
+          { id: 'eng2', name: 'ليان المقبل', position: 'مهندسة معمارية', experience: '6 سنوات', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=160' },
+          { id: 'eng3', name: 'خالد الزهراني', position: 'مهندس كهربائي', experience: '9 سنوات', avatar: 'https://images.unsplash.com/photo-1504595403659-9088ce801e29?w=160' }
+        ],
+        supervisors: [
+          { id: 'sup1', name: 'عبدالله الشهري', position: 'مشرف موقع', experience: '11 سنة', avatar: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=160' },
+          { id: 'sup2', name: 'ميساء الحربي', position: 'مشرفة جودة', experience: '7 سنوات', avatar: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?w=160' }
+        ]
+      };
+
+      const equipmentLibrary = ['خلاطة خرسانة', 'رافعة شوكية', 'حفار صغير', 'مولد كهربائي', 'أدوات قياس متقدمة', 'سقالات ألومنيوم'];
+      const materialsLibrary = ['أسمنت', 'حديد تسليح', 'خرسانة جاهزة', 'أسلاك كهربائية', 'مواسير سباكة', 'بلاط وسيراميك'];
+      const subcontractorLibrary = ['مقاول كهربائي', 'مقاول سباكة', 'مقاول تشطيبات', 'مقاول أنظمة أمنية'];
+
+      let currentStep = 1;
+      let selectedTemplate = null;
+      let editingProjectId = null;
+      let editingProject = null;
+
+      document.addEventListener('DOMContentLoaded', () => {
+        hydrateTemplateCards();
+        bindNavigation();
+        bindBudgetEvents();
+        bindFileUpload();
+        bindPhaseControls();
+        renderPhaseDefaults();
+        renderTeamDirectory();
+        renderResourcePills();
+        detectEditingContext();
+        updateStepState();
+      });
+      function detectEditingContext() {
+        const params = new URLSearchParams(window.location.search);
+        const projectId = params.get('projectId');
+        if (!projectId) return;
+        editingProjectId = projectId;
+        editingProject = findProject(projectId);
+        if (!editingProject) {
+          toast('تعذر العثور على المشروع المطلوب للتحرير', false);
+          editingProjectId = null;
+          return;
+        }
+        populateWizard(editingProject);
+      }
+
+      function findProject(id) {
+        return readProjects().find((item) => item.id === id) || null;
+      }
+
+      function populateWizard(project) {
+        selectedTemplate = project.template || null;
+        selectTemplateCard(selectedTemplate);
+        setValue('projectName', project.name);
+        setValue('projectType', project.type);
+        const location = typeof project.location === 'string' ? { address: project.location } : project.location || {};
+        setValue('projectCity', location.cityCode);
+        setValue('projectDistrict', location.district);
+        setValue('projectAddress', location.address || project.locationLabel);
+        setValue('projectDescription', project.description);
+
+        const client = project.client || {};
+        setValue('clientName', client.name || project.clientName);
+        setValue('clientType', client.type);
+        setValue('clientPhone', client.phone);
+        setValue('clientEmail', client.email);
+        setValue('clientId', client.id);
+        setValue('clientTaxNumber', client.tax);
+        setValue('clientAddress', client.address);
+
+        const specs = project.specs || {};
+        setValue('totalArea', specs.totalArea);
+        setValue('builtArea', specs.builtArea);
+        setValue('floorsCount', specs.floorsCount);
+        setValue('unitsCount', specs.unitsCount);
+        setValue('foundationType', specs.foundationType);
+        setValue('structureType', specs.structureType);
+        setValue('wallType', specs.wallType);
+        setValue('roofType', specs.roofType);
+        setValue('specialRequirements', specs.specialRequirements);
+
+        setValue('startDate', project.timeline?.startDate || project.startDate);
+        setValue('endDate', project.timeline?.endDate || project.endDate);
+
+        const budget = project.budget || {};
+        setValue('materialsCost', budget.materials);
+        setValue('laborCost', budget.labor);
+        setValue('equipmentCost', budget.equipment);
+        setValue('additionalCost', budget.additional);
+        setValue('profitMargin', budget.profitMargin ?? 15);
+        setValue('advancePayment', budget.advancePayment);
+        setValue('paymentTerms', budget.paymentTerms);
+        updateBudgetTotals();
+
+        const phases = readPhaseStorage(project.id);
+        if (phases.length) {
+          renderPhases(phases);
+        }
+
+        restoreTeamSelection(project.team || {});
+        restoreResourceSelection('equipment', project.equipment || []);
+        restoreResourceSelection('materials', project.materials || []);
+        restoreSubcontractors(project.subcontractors || []);
+        restoreAttachments(project.attachments || []);
+        refreshSummary();
+      }
+
+      function setValue(id, value) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.value = value ?? '';
+      }
+
+      function hydrateTemplateCards() {
+        document.querySelectorAll('#templateCards .wizard-template').forEach((card) => {
+          card.addEventListener('click', () => {
+            selectedTemplate = card.dataset.template;
+            selectTemplateCard(selectedTemplate);
+          });
+        });
+      }
+
+      function selectTemplateCard(template) {
+        document.querySelectorAll('#templateCards .wizard-template').forEach((card) => {
+          card.classList.toggle('selected', card.dataset.template === template);
+        });
+      }
+      function bindNavigation() {
+        document.getElementById('prevButton').addEventListener('click', () => {
+          if (currentStep === 1) return;
+          currentStep -= 1;
+          updateStepState();
+        });
+
+        document.getElementById('nextButton').addEventListener('click', () => {
+          if (!validateStep(currentStep)) return;
+          if (currentStep < 5) {
+            currentStep += 1;
+            updateStepState();
+          } else {
+            persistProject();
+          }
+        });
+
+        document.getElementById('draftButton').addEventListener('click', () => {
+          if (!validateStep(currentStep, true)) return;
+          persistProject(true);
+        });
+      }
+
+      function updateStepState() {
+        document.querySelectorAll('[data-step-content]').forEach((section) => {
+          section.classList.toggle('active', Number(section.dataset.stepContent) === currentStep);
+        });
+        document.querySelectorAll('.wizard-step-indicator').forEach((indicator) => {
+          const step = Number(indicator.dataset.step);
+          indicator.classList.toggle('active', step === currentStep);
+          indicator.classList.toggle('completed', step < currentStep);
+        });
+        document.getElementById('prevButton').disabled = currentStep === 1;
+        document.getElementById('nextButtonLabel').textContent = currentStep === 5 ? 'حفظ المشروع' : 'التالي';
+        document.getElementById('wizardProgressValue').textContent = `${Math.round((currentStep / 5) * 100)}%`;
+        if (currentStep === 5) refreshSummary();
+      }
+
+      function validateStep(step, silent = false) {
+        const required = {
+          1: [['projectName', 'اسم المشروع مطلوب'], ['projectType', 'اختر نوع المشروع'], ['projectCity', 'حدد المدينة']],
+          2: [['clientName', 'اسم العميل مطلوب'], ['clientType', 'حدد نوع العميل'], ['clientPhone', 'رقم الهاتف مطلوب']],
+          4: [['startDate', 'حدد تاريخ البداية'], ['endDate', 'حدد تاريخ الانتهاء']]
+        };
+        const validations = required[step];
+        if (!validations) {
+          if (step === 2) {
+            const phone = document.getElementById('clientPhone').value.trim();
+            if (phone && !/^05\d{8}$/.test(phone) && !silent) {
+              toast('يرجى إدخال رقم هاتف سعودي صحيح', false);
+              return false;
+            }
+          }
+          return true;
+        }
+        const missing = validations.filter(([id]) => !document.getElementById(id).value.trim());
+        if (missing.length && !silent) {
+          toast(missing[0][1], false);
+          return false;
+        }
+        if (step === 2) {
+          const phone = document.getElementById('clientPhone').value.trim();
+          if (phone && !/^05\d{8}$/.test(phone) && !silent) {
+            toast('يرجى إدخال رقم هاتف سعودي صحيح', false);
+            return false;
+          }
+        }
+        if (step === 4 && !silent) {
+          const start = document.getElementById('startDate').value;
+          const end = document.getElementById('endDate').value;
+          if (start && end && new Date(start) >= new Date(end)) {
+            toast('يجب أن يكون تاريخ النهاية بعد تاريخ البداية', false);
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function bindBudgetEvents() {
+        ['materialsCost', 'laborCost', 'equipmentCost', 'additionalCost', 'profitMargin', 'totalArea'].forEach((id) => {
+          document.getElementById(id).addEventListener('input', updateBudgetTotals);
+        });
+        ['startDate', 'endDate'].forEach((id) => {
+          document.getElementById(id).addEventListener('change', updateDurationLabel);
+        });
+      }
+
+      function bindFileUpload() {
+        const drop = document.getElementById('fileDrop');
+        const input = document.getElementById('fileInput');
+        drop.addEventListener('click', () => input.click());
+        ['dragenter', 'dragover'].forEach((event) => {
+          drop.addEventListener(event, (e) => {
+            e.preventDefault();
+            drop.classList.add('dragover');
+          });
+        });
+        ['dragleave', 'drop'].forEach((event) => {
+          drop.addEventListener(event, (e) => {
+            e.preventDefault();
+            drop.classList.remove('dragover');
+          });
+        });
+        drop.addEventListener('drop', (e) => {
+          handleFiles(e.dataTransfer.files);
+        });
+        input.addEventListener('change', (e) => handleFiles(e.target.files));
+      }
+      function handleFiles(files) {
+        const list = document.getElementById('uploadedFiles');
+        const current = [...list.querySelectorAll('.file-item')];
+        if (current.length + files.length > 10) {
+          toast('يمكن رفع حتى 10 ملفات فقط', false);
+          return;
+        }
+        [...files].forEach((file) => {
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.innerHTML = `
+            <div><i class="fas fa-file"></i> ${file.name}<br /><small>${(file.size / 1024).toFixed(1)} كيلوبايت</small></div>
+            <button type="button"><i class="fas fa-times"></i></button>
+          `;
+          item.querySelector('button').addEventListener('click', () => item.remove());
+          list.appendChild(item);
+        });
+      }
+
+      function restoreAttachments(files) {
+        const list = document.getElementById('uploadedFiles');
+        list.innerHTML = '';
+        files.forEach((file) => {
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.innerHTML = `
+            <div><i class="fas fa-file"></i> ${file.name}<br /><small>${file.size || ''}</small></div>
+            <button type="button"><i class="fas fa-times"></i></button>
+          `;
+          item.querySelector('button').addEventListener('click', () => item.remove());
+          list.appendChild(item);
+        });
+      }
+
+      function bindPhaseControls() {
+        document.getElementById('addPhaseBtn').addEventListener('click', () => {
+          const name = prompt('أدخل اسم المرحلة');
+          if (!name) return;
+          const duration = Number(prompt('مدة المرحلة بالأيام')) || 0;
+          appendPhase({ name, durationDays: duration });
+        });
+      }
+
+      function renderPhaseDefaults() {
+        const defaults = [
+          { name: 'التخطيط والتصاميم', durationDays: 30 },
+          { name: 'الأعمال الإنشائية', durationDays: 90 },
+          { name: 'التشطيبات والتسليم', durationDays: 60 }
+        ];
+        renderPhases(defaults);
+      }
+
+      function appendPhase(phase) {
+        const container = document.getElementById('phaseTimeline');
+        const item = document.createElement('div');
+        item.className = 'phase-item';
+        item.innerHTML = `
+          <div>
+            <strong>${phase.name}</strong>
+            <div class="text-muted text-sm">${phase.durationDays || 0} يوم</div>
+          </div>
+          <button type="button"><i class="fas fa-times"></i></button>
+        `;
+        item.querySelector('button').addEventListener('click', () => {
+          item.remove();
+          updatePhaseMeta();
+        });
+        container.appendChild(item);
+        updatePhaseMeta();
+      }
+
+      function renderPhases(phases) {
+        const container = document.getElementById('phaseTimeline');
+        container.innerHTML = '';
+        phases.forEach((phase) => appendPhase(phase));
+      }
+
+      function updatePhaseMeta() {
+        const phases = collectPhases();
+        document.getElementById('phasesCountLabel').textContent = `${phases.length} مرحلة`;
+        refreshSummary();
+      }
+
+      function renderTeamDirectory() {
+        renderTeamCards('managerList', teamDirectory.managers, true);
+        renderTeamCards('engineerList', teamDirectory.engineers, false);
+        renderTeamCards('supervisorList', teamDirectory.supervisors, false);
+      }
+
+      function renderTeamCards(containerId, members, single) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        members.forEach((member) => {
+          const card = document.createElement('label');
+          card.className = 'wizard-team-card';
+          card.innerHTML = `
+            <input type="${single ? 'radio' : 'checkbox'}" name="${containerId}" value="${member.id}" hidden />
+            <img src="${member.avatar}" alt="${member.name}" />
+            <div>
+              <strong>${member.name}</strong>
+              <div class="text-sm text-muted">${member.position}</div>
+              <div class="text-xs text-success">${member.experience}</div>
+            </div>
+          `;
+          card.addEventListener('click', (event) => {
+            if (event.target.tagName === 'INPUT') return;
+            const input = card.querySelector('input');
+            if (single) {
+              document.querySelectorAll(`#${containerId} .wizard-team-card`).forEach((c) => {
+                c.classList.remove('selected');
+                c.querySelector('input').checked = false;
+              });
+              input.checked = true;
+              card.classList.add('selected');
+            } else {
+              input.checked = !input.checked;
+              card.classList.toggle('selected', input.checked);
+            }
+            refreshSummary();
+          });
+          container.appendChild(card);
+        });
+      }
+
+      function restoreTeamSelection(team) {
+        if (team.manager) {
+          const managerId = team.manager.id || team.manager;
+          const input = document.querySelector(`#managerList input[value="${managerId}"]`);
+          if (input) {
+            input.checked = true;
+            input.closest('.wizard-team-card').classList.add('selected');
+          }
+        }
+        ['engineerList', 'supervisorList'].forEach((containerId) => {
+          const list = team[containerId === 'engineerList' ? 'engineers' : 'supervisors'] || [];
+          list.forEach((member) => {
+            const id = member.id || member;
+            const input = document.querySelector(`#${containerId} input[value="${id}"]`);
+            if (input) {
+              input.checked = true;
+              input.closest('.wizard-team-card').classList.add('selected');
+            }
+          });
+        });
+      }
+
+      function renderResourcePills() {
+        const equipmentContainer = document.getElementById('equipmentPills');
+        const materialsContainer = document.getElementById('materialsPills');
+        const subcontractorContainer = document.getElementById('subcontractorPills');
+        equipmentContainer.innerHTML = '';
+        materialsContainer.innerHTML = '';
+        subcontractorContainer.innerHTML = '';
+        equipmentLibrary.forEach((item) => equipmentContainer.appendChild(createResourceCheckbox('equipment', item)));
+        materialsLibrary.forEach((item) => materialsContainer.appendChild(createResourceCheckbox('materials', item)));
+        subcontractorLibrary.forEach((item) => subcontractorContainer.appendChild(createResourceCheckbox('subcontractor', item)));
+      }
+
+      function createResourceCheckbox(group, label) {
+        const wrapper = document.createElement('label');
+        wrapper.className = 'wizard-pill';
+        wrapper.style.cursor = 'pointer';
+        wrapper.innerHTML = `<input type="checkbox" value="${label}" hidden /> ${label}`;
+        const input = wrapper.querySelector('input');
+        wrapper.addEventListener('click', (event) => {
+          if (event.target.tagName === 'INPUT') return;
+          input.checked = !input.checked;
+          wrapper.classList.toggle('selected', input.checked);
+          refreshSummary();
+        });
+        return wrapper;
+      }
+      function restoreResourceSelection(type, values) {
+        const selector = type === 'equipment' ? '#equipmentPills' : '#materialsPills';
+        values.forEach((value) => {
+          const label = Array.from(document.querySelectorAll(`${selector} .wizard-pill`)).find((pill) => pill.textContent.trim() === value);
+          if (label) {
+            const input = label.querySelector('input');
+            input.checked = true;
+            label.classList.add('selected');
+          }
+        });
+      }
+
+      function restoreSubcontractors(values) {
+        values.forEach((value) => {
+          const label = Array.from(document.querySelectorAll('#subcontractorPills .wizard-pill')).find((pill) => pill.textContent.trim() === value);
+          if (label) {
+            const input = label.querySelector('input');
+            input.checked = true;
+            label.classList.add('selected');
+          }
+        });
+      }
+
+      function updateBudgetTotals() {
+        const materials = Number(document.getElementById('materialsCost').value) || 0;
+        const labor = Number(document.getElementById('laborCost').value) || 0;
+        const equipment = Number(document.getElementById('equipmentCost').value) || 0;
+        const additional = Number(document.getElementById('additionalCost').value) || 0;
+        const profitMargin = Number(document.getElementById('profitMargin').value) || 0;
+        const subtotal = materials + labor + equipment + additional;
+        const profit = subtotal * (profitMargin / 100);
+        const total = subtotal + profit;
+        document.getElementById('totalCost').textContent = `${total.toLocaleString('ar-SA')} ريال`;
+        const area = Number(document.getElementById('totalArea').value) || 0;
+        document.getElementById('costPerMeter').textContent = area > 0 ? `${Math.round(total / area).toLocaleString('ar-SA')} ريال` : '0 ريال';
+        refreshSummary();
+      }
+
+      function updateDurationLabel() {
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        if (!start || !end) return;
+        const diff = Math.max(0, Math.ceil((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)));
+        document.getElementById('projectDuration').textContent = `${diff} يوم`;
+        refreshSummary();
+      }
+
+      function collectPhases() {
+        return Array.from(document.querySelectorAll('#phaseTimeline .phase-item')).map((item, index) => {
+          const name = item.querySelector('strong')?.textContent || `مرحلة ${index + 1}`;
+          const duration = Number(item.querySelector('.text-muted')?.textContent?.replace(/[^\d]/g, '') || '0');
+          return { id: `phase-${index + 1}`, name, durationDays: duration, order: index + 1 };
+        });
+      }
+
+      function collectTeam() {
+        const managerInput = document.querySelector('#managerList input:checked');
+        const engineerInputs = document.querySelectorAll('#engineerList input:checked');
+        const supervisorInputs = document.querySelectorAll('#supervisorList input:checked');
+        return {
+          manager: managerInput ? resolveMember('managers', managerInput.value) : null,
+          engineers: Array.from(engineerInputs).map((input) => resolveMember('engineers', input.value)),
+          supervisors: Array.from(supervisorInputs).map((input) => resolveMember('supervisors', input.value))
+        };
+      }
+
+      function resolveMember(group, id) {
+        return teamDirectory[group].find((member) => member.id === id) || { id };
+      }
+
+      function collectResources(selector) {
+        return Array.from(document.querySelectorAll(`${selector} input:checked`)).map((input) => input.value);
+      }
+
+      function collectAttachments() {
+        return Array.from(document.querySelectorAll('#uploadedFiles .file-item')).map((item) => {
+          const text = item.querySelector('div')?.textContent || '';
+          const [nameLine, sizeLine] = text.split('\n');
+          return { name: nameLine?.trim(), size: sizeLine?.trim() };
+        }).filter((entry) => entry.name);
+      }
+
+      function refreshSummary() {
+        const summary = document.getElementById('projectSummary');
+        if (!summary) return;
+        const team = collectTeam();
+        const phases = collectPhases();
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        const totalCost = document.getElementById('totalCost').textContent;
+        const templateLabel = resolveTemplateLabel(selectedTemplate);
+        summary.innerHTML = `
+          <div class="wizard-summary__row"><span>اسم المشروع</span><strong>${document.getElementById('projectName').value || '—'}</strong></div>
+          <div class="wizard-summary__row"><span>نوع المشروع</span><strong>${templateLabel || resolveSelectLabel('projectType')}</strong></div>
+          <div class="wizard-summary__row"><span>العميل</span><strong>${document.getElementById('clientName').value || '—'}</strong></div>
+          <div class="wizard-summary__row"><span>المدة</span><strong>${start || end ? `${start || '—'} → ${end || '—'}` : '—'}</strong></div>
+          <div class="wizard-summary__row"><span>إجمالي العقد</span><strong>${totalCost}</strong></div>
+          <div class="wizard-summary__row"><span>عدد المراحل</span><strong>${phases.length}</strong></div>
+          <div class="wizard-summary__row"><span>مدير المشروع</span><strong>${team.manager?.name || 'لم يحدد'}</strong></div>
+        `;
+      }
+
+      function resolveTemplateLabel(value) {
+        return {
+          villa: 'قالب الفلل السكنية',
+          commercial: 'قالب المباني التجارية',
+          custom: 'تكوين مخصص'
+        }[value] || '';
+      }
+
+      function resolveSelectLabel(selectId) {
+        const element = document.getElementById(selectId);
+        if (!element) return '';
+        return element.options[element.selectedIndex]?.textContent?.trim() || '';
+      }
+      function readProjects() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_KEY) || '[]';
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function writeProjects(projects) {
+        const serialized = JSON.stringify(projects);
+        localStorage.setItem(STORAGE_KEY, serialized);
+        localStorage.setItem(LEGACY_KEY, serialized);
+      }
+
+      function readPhaseStorage(projectId) {
+        return PHASE_STORAGE_KEYS.reduce((acc, key) => {
+          try {
+            const parsed = JSON.parse(localStorage.getItem(key) || '[]');
+            const list = Array.isArray(parsed) ? parsed : [];
+            const filtered = list.filter((item) => item.projectId === projectId);
+            return filtered.length ? filtered : acc;
+          } catch (error) {
+            return acc;
+          }
+        }, []);
+      }
+
+      function persistPhases(projectId, phases) {
+        PHASE_STORAGE_KEYS.forEach((key) => {
+          let store = [];
+          try {
+            store = JSON.parse(localStorage.getItem(key) || '[]');
+            if (!Array.isArray(store)) store = [];
+          } catch (error) {
+            store = [];
+          }
+          const filtered = store.filter((item) => item.projectId !== projectId);
+          const stamped = phases.map((phase, index) => ({
+            id: phase.id || `phase-${projectId}-${index + 1}`,
+            projectId,
+            name: phase.name,
+            durationDays: Number(phase.durationDays) || 0,
+            order: phase.order || index + 1,
+            status: phase.status || 'planned',
+            startDate: phase.startDate || '',
+            endDate: phase.endDate || '',
+            progressPercent: phase.progressPercent || 0,
+            createdAt: phase.createdAt || new Date().toISOString()
+          }));
+          localStorage.setItem(key, JSON.stringify([...filtered, ...stamped]));
+        });
+      }
+
+      function collectProjectPayload() {
+        const now = new Date().toISOString();
+        const projects = readProjects();
+        const editing = editingProjectId ? projects.find((project) => project.id === editingProjectId) : null;
+        const id = editing?.id || `PRJ-${Date.now()}`;
+        const selectLabel = resolveSelectLabel('projectType');
+        const cityCode = document.getElementById('projectCity').value;
+        const cityLabel = CITY_LABELS[cityCode] || resolveSelectLabel('projectCity') || cityCode;
+        const locationLabel = [cityLabel, document.getElementById('projectDistrict').value].filter(Boolean).join(' - ');
+        const phases = collectPhases();
+        const team = collectTeam();
+        const attachments = collectAttachments();
+        const project = {
+          id,
+          code: editing?.code || `#${id}`,
+          name: document.getElementById('projectName').value.trim(),
+          type: document.getElementById('projectType').value,
+          typeLabel: selectLabel,
+          template: selectedTemplate,
+          description: document.getElementById('projectDescription').value.trim(),
+          location: {
+            cityCode,
+            cityLabel,
+            district: document.getElementById('projectDistrict').value.trim(),
+            address: document.getElementById('projectAddress').value.trim()
+          },
+          locationLabel,
+          clientName: document.getElementById('clientName').value.trim(),
+          client: {
+            name: document.getElementById('clientName').value.trim(),
+            type: document.getElementById('clientType').value,
+            phone: document.getElementById('clientPhone').value.trim(),
+            email: document.getElementById('clientEmail').value.trim(),
+            id: document.getElementById('clientId').value.trim(),
+            tax: document.getElementById('clientTaxNumber').value.trim(),
+            address: document.getElementById('clientAddress').value.trim()
+          },
+          manager: team.manager?.name || '',
+          specs: {
+            totalArea: Number(document.getElementById('totalArea').value) || 0,
+            builtArea: Number(document.getElementById('builtArea').value) || 0,
+            floorsCount: Number(document.getElementById('floorsCount').value) || 0,
+            unitsCount: Number(document.getElementById('unitsCount').value) || 0,
+            foundationType: document.getElementById('foundationType').value,
+            structureType: document.getElementById('structureType').value,
+            wallType: document.getElementById('wallType').value,
+            roofType: document.getElementById('roofType').value,
+            specialRequirements: document.getElementById('specialRequirements').value.trim()
+          },
+          timeline: {
+            startDate: document.getElementById('startDate').value,
+            endDate: document.getElementById('endDate').value,
+            durationDays: Number(document.getElementById('projectDuration').textContent.replace(/[^\d]/g, '')) || 0
+          },
+          startDate: document.getElementById('startDate').value,
+          endDate: document.getElementById('endDate').value,
+          durationDays: Number(document.getElementById('projectDuration').textContent.replace(/[^\d]/g, '')) || 0,
+          budget: {
+            materials: Number(document.getElementById('materialsCost').value) || 0,
+            labor: Number(document.getElementById('laborCost').value) || 0,
+            equipment: Number(document.getElementById('equipmentCost').value) || 0,
+            additional: Number(document.getElementById('additionalCost').value) || 0,
+            profitMargin: Number(document.getElementById('profitMargin').value) || 0,
+            advancePayment: Number(document.getElementById('advancePayment').value) || 0,
+            paymentTerms: document.getElementById('paymentTerms').value,
+            contractValue: Number(document.getElementById('totalCost').textContent.replace(/[^\d]/g, '')) || 0,
+            currency: 'SAR'
+          },
+          value: Number(document.getElementById('totalCost').textContent.replace(/[^\d]/g, '')) || 0,
+          status: editing?.status || 'active',
+          progress: editing?.progress || 0,
+          totalExpenses: editing?.totalExpenses || 0,
+          totalPayments: editing?.totalPayments || 0,
+          profitability: editing?.profitability || 0,
+          team,
+          equipment: collectResources('#equipmentPills'),
+          materials: collectResources('#materialsPills'),
+          subcontractors: collectResources('#subcontractorPills'),
+          attachments,
+          phases,
+          createdAt: editing?.createdAt || now,
+          updatedAt: now
+        };
+        return { project, phases };
+      }
+      function persistProject(saveAsDraft = false) {
+        const { project, phases } = collectProjectPayload();
+        if (!project.name || !project.client.name) {
+          toast('يرجى إكمال البيانات الأساسية قبل الحفظ', false);
+          return;
+        }
+        const projects = readProjects();
+        const index = projects.findIndex((item) => item.id === project.id);
+        if (index >= 0) {
+          projects[index] = { ...projects[index], ...project };
+        } else {
+          projects.push(project);
+        }
+        writeProjects(projects);
+        persistPhases(project.id, phases);
+        sessionStorage.setItem('contractorpro:projects:updated', Date.now().toString());
+        toast(saveAsDraft ? 'تم حفظ المسودة بنجاح' : 'تم حفظ المشروع ومزامنته بنجاح');
+        if (!saveAsDraft) {
+          setTimeout(() => {
+            window.location.href = `projects_management_center.html?${index >= 0 ? 'updated' : 'created'}=${encodeURIComponent(project.id)}`;
+          }, 900);
+        }
+      }
+
+      function toast(message, success = true) {
+        const containerId = 'wizard-toast-container';
+        let container = document.getElementById(containerId);
+        if (!container) {
+          container = document.createElement('div');
+          container.id = containerId;
+          container.style.position = 'fixed';
+          container.style.bottom = '32px';
+          container.style.left = '32px';
+          container.style.display = 'grid';
+          container.style.gap = '12px';
+          container.style.zIndex = '9999';
+          document.body.appendChild(container);
+        }
+        const toastEl = document.createElement('div');
+        toastEl.textContent = message;
+        toastEl.style.padding = '12px 18px';
+        toastEl.style.borderRadius = '16px';
+        toastEl.style.boxShadow = '0 16px 40px rgba(15, 23, 42, 0.25)';
+        toastEl.style.color = '#fff';
+        toastEl.style.background = success ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #ef4444, #b91c1c)';
+        container.appendChild(toastEl);
+        setTimeout(() => {
+          toastEl.style.opacity = '0';
+          toastEl.style.transform = 'translateY(10px)';
+          setTimeout(() => toastEl.remove(), 300);
+        }, 2200);
+      }
+
+      function goBack() {
+        if (confirm('هل ترغب في الخروج من المعالج؟ قد تفقد البيانات غير المحفوظة.')) {
+          window.location.href = 'projects_management_center.html';
+        }
+      }
+    </script>
+    <script src="../js/session.js" data-login-path="../login.html"></script>
   </body>
 </html>
