@@ -1,0 +1,281 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+
+:root {
+    --app-background: linear-gradient(140deg, #f7faff 0%, #eef2ff 40%, #fdf7ff 100%);
+    --surface-color: rgba(255, 255, 255, 0.92);
+    --surface-strong: #ffffff;
+    --surface-border: rgba(148, 163, 184, 0.25);
+    --surface-shadow: 0 24px 55px rgba(15, 23, 42, 0.12);
+    --surface-shadow-soft: 0 18px 38px rgba(59, 130, 246, 0.16);
+    --surface-shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    --heading-color: #1f2a44;
+    --text-color: #2d3a58;
+    --text-muted: #7081a1;
+    --primary-color: #3b82f6;
+    --primary-strong: #2563eb;
+    --primary-soft: #60a5fa;
+    --accent-color: #f59e0b;
+    --success-color: #10b981;
+    --info-color: #0ea5e9;
+    --danger-color: #ef4444;
+    --radius-card: 1.25rem;
+    --radius-button: 0.95rem;
+    --base-font-size: 16px;
+}
+
+html {
+    font-size: var(--base-font-size);
+}
+
+body {
+    font-family: 'Cairo', 'Noto Sans Arabic', 'Segoe UI', sans-serif;
+    background: var(--app-background);
+    background-attachment: fixed;
+    color: var(--text-color);
+    line-height: 1.65;
+    margin: 0;
+    min-height: 100vh;
+}
+
+body.bg-background,
+body[class*="bg-gradient"] {
+    background: var(--app-background) !important;
+}
+
+.bg-background {
+    background: var(--app-background) !important;
+}
+
+.font-arabic,
+.font-arabic *:not(i),
+.font-arabic-kufi,
+.font-arabic-kufi *:not(i),
+body,
+html {
+    font-family: 'Cairo', 'Noto Sans Arabic', 'Segoe UI', sans-serif !important;
+}
+
+body,
+p,
+.text-text-secondary,
+.text-muted {
+    color: var(--text-muted);
+}
+
+.text-text-primary,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--heading-color) !important;
+    letter-spacing: 0.01em;
+}
+
+.bg-surface,
+.bg-white,
+.card,
+.shadow-card,
+.shadow-modal,
+header.bg-surface,
+main .bg-surface,
+section.bg-surface {
+    background-color: var(--surface-color) !important;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--surface-border);
+    box-shadow: var(--surface-shadow);
+    backdrop-filter: blur(14px);
+    overflow: hidden;
+}
+
+.card,
+.bg-surface,
+.bg-white {
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.card:hover,
+.bg-surface:hover,
+.bg-white:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--surface-shadow-soft);
+}
+
+.card > .card-header,
+.card > header,
+header.bg-surface {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.65));
+    box-shadow: var(--surface-shadow-inner);
+}
+
+.table,
+table {
+    background-color: var(--surface-color);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--surface-shadow);
+}
+
+.table thead tr,
+table thead tr {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(148, 163, 184, 0.1));
+    color: var(--heading-color);
+}
+
+.table tbody tr:hover,
+table tbody tr:hover {
+    background-color: rgba(59, 130, 246, 0.08);
+}
+
+a {
+    color: var(--primary-strong);
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--primary-color);
+}
+
+button,
+.btn,
+.bg-primary,
+a.bg-primary,
+button.bg-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-strong)) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: var(--radius-button) !important;
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.22);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+button:hover,
+.btn:hover,
+.bg-primary:hover,
+a.bg-primary:hover,
+button.bg-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 32px rgba(37, 99, 235, 0.28);
+    filter: brightness(1.05);
+}
+
+.bg-success,
+a.bg-success,
+button.bg-success {
+    background: linear-gradient(135deg, var(--success-color), #059669) !important;
+    color: #fff !important;
+    box-shadow: 0 12px 28px rgba(16, 185, 129, 0.24);
+}
+
+.bg-warning,
+a.bg-warning,
+button.bg-warning {
+    background: linear-gradient(135deg, var(--accent-color), #f97316) !important;
+    color: #fff !important;
+    box-shadow: 0 12px 28px rgba(245, 158, 11, 0.24);
+}
+
+.bg-info,
+a.bg-info,
+button.bg-info {
+    background: linear-gradient(135deg, var(--info-color), #2563eb) !important;
+    color: #fff !important;
+    box-shadow: 0 12px 28px rgba(14, 165, 233, 0.24);
+}
+
+input,
+textarea,
+select {
+    border-radius: 0.85rem !important;
+    border: 1px solid rgba(37, 99, 235, 0.18) !important;
+    background-color: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05);
+    font-family: 'Cairo', 'Noto Sans Arabic', 'Segoe UI', sans-serif !important;
+    font-size: 0.95rem !important;
+    color: var(--text-color) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary-strong) !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
+}
+
+.badge,
+span.pill,
+.status-pill,
+.tag,
+.chip {
+    background-color: rgba(59, 130, 246, 0.14) !important;
+    color: var(--primary-strong) !important;
+    border-radius: 999px !important;
+    padding-inline: 0.85rem !important;
+    padding-block: 0.35rem !important;
+}
+
+.hero-banner,
+.highlight-section,
+.overview-panel {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(236, 252, 255, 0.88));
+    border-radius: var(--radius-card);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: var(--surface-shadow);
+}
+
+footer {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    color: var(--text-muted);
+}
+
+.shadow-card {
+    box-shadow: var(--surface-shadow) !important;
+}
+
+.shadow-modal {
+    box-shadow: 0 30px 60px rgba(15, 23, 42, 0.18) !important;
+}
+
+.alert,
+.notification-card,
+.info-card {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(244, 249, 255, 0.95));
+    border-radius: var(--radius-card);
+    border: 1px solid rgba(37, 99, 235, 0.12);
+    box-shadow: var(--surface-shadow-soft);
+}
+
+.primary-chip,
+.text-primary,
+.text-primary-600,
+.text-primary-700 {
+    color: var(--primary-strong) !important;
+}
+
+.stat-card,
+.metric-card,
+.summary-card {
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.92), rgba(236, 244, 255, 0.92));
+    border-radius: var(--radius-card);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    box-shadow: var(--surface-shadow);
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 15px;
+    }
+
+    body {
+        line-height: 1.7;
+    }
+
+    .card,
+    .bg-surface,
+    .bg-white {
+        border-radius: 1rem;
+    }
+}

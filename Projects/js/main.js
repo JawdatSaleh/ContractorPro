@@ -1629,7 +1629,7 @@ function drawLineChart(canvas, data) {
   ctx.clearRect(0, 0, width, height);
   if (!data.length) {
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '14px Tajawal';
+    ctx.font = '14px Cairo';
     ctx.textAlign = 'center';
     ctx.fillText('لا تتوفر بيانات لعرضها', width / 2, height / 2);
     return;
@@ -1659,7 +1659,7 @@ function drawLineChart(canvas, data) {
   ctx.fill();
 
   ctx.fillStyle = '#2563eb';
-  ctx.font = '12px Tajawal';
+  ctx.font = '12px Cairo';
   ctx.textAlign = 'center';
   data.forEach((point, index) => {
     const x = padding + stepX * index;
@@ -1682,7 +1682,7 @@ function drawBarChart(canvas, data) {
   ctx.clearRect(0, 0, width, height);
   if (!data.length) {
     ctx.fillStyle = '#94a3b8';
-    ctx.font = '14px Tajawal';
+    ctx.font = '14px Cairo';
     ctx.textAlign = 'center';
     ctx.fillText('لا تتوفر بيانات لعرضها', width / 2, height / 2);
     return;
@@ -1690,7 +1690,7 @@ function drawBarChart(canvas, data) {
   const padding = 32;
   const barWidth = (width - padding * 2) / data.length - 12;
   const maxValue = Math.max(1, ...data.map((point) => point.value));
-  ctx.font = '12px Tajawal';
+  ctx.font = '12px Cairo';
   data.forEach((point, index) => {
     const x = padding + index * (barWidth + 12);
     const barHeight = ((height - padding * 2) * point.value) / maxValue;
@@ -2876,7 +2876,7 @@ function updateMonthlyComparisonChart(labels, expensesData, contractsData) {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: { font: { family: 'Tajawal, sans-serif' } },
+          labels: { font: { family: 'Cairo, sans-serif' } },
         },
       },
       scales: {
@@ -2906,7 +2906,7 @@ function updateExpenseVsContractsChart(expenseTotal, contractTotal) {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: { font: { family: 'Tajawal, sans-serif' } },
+          labels: { font: { family: 'Cairo, sans-serif' } },
         },
       },
     },
@@ -2945,7 +2945,7 @@ function updateTimelineChart(labels, expensesData, contractsData) {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: { font: { family: 'Tajawal, sans-serif' } },
+          labels: { font: { family: 'Cairo, sans-serif' } },
         },
       },
       scales: {
@@ -3443,7 +3443,7 @@ function updatePaymentsCharts(payments, metrics) {
         plugins: {
           legend: {
             position: 'bottom',
-            labels: { font: { family: 'Tajawal, sans-serif' } },
+            labels: { font: { family: 'Cairo, sans-serif' } },
           },
         },
       },
