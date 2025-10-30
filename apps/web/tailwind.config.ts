@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Tajawal"', ...defaultTheme.fontFamily.sans]
+        sans: ['"Cairo"', ...defaultTheme.fontFamily.sans]
       },
       container: {
         center: true,
